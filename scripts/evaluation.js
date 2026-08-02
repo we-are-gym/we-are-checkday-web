@@ -8,6 +8,7 @@ import { STATE } from "./states.js";
 import { DOT_COUNT, MOTION_TOTAL_MAX, SCORE_MIN, SCORE_MAX } from "./constants.js";
 import { calcVo2Value, getVo2Grade } from "./vo2.js";
 import { getGradeMeta } from "./grade.js";
+import { GRADE_STYLES, VO2_GRADE_STYLES } from "./grade-styles.js";
 
 // ── 움직임 평가 데이터 (공용 모듈 7개 + VO₂ 항목) ──
 export const evals = ASSESSMENT_ITEMS.concat([
@@ -23,16 +24,6 @@ export const evals = ASSESSMENT_ITEMS.concat([
 STATE.init(evals.length, MOTION_TOTAL_MAX);
 
 // ── VO₂ 계산 (8번 항목에만) — 공용 모듈 사용 ──
-const VO2_GRADE_STYLES = {
-	excellent: { bg: "var(--green-bg)", fg: "var(--green-fg)" },
-	good: { bg: "var(--blue-bg)", fg: "var(--blue-fg)" },
-	above_avg: { bg: "var(--blue-bg)", fg: "var(--blue-fg)" },
-	average: { bg: "var(--orange-bg)", fg: "var(--orange-fg)" },
-	below_avg: { bg: "var(--orange-bg)", fg: "var(--orange-fg)" },
-	poor: { bg: "var(--red-bg)", fg: "var(--red-fg)" },
-	very_poor: { bg: "var(--red-bg)", fg: "var(--red-fg)" },
-};
-
 export function calcVo2() {
 	const age = VAL.num(UI.byId("vo2-age").value);
 	const ht = VAL.num(UI.byId("vo2-ht").value);
@@ -124,30 +115,6 @@ export function adj(i, d) {
 		UI.byId(`dot-${i}-${j}`).classList.toggle("on", j < next);
 	updateTotal();
 }
-
-const GRADE_STYLES = {
-	"평가 전": { bg: "var(--surface2)", fg: "var(--text3)", hint: "" },
-	우수: {
-		bg: "var(--green-bg)",
-		fg: "var(--green-fg)",
-		hint: "전반적으로 안정적인 패턴",
-	},
-	양호: {
-		bg: "var(--blue-bg)",
-		fg: "var(--blue-fg)",
-		hint: "일부 패턴 보완 필요",
-	},
-	보통: {
-		bg: "var(--orange-bg)",
-		fg: "var(--orange-fg)",
-		hint: "주요 패턴 집중 개선 권장",
-	},
-	"개선 필요": {
-		bg: "var(--red-bg)",
-		fg: "var(--red-fg)",
-		hint: "기초 움직임 패턴 재교육 필요",
-	},
-};
 
 export function updateTotal() {
 	const tot = STATE.total();

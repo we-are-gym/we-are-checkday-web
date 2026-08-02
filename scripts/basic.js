@@ -7,6 +7,7 @@ import { VAL } from "./validation.js";
 import { UI } from "./UI.js";
 import { calcVo2Value, getVo2Grade } from "./vo2.js";
 import { getGradeMeta } from "./grade.js";
+import { GRADE_STYLES, VO2_GRADE_STYLES, getScoreColor } from "./grade-styles.js";
 import { SCORE_MIN, SCORE_MAX, DOT_COUNT, MOTION_TOTAL_MAX } from "./constants.js";
 
 const assessments = ASSESSMENT_ITEMS.map((item, idx) => ({
@@ -20,16 +21,6 @@ assessments.forEach((a) => {
 	state[a.id] = { score: 0, checks: {}, notes: "" };
 });
 const vo2State = { score: 0, vo2: null, grade: null };
-
-const VO2_GRADE_COLORS = {
-	excellent: { bg: "#EAF3DE", fg: "#3B6D11" },
-	good: { bg: "#E6F1FB", fg: "#185FA5" },
-	above_avg: { bg: "#E6F1FB", fg: "#185FA5" },
-	average: { bg: "#FAEEDA", fg: "#854F0B" },
-	below_avg: { bg: "#FAEEDA", fg: "#854F0B" },
-	poor: { bg: "#FCEBEB", fg: "#A32D2D" },
-	very_poor: { bg: "#FCEBEB", fg: "#A32D2D" },
-};
 
 // ── VO₂ 확장/계산 ──
 function toggleVo2() {
@@ -51,7 +42,7 @@ function calcVo2() {
 
 	const gradeInfo = getVo2Grade(vr, age);
 	vo2State.grade = gradeInfo;
-	const color = VO2_GRADE_COLORS[gradeInfo.grade];
+	const color = VO2_GRADE_STYLES[gradeInfo.grade];
 
 	UI.byId("vo2-val").textContent = vr.toFixed(1);
 	const badge = UI.byId("vo2-grade-badge");
@@ -191,30 +182,6 @@ function saveNotes(id, val) {
 	state[id].notes = val;
 }
 
-const GRADE_STYLES = {
-	"평가 전": { bg: "#f2f1ed", fg: "#9a9a94", hint: "" },
-	우수: {
-		bg: "#EAF3DE",
-		fg: "#3B6D11",
-		hint: "전반적으로 양호한 기능 상태입니다",
-	},
-	양호: {
-		bg: "#E6F1FB",
-		fg: "#185FA5",
-		hint: "일부 개선이 필요한 영역이 있습니다",
-	},
-	보통: {
-		bg: "#FAEEDA",
-		fg: "#854F0B",
-		hint: "여러 항목에서 기능 개선이 필요합니다",
-	},
-	"개선 필요": {
-		bg: "#FCEBEB",
-		fg: "#A32D2D",
-		hint: "집중적인 기능 개선 프로그램을 권장합니다",
-	},
-};
-
 function getTotal() {
 	return (
 		assessments.reduce((sum, a) => sum + state[a.id].score, 0) +
@@ -284,13 +251,6 @@ function resetAll() {
 		r.classList.remove("highlight-row"),
 	);
 	updateTotal();
-}
-
-function getScoreColor(score) {
-	if (score === 3) return { bg: "#EAF3DE", fg: "#3B6D11" };
-	if (score === 2) return { bg: "#E6F1FB", fg: "#185FA5" };
-	if (score === 1) return { bg: "#FAEEDA", fg: "#854F0B" };
-	return { bg: "#f2f1ed", fg: "#9a9a94" };
 }
 
 function openReport() {
