@@ -1,5 +1,5 @@
 // 파일 용도: DOM 조작 공용 헬퍼 — 요소 조회·내용 설정·클래스 토글 (checkday · basic_function 공용)
-const UI = {
+export const UI = {
 	/**
 	 * id로 요소 조회 (없으면 null, null-safe는 호출부에서 처리)
 	 * @param {string} id

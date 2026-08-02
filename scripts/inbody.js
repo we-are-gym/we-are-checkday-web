@@ -1,5 +1,6 @@
 // 파일 용도: 인바디 관련 로직 — 수치→상태 태그 분류·태그 갱신 (checkday 공용)
 // DEPENDS: UI (전역 DOM 헬퍼)
+import { UI } from "./UI.js";
 
 /**
  * 인바디 수치→태그(정상/주의/위험) 분류
@@ -9,7 +10,7 @@
  *
  * @returns {string}
  */
-function ibTag(val, ranges) {
+export function ibTag(val, ranges) {
 	for (const r of ranges)
 		if (val <= r.max)
 			return `<span class="ib-tag" style="background:${r.bg};color:${r.fg}">${r.label}</span>`;
@@ -20,7 +21,7 @@ function ibTag(val, ranges) {
 /**
  * 인바디 입력값 읽어 태그 갱신, 총점 재계산 트리거
  */
-function updIb() {
+export function updIb() {
 	const m = parseFloat(document.getElementById("ib-m").value);
 	const bfp = parseFloat(document.getElementById("ib-bfp").value);
 	const bmi = parseFloat(document.getElementById("ib-bmi").value);

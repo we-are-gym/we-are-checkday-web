@@ -1,5 +1,5 @@
 // 파일 용도: 문자열 유틸 — 날짜·숫자 표기 포맷 공용 헬퍼 (checkday 공용)
-const STR = {
+export const STR = {
 	/**
 	 * 숫자를 두 자릿수로 패딩 (예: 3 → "03")
 	 * @param {number} n

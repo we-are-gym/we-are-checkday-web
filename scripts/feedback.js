@@ -1,5 +1,6 @@
 // 파일 용도: 피드백 CRUD — 동작 피드백 카드 생성·체크 행 추가/삭제·데이터 수집 (checkday 공용)
-// DEPENDS: ARR, UI
+// DEPENDS: UI
+import { UI } from "./UI.js";
 
 const FB_PRESET = [
 	{
@@ -40,7 +41,7 @@ const FB_PRESET = [
 const feedbacks = FB_PRESET.slice(0);
 let fbIdCounter = 0;
 
-function makeFbCheckRow(text = "") {
+export function makeFbCheckRow(text = "") {
 	return `<div class="fb-check-row">
     <input type="checkbox" style="accent-color:var(--blue);flex-shrink:0;">
     <input class="fb-check-input" type="text" value="${text}" placeholder="체크 항목...">
@@ -48,7 +49,7 @@ function makeFbCheckRow(text = "") {
   </div>`;
 }
 
-function addCheckToFb(btn) {
+export function addCheckToFb(btn) {
 	const checksWrap = btn.previousElementSibling;
 	const div = document.createElement("div");
 	div.innerHTML = makeFbCheckRow();
@@ -56,7 +57,7 @@ function addCheckToFb(btn) {
 	checksWrap.lastElementChild.querySelector(".fb-check-input").focus();
 }
 
-function addFbItem(preset) {
+export function addFbItem(preset) {
 	fbIdCounter++;
 	const id = fbIdCounter;
 	const c = UI.byId("fb-cards");
@@ -77,18 +78,18 @@ function addFbItem(preset) {
 	c.appendChild(div);
 }
 
-function buildFeedbacks() {
+export function buildFeedbacks() {
 	feedbacks.forEach((fb) => addFbItem(fb));
 }
 
 /** 초기용: 피드백 카드를 비우고 프리셋 재빌드 */
-function resetFeedbacks() {
+export function resetFeedbacks() {
 	UI.byId("fb-cards").innerHTML = "";
 	fbIdCounter = 0;
 	buildFeedbacks();
 }
 
-function getFbLines() {
+export function getFbLines() {
 	return [...document.querySelectorAll(".fb-item")]
 		.map((item) => {
 			const name =

@@ -1,5 +1,5 @@
 // 파일 용도: 입력 검증 — 수치 파싱·범위 클램프 공용 헬퍼 (checkday · basic_function 공용)
-const VAL = {
+export const VAL = {
 	/**
 	 * 문자열→숫자(실수) 변환, 변환 실패 시 NaN 반환
 	 * @param {string} v

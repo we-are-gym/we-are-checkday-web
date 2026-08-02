@@ -1,6 +1,10 @@
 // 파일 용도: 상태 관리 — 평가 점수 배열·총점·초기화 단일 소스 (checkday 공용)
 // DEPENDS: ARR, VAL
-const STATE = {
+import { ARR } from "./utils-array.js";
+import { VAL } from "./validation.js";
+import { SCORE_MIN, SCORE_MAX } from "./constants.js";
+
+export const STATE = {
 	/** 평가 점수 배열 (항목 인덱스 → 0~3점) */
 	scores: [],
 	/** 전체 총점 최댓값 (예: 움직임 총점 24) */

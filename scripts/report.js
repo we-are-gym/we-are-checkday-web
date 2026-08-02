@@ -1,8 +1,12 @@
 // 파일 용도: 리포트 생성·복사 — 결과 요약 HTML 조립·클립보드 복사 (checkday 공용)
 // DEPENDS: UI, STATE, evals(evaluation), getFbLines(feedback)
+import { UI } from "./UI.js";
+import { STATE } from "./states.js";
+import { evals } from "./evaluation.js";
+import { getFbLines } from "./feedback.js";
 
 // ── 결과 보기 공용 헬퍼 ──
-function getTotal() {
+export function getTotal() {
 	return STATE.total();
 }
 
@@ -39,7 +43,7 @@ function getEvalLines(prefix) {
 }
 
 // ── 결과 보기 ──
-function openReport() {
+export function openReport() {
 	const name = UI.byId("m-name").value || "(미입력)";
 	const session = UI.byId("m-session").value;
 	const tot = getTotal();
@@ -72,7 +76,7 @@ function openReport() {
 	UI.byId("overlay").classList.add("open");
 }
 
-function copyReport() {
+export function copyReport() {
 	const name = UI.byId("m-name").value || "(미입력)";
 	const tot = getTotal();
 	const ib = getIbData();

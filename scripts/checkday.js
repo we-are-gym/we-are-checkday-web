@@ -1,5 +1,13 @@
 // 파일 용도: 체크데이 상담지 시작점 — 날짜 표기 · 초기화 오케스트레이션 (checkday_1·2 공용)
 // DEPENDS: STR, UI, STATE, evals(evaluation), resetFeedbacks(feedback), buildEvals/updateTotal(evaluation)
+import { STR } from "./utils-string.js";
+import { UI } from "./UI.js";
+import { DOT_COUNT } from "./constants.js";
+import { STATE } from "./states.js";
+import { evals, calcVo2, buildEvals, toggleExpand, adj, updateTotal } from "./evaluation.js";
+import { addCheckToFb, addFbItem, buildFeedbacks, resetFeedbacks } from "./feedback.js";
+import { openReport, copyReport } from "./report.js";
+import { updIb } from "./inbody.js";
 
 // ── 날짜 ──
 UI.setText("date-badge", STR.today());
@@ -40,6 +48,19 @@ function resetAll() {
 	resetFeedbacks();
 	updateTotal();
 }
+
+// ── 인라인 핸들러는 전역 스코프에서 해석되므로 window에 노출 (ESM은 모듈 스코프) ──
+window.calcVo2 = calcVo2;
+window.adjustWrapper = adj;
+window.adj = adj;
+window.toggleExpand = toggleExpand;
+window.updateTotal = updateTotal;
+window.openReport = openReport;
+window.copyReport = copyReport;
+window.resetAll = resetAll;
+window.updIb = updIb;
+window.addFbItem = addFbItem;
+window.addCheckToFb = addCheckToFb;
 
 // ── 시작 ──
 buildEvals();

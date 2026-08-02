@@ -1,6 +1,13 @@
 // 파일 용도: 베이직 펑션 평가 전용 스크립트 — 항목 카드·체크·VO₂ Max Test·점수/등급·리포트 (basic_function_assessment_2 전용)
-// DEPENDS: ASSESSMENT_ITEMS, ARR, VAL, UI, STATE, calcVo2Value, getVo2Grade, getGradeMeta
+// DEPENDS: ASSESSMENT_ITEMS, ARR, VAL, UI, calcVo2Value, getVo2Grade, getGradeMeta + 상수 모듈
 // Warning: `checkday.js`와 기능 중복 많음 (본 화면은 별도 상태·렌더링 구조 사용)
+import { ASSESSMENT_ITEMS } from "./assessment-data.js";
+import { ARR } from "./utils-array.js";
+import { VAL } from "./validation.js";
+import { UI } from "./UI.js";
+import { calcVo2Value, getVo2Grade } from "./vo2.js";
+import { getGradeMeta } from "./grade.js";
+import { SCORE_MIN, SCORE_MAX, DOT_COUNT, MOTION_TOTAL_MAX } from "./constants.js";
 
 const assessments = ASSESSMENT_ITEMS.map((item, idx) => ({
 	id: idx + 1,
@@ -39,21 +46,21 @@ function calcVo2() {
 	const hr = VAL.num(UI.byId("v-hr").value);
 	if (VAL.anyNaN(age, height, weight, hr)) return;
 
-	const vo2r = calcVo2Value(age, height, weight, hr);
-	vo2State.vo2 = vo2r;
+	const vr = calcVo2Value(age, height, weight, hr);
+	vo2State.vo2 = vr;
 
-	const gradeInfo = getVo2Grade(vo2r, age);
+	const gradeInfo = getVo2Grade(vr, age);
 	vo2State.grade = gradeInfo;
 	const color = VO2_GRADE_COLORS[gradeInfo.grade];
 
-	UI.byId("vo2-val").textContent = vo2r.toFixed(1);
+	UI.byId("vo2-val").textContent = vr.toFixed(1);
 	const badge = UI.byId("vo2-grade-badge");
 	badge.textContent = gradeInfo.label;
 	badge.style.background = color.bg;
 	badge.style.color = color.fg;
 
 	UI.byId("vo2-result-box").style.display = "block";
-	UI.byId("vo2-preview").textContent = vo2r.toFixed(1) + " ml/kg/min";
+	UI.byId("vo2-preview").textContent = vr.toFixed(1) + " ml/kg/min";
 
 	// Highlight table row & column
 	highlightNormTable(gradeInfo.grade, gradeInfo.col);
@@ -332,6 +339,7 @@ function openReport() {
 function closeModal(e) {
 	if (e.target === UI.byId("modal-overlay")) closeModalDirect();
 }
+
 function closeModalDirect() {
 	UI.byId("modal-overlay").classList.remove("open");
 }
@@ -367,4 +375,19 @@ function copyReport() {
 		});
 }
 
+// ── 인라인 핸들러는 전역 스코프에서 해석되므로 window에 노출 (ESM은 모듈 스코프) ──
+window.toggleVo2 = toggleVo2;
+window.calcVo2 = calcVo2;
+window.setVo2Score = setVo2Score;
+window.resetAll = resetAll;
+window.openReport = openReport;
+window.closeModal = closeModal;
+window.closeModalDirect = closeModalDirect;
+window.copyReport = copyReport;
+window.toggleCheck = toggleCheck;
+window.adjustScore = adjustScore;
+window.toggleExpand = toggleExpand;
+window.saveNotes = saveNotes;
+
+// ── 시작 ──
 buildItems();

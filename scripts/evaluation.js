@@ -1,8 +1,16 @@
 // 파일 용도: 평가 논리 — 움직임 평가 목록 구성 · VO₂ 계산 연동 · 평가 카드 빌드 · 점수/등급/총점 갱신 (checkday 공용)
-// DEPENDS: ASSESSMENT_ITEMS, ARR, VAL, UI, STATE, calcVo2Value, getVo2Grade, getGradeMeta
+// DEPENDS: ASSESSMENT_ITEMS, ARR, VAL, UI, STATE, STYLE 등
+import { ASSESSMENT_ITEMS } from "./assessment-data.js";
+import { ARR } from "./utils-array.js";
+import { VAL } from "./validation.js";
+import { UI } from "./UI.js";
+import { STATE } from "./states.js";
+import { DOT_COUNT, MOTION_TOTAL_MAX, SCORE_MIN, SCORE_MAX } from "./constants.js";
+import { calcVo2Value, getVo2Grade } from "./vo2.js";
+import { getGradeMeta } from "./grade.js";
 
-// ── 움직임 평가 데이터 (공용 모듈 7항목 + VO₂ 항목) ──
-const evals = ASSESSMENT_ITEMS.concat([
+// ── 움직임 평가 데이터 (공용 모듈 7개 + VO₂ 항목) ──
+export const evals = ASSESSMENT_ITEMS.concat([
 	{
 		name: "VO₂ Max (스텝 테스트)",
 		desc: "심폐 지구력",
@@ -25,7 +33,7 @@ const VO2_GRADE_STYLES = {
 	very_poor: { bg: "var(--red-bg)", fg: "var(--red-fg)" },
 };
 
-function calcVo2() {
+export function calcVo2() {
 	const age = VAL.num(UI.byId("vo2-age").value);
 	const ht = VAL.num(UI.byId("vo2-ht").value);
 	const wt = VAL.num(UI.byId("vo2-wt").value);
@@ -46,7 +54,7 @@ function calcVo2() {
 }
 
 // ── 평가 카드 빌드 ──
-function buildEvals() {
+export function buildEvals() {
 	const c = UI.byId("eval-cards");
 	evals.forEach((e, i) => {
 		const div = document.createElement("div");
@@ -101,14 +109,14 @@ function buildEvals() {
 	});
 }
 
-function toggleExpand(i) {
+export function toggleExpand(i) {
 	const sp = UI.byId(`sp-${i}`);
 	const et = UI.byId(`et-${i}`);
 	sp.classList.toggle("open");
 	et.classList.toggle("open");
 }
 
-function adj(i, d) {
+export function adj(i, d) {
 	const next = VAL.bound(STATE.get(i) + d, SCORE_MIN, SCORE_MAX);
 	STATE.set(i, next);
 	UI.byId(`sv-${i}`).textContent = next;
@@ -141,7 +149,7 @@ const GRADE_STYLES = {
 	},
 };
 
-function updateTotal() {
+export function updateTotal() {
 	const tot = STATE.total();
 	const max = STATE.max;
 	const pct = Math.round((tot / max) * 100);
