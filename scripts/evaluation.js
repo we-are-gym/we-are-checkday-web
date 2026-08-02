@@ -45,7 +45,7 @@ export function calcVo2() {
 }
 
 // ── 평가 카드 빌드 ──
-export function buildEvals() {
+export function renderBasicFunctionCards() {
 	const c = UI.byId("eval-cards");
 	evals.forEach((e, i) => {
 		const div = document.createElement("div");
@@ -56,7 +56,7 @@ export function buildEvals() {
 		const tags = e.checks
 			.map(
 				(ch) =>
-					`<span class="ctag" onclick="this.classList.toggle('on')">${ch}</span>`,
+					`<span class="ctag">${ch}</span>`
 			)
 			.join("");
 
@@ -65,13 +65,13 @@ export function buildEvals() {
 				<div class="eval-num-badge">${i + 1}</div>
 				<div style="flex:1"><div class="eval-name">${e.name}</div><div class="eval-desc">${e.desc}</div></div>
 				<div class="score-ctrl">
-					<button class="score-btn" onclick="adj(${i},-1)">−</button>
+					<button class="score-btn" data-i="${i}" data-delta="-1">−</button>
 					<span class="score-val" id="sv-${i}">0</span>
-					<button class="score-btn" onclick="adj(${i},+1)">+</button>
+					<button class="score-btn" data-i="${i}" data-delta="1">+</button>
 					<div class="sdots">${dots}</div>
 				</div>
 			</div>
-			<button class="expand-toggle" id="et-${i}" onclick="toggleExpand(${i})">
+			<button class="expand-toggle" id="et-${i}" data-i="${i}">
 				체크 항목 / 메모 <span class="arr">▾</span>
 			</button>
 			<div class="sub-panel" id="sp-${i}">
@@ -82,10 +82,10 @@ export function buildEvals() {
 				<div style="margin-top:8px;padding:10px;background:var(--surface2);border-radius:8px;">
 					<div style="font-size:11px;font-weight:600;color:var(--text3);margin-bottom:8px;">VO₂ MAX 자동 계산</div>
 					<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
-						<div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:3px;">연령</label><input class="ib-num" id="vo2-age" type="number" placeholder="30" style="width:100%" oninput="calcVo2()"></div>
-						<div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:3px;">신장 (cm)</label><input class="ib-num" id="vo2-ht" type="number" placeholder="165" style="width:100%" oninput="calcVo2()"></div>
-						<div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:3px;">체중 (kg)</label><input class="ib-num" id="vo2-wt" type="number" placeholder="60" style="width:100%" oninput="calcVo2()"></div>
-						<div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:3px;">1분 회복 심박수</label><input class="ib-num" id="vo2-hr" type="number" placeholder="100" style="width:100%" oninput="calcVo2()"></div>
+						<div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:3px;">연령</label><input class="ib-num" id="vo2-age" type="number" placeholder="30" style="width:100%"></div>
+						<div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:3px;">신장 (cm)</label><input class="ib-num" id="vo2-ht" type="number" placeholder="165" style="width:100%"></div>
+						<div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:3px;">체중 (kg)</label><input class="ib-num" id="vo2-wt" type="number" placeholder="60" style="width:100%"></div>
+						<div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:3px;">1분 회복 심박수</label><input class="ib-num" id="vo2-hr" type="number" placeholder="100" style="width:100%"></div>
 					</div>
 					<div id="vo2-result" style="display:none;align-items:center;gap:10px;flex-wrap:wrap;">
 						<span id="vo2-val" style="font-size:15px;font-weight:600;"></span>
@@ -100,7 +100,7 @@ export function buildEvals() {
 	});
 }
 
-export function toggleExpand(i) {
+export function toggleBasicFunctionDetail(i) {
 	const sp = UI.byId(`sp-${i}`);
 	const et = UI.byId(`et-${i}`);
 	sp.classList.toggle("open");

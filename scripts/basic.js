@@ -112,7 +112,7 @@ function buildItems() {
 		const checksHTML = a.checks
 			.map(
 				(c, i) => `
-			<div class="check-row" onclick="toggleCheck(${a.id}, ${i})">
+			<div class="check-row" data-id="${a.id}" data-idx="${i}">
 				<div class="check-box" id="chk-${a.id}-${i}"></div>
 				<span class="check-label" id="chklbl-${a.id}-${i}">${c}</span>
 			</div>
@@ -129,27 +129,27 @@ function buildItems() {
 				</div>
 				<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
 					<div class="score-ctrl">
-						<button class="score-btn" onclick="adjustScore(${a.id}, -1)" aria-label="감소">−</button>
+						<button class="score-btn" data-aid="${a.id}" data-delta="-1" aria-label="감소">−</button>
 						<span class="score-display" id="score-${a.id}" data-score="0">0</span>
-						<button class="score-btn" onclick="adjustScore(${a.id}, +1)" aria-label="증가">+</button>
+						<button class="score-btn" data-aid="${a.id}" data-delta="1" aria-label="증가">+</button>
 					</div>
 					<div class="score-dots">${dotsHTML}</div>
 				</div>
 			</div>
-			<button class="expand-btn" id="expand-${a.id}" onclick="toggleExpand(${a.id})">
+			<button class="expand-btn" id="expand-${a.id}" data-id="${a.id}">
 				체크 항목 / 메모
 				<span class="expand-arrow">▾</span>
 			</button>
 			<div class="item-detail" id="detail-${a.id}">
 				${checksHTML}
-				<textarea class="notes-area" id="notes-${a.id}" placeholder="메모를 입력하세요..." oninput="saveNotes(${a.id}, this.value)"></textarea>
+				<textarea class="notes-area" id="notes-${a.id}" data-id="${a.id}" placeholder="메모를 입력하세요..."></textarea>
 			</div>
 		`;
 		container.appendChild(card);
 	});
 }
 
-function toggleExpand(id) {
+function toggleBasicFunctionDetail(id) {
 	const detail = UI.byId(`detail-${id}`);
 	const btn = UI.byId(`expand-${id}`);
 	detail.classList.toggle("open");
@@ -208,7 +208,16 @@ function updateTotal() {
 	hint.textContent = style.hint;
 }
 
-function resetAll() {
+// 항목별 리포트 정보를 한 곳에서만 수집 — 모달·클립보드 양쪽 공용
+function getAssessmentReportItems() {
+	return assessments.map((a) => {
+		const s = state[a.id];
+		const flagged = a.checks.filter((_, i) => s.checks[`${a.id}-${i}`]);
+		return { id: a.id, name: a.name, score: s.score, flagged, notes: s.notes };
+	});
+}
+
+function resetEntireForm() {
 	if (!confirm("모든 점수와 체크를 초기화할까요?")) return;
 	assessments.forEach((a) => {
 		state[a.id] = { score: 0, checks: {}, notes: "" };
@@ -253,23 +262,21 @@ function resetAll() {
 	updateTotal();
 }
 
-function openReport() {
+function openReportModal() {
 	const total = getTotal();
 	const container = UI.byId("report-content");
 	let html = `<div style="font-size:13px;color:#5a5a56;margin-bottom:12px;">총점 <strong style="color:#1a1a18">${total}점 / 24점</strong></div>`;
 
-	assessments.forEach((a) => {
-		const s = state[a.id];
-		const { bg, fg } = getScoreColor(s.score);
-		const flagged = a.checks.filter((_, i) => s.checks[`${a.id}-${i}`]);
+	getAssessmentReportItems().forEach(({ name, score, flagged, notes }) => {
+		const { bg, fg } = getScoreColor(score);
 		html += `<div class="report-line">
 			<div>
-				<div style="display:flex;align-items:center;gap:8px;margin-bottom:${flagged.length || s.notes ? "4px" : "0"}">
-					<span class="report-name">${a.name}</span>
-					<span class="report-score-badge" style="background:${bg};color:${fg}">${s.score}점</span>
+				<div style="display:flex;align-items:center;gap:8px;margin-bottom:${flagged.length || notes ? "4px" : "0"}">
+					<span class="report-name">${name}</span>
+					<span class="report-score-badge" style="background:${bg};color:${fg}">${score}점</span>
 				</div>
 				${flagged.length ? `<div class="report-flags">⚠ ${flagged.join(" · ")}</div>` : ""}
-				${s.notes ? `<div class="report-flags" style="color:#9a9a94">📝 ${s.notes}</div>` : ""}
+				${notes ? `<div class="report-flags" style="color:#9a9a94">📝 ${notes}</div>` : ""}
 			</div>
 		</div>`;
 	});
@@ -296,28 +303,20 @@ function openReport() {
 	UI.byId("modal-overlay").classList.add("open");
 }
 
-function closeModal(e) {
-	if (e.target === UI.byId("modal-overlay")) closeModalDirect();
-}
-
 function closeModalDirect() {
 	UI.byId("modal-overlay").classList.remove("open");
 }
 
-function copyReport() {
+function copyReportToClipboard() {
 	const total = getTotal();
 	const lines = [
 		"베이직 펑션 평가 결과",
 		`총점: ${total} / 24점`,
 		"",
-		...assessments.map((a) => {
-			const s = state[a.id];
-			const flagged = a.checks.filter(
-				(_, i) => s.checks[`${a.id}-${i}`],
-			);
-			let line = `${a.id}. ${a.name}: ${s.score}점`;
+		...getAssessmentReportItems().map(({ id, name, score, flagged, notes }) => {
+			let line = `${id}. ${name}: ${score}점`;
 			if (flagged.length) line += `\n   ⚠ ${flagged.join(", ")}`;
-			if (s.notes) line += `\n   📝 ${s.notes}`;
+			if (notes) line += `\n   📝 ${notes}`;
 			return line;
 		}),
 		`8. VO₂ Max Test: ${vo2State.score}점` +
@@ -335,19 +334,53 @@ function copyReport() {
 		});
 }
 
-// ── 인라인 핸들러는 전역 스코프에서 해석되므로 window에 노출 (ESM은 모듈 스코프) ──
-window.toggleVo2 = toggleVo2;
-window.calcVo2 = calcVo2;
-window.setVo2Score = setVo2Score;
-window.resetAll = resetAll;
-window.openReport = openReport;
-window.closeModal = closeModal;
-window.closeModalDirect = closeModalDirect;
-window.copyReport = copyReport;
-window.toggleCheck = toggleCheck;
-window.adjustScore = adjustScore;
-window.toggleExpand = toggleExpand;
-window.saveNotes = saveNotes;
+// ── 이벤트 위임 — addEventListener 위임 패턴으로 정적·동적 요소 처리 (window 오염 방지) ──
+// 정적 액션 버튼 (data-action)
+UI.delegate(document, "click", "[data-action]", (e, el) => {
+	switch (el.dataset.action) {
+		case "reset":
+			resetEntireForm();
+			break;
+		case "report":
+			openReportModal();
+			break;
+		case "print":
+			window.print();
+			break;
+		case "copy":
+			copyReportToClipboard();
+			break;
+		case "close-modal":
+			closeModalDirect();
+			break;
+	}
+});
+// VO₂ 카드 펌칭
+UI.delegate(document, "click", ".vo2-header", () => toggleVo2());
+// VO₂ 점수 증감
+UI.delegate(document, "click", "[data-vo2-delta]", (e, el) =>
+	setVo2Score(Number(el.dataset.vo2Delta)),
+);
+// 항목별 체크·점수·펼침 (동적 생성 요소)
+UI.delegate(document, "click", ".check-row", (e, el) =>
+	toggleCheck(Number(el.dataset.id), Number(el.dataset.idx)),
+);
+UI.delegate(document, "click", ".item-card .score-btn", (e, el) =>
+	adjustScore(Number(el.dataset.aid), Number(el.dataset.delta)),
+);
+UI.delegate(document, "click", ".expand-btn", (e, el) =>
+	toggleBasicFunctionDetail(Number(el.dataset.id)),
+);
+// 메모 저장 (동적 생성 요소)
+UI.delegate(document, "input", ".notes-area", (e, el) =>
+	saveNotes(Number(el.dataset.id), el.value),
+);
+// VO₂ 입력 계산
+UI.delegate(document, "input", ".vo2-input", () => calcVo2());
+// 결과 모달 배경(overlay 자신) 클릭 시 닫기
+UI.delegate(document, "click", "#modal-overlay", (e, el) => {
+	if (e.target === el) closeModalDirect();
+});
 
 // ── 시작 ──
 buildItems();

@@ -10,7 +10,7 @@ import { UI } from "./UI.js";
  *
  * @returns {string}
  */
-export function ibTag(val, ranges) {
+export function generateInbodyTags(val, ranges) {
 	for (const r of ranges)
 		if (val <= r.max)
 			return `<span class="ib-tag" style="background:${r.bg};color:${r.fg}">${r.label}</span>`;
@@ -21,7 +21,7 @@ export function ibTag(val, ranges) {
 /**
  * 인바디 입력값 읽어 태그 갱신, 총점 재계산 트리거
  */
-export function updIb() {
+export function updateInbodyTags() {
 	const m = parseFloat(document.getElementById("ib-m").value);
 	const bfp = parseFloat(document.getElementById("ib-bfp").value);
 	const bmi = parseFloat(document.getElementById("ib-bmi").value);
@@ -29,7 +29,7 @@ export function updIb() {
 	const vis = parseFloat(document.getElementById("ib-vis").value);
 	document.getElementById("tag-m").innerHTML = isNaN(m)
 		? ""
-		: ibTag(m, [
+		: generateInbodyTags(m, [
 				{
 					max: 18.4,
 					label: "낮음",
@@ -51,7 +51,7 @@ export function updIb() {
 			]);
 	document.getElementById("tag-bfp").innerHTML = isNaN(bfp)
 		? ""
-		: ibTag(bfp, [
+		: generateInbodyTags(bfp, [
 				{
 					max: 17,
 					label: "낮음",
@@ -79,7 +79,7 @@ export function updIb() {
 			]);
 	document.getElementById("tag-bmi").innerHTML = isNaN(bmi)
 		? ""
-		: ibTag(bmi, [
+		: generateInbodyTags(bmi, [
 				{
 					max: 18.4,
 					label: "저체중",
@@ -107,7 +107,7 @@ export function updIb() {
 			]);
 	document.getElementById("tag-fat").innerHTML = isNaN(fat)
 		? ""
-		: ibTag(fat, [
+		: generateInbodyTags(fat, [
 				{
 					max: 12.9,
 					label: "낮음",

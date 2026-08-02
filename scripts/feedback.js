@@ -45,11 +45,11 @@ export function makeFbCheckRow(text = "") {
 	return `<div class="fb-check-row">
     <input type="checkbox" style="accent-color:var(--blue);flex-shrink:0;">
     <input class="fb-check-input" type="text" value="${text}" placeholder="체크 항목...">
-    <button class="fb-check-del" onclick="this.parentElement.remove()" title="삭제">✕</button>
+    <button class="fb-check-del" title="삭제">✕</button>
   </div>`;
 }
 
-export function addCheckToFb(btn) {
+export function appendCheckMovementItemRow(btn) {
 	const checksWrap = btn.previousElementSibling;
 	const div = document.createElement("div");
 	div.innerHTML = makeFbCheckRow();
@@ -57,7 +57,7 @@ export function addCheckToFb(btn) {
 	checksWrap.lastElementChild.querySelector(".fb-check-input").focus();
 }
 
-export function addFbItem(preset) {
+export function appendCheckMovement(preset) {
 	fbIdCounter++;
 	const id = fbIdCounter;
 	const c = UI.byId("fb-cards");
@@ -70,26 +70,26 @@ export function addFbItem(preset) {
 	div.innerHTML = `
     <div class="fb-item-header">
       <input class="fb-move-input" type="text" value="${name}" placeholder="동작명 (예: 스쿼트)">
-      <button class="fb-del-btn" onclick="document.getElementById('fb-item-${id}').remove()" title="삭제">✕</button>
+      <button class="fb-del-btn" title="삭제">✕</button>
     </div>
     <div class="fb-checks-wrap">${checksHTML}</div>
-    <button class="add-check-btn" onclick="addCheckToFb(this)">+ 체크 항목 추가</button>
+    <button class="add-check-btn">+ 체크 항목 추가</button>
     <textarea class="eval-memo" placeholder="코칭 포인트 메모..." style="margin-top:6px;"></textarea>`;
 	c.appendChild(div);
 }
 
-export function buildFeedbacks() {
-	feedbacks.forEach((fb) => addFbItem(fb));
+export function renderCheckMovementCards() {
+	feedbacks.forEach((fb) => appendCheckMovement(fb));
 }
 
 /** 초기용: 피드백 카드를 비우고 프리셋 재빌드 */
 export function resetFeedbacks() {
 	UI.byId("fb-cards").innerHTML = "";
 	fbIdCounter = 0;
-	buildFeedbacks();
+	renderCheckMovementCards();
 }
 
-export function getFbLines() {
+export function collectCheckMovementData() {
 	return [...document.querySelectorAll(".fb-item")]
 		.map((item) => {
 			const name =

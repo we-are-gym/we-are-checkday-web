@@ -44,7 +44,7 @@
 
       <!-- VO2 Max Calculator Card -->
       <div class="vo2-card" id="vo2-card">
-        <div class="vo2-header" onclick="toggleVo2()">
+        <div class="vo2-header">
           <div
             class="item-num"
             style="
@@ -91,7 +91,7 @@
                 placeholder="예: 30"
                 min="15"
                 max="80"
-                oninput="calcVo2()"
+                
               />
             </div>
             <div class="vo2-field">
@@ -103,7 +103,7 @@
                 placeholder="예: 165"
                 min="130"
                 max="220"
-                oninput="calcVo2()"
+                
               />
             </div>
             <div class="vo2-field">
@@ -115,7 +115,7 @@
                 placeholder="예: 60"
                 min="30"
                 max="200"
-                oninput="calcVo2()"
+                
               />
             </div>
             <div class="vo2-field">
@@ -127,7 +127,7 @@
                 placeholder="예: 100"
                 min="40"
                 max="220"
-                oninput="calcVo2()"
+                
               />
             </div>
           </div>
@@ -157,7 +157,7 @@
               <div style="display: flex; align-items: center; gap: 6px">
                 <button
                   class="score-btn"
-                  onclick="setVo2Score(-1)"
+                  data-vo2-delta="-1"
                   aria-label="감소"
                 >
                   −
@@ -170,7 +170,7 @@
                 >
                 <button
                   class="score-btn"
-                  onclick="setVo2Score(1)"
+                  data-vo2-delta="1"
                   aria-label="증가"
                 >
                   +
@@ -278,26 +278,26 @@
       <div class="items" id="items-container"></div>
 
       <div class="actions">
-        <button class="btn btn-ghost" onclick="resetAll()">초기화</button>
-        <button class="btn btn-print" onclick="openReport()">
+        <button class="btn btn-ghost" data-action="reset">초기화</button>
+        <button class="btn btn-print" data-action="report">
           📋 결과 보기
         </button>
-        <button class="btn btn-primary" onclick="window.print()">
+        <button class="btn btn-primary" data-action="print">
           인쇄 / PDF 저장
         </button>
       </div>
     </div>
 
     <!-- Report Modal -->
-    <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+    <div class="modal-overlay" id="modal-overlay">
       <div class="modal">
         <h3>평가 결과 요약</h3>
         <div id="report-content"></div>
         <div class="modal-footer">
-          <button class="btn btn-ghost" onclick="closeModalDirect()">
+          <button class="btn btn-ghost" data-action="close-modal">
             닫기
           </button>
-          <button class="btn btn-primary" onclick="copyReport()">
+          <button class="btn btn-primary" data-action="copy">
             텍스트 복사
           </button>
         </div>
