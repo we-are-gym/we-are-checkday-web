@@ -9,7 +9,6 @@
 - `STATE.init(count, max)` — `count`만큼 0점 배열 + 총점 상한(`max`) 초기화
 - `STATE.get(i)` / `STATE.set(i, v)` — 점수 조회·설정(set 시 0~3 clamp)
 - `STATE.total()` — 합계, `STATE.reset()` — 전부 0
-- `STATE.all()` — 배열 참조
 
 회원 관리(`members.js`)는 `MOCK_MEMBERS`에서 복제한 `members` 배열을 메모리 상태로 유지하며, 재로딩 시 초기 목록으로 복원된다.
 
