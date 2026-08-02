@@ -12,7 +12,7 @@ const evals = ASSESSMENT_ITEMS.concat([
 ]);
 
 /** 평가 점수 단일 소스 초기화 */
-STATE.init(evals.length, 24);
+STATE.init(evals.length, MOTION_TOTAL_MAX);
 
 // ── VO₂ 계산 (8번 항목에만) — 공용 모듈 사용 ──
 const VO2_GRADE_STYLES = {
@@ -51,7 +51,7 @@ function buildEvals() {
 	evals.forEach((e, i) => {
 		const div = document.createElement("div");
 		div.className = "eval-item";
-		const dots = ARR.zeros(4)
+		const dots = ARR.zeros(DOT_COUNT)
 			.map((_, j) => `<div class="dot" id="dot-${i}-${j}"></div>`)
 			.join("");
 		const tags = e.checks
@@ -109,10 +109,10 @@ function toggleExpand(i) {
 }
 
 function adj(i, d) {
-	const next = VAL.bound(STATE.get(i) + d, 0, 3);
+	const next = VAL.bound(STATE.get(i) + d, SCORE_MIN, SCORE_MAX);
 	STATE.set(i, next);
 	UI.byId(`sv-${i}`).textContent = next;
-	for (let j = 0; j < 4; j++)
+	for (let j = 0; j < DOT_COUNT; j++)
 		UI.byId(`dot-${i}-${j}`).classList.toggle("on", j < next);
 	updateTotal();
 }

@@ -89,12 +89,12 @@ function setVo2Score(delta, suggested) {
 	if (typeof suggested === "number") {
 		vo2State.score = suggested;
 	} else {
-		vo2State.score = VAL.bound(vo2State.score + delta, 0, 3);
+		vo2State.score = VAL.bound(vo2State.score + delta, SCORE_MIN, SCORE_MAX);
 	}
 	const el = UI.byId("vo2-score-display");
 	el.textContent = vo2State.score;
 	el.dataset.score = vo2State.score;
-	for (let i = 0; i < 4; i++) {
+	for (let i = 0; i < DOT_COUNT; i++) {
 		UI.byId("vd" + i).classList.toggle("filled", i < vo2State.score);
 	}
 	updateTotal();
@@ -108,7 +108,7 @@ function buildItems() {
 		card.className = "item-card";
 		card.id = `card-${a.id}`;
 
-		const dotsHTML = ARR.zeros(4)
+		const dotsHTML = ARR.zeros(DOT_COUNT)
 			.map((_, i) => `<div class="dot" id="dot-${a.id}-${i}"></div>`)
 			.join("");
 		const checksHTML = a.checks
@@ -169,12 +169,12 @@ function toggleCheck(id, idx) {
 
 function adjustScore(id, delta) {
 	const s = state[id];
-	s.score = VAL.bound(s.score + delta, 0, 3);
+	s.score = VAL.bound(s.score + delta, SCORE_MIN, SCORE_MAX);
 	const el = UI.byId(`score-${id}`);
 	el.textContent = s.score;
 	el.dataset.score = s.score;
 	// Update dots
-	for (let i = 0; i < 4; i++) {
+	for (let i = 0; i < DOT_COUNT; i++) {
 		UI.byId(`dot-${id}-${i}`).classList.toggle("filled", i < s.score);
 	}
 	updateTotal();
@@ -217,7 +217,7 @@ function getTotal() {
 
 function updateTotal() {
 	const total = getTotal();
-	const max = 24;
+	const max = MOTION_TOTAL_MAX;
 	const pct = Math.round((total / max) * 100);
 
 	UI.byId("total-display").innerHTML = `${total} <span>/ ${max}</span>`;
@@ -241,7 +241,7 @@ function resetAll() {
 		const el = UI.byId(`score-${a.id}`);
 		el.textContent = "0";
 		el.dataset.score = "0";
-		for (let i = 0; i < 4; i++) {
+		for (let i = 0; i < DOT_COUNT; i++) {
 			UI.byId(`dot-${a.id}-${i}`).classList.remove("filled");
 		}
 		a.checks.forEach((_, i) => {
@@ -269,7 +269,7 @@ function resetAll() {
 		vScoreEl.textContent = "0";
 		vScoreEl.dataset.score = "0";
 	}
-	for (let i = 0; i < 4; i++) {
+	for (let i = 0; i < DOT_COUNT; i++) {
 		const d = UI.byId("vd" + i);
 		if (d) d.classList.remove("filled");
 	}

@@ -28,7 +28,7 @@ const STATE = {
 	 * @param {number} v
 	 */
 	set(i, v) {
-		this.scores[i] = VAL.bound(v, 0, 3);
+		this.scores[i] = VAL.bound(v, SCORE_MIN, SCORE_MAX);
 	},
 	/** 전체 점수 합계 */
 	total() {

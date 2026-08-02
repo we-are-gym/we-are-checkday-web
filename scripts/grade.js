@@ -11,8 +11,8 @@
 function getGradeMeta(total, max) {
 	const pct = Math.round((total / max) * 100);
 	if (total === 0) return { label: "평가 전" };
-	if (pct >= 83) return { label: "우수" };
-	if (pct >= 58) return { label: "양호" };
-	if (pct >= 33) return { label: "보통" };
+	if (pct >= GRADE_EXCELLENT_PCT) return { label: "우수" };
+	if (pct >= GRADE_GOOD_PCT) return { label: "양호" };
+	if (pct >= GRADE_AVERAGE_PCT) return { label: "보통" };
 	return { label: "개선 필요" };
 }

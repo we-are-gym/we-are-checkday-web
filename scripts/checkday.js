@@ -16,7 +16,7 @@ function resetAll() {
 	STATE.reset();
 	evals.forEach((_, i) => {
 		UI.byId(`sv-${i}`).textContent = "0";
-		for (let j = 0; j < 4; j++)
+		for (let j = 0; j < DOT_COUNT; j++)
 			UI.byId(`dot-${i}-${j}`).classList.remove("on");
 	});
 	[
