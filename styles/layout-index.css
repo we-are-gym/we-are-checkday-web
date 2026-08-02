@@ -1,9 +1,8 @@
-/* 파일 용도: 메인(index)·회원 관리(members)·체크회차 관리(check-sessions) 공통 셸 레이아웃
-   색상·글꼴은 colors.css/font.css 참조 — 파일명 layout-index · layout-members · layout-check-sessions로 분리 예정 */
-
+/* 파일 용도: 메인 화면(index.html) 레이아웃 — 공통 셸 + 인트로·빠른 연결 카드
+   색상·글꼴은 colors.css/font.css 참조 */
 .container { max-width:640px; margin:0 auto; }
 
-/* ── 헤더 ── */
+/* ── 헤더 (공통 셸) ── */
 .site-header { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:2rem; flex-wrap:wrap; }
 .logo { display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--text); }
 .logo-mark { width:40px; height:40px; flex-shrink:0; }
@@ -15,7 +14,7 @@
 .nav-link:hover { background:var(--surface2); color:var(--text); }
 .nav-link.active { background:var(--blue-bg); color:var(--blue-fg); border-color:var(--blue-fg); }
 
-/* ── 메인 (index) ── */
+/* ── 인트로 (index 고유) ── */
 .hero { text-align:center; padding:2.5rem 0 2rem; }
 .hero-mark { width:72px; height:72px; margin-bottom:1rem; }
 .hero h1 { font-size:26px; font-weight:700; letter-spacing:-0.5px; margin-bottom:6px; }
@@ -25,13 +24,6 @@
 .link-card:hover { background:var(--surface2); }
 .link-card-title { font-size:15px; font-weight:600; }
 .link-card-desc { font-size:12px; color:var(--text3); }
-
-/* ── 준비중 ── */
-.placeholder-card { background:var(--surface); border:.5px solid var(--border); border-radius:var(--rlg); padding:2.5rem 1.5rem; text-align:center; margin-top:1rem; }
-.placeholder-card h1 { font-size:20px; font-weight:600; margin-bottom:10px; }
-.ready-msg { font-size:14px; color:var(--text2); margin-bottom:1.25rem; }
-.btn { display:inline-block; padding:9px 18px; border-radius:var(--r); font-size:13px; font-weight:500; border:.5px solid var(--border2); background:var(--surface); color:var(--text2); text-decoration:none; transition:background .15s; }
-.btn:hover { background:var(--surface2); }
 
 @media (max-width:480px) {
   .site-header { flex-direction:column; align-items:flex-start; }
