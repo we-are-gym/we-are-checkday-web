@@ -208,6 +208,15 @@ function updateTotal() {
 	hint.textContent = style.hint;
 }
 
+// 항목별 리포트 정보를 한 곳에서만 수집 — 모달·클립보드 양쪽 공용
+function getAssessmentReportItems() {
+	return assessments.map((a) => {
+		const s = state[a.id];
+		const flagged = a.checks.filter((_, i) => s.checks[`${a.id}-${i}`]);
+		return { id: a.id, name: a.name, score: s.score, flagged, notes: s.notes };
+	});
+}
+
 function resetEntireForm() {
 	if (!confirm("모든 점수와 체크를 초기화할까요?")) return;
 	assessments.forEach((a) => {
@@ -258,18 +267,16 @@ function openReportModal() {
 	const container = UI.byId("report-content");
 	let html = `<div style="font-size:13px;color:#5a5a56;margin-bottom:12px;">총점 <strong style="color:#1a1a18">${total}점 / 24점</strong></div>`;
 
-	assessments.forEach((a) => {
-		const s = state[a.id];
-		const { bg, fg } = getScoreColor(s.score);
-		const flagged = a.checks.filter((_, i) => s.checks[`${a.id}-${i}`]);
+	getAssessmentReportItems().forEach(({ name, score, flagged, notes }) => {
+		const { bg, fg } = getScoreColor(score);
 		html += `<div class="report-line">
 			<div>
-				<div style="display:flex;align-items:center;gap:8px;margin-bottom:${flagged.length || s.notes ? "4px" : "0"}">
-					<span class="report-name">${a.name}</span>
-					<span class="report-score-badge" style="background:${bg};color:${fg}">${s.score}점</span>
+				<div style="display:flex;align-items:center;gap:8px;margin-bottom:${flagged.length || notes ? "4px" : "0"}">
+					<span class="report-name">${name}</span>
+					<span class="report-score-badge" style="background:${bg};color:${fg}">${score}점</span>
 				</div>
 				${flagged.length ? `<div class="report-flags">⚠ ${flagged.join(" · ")}</div>` : ""}
-				${s.notes ? `<div class="report-flags" style="color:#9a9a94">📝 ${s.notes}</div>` : ""}
+				${notes ? `<div class="report-flags" style="color:#9a9a94">📝 ${notes}</div>` : ""}
 			</div>
 		</div>`;
 	});
@@ -306,14 +313,10 @@ function copyReportToClipboard() {
 		"베이직 펑션 평가 결과",
 		`총점: ${total} / 24점`,
 		"",
-		...assessments.map((a) => {
-			const s = state[a.id];
-			const flagged = a.checks.filter(
-				(_, i) => s.checks[`${a.id}-${i}`],
-			);
-			let line = `${a.id}. ${a.name}: ${s.score}점`;
+		...getAssessmentReportItems().map(({ id, name, score, flagged, notes }) => {
+			let line = `${id}. ${name}: ${score}점`;
 			if (flagged.length) line += `\n   ⚠ ${flagged.join(", ")}`;
-			if (s.notes) line += `\n   📝 ${s.notes}`;
+			if (notes) line += `\n   📝 ${notes}`;
 			return line;
 		}),
 		`8. VO₂ Max Test: ${vo2State.score}점` +
