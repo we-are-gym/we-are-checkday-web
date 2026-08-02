@@ -994,6 +994,7 @@
 
     <script src="scripts/assessment-data.js"></script>
     <script src="scripts/vo2.js"></script>
+    <script src="scripts/grade.js"></script>
     <script>
       const assessments = ASSESSMENT_ITEMS.map((item, idx) => ({
         id: idx + 1,
@@ -1221,13 +1222,8 @@
           `${total} <span>/ ${max}</span>`;
         document.getElementById("progress-fill").style.width = `${pct}%`;
 
-        let label;
-        if (total === 0) label = "평가 전";
-        else if (pct >= 83) label = "우수";
-        else if (pct >= 58) label = "양호";
-        else if (pct >= 33) label = "보통";
-        else label = "개선 필요";
-        const style = GRADE_STYLES[label];
+        const meta = getGradeMeta(total, max);
+        const style = GRADE_STYLES[meta.label];
         const badge = document.getElementById("grade-badge");
         const hint = document.getElementById("grade-hint");
 

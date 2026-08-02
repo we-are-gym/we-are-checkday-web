@@ -149,6 +149,14 @@ function adj(i,d) {
   updateTotal();
 }
 
+const GRADE_STYLES = {
+  '평가 전': { bg:'var(--surface2)', fg:'var(--text3)', hint:'' },
+  '우수': { bg:'var(--green-bg)', fg:'var(--green-fg)', hint:'전반적으로 안정적인 패턴' },
+  '양호': { bg:'var(--blue-bg)', fg:'var(--blue-fg)', hint:'일부 패턴 보완 필요' },
+  '보통': { bg:'var(--orange-bg)', fg:'var(--orange-fg)', hint:'주요 패턴 집중 개선 권장' },
+  '개선 필요': { bg:'var(--red-bg)', fg:'var(--red-fg)', hint:'기초 움직임 패턴 재교육 필요' },
+};
+
 function updateTotal() {
   const tot=getTotal();
   const max=24; const pct=Math.round(tot/max*100);
@@ -156,13 +164,9 @@ function updateTotal() {
   document.getElementById('prog-fill').style.width=pct+'%';
   const pill=document.getElementById('grade-pill');
   const hint=document.getElementById('grade-hint');
-  let label,bg,fg,h;
-  if(tot===0){label='평가 전';bg='var(--surface2)';fg='var(--text3)';h='';}
-  else if(pct>=83){label='우수';bg='var(--green-bg)';fg='var(--green-fg)';h='전반적으로 안정적인 패턴';}
-  else if(pct>=58){label='양호';bg='var(--blue-bg)';fg='var(--blue-fg)';h='일부 패턴 보완 필요';}
-  else if(pct>=33){label='보통';bg='var(--orange-bg)';fg='var(--orange-fg)';h='주요 패턴 집중 개선 권장';}
-  else{label='개선 필요';bg='var(--red-bg)';fg='var(--red-fg)';h='기초 움직임 패턴 재교육 필요';}
-  pill.textContent=label; pill.style.background=bg; pill.style.color=fg; hint.textContent=h;
+  const meta=getGradeMeta(tot, max);
+  const style=GRADE_STYLES[meta.label];
+  pill.textContent=meta.label; pill.style.background=style.bg; pill.style.color=style.fg; hint.textContent=style.hint;
 }
 
 // ── 동작 피드백 빌드 (추가/삭제 가능) ──
