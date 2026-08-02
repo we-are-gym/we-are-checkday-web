@@ -49,7 +49,7 @@ export function makeFbCheckRow(text = "") {
   </div>`;
 }
 
-export function addCheckToFb(btn) {
+export function appendCheckMovementItemRow(btn) {
 	const checksWrap = btn.previousElementSibling;
 	const div = document.createElement("div");
 	div.innerHTML = makeFbCheckRow();
@@ -57,7 +57,7 @@ export function addCheckToFb(btn) {
 	checksWrap.lastElementChild.querySelector(".fb-check-input").focus();
 }
 
-export function addFbItem(preset) {
+export function appendCheckMovement(preset) {
 	fbIdCounter++;
 	const id = fbIdCounter;
 	const c = UI.byId("fb-cards");
@@ -73,23 +73,23 @@ export function addFbItem(preset) {
       <button class="fb-del-btn" onclick="document.getElementById('fb-item-${id}').remove()" title="삭제">✕</button>
     </div>
     <div class="fb-checks-wrap">${checksHTML}</div>
-    <button class="add-check-btn" onclick="addCheckToFb(this)">+ 체크 항목 추가</button>
+    <button class="add-check-btn" onclick="appendCheckMovementItemRow(this)">+ 체크 항목 추가</button>
     <textarea class="eval-memo" placeholder="코칭 포인트 메모..." style="margin-top:6px;"></textarea>`;
 	c.appendChild(div);
 }
 
-export function buildFeedbacks() {
-	feedbacks.forEach((fb) => addFbItem(fb));
+export function renderCheckMovementCards() {
+	feedbacks.forEach((fb) => appendCheckMovement(fb));
 }
 
 /** 초기용: 피드백 카드를 비우고 프리셋 재빌드 */
 export function resetFeedbacks() {
 	UI.byId("fb-cards").innerHTML = "";
 	fbIdCounter = 0;
-	buildFeedbacks();
+	renderCheckMovementCards();
 }
 
-export function getFbLines() {
+export function collectCheckMovementData() {
 	return [...document.querySelectorAll(".fb-item")]
 		.map((item) => {
 			const name =

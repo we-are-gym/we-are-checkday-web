@@ -136,7 +136,7 @@ function buildItems() {
 					<div class="score-dots">${dotsHTML}</div>
 				</div>
 			</div>
-			<button class="expand-btn" id="expand-${a.id}" onclick="toggleExpand(${a.id})">
+			<button class="expand-btn" id="expand-${a.id}" onclick="toggleBasicFunctionDetail(${a.id})">
 				체크 항목 / 메모
 				<span class="expand-arrow">▾</span>
 			</button>
@@ -149,7 +149,7 @@ function buildItems() {
 	});
 }
 
-function toggleExpand(id) {
+function toggleBasicFunctionDetail(id) {
 	const detail = UI.byId(`detail-${id}`);
 	const btn = UI.byId(`expand-${id}`);
 	detail.classList.toggle("open");
@@ -208,7 +208,7 @@ function updateTotal() {
 	hint.textContent = style.hint;
 }
 
-function resetAll() {
+function resetEntireForm() {
 	if (!confirm("모든 점수와 체크를 초기화할까요?")) return;
 	assessments.forEach((a) => {
 		state[a.id] = { score: 0, checks: {}, notes: "" };
@@ -253,7 +253,7 @@ function resetAll() {
 	updateTotal();
 }
 
-function openReport() {
+function openReportModal() {
 	const total = getTotal();
 	const container = UI.byId("report-content");
 	let html = `<div style="font-size:13px;color:#5a5a56;margin-bottom:12px;">총점 <strong style="color:#1a1a18">${total}점 / 24점</strong></div>`;
@@ -304,7 +304,7 @@ function closeModalDirect() {
 	UI.byId("modal-overlay").classList.remove("open");
 }
 
-function copyReport() {
+function copyReportToClipboard() {
 	const total = getTotal();
 	const lines = [
 		"베이직 펑션 평가 결과",
@@ -339,14 +339,14 @@ function copyReport() {
 window.toggleVo2 = toggleVo2;
 window.calcVo2 = calcVo2;
 window.setVo2Score = setVo2Score;
-window.resetAll = resetAll;
-window.openReport = openReport;
+window.resetEntireForm = resetEntireForm;
+window.openReportModal = openReportModal;
 window.closeModal = closeModal;
 window.closeModalDirect = closeModalDirect;
-window.copyReport = copyReport;
+window.copyReportToClipboard = copyReportToClipboard;
 window.toggleCheck = toggleCheck;
 window.adjustScore = adjustScore;
-window.toggleExpand = toggleExpand;
+window.toggleBasicFunctionDetail = toggleBasicFunctionDetail;
 window.saveNotes = saveNotes;
 
 // ── 시작 ──

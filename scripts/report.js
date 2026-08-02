@@ -1,9 +1,9 @@
 // 파일 용도: 리포트 생성·복사 — 결과 요약 HTML 조립·클립보드 복사 (checkday 공용)
-// DEPENDS: UI, STATE, evals(evaluation), getFbLines(feedback)
+// DEPENDS: UI, STATE, evals(evaluation), collectCheckMovementData(feedback)
 import { UI } from "./UI.js";
 import { STATE } from "./states.js";
 import { evals } from "./evaluation.js";
-import { getFbLines } from "./feedback.js";
+import { collectCheckMovementData } from "./feedback.js";
 
 // ── 공용 포맷터 — 평가 줄·피드백 줄을 한 곳에서만 생성 ──
 /** 평가 줄: "이름: N점 [체크] / 메모" (선택 요소만 포함, prefix는 줄 앞 들여쓰기) */
@@ -54,7 +54,7 @@ function getEvalLines(prefix) {
 }
 
 // ── 결과 보기 ──
-export function openReport() {
+export function openReportModal() {
 	const name = UI.byId("m-name").value || "(미입력)";
 	const session = UI.byId("m-session").value;
 	const tot = getTotal();
@@ -65,7 +65,7 @@ export function openReport() {
 	const consult = UI.byId("consult-memo").value;
 
 	const evalLines = getEvalLines("");
-	const fbLines = getFbLines().map((fb) => formatFbLine(fb));
+	const fbLines = collectCheckMovementData().map((fb) => formatFbLine(fb));
 
 	let html = `
     <div class="rline"><div class="rlabel">회원</div><div>${name} ${session}</div></div>
@@ -83,13 +83,13 @@ export function openReport() {
 	UI.byId("overlay").classList.add("open");
 }
 
-export function copyReport() {
+export function copyReportToClipboard() {
 	const name = UI.byId("m-name").value || "(미입력)";
 	const tot = getTotal();
 	const ib = getIbData();
 	const goals = getSelectedGoals();
 	const evalLines = getEvalLines("  ");
-	const fbLines = getFbLines().map((fb) => formatFbLine(fb, "  "));
+	const fbLines = collectCheckMovementData().map((fb) => formatFbLine(fb, "  "));
 	const lines = [
 		`[체크데이] ${name} / ${UI.byId("m-session").value}`,
 		`━ 인바디: 체중 ${ib.w || "—"}kg / 골격근 ${ib.m || "—"}kg / 체지방률 ${ib.bfp || "—"}% / BMI ${ib.bmi || "—"} / 내장지방 ${ib.vis || "—"}`,

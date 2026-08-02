@@ -278,8 +278,8 @@
       <div class="items" id="items-container"></div>
 
       <div class="actions">
-        <button class="btn btn-ghost" onclick="resetAll()">초기화</button>
-        <button class="btn btn-print" onclick="openReport()">
+        <button class="btn btn-ghost" onclick="resetEntireForm()">초기화</button>
+        <button class="btn btn-print" onclick="openReportModal()">
           📋 결과 보기
         </button>
         <button class="btn btn-primary" onclick="window.print()">
@@ -297,7 +297,7 @@
           <button class="btn btn-ghost" onclick="closeModalDirect()">
             닫기
           </button>
-          <button class="btn btn-primary" onclick="copyReport()">
+          <button class="btn btn-primary" onclick="copyReportToClipboard()">
             텍스트 복사
           </button>
         </div>

@@ -45,7 +45,7 @@ export function calcVo2() {
 }
 
 // ── 평가 카드 빌드 ──
-export function buildEvals() {
+export function renderBasicFunctionCards() {
 	const c = UI.byId("eval-cards");
 	evals.forEach((e, i) => {
 		const div = document.createElement("div");
@@ -71,7 +71,7 @@ export function buildEvals() {
 					<div class="sdots">${dots}</div>
 				</div>
 			</div>
-			<button class="expand-toggle" id="et-${i}" onclick="toggleExpand(${i})">
+			<button class="expand-toggle" id="et-${i}" onclick="toggleBasicFunctionDetail(${i})">
 				체크 항목 / 메모 <span class="arr">▾</span>
 			</button>
 			<div class="sub-panel" id="sp-${i}">
@@ -100,7 +100,7 @@ export function buildEvals() {
 	});
 }
 
-export function toggleExpand(i) {
+export function toggleBasicFunctionDetail(i) {
 	const sp = UI.byId(`sp-${i}`);
 	const et = UI.byId(`et-${i}`);
 	sp.classList.toggle("open");

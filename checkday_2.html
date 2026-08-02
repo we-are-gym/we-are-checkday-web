@@ -76,7 +76,7 @@
                 type="number"
                 placeholder="65.0"
                 step="0.1"
-                oninput="updIb()"
+                oninput="updateInbodyTags()"
               />
               <div id="tag-w"></div>
             </div>
@@ -88,7 +88,7 @@
                 type="number"
                 placeholder="28.0"
                 step="0.1"
-                oninput="updIb()"
+                oninput="updateInbodyTags()"
               />
               <div id="tag-m"></div>
             </div>
@@ -100,7 +100,7 @@
                 type="number"
                 placeholder="18.0"
                 step="0.1"
-                oninput="updIb()"
+                oninput="updateInbodyTags()"
               />
               <div id="tag-fat"></div>
             </div>
@@ -112,7 +112,7 @@
                 type="number"
                 placeholder="23.5"
                 step="0.1"
-                oninput="updIb()"
+                oninput="updateInbodyTags()"
               />
               <div id="tag-bmi"></div>
             </div>
@@ -124,7 +124,7 @@
                 type="number"
                 placeholder="27.0"
                 step="0.1"
-                oninput="updIb()"
+                oninput="updateInbodyTags()"
               />
               <div id="tag-bfp"></div>
             </div>
@@ -135,7 +135,7 @@
                 id="ib-bmr"
                 type="number"
                 placeholder="1450"
-                oninput="updIb()"
+                oninput="updateInbodyTags()"
               />
               <div id="tag-bmr"></div>
             </div>
@@ -169,7 +169,7 @@
                 placeholder="8"
                 min="1"
                 max="20"
-                oninput="updIb()"
+                oninput="updateInbodyTags()"
                 style="width: 70px"
               />
             </div>
@@ -251,7 +251,7 @@
           <div class="sec-sub">동작 추가/삭제 가능</div>
         </div>
         <div class="card" id="fb-cards"></div>
-        <button class="add-fb-btn" onclick="addFbItem()">+ 동작 추가</button>
+        <button class="add-fb-btn" onclick="appendCheckMovement()">+ 동작 추가</button>
       </div>
 
       <!-- ⑤ 종합 상담 메모 -->
@@ -271,8 +271,8 @@
       </div>
 
       <div class="actions">
-        <button class="btn btn-ghost" onclick="resetAll()">초기화</button>
-        <button class="btn btn-ghost" onclick="openReport()">
+        <button class="btn btn-ghost" onclick="resetEntireForm()">초기화</button>
+        <button class="btn btn-ghost" onclick="openReportModal()">
           📋 결과 보기
         </button>
         <button class="btn btn-primary" onclick="window.print()">
@@ -299,7 +299,7 @@
           >
             닫기
           </button>
-          <button class="btn btn-primary" onclick="copyReport()">
+          <button class="btn btn-primary" onclick="copyReportToClipboard()">
             텍스트 복사
           </button>
         </div>
