@@ -59,3 +59,29 @@
 		--red-fg: #f57070;
 	}
 }
+
+/* ── 위아짐 심볼: 밝은 테마=초록, 어두운 테마=하양 (CSS 배경 이미지) ── */
+.logo-mark,
+.hero-mark {
+	display: inline-block;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+.logo-mark {
+	background-image: url("../images/symbol-WeAreGym-green-square.png");
+}
+
+.hero-mark {
+	background-image: url("../images/symbol-WeAreGym-green-square.png");
+}
+
+@media (prefers-color-scheme: dark) {
+	.logo-mark {
+		background-image: url("../images/symbol-WeAreGym-white-square.png");
+	}
+	.hero-mark {
+		background-image: url("../images/symbol-WeAreGym-white-square.png");
+	}
+}
