@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>베이직 펑션 평가지</title>
     <style>
+      /* Warning: 중복 심각 */
+
       *,
       *::before,
       *::after {
@@ -995,7 +997,10 @@
     <script src="scripts/assessment-data.js"></script>
     <script src="scripts/vo2.js"></script>
     <script src="scripts/grade.js"></script>
+
     <script>
+      // Warning: `checkday.js`와 기능 중복 많음
+
       const assessments = ASSESSMENT_ITEMS.map((item, idx) => ({
         id: idx + 1,
         ...item,

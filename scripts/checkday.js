@@ -54,9 +54,19 @@ const feedbacks = [
 	},
 ];
 
+/** 평가 점수 배열 */
 const scores = new Array(evals.length).fill(0);
 
 // ── 인바디 태그 ──
+
+/**
+ * 인바디 수치→태그(정상/주의/위험) 분류
+ *
+ * @param {number} val
+ * @param {Array<any>} ranges
+ *
+ * @returns {string}
+ */
 function ibTag(val, ranges) {
 	for (const r of ranges)
 		if (val <= r.max)
@@ -64,6 +74,10 @@ function ibTag(val, ranges) {
 	const l = ranges[ranges.length - 1];
 	return `<span class="ib-tag" style="background:${l.bg};color:${l.fg}">${l.label}</span>`;
 }
+
+/**
+ * 인바디 입력값 읽어 태그 갱신, 총점 재계산 트리거
+ */
 function updIb() {
 	const m = parseFloat(document.getElementById("ib-m").value);
 	const bfp = parseFloat(document.getElementById("ib-bfp").value);

@@ -1,4 +1,7 @@
 /* 파일 용도: 체크데이 상담지 공용 스타일 — checkday_1·2가 공유 */
+
+/* Warning: `main.css`와 변수 겹침 */
+
 *,
 *::before,
 *::after {

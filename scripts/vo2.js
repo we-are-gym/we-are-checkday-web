@@ -75,8 +75,19 @@ const VO2_NORMS = [
 	},
 ];
 
+/**
+ * VO₂ Max 계산 → 숫자 반환
+ *
+ * @param {number} age
+ * @param {number} height 키[단위: …]
+ * @param {number} weight 몸무게[단위: …]
+ * @param {number} hr …
+ *
+ * @returns {number} VO₂ 맥스
+ */
 function calcVo2Value(age, height, weight, hr) {
 	return (
+		// ACSM 스텝 테스트 공식
 		Math.round(
 			(54.337 -
 				0.185 * age +
@@ -88,6 +99,19 @@ function calcVo2Value(age, height, weight, hr) {
 	);
 }
 
+/**
+ * 연령대별 정상치(`VO2_NORMS`) 대비 등급 판정
+ *
+ * @param {number} vo2
+ * @param {number} age
+ *
+ * @returns {{
+ * 		grade: "excellent" | "above_avg" | "below_avg" | "poor";
+ * 		label: string;
+ * 		score: number;
+ * 		col: any;
+ * }}
+ */
 function getVo2Grade(vo2, age) {
 	const norm =
 		VO2_NORMS.find((n) => age >= n.ageMin && age <= n.ageMax) ||
