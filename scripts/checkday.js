@@ -49,17 +49,55 @@ function resetEntireForm() {
 	updateTotal();
 }
 
-// ── 인라인 핸들러는 전역 스코프에서 해석되므로 window에 노출 (ESM은 모듈 스코프) ──
-window.calcVo2 = calcVo2;
-window.adj = adj;
-window.toggleBasicFunctionDetail = toggleBasicFunctionDetail;
-window.updateTotal = updateTotal;
-window.openReportModal = openReportModal;
-window.copyReportToClipboard = copyReportToClipboard;
-window.resetEntireForm = resetEntireForm;
-window.updateInbodyTags = updateInbodyTags;
-window.appendCheckMovement = appendCheckMovement;
-window.appendCheckMovementItemRow = appendCheckMovementItemRow;
+// ── 이벤트 위임 — 인라인 onclick·window 오염 없이 정적·동적 요소를 한 루트에서 처리 ──
+// 정적 액션 버튼 (data-action)
+UI.delegate(document, "click", "[data-action]", (e, el) => {
+	switch (el.dataset.action) {
+		case "reset":
+			resetEntireForm();
+			break;
+		case "report":
+			openReportModal();
+			break;
+		case "print":
+			window.print();
+			break;
+		case "copy":
+			copyReportToClipboard();
+			break;
+		case "close-modal":
+			UI.byId("overlay").classList.remove("open");
+			break;
+	}
+});
+// 목표·체크 문구 태그 토글
+UI.delegate(document, "click", ".goal-tag, .ctag", (e, el) => el.classList.toggle("on"));
+// 평가 카드 펼침 (동적 생성 요소)
+UI.delegate(document, "click", ".expand-toggle", (e, el) =>
+	toggleBasicFunctionDetail(Number(el.dataset.i)),
+);
+// 평가 점수 증감 (동적 생성 요소)
+UI.delegate(document, "click", "#eval-cards .score-btn", (e, el) =>
+	adj(Number(el.dataset.i), Number(el.dataset.delta)),
+);
+// 동작 피드백 카드 CRUD (동적 생성 요소)
+UI.delegate(document, "click", ".fb-del-btn", (e, el) => el.closest(".fb-item")?.remove());
+UI.delegate(document, "click", ".add-check-btn", (e, el) => appendCheckMovementItemRow(el));
+UI.delegate(document, "click", ".fb-check-del", (e, el) => el.closest(".fb-check-row")?.remove());
+UI.delegate(document, "click", ".add-fb-btn", () => appendCheckMovement());
+// 결과 모달 배경(overlay 자신) 클릭 시 닫기
+UI.delegate(document, "click", "#overlay", (e) => {
+	if (e.target.id === "overlay") e.target.classList.remove("open");
+});
+
+// ── input 위임 — 인바디 수치·VO₂ 입력 갱신 ──
+document.addEventListener("input", (e) => {
+	const id = e.target.id;
+	if (!id) return;
+	if (id.startsWith("ib-")) updateInbodyTags();
+	else if (id === "vo2-age" || id === "vo2-ht" || id === "vo2-wt" || id === "vo2-hr")
+		calcVo2();
+});
 
 // ── 시작 ──
 renderBasicFunctionCards();
