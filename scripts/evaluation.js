@@ -1,8 +1,17 @@
 // 파일 용도: 평가 논리 — 움직임 평가 목록 구성 · VO₂ 계산 연동 · 평가 카드 빌드 · 점수/등급/총점 갱신 (checkday 공용)
-// DEPENDS: ASSESSMENT_ITEMS, ARR, VAL, UI, STATE, calcVo2Value, getVo2Grade, getGradeMeta
+// DEPENDS: ASSESSMENT_ITEMS, ARR, VAL, UI, STATE, STYLE 등
+import { ASSESSMENT_ITEMS } from "./assessment-data.js";
+import { ARR } from "./utils-array.js";
+import { VAL } from "./validation.js";
+import { UI } from "./UI.js";
+import { STATE } from "./states.js";
+import { DOT_COUNT, MOTION_TOTAL_MAX, SCORE_MIN, SCORE_MAX } from "./constants.js";
+import { calcVo2Value, getVo2Grade } from "./vo2.js";
+import { getGradeMeta } from "./grade.js";
+import { GRADE_STYLES, VO2_GRADE_STYLES } from "./grade-styles.js";
 
-// ── 움직임 평가 데이터 (공용 모듈 7항목 + VO₂ 항목) ──
-const evals = ASSESSMENT_ITEMS.concat([
+// ── 움직임 평가 데이터 (공용 모듈 7개 + VO₂ 항목) ──
+export const evals = ASSESSMENT_ITEMS.concat([
 	{
 		name: "VO₂ Max (스텝 테스트)",
 		desc: "심폐 지구력",
@@ -12,20 +21,10 @@ const evals = ASSESSMENT_ITEMS.concat([
 ]);
 
 /** 평가 점수 단일 소스 초기화 */
-STATE.init(evals.length, 24);
+STATE.init(evals.length, MOTION_TOTAL_MAX);
 
 // ── VO₂ 계산 (8번 항목에만) — 공용 모듈 사용 ──
-const VO2_GRADE_STYLES = {
-	excellent: { bg: "var(--green-bg)", fg: "var(--green-fg)" },
-	good: { bg: "var(--blue-bg)", fg: "var(--blue-fg)" },
-	above_avg: { bg: "var(--blue-bg)", fg: "var(--blue-fg)" },
-	average: { bg: "var(--orange-bg)", fg: "var(--orange-fg)" },
-	below_avg: { bg: "var(--orange-bg)", fg: "var(--orange-fg)" },
-	poor: { bg: "var(--red-bg)", fg: "var(--red-fg)" },
-	very_poor: { bg: "var(--red-bg)", fg: "var(--red-fg)" },
-};
-
-function calcVo2() {
+export function calcVo2() {
 	const age = VAL.num(UI.byId("vo2-age").value);
 	const ht = VAL.num(UI.byId("vo2-ht").value);
 	const wt = VAL.num(UI.byId("vo2-wt").value);
@@ -46,12 +45,12 @@ function calcVo2() {
 }
 
 // ── 평가 카드 빌드 ──
-function buildEvals() {
+export function buildEvals() {
 	const c = UI.byId("eval-cards");
 	evals.forEach((e, i) => {
 		const div = document.createElement("div");
 		div.className = "eval-item";
-		const dots = ARR.zeros(4)
+		const dots = ARR.zeros(DOT_COUNT)
 			.map((_, j) => `<div class="dot" id="dot-${i}-${j}"></div>`)
 			.join("");
 		const tags = e.checks
@@ -101,47 +100,23 @@ function buildEvals() {
 	});
 }
 
-function toggleExpand(i) {
+export function toggleExpand(i) {
 	const sp = UI.byId(`sp-${i}`);
 	const et = UI.byId(`et-${i}`);
 	sp.classList.toggle("open");
 	et.classList.toggle("open");
 }
 
-function adj(i, d) {
-	const next = VAL.bound(STATE.get(i) + d, 0, 3);
+export function adj(i, d) {
+	const next = VAL.bound(STATE.get(i) + d, SCORE_MIN, SCORE_MAX);
 	STATE.set(i, next);
 	UI.byId(`sv-${i}`).textContent = next;
-	for (let j = 0; j < 4; j++)
+	for (let j = 0; j < DOT_COUNT; j++)
 		UI.byId(`dot-${i}-${j}`).classList.toggle("on", j < next);
 	updateTotal();
 }
 
-const GRADE_STYLES = {
-	"평가 전": { bg: "var(--surface2)", fg: "var(--text3)", hint: "" },
-	우수: {
-		bg: "var(--green-bg)",
-		fg: "var(--green-fg)",
-		hint: "전반적으로 안정적인 패턴",
-	},
-	양호: {
-		bg: "var(--blue-bg)",
-		fg: "var(--blue-fg)",
-		hint: "일부 패턴 보완 필요",
-	},
-	보통: {
-		bg: "var(--orange-bg)",
-		fg: "var(--orange-fg)",
-		hint: "주요 패턴 집중 개선 권장",
-	},
-	"개선 필요": {
-		bg: "var(--red-bg)",
-		fg: "var(--red-fg)",
-		hint: "기초 움직임 패턴 재교육 필요",
-	},
-};
-
-function updateTotal() {
+export function updateTotal() {
 	const tot = STATE.total();
 	const max = STATE.max;
 	const pct = Math.round((tot / max) * 100);

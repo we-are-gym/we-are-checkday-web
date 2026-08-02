@@ -1,8 +1,26 @@
 // 파일 용도: 리포트 생성·복사 — 결과 요약 HTML 조립·클립보드 복사 (checkday 공용)
 // DEPENDS: UI, STATE, evals(evaluation), getFbLines(feedback)
+import { UI } from "./UI.js";
+import { STATE } from "./states.js";
+import { evals } from "./evaluation.js";
+import { getFbLines } from "./feedback.js";
+
+// ── 공용 포맷터 — 평가 줄·피드백 줄을 한 곳에서만 생성 ──
+/** 평가 줄: "이름: N점 [체크] / 메모" (선택 요소만 포함, prefix는 줄 앞 들여쓰기) */
+function formatEvalLine(name, score, checked, memo, prefix = "") {
+	let s = `${name}: ${score}점`;
+	if (checked.length) s += ` [${checked.join(", ")}]`;
+	if (memo) s += ` / ${memo}`;
+	return `${prefix}${s}`;
+}
+
+/** 피드백 줄: "동작명 → 항목1, 항목2 / 메모" (prefix는 줄 앞 들여쓰기) */
+function formatFbLine(fb, prefix = "") {
+	return `${prefix}${fb.name}${fb.checked.length ? " → " + fb.checked.join(", ") : ""}${fb.memo ? " / " + fb.memo : ""}`;
+}
 
 // ── 결과 보기 공용 헬퍼 ──
-function getTotal() {
+export function getTotal() {
 	return STATE.total();
 }
 
@@ -31,15 +49,12 @@ function getEvalLines(prefix) {
 			(el) => el.textContent,
 		);
 		const memo = evalCards[i].querySelector(".eval-memo").value;
-		let s = `${prefix}${e.name}: ${STATE.get(i)}점`;
-		if (checked.length) s += ` [${checked.join(", ")}]`;
-		if (memo) s += ` / ${memo}`;
-		return s;
+		return formatEvalLine(e.name, STATE.get(i), checked, memo, prefix);
 	});
 }
 
 // ── 결과 보기 ──
-function openReport() {
+export function openReport() {
 	const name = UI.byId("m-name").value || "(미입력)";
 	const session = UI.byId("m-session").value;
 	const tot = getTotal();
@@ -50,11 +65,7 @@ function openReport() {
 	const consult = UI.byId("consult-memo").value;
 
 	const evalLines = getEvalLines("");
-	const fbData = getFbLines();
-	const fbLines = fbData.map(
-		(fb) =>
-			`${fb.name}${fb.checked.length ? " → " + fb.checked.join(", ") : ""}${fb.memo ? " / " + fb.memo : ""}`,
-	);
+	const fbLines = getFbLines().map((fb) => formatFbLine(fb));
 
 	let html = `
     <div class="rline"><div class="rlabel">회원</div><div>${name} ${session}</div></div>
@@ -72,17 +83,13 @@ function openReport() {
 	UI.byId("overlay").classList.add("open");
 }
 
-function copyReport() {
+export function copyReport() {
 	const name = UI.byId("m-name").value || "(미입력)";
 	const tot = getTotal();
 	const ib = getIbData();
 	const goals = getSelectedGoals();
 	const evalLines = getEvalLines("  ");
-	const fbData = getFbLines();
-	const fbLines = fbData.map(
-		(fb) =>
-			`  ${fb.name}${fb.checked.length ? " → " + fb.checked.join(", ") : ""}${fb.memo ? " / " + fb.memo : ""}`,
-	);
+	const fbLines = getFbLines().map((fb) => formatFbLine(fb, "  "));
 	const lines = [
 		`[체크데이] ${name} / ${UI.byId("m-session").value}`,
 		`━ 인바디: 체중 ${ib.w || "—"}kg / 골격근 ${ib.m || "—"}kg / 체지방률 ${ib.bfp || "—"}% / BMI ${ib.bmi || "—"} / 내장지방 ${ib.vis || "—"}`,

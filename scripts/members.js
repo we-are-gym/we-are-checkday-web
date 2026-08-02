@@ -1,5 +1,8 @@
 /* 파일 용도: 회원 관리 화면(members.html) — mock 회원 데이터와 목록·검색·생성·제거 로직
    상태는 메모리(mock)만 유지, 재로딩 시 초기값으로 복원 */
+import { UI } from "./UI.js";
+import { VAL } from "./validation.js";
+import { STR } from "./utils-string.js";
 
 const MOCK_MEMBERS = [
   { id: 1, name: "김민준", gender: "남", age: 27, phone: "010-1234-1001", goal: "체지방 감소", registered: "2026-07-01" },
@@ -99,4 +102,5 @@ function initMembers() {
   bindMemberEvents();
 }
 
-document.addEventListener("DOMContentLoaded", initMembers);
+// ── 시작 (모듈 스크립트는 defer되므로 DOM 완료 후 실행; DOMContentLoaded 대기 불필요) ──
+initMembers();

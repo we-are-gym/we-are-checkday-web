@@ -1,5 +1,5 @@
 // 파일 용도: 배열 유틸리티 — 점수 합계·총점 계산 공용 헬퍼 (checkday·basic_function 공용)
-const ARR = {
+export const ARR = {
 	/**
 	 * 배열 숫자 합계 반환
 	 * @param {Array<number>} arr

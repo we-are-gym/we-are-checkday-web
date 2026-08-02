@@ -3,7 +3,7 @@
 // 파일 용도: 움직임 평가 7개 항목 데이터 — basic_function_assessment_2.html·checkday 공용
 // 구조: 각 항목 = `{ name, desc, checks[] }`
 // 체크 문구는 basic_function_assessment_2.html 기준으로 통일
-const ASSESSMENT_ITEMS = [
+export const ASSESSMENT_ITEMS = [
 	{
 		name: "호흡 테스트",
 		desc: "늑골 · 복압 평가",

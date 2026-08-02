@@ -1,6 +1,6 @@
 // 파일 용도: VO₂ Max 계산 공식·정상치·등급 산정 — basic_function_assessment_2.html·checkday 공용
 // VO2 Max norms for women (Topendsports)
-const VO2_NORMS = [
+export const VO2_NORMS = [
 	{
 		ageMin: 18,
 		ageMax: 25,
@@ -85,7 +85,7 @@ const VO2_NORMS = [
  *
  * @returns {number} VO₂ 맥스
  */
-function calcVo2Value(age, height, weight, hr) {
+export function calcVo2Value(age, height, weight, hr) {
 	return (
 		// ACSM 스텝 테스트 공식
 		Math.round(
@@ -112,7 +112,7 @@ function calcVo2Value(age, height, weight, hr) {
  * 		col: any;
  * }}
  */
-function getVo2Grade(vo2, age) {
+export function getVo2Grade(vo2, age) {
 	const norm =
 		VO2_NORMS.find((n) => age >= n.ageMin && age <= n.ageMax) ||
 		VO2_NORMS[VO2_NORMS.length - 1];
