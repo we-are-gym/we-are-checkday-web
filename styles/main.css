@@ -1,21 +1,6 @@
-/* 파일 용도: 메인(index)·회원 관리(members)·체크회차 관리(check-sessions) 공통 셸 스타일 */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --bg: #f5f4f0; --surface: #fff; --surface2: #f0efe9;
-  --border: rgba(0,0,0,0.09); --border2: rgba(0,0,0,0.16);
-  --text: #1c1c18; --text2: #5c5c56; --text3: #9c9c94;
-  --blue: #3478D4; --blue-bg: #EBF2FC; --blue-fg: #1A4E96;
-  --r: 10px; --rlg: 14px;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #1a1a16; --surface: #232320; --surface2: #2c2c28;
-    --border: rgba(255,255,255,0.09); --border2: rgba(255,255,255,0.16);
-    --text: #f0efe8; --text2: #a0a098; --text3: #606058;
-    --blue-bg: #0D3868; --blue-fg: #7EB3F5;
-  }
-}
-body { font-family: -apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; padding:1.5rem 1rem 5rem; }
+/* 파일 용도: 메인(index)·회원 관리(members)·체크회차 관리(check-sessions) 공통 셸 레이아웃
+   색상·글꼴은 colors.css/font.css 참조 — 파일명 layout-index · layout-members · layout-check-sessions로 분리 예정 */
+
 .container { max-width:640px; margin:0 auto; }
 
 /* ── 헤더 ── */

@@ -1,0 +1,61 @@
+/* 파일 용도: 공용 색상 팔레트 — 라이트/다크 테마 CSS 변수 단일 정의 (전체 화면 공용)
+   사용: 모든 layout-*.css / 페이지들이 이 파일을 먼저 링크하고, 파일 내 `:root` 재정의는 금지 */
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+:root {
+	--bg: #f5f4f0;
+	--surface: #fff;
+	--surface2: #f0efe9;
+	--border: rgba(0, 0, 0, 0.09);
+	--border2: rgba(0, 0, 0, 0.16);
+	--text: #1c1c18;
+	--text2: #5c5c56;
+	--text3: #9c9c94;
+	--blue: #3478d4;
+	--blue-bg: #ebf2fc;
+	--blue-fg: #1a4e96;
+	--green-bg: #e8f5de;
+	--green-fg: #2e6b0e;
+	--orange-bg: #fdf0e0;
+	--orange-fg: #8a5000;
+	--red-bg: #fceaea;
+	--red-fg: #a82b2b;
+	--r: 10px;
+	--rlg: 14px;
+
+	/* ── 하위 호환 별칭 (기존 basic 화면 등에서 사용) ── */
+	--blue-light: var(--blue-bg);
+	--blue-dark: var(--blue-fg);
+	--radius: var(--r);
+	--radius-lg: var(--rlg);
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--bg: #1a1a16;
+		--surface: #232320;
+		--surface2: #2c2c28;
+		--border: rgba(255, 255, 255, 0.09);
+		--border2: rgba(255, 255, 255, 0.16);
+		--text: #f0efe8;
+		--text2: #a0a098;
+		--text3: #606058;
+		--blue-bg: #0d3868;
+		--blue-fg: #7eb3f5;
+		--blue-light: #0d3868;
+		--blue-dark: #7eb3f5;
+		--green-bg: #1a3a0a;
+		--green-fg: #7dc450;
+		--orange-bg: #3a2800;
+		--orange-fg: #f5a830;
+		--red-bg: #3a1010;
+		--red-fg: #f57070;
+	}
+}
