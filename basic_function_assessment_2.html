@@ -1,837 +1,1124 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>베이직 펑션 평가지</title>
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>베이직 펑션 평가지</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-  :root {
-    --bg: #f8f7f4;
-    --surface: #ffffff;
-    --surface2: #f2f1ed;
-    --border: rgba(0,0,0,0.1);
-    --border2: rgba(0,0,0,0.18);
-    --text: #1a1a18;
-    --text2: #5a5a56;
-    --text3: #9a9a94;
-    --blue: #378ADD;
-    --blue-light: #E6F1FB;
-    --blue-dark: #185FA5;
-    --radius: 10px;
-    --radius-lg: 14px;
-  }
+      :root {
+        --bg: #f8f7f4;
+        --surface: #ffffff;
+        --surface2: #f2f1ed;
+        --border: rgba(0, 0, 0, 0.1);
+        --border2: rgba(0, 0, 0, 0.18);
+        --text: #1a1a18;
+        --text2: #5a5a56;
+        --text3: #9a9a94;
+        --blue: #378add;
+        --blue-light: #e6f1fb;
+        --blue-dark: #185fa5;
+        --radius: 10px;
+        --radius-lg: 14px;
+      }
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #1a1a18;
-      --surface: #242420;
-      --surface2: #2e2e2a;
-      --border: rgba(255,255,255,0.1);
-      --border2: rgba(255,255,255,0.18);
-      --text: #f0efe8;
-      --text2: #a0a09a;
-      --text3: #606058;
-      --blue-light: #0C447C;
-      --blue-dark: #85B7EB;
-    }
-  }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #1a1a18;
+          --surface: #242420;
+          --surface2: #2e2e2a;
+          --border: rgba(255, 255, 255, 0.1);
+          --border2: rgba(255, 255, 255, 0.18);
+          --text: #f0efe8;
+          --text2: #a0a09a;
+          --text3: #606058;
+          --blue-light: #0c447c;
+          --blue-dark: #85b7eb;
+        }
+      }
 
-  body {
-    font-family: -apple-system, 'Pretendard', 'Apple SD Gothic Neo', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    padding: 2rem 1rem 4rem;
-  }
+      body {
+        font-family:
+          -apple-system, "Pretendard", "Apple SD Gothic Neo", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        padding: 2rem 1rem 4rem;
+      }
 
-  .container {
-    max-width: 640px;
-    margin: 0 auto;
-  }
+      .container {
+        max-width: 640px;
+        margin: 0 auto;
+      }
 
-  /* Header */
-  .page-header {
-    margin-bottom: 2rem;
-  }
-  .page-header h1 {
-    font-size: 22px;
-    font-weight: 600;
-    letter-spacing: -0.3px;
-    margin-bottom: 4px;
-  }
-  .page-header p {
-    font-size: 13px;
-    color: var(--text2);
-  }
+      /* Header */
+      .page-header {
+        margin-bottom: 2rem;
+      }
+      .page-header h1 {
+        font-size: 22px;
+        font-weight: 600;
+        letter-spacing: -0.3px;
+        margin-bottom: 4px;
+      }
+      .page-header p {
+        font-size: 13px;
+        color: var(--text2);
+      }
 
-  /* Score summary */
-  .score-summary {
-    background: var(--surface);
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 1.25rem 1.5rem;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 1.25rem;
-  }
-  .score-left { flex-shrink: 0; }
-  .score-label { font-size: 11px; font-weight: 500; color: var(--text3); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 2px; }
-  .score-num { font-size: 36px; font-weight: 600; color: var(--text); letter-spacing: -1px; line-height: 1; }
-  .score-num span { font-size: 15px; font-weight: 400; color: var(--text3); margin-left: 2px; }
-  .score-right { flex: 1; }
-  .progress-track {
-    height: 6px;
-    background: var(--surface2);
-    border-radius: 99px;
-    overflow: hidden;
-    margin-bottom: 8px;
-  }
-  .progress-fill {
-    height: 100%;
-    border-radius: 99px;
-    background: var(--blue);
-    transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
-  }
-  .grade-row { display: flex; align-items: center; gap: 8px; }
-  .grade-badge {
-    font-size: 12px;
-    font-weight: 500;
-    padding: 3px 10px;
-    border-radius: 99px;
-    transition: background 0.3s, color 0.3s;
-  }
-  .grade-hint { font-size: 12px; color: var(--text3); }
+      /* Score summary */
+      .score-summary {
+        background: var(--surface);
+        border: 0.5px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+      }
+      .score-left {
+        flex-shrink: 0;
+      }
+      .score-label {
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--text3);
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        margin-bottom: 2px;
+      }
+      .score-num {
+        font-size: 36px;
+        font-weight: 600;
+        color: var(--text);
+        letter-spacing: -1px;
+        line-height: 1;
+      }
+      .score-num span {
+        font-size: 15px;
+        font-weight: 400;
+        color: var(--text3);
+        margin-left: 2px;
+      }
+      .score-right {
+        flex: 1;
+      }
+      .progress-track {
+        height: 6px;
+        background: var(--surface2);
+        border-radius: 99px;
+        overflow: hidden;
+        margin-bottom: 8px;
+      }
+      .progress-fill {
+        height: 100%;
+        border-radius: 99px;
+        background: var(--blue);
+        transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .grade-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .grade-badge {
+        font-size: 12px;
+        font-weight: 500;
+        padding: 3px 10px;
+        border-radius: 99px;
+        transition:
+          background 0.3s,
+          color 0.3s;
+      }
+      .grade-hint {
+        font-size: 12px;
+        color: var(--text3);
+      }
 
-  /* Items */
-  .items { display: flex; flex-direction: column; gap: 8px; }
+      /* Items */
+      .items {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
 
-  .item-card {
-    background: var(--surface);
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    transition: border-color 0.2s;
-  }
-  .item-card:has(.score-display:not([data-score="0"])) {
-    border-color: var(--border2);
-  }
+      .item-card {
+        background: var(--surface);
+        border: 0.5px solid var(--border);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        transition: border-color 0.2s;
+      }
+      .item-card:has(.score-display:not([data-score="0"])) {
+        border-color: var(--border2);
+      }
 
-  .item-top {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 0.875rem 1rem;
-  }
-  .item-num {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: var(--surface2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--text3);
-    flex-shrink: 0;
-  }
-  .item-info { flex: 1; }
-  .item-name { font-size: 14px; font-weight: 500; color: var(--text); }
-  .item-desc { font-size: 12px; color: var(--text3); margin-top: 1px; }
+      .item-top {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0.875rem 1rem;
+      }
+      .item-num {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: var(--surface2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text3);
+        flex-shrink: 0;
+      }
+      .item-info {
+        flex: 1;
+      }
+      .item-name {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text);
+      }
+      .item-desc {
+        font-size: 12px;
+        color: var(--text3);
+        margin-top: 1px;
+      }
 
-  .score-ctrl {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    flex-shrink: 0;
-  }
-  .score-btn {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    border: 0.5px solid var(--border2);
-    background: var(--surface);
-    color: var(--text);
-    font-size: 18px;
-    line-height: 1;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.15s, transform 0.1s;
-    user-select: none;
-  }
-  .score-btn:hover { background: var(--surface2); }
-  .score-btn:active { transform: scale(0.9); }
-  .score-display {
-    font-size: 18px;
-    font-weight: 600;
-    min-width: 26px;
-    text-align: center;
-    color: var(--text);
-  }
-  .score-dots {
-    display: flex;
-    gap: 4px;
-    margin-top: 3px;
-    justify-content: center;
-  }
-  .dot {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--border2);
-    transition: background 0.2s;
-  }
-  .dot.filled { background: var(--blue); }
+      .score-ctrl {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        flex-shrink: 0;
+      }
+      .score-btn {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 0.5px solid var(--border2);
+        background: var(--surface);
+        color: var(--text);
+        font-size: 18px;
+        line-height: 1;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+          background 0.15s,
+          transform 0.1s;
+        user-select: none;
+      }
+      .score-btn:hover {
+        background: var(--surface2);
+      }
+      .score-btn:active {
+        transform: scale(0.9);
+      }
+      .score-display {
+        font-size: 18px;
+        font-weight: 600;
+        min-width: 26px;
+        text-align: center;
+        color: var(--text);
+      }
+      .score-dots {
+        display: flex;
+        gap: 4px;
+        margin-top: 3px;
+        justify-content: center;
+      }
+      .dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--border2);
+        transition: background 0.2s;
+      }
+      .dot.filled {
+        background: var(--blue);
+      }
 
-  /* Expand toggle */
-  .expand-btn {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 1rem 0.75rem;
-    background: none;
-    border: none;
-    border-top: 0.5px solid var(--border);
-    color: var(--text3);
-    font-size: 12px;
-    cursor: pointer;
-    text-align: left;
-    font-family: inherit;
-    transition: color 0.15s;
-  }
-  .expand-btn:hover { color: var(--text2); }
-  .expand-arrow {
-    display: inline-block;
-    transition: transform 0.2s;
-    font-style: normal;
-    margin-left: auto;
-  }
-  .expand-btn.open .expand-arrow { transform: rotate(180deg); }
+      /* Expand toggle */
+      .expand-btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 1rem 0.75rem;
+        background: none;
+        border: none;
+        border-top: 0.5px solid var(--border);
+        color: var(--text3);
+        font-size: 12px;
+        cursor: pointer;
+        text-align: left;
+        font-family: inherit;
+        transition: color 0.15s;
+      }
+      .expand-btn:hover {
+        color: var(--text2);
+      }
+      .expand-arrow {
+        display: inline-block;
+        transition: transform 0.2s;
+        font-style: normal;
+        margin-left: auto;
+      }
+      .expand-btn.open .expand-arrow {
+        transform: rotate(180deg);
+      }
 
-  /* Detail panel */
-  .item-detail {
-    display: none;
-    flex-direction: column;
-    gap: 6px;
-    padding: 0 1rem 0.875rem;
-    border-top: 0.5px solid var(--border);
-  }
-  .item-detail.open { display: flex; }
+      /* Detail panel */
+      .item-detail {
+        display: none;
+        flex-direction: column;
+        gap: 6px;
+        padding: 0 1rem 0.875rem;
+        border-top: 0.5px solid var(--border);
+      }
+      .item-detail.open {
+        display: flex;
+      }
 
-  .check-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    cursor: pointer;
-    padding: 3px 0;
-  }
-  .check-box {
-    width: 16px;
-    height: 16px;
-    border: 1.5px solid var(--border2);
-    border-radius: 4px;
-    flex-shrink: 0;
-    margin-top: 1px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.15s, border-color 0.15s;
-  }
-  .check-box.checked {
-    background: var(--blue-light);
-    border-color: var(--blue);
-  }
-  .check-box.checked::after {
-    content: '';
-    display: block;
-    width: 8px;
-    height: 6px;
-    border-left: 1.5px solid var(--blue-dark);
-    border-bottom: 1.5px solid var(--blue-dark);
-    transform: rotate(-45deg) translateY(-1px);
-  }
-  .check-label {
-    font-size: 13px;
-    color: var(--text2);
-    line-height: 1.5;
-    transition: color 0.15s;
-  }
-  .check-label.checked-text { color: var(--text); }
+      .check-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        cursor: pointer;
+        padding: 3px 0;
+      }
+      .check-box {
+        width: 16px;
+        height: 16px;
+        border: 1.5px solid var(--border2);
+        border-radius: 4px;
+        flex-shrink: 0;
+        margin-top: 1px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .check-box.checked {
+        background: var(--blue-light);
+        border-color: var(--blue);
+      }
+      .check-box.checked::after {
+        content: "";
+        display: block;
+        width: 8px;
+        height: 6px;
+        border-left: 1.5px solid var(--blue-dark);
+        border-bottom: 1.5px solid var(--blue-dark);
+        transform: rotate(-45deg) translateY(-1px);
+      }
+      .check-label {
+        font-size: 13px;
+        color: var(--text2);
+        line-height: 1.5;
+        transition: color 0.15s;
+      }
+      .check-label.checked-text {
+        color: var(--text);
+      }
 
-  .notes-area {
-    width: 100%;
-    margin-top: 6px;
-    padding: 8px 10px;
-    font-size: 13px;
-    font-family: inherit;
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--surface2);
-    color: var(--text);
-    resize: vertical;
-    min-height: 60px;
-    outline: none;
-    transition: border-color 0.15s;
-  }
-  .notes-area:focus { border-color: var(--blue); }
-  .notes-area::placeholder { color: var(--text3); }
+      .notes-area {
+        width: 100%;
+        margin-top: 6px;
+        padding: 8px 10px;
+        font-size: 13px;
+        font-family: inherit;
+        border: 0.5px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--surface2);
+        color: var(--text);
+        resize: vertical;
+        min-height: 60px;
+        outline: none;
+        transition: border-color 0.15s;
+      }
+      .notes-area:focus {
+        border-color: var(--blue);
+      }
+      .notes-area::placeholder {
+        color: var(--text3);
+      }
 
-  /* Actions */
-  .actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 1.5rem;
-    flex-wrap: wrap;
-  }
-  .btn {
-    padding: 9px 18px;
-    border-radius: var(--radius);
-    font-size: 13px;
-    font-weight: 500;
-    font-family: inherit;
-    cursor: pointer;
-    border: 0.5px solid var(--border2);
-    transition: background 0.15s, transform 0.1s;
-  }
-  .btn:active { transform: scale(0.97); }
-  .btn-ghost { background: var(--surface); color: var(--text2); }
-  .btn-ghost:hover { background: var(--surface2); }
-  .btn-primary { background: var(--blue); color: #fff; border-color: var(--blue); }
-  .btn-primary:hover { opacity: 0.88; }
-  .btn-print { background: var(--surface); color: var(--text); }
-  .btn-print:hover { background: var(--surface2); }
+      /* Actions */
+      .actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+      }
+      .btn {
+        padding: 9px 18px;
+        border-radius: var(--radius);
+        font-size: 13px;
+        font-weight: 500;
+        font-family: inherit;
+        cursor: pointer;
+        border: 0.5px solid var(--border2);
+        transition:
+          background 0.15s,
+          transform 0.1s;
+      }
+      .btn:active {
+        transform: scale(0.97);
+      }
+      .btn-ghost {
+        background: var(--surface);
+        color: var(--text2);
+      }
+      .btn-ghost:hover {
+        background: var(--surface2);
+      }
+      .btn-primary {
+        background: var(--blue);
+        color: #fff;
+        border-color: var(--blue);
+      }
+      .btn-primary:hover {
+        opacity: 0.88;
+      }
+      .btn-print {
+        background: var(--surface);
+        color: var(--text);
+      }
+      .btn-print:hover {
+        background: var(--surface2);
+      }
 
-  /* Print modal */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.45);
-    z-index: 100;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
-  }
-  .modal-overlay.open { display: flex; }
-  .modal {
-    background: var(--surface);
-    border-radius: var(--radius-lg);
-    padding: 1.5rem;
-    max-width: 500px;
-    width: 100%;
-    max-height: 80vh;
-    overflow-y: auto;
-  }
-  .modal h3 { font-size: 16px; font-weight: 600; margin-bottom: 1rem; }
-  .report-line {
-    font-size: 13px;
-    color: var(--text2);
-    padding: 6px 0;
-    border-bottom: 0.5px solid var(--border);
-    display: flex;
-    gap: 8px;
-    align-items: flex-start;
-  }
-  .report-line:last-of-type { border-bottom: none; }
-  .report-name { font-weight: 500; color: var(--text); min-width: 140px; }
-  .report-score-badge {
-    font-size: 11px;
-    font-weight: 600;
-    padding: 2px 7px;
-    border-radius: 99px;
-    flex-shrink: 0;
-  }
-  .report-flags { font-size: 12px; color: var(--text3); margin-top: 2px; }
-  .modal-footer { display: flex; gap: 8px; margin-top: 1.25rem; justify-content: flex-end; }
+      /* Print modal */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
+        z-index: 100;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+      }
+      .modal-overlay.open {
+        display: flex;
+      }
+      .modal {
+        background: var(--surface);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        max-width: 500px;
+        width: 100%;
+        max-height: 80vh;
+        overflow-y: auto;
+      }
+      .modal h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 1rem;
+      }
+      .report-line {
+        font-size: 13px;
+        color: var(--text2);
+        padding: 6px 0;
+        border-bottom: 0.5px solid var(--border);
+        display: flex;
+        gap: 8px;
+        align-items: flex-start;
+      }
+      .report-line:last-of-type {
+        border-bottom: none;
+      }
+      .report-name {
+        font-weight: 500;
+        color: var(--text);
+        min-width: 140px;
+      }
+      .report-score-badge {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 2px 7px;
+        border-radius: 99px;
+        flex-shrink: 0;
+      }
+      .report-flags {
+        font-size: 12px;
+        color: var(--text3);
+        margin-top: 2px;
+      }
+      .modal-footer {
+        display: flex;
+        gap: 8px;
+        margin-top: 1.25rem;
+        justify-content: flex-end;
+      }
 
-  /* VO2 Max Calculator */
-  .vo2-card {
-    background: var(--surface);
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    margin-bottom: 8px;
-  }
-  .vo2-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 0.875rem 1rem;
-    cursor: pointer;
-    user-select: none;
-  }
-  .vo2-title-area { flex: 1; }
-  .vo2-title { font-size: 14px; font-weight: 500; color: var(--text); }
-  .vo2-desc { font-size: 12px; color: var(--text3); margin-top: 1px; }
-  .vo2-result-preview {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text2);
-    flex-shrink: 0;
-  }
+      /* VO2 Max Calculator */
+      .vo2-card {
+        background: var(--surface);
+        border: 0.5px solid var(--border);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        margin-bottom: 8px;
+      }
+      .vo2-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0.875rem 1rem;
+        cursor: pointer;
+        user-select: none;
+      }
+      .vo2-title-area {
+        flex: 1;
+      }
+      .vo2-title {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text);
+      }
+      .vo2-desc {
+        font-size: 12px;
+        color: var(--text3);
+        margin-top: 1px;
+      }
+      .vo2-result-preview {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text2);
+        flex-shrink: 0;
+      }
 
-  .vo2-body {
-    display: none;
-    flex-direction: column;
-    gap: 0;
-    border-top: 0.5px solid var(--border);
-  }
-  .vo2-body.open { display: flex; }
+      .vo2-body {
+        display: none;
+        flex-direction: column;
+        gap: 0;
+        border-top: 0.5px solid var(--border);
+      }
+      .vo2-body.open {
+        display: flex;
+      }
 
-  .vo2-inputs {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    padding: 1rem;
-  }
-  .vo2-field { display: flex; flex-direction: column; gap: 5px; }
-  .vo2-label { font-size: 11px; font-weight: 500; color: var(--text3); letter-spacing: 0.3px; }
-  .vo2-input {
-    padding: 8px 10px;
-    border: 0.5px solid var(--border2);
-    border-radius: var(--radius);
-    background: var(--surface2);
-    color: var(--text);
-    font-size: 14px;
-    font-family: inherit;
-    outline: none;
-    transition: border-color 0.15s;
-    width: 100%;
-  }
-  .vo2-input:focus { border-color: var(--blue); background: var(--surface); }
-  .vo2-input::placeholder { color: var(--text3); }
+      .vo2-inputs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        padding: 1rem;
+      }
+      .vo2-field {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+      .vo2-label {
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--text3);
+        letter-spacing: 0.3px;
+      }
+      .vo2-input {
+        padding: 8px 10px;
+        border: 0.5px solid var(--border2);
+        border-radius: var(--radius);
+        background: var(--surface2);
+        color: var(--text);
+        font-size: 14px;
+        font-family: inherit;
+        outline: none;
+        transition: border-color 0.15s;
+        width: 100%;
+      }
+      .vo2-input:focus {
+        border-color: var(--blue);
+        background: var(--surface);
+      }
+      .vo2-input::placeholder {
+        color: var(--text3);
+      }
 
-  .vo2-result-box {
-    margin: 0 1rem 1rem;
-    border-radius: var(--radius);
-    padding: 1rem;
-    background: var(--surface2);
-    border: 0.5px solid var(--border);
-  }
-  .vo2-result-top {
-    display: flex;
-    align-items: flex-end;
-    gap: 12px;
-    margin-bottom: 10px;
-  }
-  .vo2-value-group { flex: 1; }
-  .vo2-value-label { font-size: 11px; color: var(--text3); margin-bottom: 2px; }
-  .vo2-value { font-size: 28px; font-weight: 600; color: var(--text); letter-spacing: -0.5px; line-height: 1; }
-  .vo2-unit { font-size: 12px; color: var(--text3); margin-top: 2px; }
-  .vo2-grade-group { text-align: right; }
-  .vo2-grade-label { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
-  .vo2-grade-badge {
-    display: inline-block;
-    font-size: 13px;
-    font-weight: 600;
-    padding: 5px 14px;
-    border-radius: 99px;
-  }
-  .vo2-score-group { display: flex; gap: 6px; align-items: center; }
-  .vo2-score-label { font-size: 12px; color: var(--text2); }
+      .vo2-result-box {
+        margin: 0 1rem 1rem;
+        border-radius: var(--radius);
+        padding: 1rem;
+        background: var(--surface2);
+        border: 0.5px solid var(--border);
+      }
+      .vo2-result-top {
+        display: flex;
+        align-items: flex-end;
+        gap: 12px;
+        margin-bottom: 10px;
+      }
+      .vo2-value-group {
+        flex: 1;
+      }
+      .vo2-value-label {
+        font-size: 11px;
+        color: var(--text3);
+        margin-bottom: 2px;
+      }
+      .vo2-value {
+        font-size: 28px;
+        font-weight: 600;
+        color: var(--text);
+        letter-spacing: -0.5px;
+        line-height: 1;
+      }
+      .vo2-unit {
+        font-size: 12px;
+        color: var(--text3);
+        margin-top: 2px;
+      }
+      .vo2-grade-group {
+        text-align: right;
+      }
+      .vo2-grade-label {
+        font-size: 11px;
+        color: var(--text3);
+        margin-bottom: 4px;
+      }
+      .vo2-grade-badge {
+        display: inline-block;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 5px 14px;
+        border-radius: 99px;
+      }
+      .vo2-score-group {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+      .vo2-score-label {
+        font-size: 12px;
+        color: var(--text2);
+      }
 
-  .vo2-formula {
-    font-size: 11px;
-    color: var(--text3);
-    padding: 8px 10px;
-    background: var(--bg);
-    border-radius: 6px;
-    margin-top: 8px;
-    line-height: 1.6;
-    border: 0.5px solid var(--border);
-  }
+      .vo2-formula {
+        font-size: 11px;
+        color: var(--text3);
+        padding: 8px 10px;
+        background: var(--bg);
+        border-radius: 6px;
+        margin-top: 8px;
+        line-height: 1.6;
+        border: 0.5px solid var(--border);
+      }
 
-  .vo2-norms {
-    margin: 0 1rem 1rem;
-    border-radius: var(--radius);
-    overflow: hidden;
-    border: 0.5px solid var(--border);
-  }
-  .vo2-norms-title {
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--text3);
-    padding: 6px 10px;
-    background: var(--surface2);
-    border-bottom: 0.5px solid var(--border);
-    letter-spacing: 0.3px;
-  }
-  .vo2-norms table {
-    width: 100%;
-    font-size: 11px;
-    border-collapse: collapse;
-  }
-  .vo2-norms th {
-    padding: 5px 8px;
-    text-align: center;
-    color: var(--text3);
-    font-weight: 500;
-    background: var(--surface2);
-    border-bottom: 0.5px solid var(--border);
-  }
-  .vo2-norms th:first-child { text-align: left; }
-  .vo2-norms td {
-    padding: 5px 8px;
-    text-align: center;
-    color: var(--text2);
-    border-bottom: 0.5px solid var(--border);
-    font-size: 11px;
-  }
-  .vo2-norms td:first-child { text-align: left; font-weight: 500; color: var(--text); }
-  .vo2-norms tr:last-child td { border-bottom: none; }
-  .vo2-norms tr.highlight-row td { background: var(--blue-light); color: var(--blue-dark); font-weight: 500; }
-  .vo2-norms tr.highlight-row td:first-child { color: var(--blue-dark); }
+      .vo2-norms {
+        margin: 0 1rem 1rem;
+        border-radius: var(--radius);
+        overflow: hidden;
+        border: 0.5px solid var(--border);
+      }
+      .vo2-norms-title {
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--text3);
+        padding: 6px 10px;
+        background: var(--surface2);
+        border-bottom: 0.5px solid var(--border);
+        letter-spacing: 0.3px;
+      }
+      .vo2-norms table {
+        width: 100%;
+        font-size: 11px;
+        border-collapse: collapse;
+      }
+      .vo2-norms th {
+        padding: 5px 8px;
+        text-align: center;
+        color: var(--text3);
+        font-weight: 500;
+        background: var(--surface2);
+        border-bottom: 0.5px solid var(--border);
+      }
+      .vo2-norms th:first-child {
+        text-align: left;
+      }
+      .vo2-norms td {
+        padding: 5px 8px;
+        text-align: center;
+        color: var(--text2);
+        border-bottom: 0.5px solid var(--border);
+        font-size: 11px;
+      }
+      .vo2-norms td:first-child {
+        text-align: left;
+        font-weight: 500;
+        color: var(--text);
+      }
+      .vo2-norms tr:last-child td {
+        border-bottom: none;
+      }
+      .vo2-norms tr.highlight-row td {
+        background: var(--blue-light);
+        color: var(--blue-dark);
+        font-weight: 500;
+      }
+      .vo2-norms tr.highlight-row td:first-child {
+        color: var(--blue-dark);
+      }
 
-  @media (max-width: 480px) {
-    .score-summary { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
-    .score-right { width: 100%; }
-    .vo2-inputs { grid-template-columns: 1fr 1fr; }
-  }
+      @media (max-width: 480px) {
+        .score-summary {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.75rem;
+        }
+        .score-right {
+          width: 100%;
+        }
+        .vo2-inputs {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
 
-  @media print {
-    body { background: white; }
-    .actions, .modal-overlay { display: none !important; }
-  }
-</style>
-</head>
-<body>
-<div class="container">
-  <div class="page-header">
-    <h1>베이직 펑션 평가지</h1>
-    <p>각 항목당 0–3점 · 총 8개 항목 · 24점 만점</p>
-  </div>
-
-  <div class="score-summary">
-    <div class="score-left">
-      <div class="score-label">총점</div>
-      <div class="score-num" id="total-display">0 <span>/ 24</span></div>
-    </div>
-    <div class="score-right">
-      <div class="progress-track">
-        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+      @media print {
+        body {
+          background: white;
+        }
+        .actions,
+        .modal-overlay {
+          display: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header">
+        <h1>베이직 펑션 평가지</h1>
+        <p>각 항목당 0–3점 · 총 8개 항목 · 24점 만점</p>
       </div>
-      <div class="grade-row">
-        <div class="grade-badge" id="grade-badge" style="background:#f2f1ed;color:#9a9a94;">평가 전</div>
-        <span class="grade-hint" id="grade-hint"></span>
-      </div>
-    </div>
-  </div>
 
-  <!-- VO2 Max Calculator Card -->
-  <div class="vo2-card" id="vo2-card">
-    <div class="vo2-header" onclick="toggleVo2()">
-      <div class="item-num" style="background:var(--surface2);color:var(--text3);font-size:11px;font-weight:600;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">8</div>
-      <div class="vo2-title-area">
-        <div class="vo2-title">VO₂ Max Test</div>
-        <div class="vo2-desc">심폐 지구력 평가 · 스텝 테스트 자동 계산</div>
-      </div>
-      <div id="vo2-preview" class="vo2-result-preview">—</div>
-      <span id="vo2-arrow" style="display:inline-block;transition:transform 0.2s;margin-left:6px;color:var(--text3);">▾</span>
-    </div>
-
-    <div class="vo2-body" id="vo2-body">
-      <div class="vo2-inputs">
-        <div class="vo2-field">
-          <label class="vo2-label">연령 (세)</label>
-          <input class="vo2-input" type="number" id="v-age" placeholder="예: 30" min="15" max="80" oninput="calcVo2()">
+      <div class="score-summary">
+        <div class="score-left">
+          <div class="score-label">총점</div>
+          <div class="score-num" id="total-display">0 <span>/ 24</span></div>
         </div>
-        <div class="vo2-field">
-          <label class="vo2-label">신장 (cm)</label>
-          <input class="vo2-input" type="number" id="v-height" placeholder="예: 165" min="130" max="220" oninput="calcVo2()">
-        </div>
-        <div class="vo2-field">
-          <label class="vo2-label">체중 (kg)</label>
-          <input class="vo2-input" type="number" id="v-weight" placeholder="예: 60" min="30" max="200" oninput="calcVo2()">
-        </div>
-        <div class="vo2-field">
-          <label class="vo2-label">1분 회복기 심박수 (bpm)</label>
-          <input class="vo2-input" type="number" id="v-hr" placeholder="예: 100" min="40" max="220" oninput="calcVo2()">
-        </div>
-      </div>
-
-      <div class="vo2-result-box" id="vo2-result-box" style="display:none;">
-        <div class="vo2-result-top">
-          <div class="vo2-value-group">
-            <div class="vo2-value-label">VO₂ Max 추정치</div>
-            <div class="vo2-value" id="vo2-val">—</div>
-            <div class="vo2-unit">ml / kg / min</div>
+        <div class="score-right">
+          <div class="progress-track">
+            <div
+              class="progress-fill"
+              id="progress-fill"
+              style="width: 0%"
+            ></div>
           </div>
-          <div class="vo2-grade-group">
-            <div class="vo2-grade-label">등급</div>
-            <div class="vo2-grade-badge" id="vo2-grade-badge">—</div>
+          <div class="grade-row">
+            <div
+              class="grade-badge"
+              id="grade-badge"
+              style="background: #f2f1ed; color: #9a9a94"
+            >
+              평가 전
+            </div>
+            <span class="grade-hint" id="grade-hint"></span>
           </div>
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px;">
-          <div class="vo2-score-label">평가 점수</div>
-          <div style="display:flex;align-items:center;gap:6px;">
-            <button class="score-btn" onclick="setVo2Score(-1)" aria-label="감소">−</button>
-            <span class="score-display" id="vo2-score-display" data-score="0">0</span>
-            <button class="score-btn" onclick="setVo2Score(1)" aria-label="증가">+</button>
-          </div>
-          <div style="display:flex;gap:4px;">
-            <div class="dot" id="vd0"></div><div class="dot" id="vd1"></div><div class="dot" id="vd2"></div><div class="dot" id="vd3"></div>
-          </div>
-        </div>
-        <div class="vo2-formula">
-          공식: VO₂ Max = 54.337 − 0.185(연령) + 0.097(신장) − 0.246(체중) − 0.112(1분 회복기 심박수)
         </div>
       </div>
 
-      <div class="vo2-norms">
-        <div class="vo2-norms-title">MAXIMAL OXYGEN UPTAKE NORMS FOR WOMEN (ml/kg/min)</div>
-        <table id="vo2-table">
-          <thead>
-            <tr>
-              <th>등급</th>
-              <th>18–25</th>
-              <th>26–35</th>
-              <th>36–45</th>
-              <th>46–55</th>
-              <th>56–65</th>
-              <th>65+</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr data-grade="excellent"><td>Excellent</td><td>&gt;56</td><td>&gt;52</td><td>&gt;45</td><td>&gt;40</td><td>&gt;37</td><td>&gt;32</td></tr>
-            <tr data-grade="good"><td>Good</td><td>47–56</td><td>45–52</td><td>38–45</td><td>34–40</td><td>32–37</td><td>28–32</td></tr>
-            <tr data-grade="above_avg"><td>Above average</td><td>42–46</td><td>39–44</td><td>34–37</td><td>31–33</td><td>28–31</td><td>25–27</td></tr>
-            <tr data-grade="average"><td>Average</td><td>38–41</td><td>35–38</td><td>31–33</td><td>28–30</td><td>25–27</td><td>22–24</td></tr>
-            <tr data-grade="below_avg"><td>Below average</td><td>33–37</td><td>31–34</td><td>27–30</td><td>25–27</td><td>22–24</td><td>19–21</td></tr>
-            <tr data-grade="poor"><td>Poor</td><td>28–32</td><td>26–30</td><td>22–26</td><td>20–24</td><td>18–21</td><td>17–18</td></tr>
-            <tr data-grade="very_poor"><td>Very poor</td><td>&lt;28</td><td>&lt;26</td><td>&lt;22</td><td>&lt;20</td><td>&lt;18</td><td>&lt;17</td></tr>
-          </tbody>
-        </table>
+      <!-- VO2 Max Calculator Card -->
+      <div class="vo2-card" id="vo2-card">
+        <div class="vo2-header" onclick="toggleVo2()">
+          <div
+            class="item-num"
+            style="
+              background: var(--surface2);
+              color: var(--text3);
+              font-size: 11px;
+              font-weight: 600;
+              width: 24px;
+              height: 24px;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              flex-shrink: 0;
+            "
+          >
+            8
+          </div>
+          <div class="vo2-title-area">
+            <div class="vo2-title">VO₂ Max Test</div>
+            <div class="vo2-desc">심폐 지구력 평가 · 스텝 테스트 자동 계산</div>
+          </div>
+          <div id="vo2-preview" class="vo2-result-preview">—</div>
+          <span
+            id="vo2-arrow"
+            style="
+              display: inline-block;
+              transition: transform 0.2s;
+              margin-left: 6px;
+              color: var(--text3);
+            "
+            >▾</span
+          >
+        </div>
+
+        <div class="vo2-body" id="vo2-body">
+          <div class="vo2-inputs">
+            <div class="vo2-field">
+              <label class="vo2-label">연령 (세)</label>
+              <input
+                class="vo2-input"
+                type="number"
+                id="v-age"
+                placeholder="예: 30"
+                min="15"
+                max="80"
+                oninput="calcVo2()"
+              />
+            </div>
+            <div class="vo2-field">
+              <label class="vo2-label">신장 (cm)</label>
+              <input
+                class="vo2-input"
+                type="number"
+                id="v-height"
+                placeholder="예: 165"
+                min="130"
+                max="220"
+                oninput="calcVo2()"
+              />
+            </div>
+            <div class="vo2-field">
+              <label class="vo2-label">체중 (kg)</label>
+              <input
+                class="vo2-input"
+                type="number"
+                id="v-weight"
+                placeholder="예: 60"
+                min="30"
+                max="200"
+                oninput="calcVo2()"
+              />
+            </div>
+            <div class="vo2-field">
+              <label class="vo2-label">1분 회복기 심박수 (bpm)</label>
+              <input
+                class="vo2-input"
+                type="number"
+                id="v-hr"
+                placeholder="예: 100"
+                min="40"
+                max="220"
+                oninput="calcVo2()"
+              />
+            </div>
+          </div>
+
+          <div class="vo2-result-box" id="vo2-result-box" style="display: none">
+            <div class="vo2-result-top">
+              <div class="vo2-value-group">
+                <div class="vo2-value-label">VO₂ Max 추정치</div>
+                <div class="vo2-value" id="vo2-val">—</div>
+                <div class="vo2-unit">ml / kg / min</div>
+              </div>
+              <div class="vo2-grade-group">
+                <div class="vo2-grade-label">등급</div>
+                <div class="vo2-grade-badge" id="vo2-grade-badge">—</div>
+              </div>
+            </div>
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                flex-wrap: wrap;
+                margin-top: 10px;
+              "
+            >
+              <div class="vo2-score-label">평가 점수</div>
+              <div style="display: flex; align-items: center; gap: 6px">
+                <button
+                  class="score-btn"
+                  onclick="setVo2Score(-1)"
+                  aria-label="감소"
+                >
+                  −
+                </button>
+                <span
+                  class="score-display"
+                  id="vo2-score-display"
+                  data-score="0"
+                  >0</span
+                >
+                <button
+                  class="score-btn"
+                  onclick="setVo2Score(1)"
+                  aria-label="증가"
+                >
+                  +
+                </button>
+              </div>
+              <div style="display: flex; gap: 4px">
+                <div class="dot" id="vd0"></div>
+                <div class="dot" id="vd1"></div>
+                <div class="dot" id="vd2"></div>
+                <div class="dot" id="vd3"></div>
+              </div>
+            </div>
+            <div class="vo2-formula">
+              공식: VO₂ Max = 54.337 − 0.185(연령) + 0.097(신장) − 0.246(체중) −
+              0.112(1분 회복기 심박수)
+            </div>
+          </div>
+
+          <div class="vo2-norms">
+            <div class="vo2-norms-title">
+              MAXIMAL OXYGEN UPTAKE NORMS FOR WOMEN (ml/kg/min)
+            </div>
+            <table id="vo2-table">
+              <thead>
+                <tr>
+                  <th>등급</th>
+                  <th>18–25</th>
+                  <th>26–35</th>
+                  <th>36–45</th>
+                  <th>46–55</th>
+                  <th>56–65</th>
+                  <th>65+</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr data-grade="excellent">
+                  <td>Excellent</td>
+                  <td>&gt;56</td>
+                  <td>&gt;52</td>
+                  <td>&gt;45</td>
+                  <td>&gt;40</td>
+                  <td>&gt;37</td>
+                  <td>&gt;32</td>
+                </tr>
+                <tr data-grade="good">
+                  <td>Good</td>
+                  <td>47–56</td>
+                  <td>45–52</td>
+                  <td>38–45</td>
+                  <td>34–40</td>
+                  <td>32–37</td>
+                  <td>28–32</td>
+                </tr>
+                <tr data-grade="above_avg">
+                  <td>Above average</td>
+                  <td>42–46</td>
+                  <td>39–44</td>
+                  <td>34–37</td>
+                  <td>31–33</td>
+                  <td>28–31</td>
+                  <td>25–27</td>
+                </tr>
+                <tr data-grade="average">
+                  <td>Average</td>
+                  <td>38–41</td>
+                  <td>35–38</td>
+                  <td>31–33</td>
+                  <td>28–30</td>
+                  <td>25–27</td>
+                  <td>22–24</td>
+                </tr>
+                <tr data-grade="below_avg">
+                  <td>Below average</td>
+                  <td>33–37</td>
+                  <td>31–34</td>
+                  <td>27–30</td>
+                  <td>25–27</td>
+                  <td>22–24</td>
+                  <td>19–21</td>
+                </tr>
+                <tr data-grade="poor">
+                  <td>Poor</td>
+                  <td>28–32</td>
+                  <td>26–30</td>
+                  <td>22–26</td>
+                  <td>20–24</td>
+                  <td>18–21</td>
+                  <td>17–18</td>
+                </tr>
+                <tr data-grade="very_poor">
+                  <td>Very poor</td>
+                  <td>&lt;28</td>
+                  <td>&lt;26</td>
+                  <td>&lt;22</td>
+                  <td>&lt;20</td>
+                  <td>&lt;18</td>
+                  <td>&lt;17</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="items" id="items-container"></div>
+
+      <div class="actions">
+        <button class="btn btn-ghost" onclick="resetAll()">초기화</button>
+        <button class="btn btn-print" onclick="openReport()">
+          📋 결과 보기
+        </button>
+        <button class="btn btn-primary" onclick="window.print()">
+          인쇄 / PDF 저장
+        </button>
       </div>
     </div>
-  </div>
 
-  <div class="items" id="items-container"></div>
-
-  <div class="actions">
-    <button class="btn btn-ghost" onclick="resetAll()">초기화</button>
-    <button class="btn btn-print" onclick="openReport()">📋 결과 보기</button>
-    <button class="btn btn-primary" onclick="window.print()">인쇄 / PDF 저장</button>
-  </div>
-</div>
-
-<!-- Report Modal -->
-<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
-  <div class="modal">
-    <h3>평가 결과 요약</h3>
-    <div id="report-content"></div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModalDirect()">닫기</button>
-      <button class="btn btn-primary" onclick="copyReport()">텍스트 복사</button>
+    <!-- Report Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+      <div class="modal">
+        <h3>평가 결과 요약</h3>
+        <div id="report-content"></div>
+        <div class="modal-footer">
+          <button class="btn btn-ghost" onclick="closeModalDirect()">
+            닫기
+          </button>
+          <button class="btn btn-primary" onclick="copyReport()">
+            텍스트 복사
+          </button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
 
-<script>
-const assessments = [
-  {
-    id: 1,
-    name: "호흡 테스트",
-    desc: "늑골 · 복압 평가",
-    checks: [
-      "허리가 과도하게 뜸",
-      "허벅지가 수직으로 안 섬",
-      "엉덩이가 과도하게 뜸",
-      "호흡 중 갈비뼈 과도하게 올라감",
-      "내쉴 때 늑골이 내려가지 않음"
-    ]
-  },
-  {
-    id: 2,
-    name: "Lumbar ROM (바닥짚기)",
-    desc: "힌지 / 햄스트링 / 요추 안정성 평가",
-    checks: [
-      "앞으로만 숙여짐 (힙 후방 이동 없음)",
-      "무릎이 많이 구부려짐 (햄스트링 타이트)",
-      "등이 솟고 허리 긴장으로 하강 제한"
-    ]
-  },
-  {
-    id: 3,
-    name: "Wall Angel Test",
-    desc: "흉추 · 목 · 어깨 · 코어 평가",
-    checks: [
-      "손목이 꺾임",
-      "허리 과도하게 꺾임 (늑골 과도 상승)",
-      "턱이 들림"
-    ]
-  },
-  {
-    id: 4,
-    name: "Over Head Squat",
-    desc: "상체 / 하체 통합 코디네이션 평가",
-    checks: [
-      "발목·무릎 정렬 불량",
-      "허리 아치 또는 말림",
-      "상체 과도한 굽힘",
-      "팔이 앞으로 떨어짐",
-      "비대칭 체중이동"
-    ]
-  },
-  {
-    id: 5,
-    name: "Single Balance Test",
-    desc: "감각기능 / 전정기관 평가",
-    checks: [
-      "시각 ON – 골반 틀어짐",
-      "시각 OFF – 균형 불안정",
-      "고개 회전 시 균형 손실 (전정기관)"
-    ]
-  },
-  {
-    id: 6,
-    name: "One Leg Squat",
-    desc: "발목 / 무릎 / 고관절 하지패턴 평가",
-    checks: [
-      "무릎이 안으로 들어감 (통증 동반 여부)",
-      "지지측 엉덩이 돌아감 (중둔근 부전)",
-      "상체 숙여짐 (발목 가동성 제한)"
-    ]
-  },
-  {
-    id: 7,
-    name: "원레그 브릿지",
-    desc: "회전기능 평가 (후면사슬 / X자 기능)",
-    checks: [
-      "골반 과도한 틀어짐 (코어 회전 기능 저하)",
-      "엉덩이가 잘 안 올라감 (둔근 기능 부전)"
-    ]
-  },
-];
+    <script src="scripts/assessment-data.js"></script>
+    <script src="scripts/vo2.js"></script>
+    <script src="scripts/grade.js"></script>
+    <script>
+      const assessments = ASSESSMENT_ITEMS.map((item, idx) => ({
+        id: idx + 1,
+        ...item,
+      }));
 
-const state = {};
-assessments.forEach(a => { state[a.id] = { score: 0, checks: {}, notes: '' }; });
-const vo2State = { score: 0, vo2: null, grade: null };
+      const state = {};
+      assessments.forEach((a) => {
+        state[a.id] = { score: 0, checks: {}, notes: "" };
+      });
+      const vo2State = { score: 0, vo2: null, grade: null };
 
-// VO2 Max norms for women (Topendsports)
-const vo2Norms = [
-  { ageMin:18, ageMax:25, col:1, excellent:56, good:[47,56], above_avg:[42,46], average:[38,41], below_avg:[33,37], poor:[28,32], very_poor:28 },
-  { ageMin:26, ageMax:35, col:2, excellent:52, good:[45,52], above_avg:[39,44], average:[35,38], below_avg:[31,34], poor:[26,30], very_poor:26 },
-  { ageMin:36, ageMax:45, col:3, excellent:45, good:[38,45], above_avg:[34,37], average:[31,33], below_avg:[27,30], poor:[22,26], very_poor:22 },
-  { ageMin:46, ageMax:55, col:4, excellent:40, good:[34,40], above_avg:[31,33], average:[28,30], below_avg:[25,27], poor:[20,24], very_poor:20 },
-  { ageMin:56, ageMax:65, col:5, excellent:37, good:[32,37], above_avg:[28,31], average:[25,27], below_avg:[22,24], poor:[18,21], very_poor:18 },
-  { ageMin:66, ageMax:120,col:6, excellent:32, good:[28,32], above_avg:[25,27], average:[22,24], below_avg:[19,21], poor:[17,18], very_poor:17 },
-];
+      const VO2_GRADE_COLORS = {
+        excellent: { bg: "#EAF3DE", fg: "#3B6D11" },
+        good: { bg: "#E6F1FB", fg: "#185FA5" },
+        above_avg: { bg: "#E6F1FB", fg: "#185FA5" },
+        average: { bg: "#FAEEDA", fg: "#854F0B" },
+        below_avg: { bg: "#FAEEDA", fg: "#854F0B" },
+        poor: { bg: "#FCEBEB", fg: "#A32D2D" },
+        very_poor: { bg: "#FCEBEB", fg: "#A32D2D" },
+      };
 
-function getVo2Grade(vo2, age) {
-  const norm = vo2Norms.find(n => age >= n.ageMin && age <= n.ageMax) || vo2Norms[vo2Norms.length-1];
-  if (vo2 > norm.excellent) return { grade:'excellent', label:'Excellent', bg:'#EAF3DE', fg:'#3B6D11', score:3, col:norm.col };
-  if (vo2 >= norm.good[0])  return { grade:'good', label:'Good', bg:'#E6F1FB', fg:'#185FA5', score:3, col:norm.col };
-  if (vo2 >= norm.above_avg[0]) return { grade:'above_avg', label:'Above average', bg:'#E6F1FB', fg:'#185FA5', score:2, col:norm.col };
-  if (vo2 >= norm.average[0])   return { grade:'average', label:'Average', bg:'#FAEEDA', fg:'#854F0B', score:2, col:norm.col };
-  if (vo2 >= norm.below_avg[0]) return { grade:'below_avg', label:'Below average', bg:'#FAEEDA', fg:'#854F0B', score:1, col:norm.col };
-  if (vo2 >= norm.poor[0])      return { grade:'poor', label:'Poor', bg:'#FCEBEB', fg:'#A32D2D', score:1, col:norm.col };
-  return { grade:'very_poor', label:'Very poor', bg:'#FCEBEB', fg:'#A32D2D', score:0, col:norm.col };
-}
+      function toggleVo2() {
+        const body = document.getElementById("vo2-body");
+        const arrow = document.getElementById("vo2-arrow");
+        const open = body.classList.toggle("open");
+        arrow.style.transform = open ? "rotate(180deg)" : "";
+      }
 
-function toggleVo2() {
-  const body = document.getElementById('vo2-body');
-  const arrow = document.getElementById('vo2-arrow');
-  const open = body.classList.toggle('open');
-  arrow.style.transform = open ? 'rotate(180deg)' : '';
-}
+      function calcVo2() {
+        const age = parseFloat(document.getElementById("v-age").value);
+        const height = parseFloat(document.getElementById("v-height").value);
+        const weight = parseFloat(document.getElementById("v-weight").value);
+        const hr = parseFloat(document.getElementById("v-hr").value);
+        if (isNaN(age) || isNaN(height) || isNaN(weight) || isNaN(hr)) return;
 
-function calcVo2() {
-  const age = parseFloat(document.getElementById('v-age').value);
-  const height = parseFloat(document.getElementById('v-height').value);
-  const weight = parseFloat(document.getElementById('v-weight').value);
-  const hr = parseFloat(document.getElementById('v-hr').value);
-  if (isNaN(age) || isNaN(height) || isNaN(weight) || isNaN(hr)) return;
+        const vo2r = calcVo2Value(age, height, weight, hr);
+        vo2State.vo2 = vo2r;
 
-  const vo2 = 54.337 - 0.185*age + 0.097*height - 0.246*weight - 0.112*hr;
-  const vo2r = Math.round(vo2 * 10) / 10;
-  vo2State.vo2 = vo2r;
+        const gradeInfo = getVo2Grade(vo2r, age);
+        vo2State.grade = gradeInfo;
+        const color = VO2_GRADE_COLORS[gradeInfo.grade];
 
-  const gradeInfo = getVo2Grade(vo2r, age);
-  vo2State.grade = gradeInfo;
+        document.getElementById("vo2-val").textContent = vo2r.toFixed(1);
+        const badge = document.getElementById("vo2-grade-badge");
+        badge.textContent = gradeInfo.label;
+        badge.style.background = color.bg;
+        badge.style.color = color.fg;
 
-  document.getElementById('vo2-val').textContent = vo2r.toFixed(1);
-  const badge = document.getElementById('vo2-grade-badge');
-  badge.textContent = gradeInfo.label;
-  badge.style.background = gradeInfo.bg;
-  badge.style.color = gradeInfo.fg;
+        document.getElementById("vo2-result-box").style.display = "block";
+        document.getElementById("vo2-preview").textContent =
+          vo2r.toFixed(1) + " ml/kg/min";
 
-  document.getElementById('vo2-result-box').style.display = 'block';
-  document.getElementById('vo2-preview').textContent = vo2r.toFixed(1) + ' ml/kg/min';
+        // Highlight table row & column
+        highlightNormTable(gradeInfo.grade, gradeInfo.col);
 
-  // Highlight table row & column
-  highlightNormTable(gradeInfo.grade, gradeInfo.col);
+        // Auto-suggest score
+        setVo2Score(0, gradeInfo.score);
+      }
 
-  // Auto-suggest score
-  autoSetVo2Score(gradeInfo.score);
-}
+      function highlightNormTable(grade, col) {
+        const rows = document.querySelectorAll("#vo2-table tbody tr");
+        rows.forEach((row) => {
+          row.classList.remove("highlight-row");
+          // Reset all cell backgrounds
+          Array.from(row.cells).forEach((td, i) => {
+            td.style.background = "";
+            td.style.color = "";
+            td.style.fontWeight = "";
+          });
+        });
+        const targetRow = document.querySelector(
+          `#vo2-table tr[data-grade="${grade}"]`,
+        );
+        if (targetRow) {
+          targetRow.classList.add("highlight-row");
+          // Also highlight the age column cell
+          const cell = targetRow.cells[col];
+          if (cell) {
+            cell.style.outline = "2px solid var(--blue)";
+            cell.style.outlineOffset = "-2px";
+          }
+        }
+      }
 
-function highlightNormTable(grade, col) {
-  const rows = document.querySelectorAll('#vo2-table tbody tr');
-  rows.forEach(row => {
-    row.classList.remove('highlight-row');
-    // Reset all cell backgrounds
-    Array.from(row.cells).forEach((td, i) => {
-      td.style.background = '';
-      td.style.color = '';
-      td.style.fontWeight = '';
-    });
-  });
-  const targetRow = document.querySelector(`#vo2-table tr[data-grade="${grade}"]`);
-  if (targetRow) {
-    targetRow.classList.add('highlight-row');
-    // Also highlight the age column cell
-    const cell = targetRow.cells[col];
-    if (cell) {
-      cell.style.outline = '2px solid var(--blue)';
-      cell.style.outlineOffset = '-2px';
-    }
-  }
-}
+      function setVo2Score(delta, suggested) {
+        if (typeof suggested === "number") {
+          vo2State.score = suggested;
+        } else {
+          vo2State.score = Math.max(0, Math.min(3, vo2State.score + delta));
+        }
+        const el = document.getElementById("vo2-score-display");
+        el.textContent = vo2State.score;
+        el.dataset.score = vo2State.score;
+        for (let i = 0; i < 4; i++) {
+          document
+            .getElementById("vd" + i)
+            .classList.toggle("filled", i < vo2State.score);
+        }
+        updateTotal();
+      }
 
-function autoSetVo2Score(suggested) {
-  vo2State.score = suggested;
-  const el = document.getElementById('vo2-score-display');
-  el.textContent = suggested;
-  el.dataset.score = suggested;
-  for (let i = 0; i < 4; i++) {
-    document.getElementById('vd'+i).classList.toggle('filled', i < suggested);
-  }
-  updateTotal();
-}
+      function buildItems() {
+        const container = document.getElementById("items-container");
+        assessments.forEach((a) => {
+          const card = document.createElement("div");
+          card.className = "item-card";
+          card.id = `card-${a.id}`;
 
-function setVo2Score(delta) {
-  vo2State.score = Math.max(0, Math.min(3, vo2State.score + delta));
-  const el = document.getElementById('vo2-score-display');
-  el.textContent = vo2State.score;
-  el.dataset.score = vo2State.score;
-  for (let i = 0; i < 4; i++) {
-    document.getElementById('vd'+i).classList.toggle('filled', i < vo2State.score);
-  }
-  updateTotal();
-}
-
-function buildItems() {
-  const container = document.getElementById('items-container');
-  assessments.forEach(a => {
-    const card = document.createElement('div');
-    card.className = 'item-card';
-    card.id = `card-${a.id}`;
-
-    const dotsHTML = [0,1,2,3].map(i => `<div class="dot" id="dot-${a.id}-${i}"></div>`).join('');
-    const checksHTML = a.checks.map((c, i) => `
+          const dotsHTML = [0, 1, 2, 3]
+            .map((i) => `<div class="dot" id="dot-${a.id}-${i}"></div>`)
+            .join("");
+          const checksHTML = a.checks
+            .map(
+              (c, i) => `
       <div class="check-row" onclick="toggleCheck(${a.id}, ${i})">
         <div class="check-box" id="chk-${a.id}-${i}"></div>
         <span class="check-label" id="chklbl-${a.id}-${i}">${c}</span>
       </div>
-    `).join('');
+    `,
+            )
+            .join("");
 
-    card.innerHTML = `
+          card.innerHTML = `
       <div class="item-top">
         <div class="item-num">${a.id}</div>
         <div class="item-info">
@@ -856,139 +1143,184 @@ function buildItems() {
         <textarea class="notes-area" id="notes-${a.id}" placeholder="메모를 입력하세요..." oninput="saveNotes(${a.id}, this.value)"></textarea>
       </div>
     `;
-    container.appendChild(card);
-  });
-}
+          container.appendChild(card);
+        });
+      }
 
-function toggleExpand(id) {
-  const detail = document.getElementById(`detail-${id}`);
-  const btn = document.getElementById(`expand-${id}`);
-  detail.classList.toggle('open');
-  btn.classList.toggle('open');
-}
+      function toggleExpand(id) {
+        const detail = document.getElementById(`detail-${id}`);
+        const btn = document.getElementById(`expand-${id}`);
+        detail.classList.toggle("open");
+        btn.classList.toggle("open");
+      }
 
-function toggleCheck(id, idx) {
-  const key = `${id}-${idx}`;
-  state[id].checks[key] = !state[id].checks[key];
-  const box = document.getElementById(`chk-${id}-${idx}`);
-  const lbl = document.getElementById(`chklbl-${id}-${idx}`);
-  box.classList.toggle('checked', state[id].checks[key]);
-  lbl.classList.toggle('checked-text', state[id].checks[key]);
-}
+      function toggleCheck(id, idx) {
+        const key = `${id}-${idx}`;
+        state[id].checks[key] = !state[id].checks[key];
+        const box = document.getElementById(`chk-${id}-${idx}`);
+        const lbl = document.getElementById(`chklbl-${id}-${idx}`);
+        box.classList.toggle("checked", state[id].checks[key]);
+        lbl.classList.toggle("checked-text", state[id].checks[key]);
+      }
 
-function adjustScore(id, delta) {
-  const s = state[id];
-  s.score = Math.max(0, Math.min(3, s.score + delta));
-  const el = document.getElementById(`score-${id}`);
-  el.textContent = s.score;
-  el.dataset.score = s.score;
-  // Update dots
-  for (let i = 0; i < 4; i++) {
-    document.getElementById(`dot-${id}-${i}`).classList.toggle('filled', i < s.score);
-  }
-  updateTotal();
-}
+      function adjustScore(id, delta) {
+        const s = state[id];
+        s.score = Math.max(0, Math.min(3, s.score + delta));
+        const el = document.getElementById(`score-${id}`);
+        el.textContent = s.score;
+        el.dataset.score = s.score;
+        // Update dots
+        for (let i = 0; i < 4; i++) {
+          document
+            .getElementById(`dot-${id}-${i}`)
+            .classList.toggle("filled", i < s.score);
+        }
+        updateTotal();
+      }
 
-function saveNotes(id, val) {
-  state[id].notes = val;
-}
+      function saveNotes(id, val) {
+        state[id].notes = val;
+      }
 
-function updateTotal() {
-  const total = assessments.reduce((sum, a) => sum + state[a.id].score, 0) + vo2State.score;
-  const max = 24;
-  const pct = Math.round((total / max) * 100);
+      const GRADE_STYLES = {
+        "평가 전": { bg: "#f2f1ed", fg: "#9a9a94", hint: "" },
+        우수: {
+          bg: "#EAF3DE",
+          fg: "#3B6D11",
+          hint: "전반적으로 양호한 기능 상태입니다",
+        },
+        양호: {
+          bg: "#E6F1FB",
+          fg: "#185FA5",
+          hint: "일부 개선이 필요한 영역이 있습니다",
+        },
+        보통: {
+          bg: "#FAEEDA",
+          fg: "#854F0B",
+          hint: "여러 항목에서 기능 개선이 필요합니다",
+        },
+        "개선 필요": {
+          bg: "#FCEBEB",
+          fg: "#A32D2D",
+          hint: "집중적인 기능 개선 프로그램을 권장합니다",
+        },
+      };
 
-  document.getElementById('total-display').innerHTML = `${total} <span>/ ${max}</span>`;
-  document.getElementById('progress-fill').style.width = `${pct}%`;
+      function getTotal() {
+        return (
+          assessments.reduce((sum, a) => sum + state[a.id].score, 0) +
+          vo2State.score
+        );
+      }
 
-  const badge = document.getElementById('grade-badge');
-  const hint = document.getElementById('grade-hint');
-  let label, bg, fg, hintText;
+      function updateTotal() {
+        const total = getTotal();
+        const max = 24;
+        const pct = Math.round((total / max) * 100);
 
-  if (total === 0) {
-    label = '평가 전'; bg = '#f2f1ed'; fg = '#9a9a94'; hintText = '';
-  } else if (pct >= 83) {
-    label = '우수'; bg = '#EAF3DE'; fg = '#3B6D11'; hintText = '전반적으로 양호한 기능 상태입니다';
-  } else if (pct >= 58) {
-    label = '양호'; bg = '#E6F1FB'; fg = '#185FA5'; hintText = '일부 개선이 필요한 영역이 있습니다';
-  } else if (pct >= 33) {
-    label = '보통'; bg = '#FAEEDA'; fg = '#854F0B'; hintText = '여러 항목에서 기능 개선이 필요합니다';
-  } else {
-    label = '개선 필요'; bg = '#FCEBEB'; fg = '#A32D2D'; hintText = '집중적인 기능 개선 프로그램을 권장합니다';
-  }
+        document.getElementById("total-display").innerHTML =
+          `${total} <span>/ ${max}</span>`;
+        document.getElementById("progress-fill").style.width = `${pct}%`;
 
-  badge.textContent = label;
-  badge.style.background = bg;
-  badge.style.color = fg;
-  hint.textContent = hintText;
-}
+        const meta = getGradeMeta(total, max);
+        const style = GRADE_STYLES[meta.label];
+        const badge = document.getElementById("grade-badge");
+        const hint = document.getElementById("grade-hint");
 
-function resetAll() {
-  if (!confirm('모든 점수와 체크를 초기화할까요?')) return;
-  assessments.forEach(a => {
-    state[a.id] = { score: 0, checks: {}, notes: '' };
-    const el = document.getElementById(`score-${a.id}`);
-    el.textContent = '0';
-    el.dataset.score = '0';
-    for (let i = 0; i < 4; i++) {
-      document.getElementById(`dot-${a.id}-${i}`).classList.remove('filled');
-    }
-    a.checks.forEach((_, i) => {
-      document.getElementById(`chk-${a.id}-${i}`).classList.remove('checked');
-      document.getElementById(`chklbl-${a.id}-${i}`).classList.remove('checked-text');
-    });
-    const notes = document.getElementById(`notes-${a.id}`);
-    if (notes) notes.value = '';
-    const detail = document.getElementById(`detail-${a.id}`);
-    detail.classList.remove('open');
-    document.getElementById(`expand-${a.id}`).classList.remove('open');
-  });
-  // Reset VO2
-  vo2State.score = 0; vo2State.vo2 = null; vo2State.grade = null;
-  ['v-age','v-height','v-weight','v-hr'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
-  document.getElementById('vo2-result-box').style.display = 'none';
-  document.getElementById('vo2-preview').textContent = '—';
-  const vScoreEl = document.getElementById('vo2-score-display');
-  if (vScoreEl) { vScoreEl.textContent = '0'; vScoreEl.dataset.score = '0'; }
-  for (let i = 0; i < 4; i++) { const d = document.getElementById('vd'+i); if(d) d.classList.remove('filled'); }
-  document.querySelectorAll('#vo2-table tbody tr').forEach(r => r.classList.remove('highlight-row'));
-  updateTotal();
-}
+        badge.textContent = meta.label;
+        badge.style.background = style.bg;
+        badge.style.color = style.fg;
+        hint.textContent = style.hint;
+      }
 
-function getScoreColor(score) {
-  if (score === 3) return { bg: '#EAF3DE', fg: '#3B6D11' };
-  if (score === 2) return { bg: '#E6F1FB', fg: '#185FA5' };
-  if (score === 1) return { bg: '#FAEEDA', fg: '#854F0B' };
-  return { bg: '#f2f1ed', fg: '#9a9a94' };
-}
+      function resetAll() {
+        if (!confirm("모든 점수와 체크를 초기화할까요?")) return;
+        assessments.forEach((a) => {
+          state[a.id] = { score: 0, checks: {}, notes: "" };
+          const el = document.getElementById(`score-${a.id}`);
+          el.textContent = "0";
+          el.dataset.score = "0";
+          for (let i = 0; i < 4; i++) {
+            document
+              .getElementById(`dot-${a.id}-${i}`)
+              .classList.remove("filled");
+          }
+          a.checks.forEach((_, i) => {
+            document
+              .getElementById(`chk-${a.id}-${i}`)
+              .classList.remove("checked");
+            document
+              .getElementById(`chklbl-${a.id}-${i}`)
+              .classList.remove("checked-text");
+          });
+          const notes = document.getElementById(`notes-${a.id}`);
+          if (notes) notes.value = "";
+          const detail = document.getElementById(`detail-${a.id}`);
+          detail.classList.remove("open");
+          document.getElementById(`expand-${a.id}`).classList.remove("open");
+        });
+        // Reset VO2
+        vo2State.score = 0;
+        vo2State.vo2 = null;
+        vo2State.grade = null;
+        ["v-age", "v-height", "v-weight", "v-hr"].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.value = "";
+        });
+        document.getElementById("vo2-result-box").style.display = "none";
+        document.getElementById("vo2-preview").textContent = "—";
+        const vScoreEl = document.getElementById("vo2-score-display");
+        if (vScoreEl) {
+          vScoreEl.textContent = "0";
+          vScoreEl.dataset.score = "0";
+        }
+        for (let i = 0; i < 4; i++) {
+          const d = document.getElementById("vd" + i);
+          if (d) d.classList.remove("filled");
+        }
+        document
+          .querySelectorAll("#vo2-table tbody tr")
+          .forEach((r) => r.classList.remove("highlight-row"));
+        updateTotal();
+      }
 
-function openReport() {
-  const total = assessments.reduce((sum, a) => sum + state[a.id].score, 0) + vo2State.score;
-  const container = document.getElementById('report-content');
-  let html = `<div style="font-size:13px;color:#5a5a56;margin-bottom:12px;">총점 <strong style="color:#1a1a18">${total}점 / 24점</strong></div>`;
+      function getScoreColor(score) {
+        if (score === 3) return { bg: "#EAF3DE", fg: "#3B6D11" };
+        if (score === 2) return { bg: "#E6F1FB", fg: "#185FA5" };
+        if (score === 1) return { bg: "#FAEEDA", fg: "#854F0B" };
+        return { bg: "#f2f1ed", fg: "#9a9a94" };
+      }
 
-  assessments.forEach(a => {
-    const s = state[a.id];
-    const { bg, fg } = getScoreColor(s.score);
-    const flagged = a.checks.filter((_, i) => s.checks[`${a.id}-${i}`]);
-    html += `<div class="report-line">
+      function openReport() {
+        const total = getTotal();
+        const container = document.getElementById("report-content");
+        let html = `<div style="font-size:13px;color:#5a5a56;margin-bottom:12px;">총점 <strong style="color:#1a1a18">${total}점 / 24점</strong></div>`;
+
+        assessments.forEach((a) => {
+          const s = state[a.id];
+          const { bg, fg } = getScoreColor(s.score);
+          const flagged = a.checks.filter((_, i) => s.checks[`${a.id}-${i}`]);
+          html += `<div class="report-line">
       <div>
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:${flagged.length || s.notes ? '4px' : '0'}">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:${flagged.length || s.notes ? "4px" : "0"}">
           <span class="report-name">${a.name}</span>
           <span class="report-score-badge" style="background:${bg};color:${fg}">${s.score}점</span>
         </div>
-        ${flagged.length ? `<div class="report-flags">⚠ ${flagged.join(' · ')}</div>` : ''}
-        ${s.notes ? `<div class="report-flags" style="color:#9a9a94">📝 ${s.notes}</div>` : ''}
+        ${flagged.length ? `<div class="report-flags">⚠ ${flagged.join(" · ")}</div>` : ""}
+        ${s.notes ? `<div class="report-flags" style="color:#9a9a94">📝 ${s.notes}</div>` : ""}
       </div>
     </div>`;
-  });
+        });
 
-  // VO2 row
-  const vGrade = vo2State.grade;
-  const vBg = vGrade ? vGrade.bg : '#f2f1ed';
-  const vFg = vGrade ? vGrade.fg : '#9a9a94';
-  const vInfo = vo2State.vo2 !== null ? `VO₂ Max: ${vo2State.vo2.toFixed(1)} ml/kg/min · ${vGrade ? vGrade.label : ''}` : '미입력';
-  html += `<div class="report-line">
+        // VO2 row
+        const vGrade = vo2State.grade;
+        const vBg = vGrade ? vGrade.bg : "#f2f1ed";
+        const vFg = vGrade ? vGrade.fg : "#9a9a94";
+        const vInfo =
+          vo2State.vo2 !== null
+            ? `VO₂ Max: ${vo2State.vo2.toFixed(1)} ml/kg/min · ${vGrade ? vGrade.label : ""}`
+            : "미입력";
+        html += `<div class="report-line">
     <div>
       <div style="display:flex;align-items:center;gap:8px;">
         <span class="report-name">VO₂ Max Test</span>
@@ -998,37 +1330,48 @@ function openReport() {
     </div>
   </div>`;
 
-  container.innerHTML = html;
-  document.getElementById('modal-overlay').classList.add('open');
-}
+        container.innerHTML = html;
+        document.getElementById("modal-overlay").classList.add("open");
+      }
 
-function closeModal(e) {
-  if (e.target === document.getElementById('modal-overlay')) closeModalDirect();
-}
-function closeModalDirect() {
-  document.getElementById('modal-overlay').classList.remove('open');
-}
+      function closeModal(e) {
+        if (e.target === document.getElementById("modal-overlay"))
+          closeModalDirect();
+      }
+      function closeModalDirect() {
+        document.getElementById("modal-overlay").classList.remove("open");
+      }
 
-function copyReport() {
-  const total = assessments.reduce((sum, a) => sum + state[a.id].score, 0) + vo2State.score;
-  const lines = [`베이직 펑션 평가 결과`, `총점: ${total} / 24점`, ``, ...assessments.map(a => {
-    const s = state[a.id];
-    const flagged = a.checks.filter((_, i) => s.checks[`${a.id}-${i}`]);
-    let line = `${a.id}. ${a.name}: ${s.score}점`;
-    if (flagged.length) line += `\n   ⚠ ${flagged.join(', ')}`;
-    if (s.notes) line += `\n   📝 ${s.notes}`;
-    return line;
-  }),
-  `8. VO₂ Max Test: ${vo2State.score}점` + (vo2State.vo2 !== null ? `\n   VO₂ Max: ${vo2State.vo2.toFixed(1)} ml/kg/min · ${vo2State.grade ? vo2State.grade.label : ''}` : '')
-  ];
-  navigator.clipboard.writeText(lines.join('\n')).then(() => {
-    alert('클립보드에 복사되었습니다!');
-  }).catch(() => {
-    alert('복사에 실패했습니다. 직접 선택해서 복사해 주세요.');
-  });
-}
+      function copyReport() {
+        const total = getTotal();
+        const lines = [
+          `베이직 펑션 평가 결과`,
+          `총점: ${total} / 24점`,
+          ``,
+          ...assessments.map((a) => {
+            const s = state[a.id];
+            const flagged = a.checks.filter((_, i) => s.checks[`${a.id}-${i}`]);
+            let line = `${a.id}. ${a.name}: ${s.score}점`;
+            if (flagged.length) line += `\n   ⚠ ${flagged.join(", ")}`;
+            if (s.notes) line += `\n   📝 ${s.notes}`;
+            return line;
+          }),
+          `8. VO₂ Max Test: ${vo2State.score}점` +
+            (vo2State.vo2 !== null
+              ? `\n   VO₂ Max: ${vo2State.vo2.toFixed(1)} ml/kg/min · ${vo2State.grade ? vo2State.grade.label : ""}`
+              : ""),
+        ];
+        navigator.clipboard
+          .writeText(lines.join("\n"))
+          .then(() => {
+            alert("클립보드에 복사되었습니다!");
+          })
+          .catch(() => {
+            alert("복사에 실패했습니다. 직접 선택해서 복사해 주세요.");
+          });
+      }
 
-buildItems();
-</script>
-</body>
+      buildItems();
+    </script>
+  </body>
 </html>

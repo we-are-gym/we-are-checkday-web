@@ -25,6 +25,6 @@
 
 ## 배포 아키텍처
 
-기트허브 페이지로 호스팅됩니다.
+기트허브 페이지로 호스팅됩니다. 진입점은 `index.html`이며, 화면 이동은 HTML 파일 경로 링크(`members.html`, `check-sessions.html`)로 이루어집니다.
 
 <!-- EOF -->
