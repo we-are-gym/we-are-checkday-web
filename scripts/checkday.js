@@ -51,7 +51,6 @@ function resetAll() {
 
 // ── 인라인 핸들러는 전역 스코프에서 해석되므로 window에 노출 (ESM은 모듈 스코프) ──
 window.calcVo2 = calcVo2;
-window.adjustWrapper = adj;
 window.adj = adj;
 window.toggleExpand = toggleExpand;
 window.updateTotal = updateTotal;

@@ -42,8 +42,4 @@ export const STATE = {
 	reset() {
 		this.scores.fill(0);
 	},
-	/** scores 배열 참조(직접 조작용) */
-	all() {
-		return this.scores;
-	},
 };

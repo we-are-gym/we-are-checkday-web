@@ -2,32 +2,41 @@
 
 ## 모듈 구조
 
-JS는 `<script>` 태그 전역 로딩(ESM 아님)이며, **의존성 순서에 따라 로드 순서가 결정**된다. 페이지마다 공용 모듈을 동일 순서로 먼저 로드하고 화면 전용 모듈을 뒤에 로드한다.
+JS는 **ES Modules**(`<script type="module">`)로 로드된다. 각 페이지는 진입점 모듈 하나만 `<script>` 태그로 로드하고, 나머지 의존성은 `import`/`export`로 모듈 그래프가 자동 구성된다. 페이지마다 공용 모듈을 수동 로드할 필요가 없다.
 
-### 공용 기초 모듈 (의존성 순서로 로드)
+### 공용 기초 모듈 (임포트 그래프의 잎)
 
-| 모듈              | 전역    | 책임                                 | 의존         |
-| ----------------- | ------- | ------------------------------------ | ------------ |
-| `utils-array.js`  | `ARR`   | 배열 합계·0 배열                     | 없음         |
-| `utils-string.js` | `STR`   | 날짜 포맷·숫자 2자리                 | 없음         |
-| `validation.js`   | `VAL`   | 수치 파싱·NaN 판별·범위 clamp        | 없음         |
-| `UI.js`           | `UI`    | DOM 조회·내용 설정·클래스 토글       | 없음         |
-| `states.js`       | `STATE` | 평가 점수 배열·총점·초기화 단일 소스 | `ARR`, `VAL` |
+| 모듈              | 내보내기 | 책임                                 | 의존                      |
+| ----------------- | -------- | ------------------------------------ | ------------------------- |
+| `utils-array.js`  | `ARR`    | 배열 합계·0 배열                     | 없음                      |
+| `utils-string.js` | `STR`    | 날짜 포맷·숫자 2자리                 | 없음                      |
+| `validation.js`   | `VAL`    | 수치 파싱·NaN 판별·범위 clamp        | 없음                      |
+| `constants.js`    | 상수     | 마법 숫자 중앙화 (점수·임계점·총점)  | 없음                      |
+| `UI.js`           | `UI`     | DOM 조회·내용 설정·클래스 토글       | 없음                      |
+| `states.js`       | `STATE`  | 평가 점수 배열·총점·초기화 단일 소스 | `ARR`, `VAL`, `constants` |
 
-### 도메인 모듈 (평가 화면 공용)
+### 평가 공용 모듈
 
-| 모듈                 | 용도                                                   | 의존                                                            |
-| -------------------- | ------------------------------------------------------ | --------------------------------------------------------------- |
-| `assessment-data.js` | 움직임 평가 7개 항목 데이터 (basic·checkday 공용)      | 없음                                                            |
-| `vo2.js`             | VO₂ Max 공식·정상치·등급 산정                          | 없음                                                            |
-| `grade.js`           | 총점 → 등급 라벨 산정                                  | 없음                                                            |
-| `inbody.js`          | 인바디 수치 → 상태 태그 분류·갱신                      | `UI`                                                            |
-| `evaluation.js`      | 평가 목록 구성·카드 빌드·점수/등급/총점 갱신           | `ASSESSMENT_ITEMS`, `ARR`, `VAL`, `UI`, `STATE`, `vo2`, `grade` |
-| `feedback.js`        | 피드백 CRUD·체크 행·데이터 수집                        | `ARR`, `UI`                                                     |
-| `report.js`          | 리포트 조립·클립보드 복사                              | `UI`, `STATE`, `evaluation`, `feedback`                         |
-| `checkday.js`        | 상담지 시작점 — 날짜 표기·초기화 오케스트레이션        | `STR`, `UI`, `STATE`, `evaluation`, `feedback`                  |
-| `basic.js`           | 베이직 펑션 전용 — 항목 카드·체크·VO₂·점수/등급·리포트 | `ASSESSMENT_ITEMS`, `ARR`, `VAL`, `UI`, `STATE`, `vo2`, `grade` |
-| `members.js`         | 회원 관리 — mock 목록·검색·등록·제거                   | `ARR`, `VAL`, `UI`                                              |
+| 모듈                 | 내보내기                                                               | 용도                                                                    | 의존                                                                                               |
+| -------------------- | ---------------------------------------------------------------------- | ----------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `assessment-data.js` | `ASSESSMENT_ITEMS`                                                     | 베이직 펑션 평가 7개 항목 데이터 (basic·checkday 공용)                  | 없음                                                                                               |
+| `vo2.js`             | `VO2_NORMS`, `calcVo2Value`, `getVo2Grade`                             | VO₂ Max 공식·정상치·등급 산정                                           | 없음                                                                                               |
+| `grade.js`           | `getGradeMeta`                                                         | 총점 → 등급 라벨 산정                                                   | `constants`                                                                                        |
+| `grade-styles.js`    | `GRADE_STYLES`, `VO2_GRADE_STYLES`, `getScoreColor`                    | 등급·VO₂ 라벨 스타일 공용                                               | 없음                                                                                               |
+| `inbody.js`          | `ibTag`, `updIb`                                                       | 인바디 수치 → 상태 태그 분류·갱신                                       | `UI`                                                                                               |
+| `evaluation.js`      | `evals`, `buildEvals`, `adj`, `toggleExpand`, `calcVo2`, `updateTotal` | 베이직 펑션 평가 목록·카드 빌드·점수/등급/총점 갱신                     | `assessment-data`, `arr`, `validation`, `UI`, `STATE`, `constants`, `vo2`, `grade`, `grade-styles` |
+| `feedback.js`        | `addFbItem`, `getFbLines` 등                                           | 체크동작 CRUD 등                                                        | `UI`                                                                                               |
+| `report.js`          | `openReport`, `copyReport`                                             | 리포트 조립·클립보드 복사 (공용 포맷터 `formatEvalLine`/`formatFbLine`) | `UI`, `STATE`, `evaluation`, `feedback`                                                            |
+
+### 화면 진입점 (엔트리 모듈)
+
+| 모듈          | 대상 화면                          | 역할                                                                      |
+| ------------- | ---------------------------------- | ------------------------------------------------------------------------- |
+| `checkday.js` | `checkday_1/2.html`                | 상담지 시작점 — 날짜 표기·초기화 오케스트레이션·인라인 핸들러 window 노출 | `STR`, `UI`, `STATE`, `evaluation`, `feedback`, `report`, `inbody`                 |
+| `basic.js`    | `basic_function_assessment_2.html` | 베이직 펑션 전용 — 항목·체크·VO₂·점수/등급·리포트                         | `assessment-data`, `arr`, `val`, `UI`, `vo2`, `grade`, `grade-styles`, `constants` |
+| `members.js`  | `members.html`                     | 회원 관리 — mock 목록·검색·등록·제거                                      | `UI`, `VAL`, `STR`                                                                 |
+
+> 참고: 인라인 `onclick`/`oninput` 핸들러는 전역 스코프에서 해석되므로, 진입점 모듈이 필요한 함수를 `window`에 노출한다.
 
 ## 화면 구성
 

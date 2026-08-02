@@ -10,8 +10,8 @@
 
 ## 코드 구조
 
-- **JS**: `scripts/` 아래 전역 `<script>` 로딩(ESM 아님). 공용 기초 모듈(`utils-array.js`, `utils-string.js`, `validation.js`, `UI.js`, `states.js`)을 의존성 순서로 먼저 로드한 뒤, 화면 전용 모듈(`checkday.js`, `basic.js`, `members.js` 등)을 뒤에 로드한다. 상세는 [데이터 아키텍처](.docs/architectures/DataArchitecture.md) 참조.
-- **CSS**: `styles/colors.css`(공용 색상 팔레트)와 `styles/font.css`(공용 글꼼)를 모든 페이지가 먼저 로드하고, 화면별 레이아웃(`layout-*.css`)을 뒤에 로드한다. 각 화면은 `:root` 색상·글꼼을 재정의하지 않는다.
+- **JS**: `scripts/` 아래 ES Modules(`<script type="module">`) 로딩. 각 페이지는 진입점 모듈(`checkday.js`, `basic.js`, `members.js`)만 로드하고 나머지는 `import`/`export` 모듈 그래프가 자동 구성. 공용 기초 모듈(`utils-array.js`, `utils-string.js`, `validation.js`, `constants.js`, `UI.js`, `states.js`)·평가 공용 모듈(`assessment-data.js`, `vo2.js`, `grade.js`, `grade-styles.js`, `inbody.js`, `evaluation.js`, `feedback.js`, `report.js`)을 공유한다. 상세는 [애플리케이션·아키텍처](.docs/architectures/AppArchitecture.md) 참조.
+- **CSS**: `styles/colors.css`(공용 색상 팔레트 + 라이트/다크 테마 심볼 배경)와 `styles/font.css`(공용 글꼴)를 모든 페이지가 먼저 로드하고, 화면별 레이아웃(`layout-*.css`)을 뒤에 로드한다. 각 화면은 `:root` 색상·글꼴을 재정의하지 않는다.
 
 ## 코드 스타일
 
