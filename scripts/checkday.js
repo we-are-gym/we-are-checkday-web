@@ -1,12 +1,6 @@
 // 파일 용도: 체크데이 상담지 공용 스크립트 — checkday_1·2가 공유
 // ── 날짜 ──
-const today = new Date();
-document.getElementById("date-badge").textContent =
-	today.getFullYear() +
-	"." +
-	String(today.getMonth() + 1).padStart(2, "0") +
-	"." +
-	String(today.getDate()).padStart(2, "0");
+document.getElementById("date-badge").textContent = STR.today();
 
 // ── 움직임 평가 데이터 (공용 모듈 7항목 + VO₂ 항목) ──
 const evals = ASSESSMENT_ITEMS.concat([
@@ -303,7 +297,7 @@ function toggleExpand(i) {
 }
 
 function adj(i, d) {
-	scores[i] = Math.max(0, Math.min(3, scores[i] + d));
+	scores[i] = VAL.bound(scores[i] + d, 0, 3);
 	document.getElementById(`sv-${i}`).textContent = scores[i];
 	for (let j = 0; j < 4; j++)
 		document
@@ -457,7 +451,7 @@ function resetAll() {
 
 // ── 결과 보기 공용 헬퍼 ──
 function getTotal() {
-	return scores.reduce((a, b) => a + b, 0);
+	return ARR.sum(scores);
 }
 
 function getIbData() {
