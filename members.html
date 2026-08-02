@@ -4,10 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>회원 관리 — 위아짐 체크데이</title>
-    <link rel="stylesheet" href="styles/main.css" />
+    <link rel="stylesheet" href="styles/colors.css" />
+    <link rel="stylesheet" href="styles/font.css" />
+    <link rel="stylesheet" href="styles/layout-members.css" />
   </head>
   <body>
-    <!-- 파일 용도: 회원 관리 화면 — 현재 『준비중』 placeholder -->
+    <!-- 파일 용도: 회원 관리 화면 — 회원 목록·검색·생성·제거 (mock 데이터) -->
     <div class="container">
       <header class="site-header">
         <a class="logo" href="index.html">
@@ -54,14 +56,77 @@
       </header>
 
       <main>
-        <div class="placeholder-card">
-          <h1>회원 관리</h1>
-          <p class="ready-msg">
-            『준비중』입니다. 회원 관리 화면은 곧 제공될 예정입니다.
-          </p>
-          <a class="btn" href="index.html">홈으로 돌아가기</a>
-        </div>
+        <!-- 검색 -->
+        <section class="member-toolbar">
+          <input
+            id="search-input"
+            class="member-search"
+            type="search"
+            placeholder="이름·전화번호·목표로 검색"
+            aria-label="회원 검색"
+          />
+          <span
+            class="member-count"
+            id="member-count"
+            aria-live="polite"
+          ></span>
+        </section>
+
+        <!-- 목록 -->
+        <table class="member-table">
+          <thead>
+            <tr>
+              <th>이름</th>
+              <th>성별</th>
+              <th>나이</th>
+              <th>전화번호</th>
+              <th>목표</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="member-list"></tbody>
+        </table>
+        <p class="member-empty" id="member-empty" hidden>
+          등록된 회원이 없습니다.
+        </p>
+
+        <!-- 생성 -->
+        <section class="member-create">
+          <h2 class="member-create-title">회원 등록</h2>
+          <form id="member-form" class="member-form">
+            <label class="member-field">
+              <span>이름</span>
+              <input id="f-name" type="text" required placeholder="이름" />
+            </label>
+            <label class="member-field">
+              <span>성별</span>
+              <select id="f-gender">
+                <option value="남">남</option>
+                <option value="여">여</option>
+              </select>
+            </label>
+            <label class="member-field">
+              <span>나이</span>
+              <input id="f-age" type="number" min="1" max="120" value="30" />
+            </label>
+            <label class="member-field">
+              <span>전화번호</span>
+              <input id="f-phone" type="tel" placeholder="010-0000-0000" />
+            </label>
+            <label class="member-field">
+              <span>목표</span>
+              <input id="f-goal" type="text" placeholder="체지방 감소" />
+            </label>
+            <button class="btn btn-primary" type="submit">회원 추가</button>
+          </form>
+        </section>
       </main>
     </div>
+
+    <script src="scripts/utils-array.js"></script>
+    <script src="scripts/utils-string.js"></script>
+    <script src="scripts/validation.js"></script>
+    <script src="scripts/UI.js"></script>
+    <script src="scripts/members.js"></script>
   </body>
 </html>
