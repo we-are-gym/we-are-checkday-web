@@ -1,4 +1,4 @@
-// 체크데이 상담지 전용 스크립트 — 공용 모듈(assessment-info.js·vo2.js)를 참조
+// 파일 용도: 체크데이 상담지 공용 스크립트 — checkday_1·2가 공유
 // ── 날짜 ──
 const today = new Date();
 document.getElementById('date-badge').textContent =
@@ -16,7 +16,7 @@ const feedbacks = [
   { name:'스쿼트', checks:['무릎 안쪽 무너짐','허리 말림','상체 과도한 숙임','뒤꿈치 들림','좌우 비대칭'] },
   { name:'힙힌지 / 데드리프트', checks:['등 굽음 (요추 굴곡)','무릎 과도한 굽힘','엉덩이 후방 이동 부족','바 몸에서 멀어짐'] },
   { name:'런지', checks:['앞무릎 내반','골반 틀어짐','상체 흔들림','발목 불안정'] },
-  { name:'푸시업', checks:['날개뼈 들뜸','요추 과신전','어깨 으쓱(승모근 과활성)','팔꿈치 과도한 외전'] },
+  { name:'푸시업', checks:['날개뼈 들뜸','요추 과신전','어깨 으쓱 (승모근 과활성)','팔꿈치 과도한 외전'] },
 ];
 
 const scores = new Array(evals.length).fill(0);
@@ -150,7 +150,7 @@ function adj(i,d) {
 }
 
 function updateTotal() {
-  const tot=scores.reduce((a,b)=>a+b,0);
+  const tot=getTotal();
   const max=24; const pct=Math.round(tot/max*100);
   document.getElementById('total-num').innerHTML=`${tot} <span>/ ${max}</span>`;
   document.getElementById('prog-fill').style.width=pct+'%';
@@ -241,30 +241,46 @@ function resetAll() {
   updateTotal();
 }
 
-// ── 결과 보기 ──
-function openReport() {
-  const name=document.getElementById('m-name').value||'(미입력)';
-  const session=document.getElementById('m-session').value;
-  const tot=scores.reduce((a,b)=>a+b,0);
-  const ib={w:document.getElementById('ib-w').value,m:document.getElementById('ib-m').value,
-             fat:document.getElementById('ib-fat').value,bmi:document.getElementById('ib-bmi').value,
-             bfp:document.getElementById('ib-bfp').value,bmr:document.getElementById('ib-bmr').value,
-             vis:document.getElementById('ib-vis').value};
-  const ibC=document.getElementById('ib-comment').value;
-  const goals=[...document.querySelectorAll('.goal-tag.on')].map(el=>el.textContent).join(' ');
-  const gMemo=document.getElementById('goal-memo').value;
-  const consult=document.getElementById('consult-memo').value;
+// ── 결과 보기 공용 헬퍼 ──
+function getTotal() {
+  return scores.reduce((a,b)=>a+b,0);
+}
 
+function getIbData() {
+  return {w:document.getElementById('ib-w').value,m:document.getElementById('ib-m').value,
+          fat:document.getElementById('ib-fat').value,bmi:document.getElementById('ib-bmi').value,
+          bfp:document.getElementById('ib-bfp').value,bmr:document.getElementById('ib-bmr').value,
+          vis:document.getElementById('ib-vis').value};
+}
+
+function getSelectedGoals() {
+  return [...document.querySelectorAll('.goal-tag.on')].map(el=>el.textContent).join(' ');
+}
+
+function getEvalLines(prefix) {
   const evalCards=document.querySelectorAll('#eval-cards .eval-item');
-  const evalLines=evals.map((e,i)=>{
+  return evals.map((e,i)=>{
     const checked=[...evalCards[i].querySelectorAll('.ctag.on')].map(el=>el.textContent);
     const memo=evalCards[i].querySelector('.eval-memo').value;
-    let s=`${e.name}: ${scores[i]}점`;
+    let s=`${prefix}${e.name}: ${scores[i]}점`;
     if(checked.length) s+=` [${checked.join(', ')}]`;
     if(memo) s+=` / ${memo}`;
     return s;
   });
+}
 
+// ── 결과 보기 ──
+function openReport() {
+  const name=document.getElementById('m-name').value||'(미입력)';
+  const session=document.getElementById('m-session').value;
+  const tot=getTotal();
+  const ib=getIbData();
+  const ibC=document.getElementById('ib-comment').value;
+  const goals=getSelectedGoals();
+  const gMemo=document.getElementById('goal-memo').value;
+  const consult=document.getElementById('consult-memo').value;
+
+  const evalLines=getEvalLines('');
   const fbData=getFbLines();
   const fbLines=fbData.map(fb=>`${fb.name}${fb.checked.length?' → '+fb.checked.join(', '):''}${fb.memo?' / '+fb.memo:''}`);
 
@@ -286,18 +302,10 @@ function openReport() {
 
 function copyReport() {
   const name=document.getElementById('m-name').value||'(미입력)';
-  const tot=scores.reduce((a,b)=>a+b,0);
-  const ib={w:document.getElementById('ib-w').value,m:document.getElementById('ib-m').value,
-             fat:document.getElementById('ib-fat').value,bmi:document.getElementById('ib-bmi').value,
-             bfp:document.getElementById('ib-bfp').value,bmr:document.getElementById('ib-bmr').value,
-             vis:document.getElementById('ib-vis').value};
-  const goals=[...document.querySelectorAll('.goal-tag.on')].map(el=>el.textContent).join(' ');
-  const evalCards=document.querySelectorAll('#eval-cards .eval-item');
-  const evalLines=evals.map((e,i)=>{
-    const ch=[...evalCards[i].querySelectorAll('.ctag.on')].map(el=>el.textContent);
-    const memo=evalCards[i].querySelector('.eval-memo').value;
-    return `  ${e.name}: ${scores[i]}점${ch.length?' ['+ch.join(', ')+']':''}${memo?' / '+memo:''}`;
-  });
+  const tot=getTotal();
+  const ib=getIbData();
+  const goals=getSelectedGoals();
+  const evalLines=getEvalLines('  ');
   const fbData=getFbLines();
   const fbLines=fbData.map(fb=>`  ${fb.name}${fb.checked.length?' → '+fb.checked.join(', '):''}${fb.memo?' / '+fb.memo:''}`);
   const lines=[
