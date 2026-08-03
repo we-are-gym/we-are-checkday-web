@@ -3,6 +3,7 @@
 import { UI } from "./UI.js";
 import { VAL } from "./validation.js";
 import { STR } from "./utils-string.js";
+import "./components/app-header.js";
 
 const MOCK_MEMBERS = [
   { id: 1, name: "김민준", gender: "남", age: 27, phone: "010-1234-1001", goal: "체지방 감소", registered: "2026-07-01" },

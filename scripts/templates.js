@@ -178,13 +178,17 @@ export const TPL = {
 			<table class="compare-table">
 				<thead><tr><th>항목</th><th>${escapeHtml(tgtLabel)}</th><th>${escapeHtml(curLabel)}</th><th>변화</th></tr></thead>
 				<tbody>
-					${rows.map((r) => `
+					${rows
+						.map(
+							(r) => `
 						<tr>
 							<td>${escapeHtml(r.label)}</td>
 							<td>${r.tgt}</td>
 							<td>${r.cur}</td>
 							<td>${r.delta}</td>
-						</tr>`).join("")}
+						</tr>`,
+						)
+						.join("")}
 				</tbody>
 			</table>`;
 	},

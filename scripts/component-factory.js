@@ -5,8 +5,9 @@
 /**
  * 컴포넌트 명세
  * @typedef {Object} ComponentSpec
+ * @property {(this: HTMLElement) => void} [connectedCallback] — innerHTML 재작성 전 1회 호출 (light-DOM 자식 캡처 등)
  * @property {(this: HTMLElement) => string} render — 현재 속성으로 마크업 문자열 반환 (내부 HTML 채움)
- * @property {(this: HTMLElement) => void} [onConnect] — 문서 연결 시 1회 호출 (초기 렌더·이벤트 바인딩)
+ * @property {(this: HTMLElement) => void} [onConnect] — 문서 연결 시 render 후 1회 호출 (이벤트 바인딩)
  * @property {(this: HTMLElement) => void} [refreshAfter] — refresh() 후 추가 처리
  */
 
@@ -23,6 +24,7 @@
 export function defineComponent(tag, spec) {
 	class Component extends HTMLElement {
 		connectedCallback() {
+			if (spec.connectedCallback) spec.connectedCallback.call(this);
 			this.refresh();
 			if (spec.onConnect) spec.onConnect.call(this);
 		}

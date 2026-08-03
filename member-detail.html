@@ -6,24 +6,18 @@
     <title>회원 상세 — 위아짐 체크데이</title>
     <link rel="stylesheet" href="styles/colors.css" />
     <link rel="stylesheet" href="styles/font.css" />
+    <link rel="stylesheet" href="styles/layout-shell.css" />
     <link rel="stylesheet" href="styles/layout-members.css" />
   </head>
   <body>
     <!-- 파일 용도: 회원 상세 화면 — 현재 『준비중』 placeholder -->
     <div class="container">
-      <header class="site-header">
-        <a class="logo" href="index.html">
-          <!-- 활성 로고: CSS 배경 이미지로 초록(밝은)&하양(어두운) 전환 -->
-          <span class="logo-mark" role="img" aria-label="위아짐 심볼"></span>
-          <span class="logo-text">
-            <span class="logo-name">위아짐</span>
-          </span>
-        </a>
+      <app-header>
         <nav class="nav">
           <a class="nav-link" href="members.html">회원 관리</a>
           <!-- <a class="nav-link" href="check-sessions.html">체크회차 관리</a> -->
         </nav>
-      </header>
+      </app-header>
 
       <main>
         <div class="placeholder-card">
@@ -36,5 +30,7 @@
         </div>
       </main>
     </div>
+
+    <script type="module" src="scripts/member-detail.js"></script>
   </body>
 </html>
