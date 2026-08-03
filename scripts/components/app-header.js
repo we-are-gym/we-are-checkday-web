@@ -5,6 +5,7 @@
 // 부수 임포트: app-gnb·app-help 등록까지 이 모듈 하나로 처리
 import { defineComponent } from "../component-factory.js";
 import { TPL } from "../templates.js";
+import { logout } from "../auth.js";
 import "./app-gnb.js";
 import "./app-help.js";
 
@@ -27,6 +28,7 @@ defineComponent("app-header", {
 		const logoutBtn = this.querySelector("[data-header-logout]");
 		if (logoutBtn) {
 			logoutBtn.addEventListener("click", () => {
+				logout();
 				window.location.href = "login.html";
 			});
 		}
