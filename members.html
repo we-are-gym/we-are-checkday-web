@@ -27,8 +27,8 @@
             id="search-input"
             class="member-search"
             type="search"
-            placeholder="이름·전화번호·목표로 검색"
-            aria-label="회원 검색"
+            placeholder="회원 이름으로 검색"
+            aria-label="회원 이름 검색"
           />
           <span
             class="member-count"
@@ -37,54 +37,11 @@
           ></span>
         </section>
 
-        <!-- 목록 -->
-        <table class="member-table">
-          <thead>
-            <tr>
-              <th>이름</th>
-              <th>성별</th>
-              <th>나이</th>
-              <th>전화번호</th>
-              <th>목표</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="member-list"></tbody>
-        </table>
+        <!-- 목록 (컴포넌트가 테이블 렌더링) -->
+        <member-table id="member-table"></member-table>
         <p class="member-empty" id="member-empty" hidden>
           등록된 회원이 없습니다.
         </p>
-
-        <!-- 생성 -->
-        <section class="member-create">
-          <h2 class="member-create-title">회원 등록</h2>
-          <form id="member-form" class="member-form">
-            <label class="member-field">
-              <span>이름</span>
-              <input id="f-name" type="text" required placeholder="이름" />
-            </label>
-            <label class="member-field">
-              <span>성별</span>
-              <select id="f-gender">
-                <option value="남">남</option>
-                <option value="여">여</option>
-              </select>
-            </label>
-            <label class="member-field">
-              <span>나이</span>
-              <input id="f-age" type="number" min="1" max="120" value="30" />
-            </label>
-            <label class="member-field">
-              <span>전화번호</span>
-              <input id="f-phone" type="tel" placeholder="010-0000-0000" />
-            </label>
-            <label class="member-field">
-              <span>목표</span>
-              <input id="f-goal" type="text" placeholder="체지방 감소" />
-            </label>
-            <button class="btn btn-primary" type="submit">회원 추가</button>
-          </form>
-        </section>
       </main>
     </div>
 
