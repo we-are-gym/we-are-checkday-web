@@ -1,13 +1,17 @@
-/* 파일 용도: 회원 관리 화면(members.html) 레이아웃 — 회원 목록·검색·등록
+/* 파일 용도: 회원 관리 화면(members.html) 레이아웃 — 페이지 머리·검색·회원 목록 테이블 (프로토타입 배치)
    헤더 셸은 layout-shell.css 참조, 색상·글꼴은 colors.css/font.css 참조 */
 .container { max-width:640px; margin:0 auto; }
 
-/* ── 도구 모음 (검색·건수) ── */
+/* ── 페이지 머리 (프로토타입 page-head 대응) ── */
+.page-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:1.1rem; flex-wrap:wrap; }
+.page-title { font-size:22px; font-weight:700; letter-spacing:-0.3px; }
+.page-sub { font-size:12.5px; color:var(--text3); margin-top:4px; }
+
+/* ── 도구 모음 (검색) ── */
 .member-toolbar { display:flex; align-items:center; gap:12px; margin-bottom:1.25rem; flex-wrap:wrap; }
 .member-search { flex:1; min-width:200px; padding:10px 14px; border:.5px solid var(--border2); border-radius:var(--r); background:var(--surface); color:var(--text); font-size:14px; font-family:inherit; outline:none; transition:border-color .15s; }
 .member-search:focus { border-color:var(--blue); }
 .member-search::placeholder { color:var(--text3); }
-.member-count { font-size:12px; color:var(--text3); }
 
 /* ── 회원 목록 ── */
 .member-table { width:100%; border-collapse:collapse; background:var(--surface); border:.5px solid var(--border); border-radius:var(--rlg); overflow:hidden; }
@@ -17,7 +21,8 @@
 .member-row { cursor:pointer; transition:background .12s; }
 .member-row:hover { background:var(--surface2); }
 .member-row:focus-visible { outline:2px solid var(--blue); outline-offset:-2px; }
-.member-name { font-weight:600; color:var(--text); }
+/* 이름은 프로토타입처럼 굵게 (기본 셀보다 강조) */
+.member-name { font-weight:700; color:var(--text); }
 .member-gender { font-size:12px; color:var(--text2); }
 .member-goal { font-size:12px; color:var(--blue-fg); }
 .member-trainer { font-size:12px; color:var(--text2); }
