@@ -162,6 +162,18 @@ UI.delegate(document, "click", "[data-del-record]", (e, el) => {
 	}));
 	refreshRecords();
 });
+// 기록 행 클릭/키보드 → 조회 화면 (삭제 버튼은 제외)
+const goView = (el) => (window.location.href = `check-doc-view.html?docID=${el.dataset.recordId}`);
+UI.delegate(document, "click", ".record-row", (e, el) => {
+	if (e.target.closest("[data-del-record]")) return;
+	goView(el);
+});
+UI.delegate(document, "keydown", ".record-row", (e, el) => {
+	if ((e.key === "Enter" || e.key === " ") && !e.target.closest("[data-del-record]")) {
+		e.preventDefault();
+		goView(el);
+	}
+});
 const tabs = UI.queryAll(".tab-btn");
 tabs.forEach((btn) => {
 	btn.addEventListener("click", () => switchTab(btn.dataset.tab));
