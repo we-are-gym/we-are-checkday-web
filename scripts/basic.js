@@ -10,6 +10,7 @@ import { calcVo2Value, determineVO2Grade } from "./vo2.js";
 import { getGradeMeta } from "./grade.js";
 import { GRADE_STYLES, VO2_GRADE_STYLES, getScoreColor } from "./grade-styles.js";
 import { SCORE_MIN, SCORE_MAX, DOT_COUNT, MOTION_TOTAL_MAX } from "./constants.js";
+import "./components/app-header.js";
 
 const assessments = ASSESSMENT_ITEMS.map((item, idx) => ({
 	id: idx + 1,

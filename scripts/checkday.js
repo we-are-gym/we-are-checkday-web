@@ -8,6 +8,7 @@ import { evals, updateVO2Disp, renderBasicFunctionCards, toggleBasicFunctionDeta
 import { appendCheckMovementItemRow, appendCheckMovement, renderCheckMovementCards, resetFeedbacks } from "./feedback.js";
 import { openReportModal, copyReportToClipboard } from "./report.js";
 import { updateInbodyTags } from "./inbody.js";
+import "./components/app-header.js";
 
 // ── 날짜 ──
 UI.setText("date-badge", STR.today());

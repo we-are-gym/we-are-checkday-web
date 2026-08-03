@@ -242,9 +242,10 @@ export const TPL = {
 
 	/**
 	 * 도움말 모달 (app-help 컴포넌트 내부용)
+	 * @param {string} [content] 도움말 본문 HTML (light-DOM 자식 캡처 결과)
 	 * @returns {string}
 	 */
-	helpModal() {
+	helpModal(content = "") {
 		return `
 			<div class="help-overlay" data-help-overlay hidden>
 				<div class="help-modal" role="dialog" aria-modal="true" aria-labelledby="help-title">
@@ -252,7 +253,7 @@ export const TPL = {
 						<h3 id="help-title">도움말</h3>
 						<button type="button" class="link-btn" data-help-close aria-label="닫기">✕</button>
 					</div>
-					<div class="help-body"></div>
+					<div class="help-body">${content}</div>
 				</div>
 			</div>`;
 	},

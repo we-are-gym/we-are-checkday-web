@@ -12,8 +12,12 @@
   <body>
     <!-- 파일 용도: 회원 관리 화면 — 회원 목록·검색·생성·제거 (mock 데이터) -->
     <div class="container">
-      <app-header>
+      <app-header logout crumb="회원 관리">
         <app-gnb active="members"></app-gnb>
+        <app-help>
+          <h4>회원 관리</h4>
+          <p>회원 행을 클릭하면 상세 화면으로 이동합니다. 제거 버튼은 즉시 목록에서 삭제합니다.</p>
+        </app-help>
       </app-header>
 
       <main>
