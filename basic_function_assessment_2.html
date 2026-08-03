@@ -6,11 +6,20 @@
     <title>베이직 펑션 평가지</title>
     <link rel="stylesheet" href="styles/colors.css" />
     <link rel="stylesheet" href="styles/font.css" />
+    <link rel="stylesheet" href="styles/layout-shell.css" />
     <link rel="stylesheet" href="styles/layout-basic-function.css" />
   </head>
   <body>
     <!-- 파일 용도: 베이직 펑션 평가화면 — 7개 움직임 항목 + VO₂ Max 심폐 평가 입력과 결과 조회 -->
     <div class="container">
+      <app-header logout crumb="베이직 펑션 평가">
+        <app-gnb></app-gnb>
+        <app-help>
+          <h4>베이직 펑션 평가</h4>
+          <p>각 항목 0–3점 · 7개 항목 + VO₂ Max = 24점 만점. 항목 카드의 +/− 버튼으로 점수를 조절합니다.</p>
+          <p>VO₂ Max Test 카드에 연령·신장·체중·1분 회복 심박수를 입력하면 등급과 권장 점수가 자동 계산됩니다.</p>
+        </app-help>
+      </app-header>
       <div class="page-header">
         <h1>베이직 펑션 평가지</h1>
         <p>각 항목당 0–3점 · 총 8개 항목 · 24점 만점</p>
@@ -33,7 +42,7 @@
             <div
               class="grade-badge"
               id="grade-badge"
-              style="background: #f2f1ed; color: #9a9a94"
+              style="background: var(--surface2); color: var(--text3)"
             >
               평가 전
             </div>

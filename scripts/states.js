@@ -16,7 +16,7 @@ export const STATE = {
 	 * @param {number} max 총점 최댓값
 	 */
 	init(count, max) {
-		this.scores = ARR.zeros(count);
+		this.scores = ARR.createZeroArray(count);
 		this.max = max;
 	},
 	/**
@@ -32,10 +32,10 @@ export const STATE = {
 	 * @param {number} v
 	 */
 	set(i, v) {
-		this.scores[i] = VAL.bound(v, SCORE_MIN, SCORE_MAX);
+		this.scores[i] = VAL.clamp(v, SCORE_MIN, SCORE_MAX);
 	},
 	/** 전체 점수 합계 */
-	total() {
+	getTotal() {
 		return ARR.sum(this.scores);
 	},
 	/** 모든 점수를 0으로 */

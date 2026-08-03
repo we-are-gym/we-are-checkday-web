@@ -21,7 +21,7 @@ function formatFbLine(fb, prefix = "") {
 
 // ── 결과 보기 공용 헬퍼 ──
 export function getTotal() {
-	return STATE.total();
+	return STATE.getTotal();
 }
 
 function getIbData() {

@@ -13,7 +13,7 @@ export const UI = {
 	 * @param {string} sel
 	 * @returns {Element | null}
 	 */
-	q(sel) {
+	queryOne(sel) {
 		return document.querySelector(sel);
 	},
 	/**
@@ -21,7 +21,7 @@ export const UI = {
 	 * @param {string} sel
 	 * @returns {Array<Element>}
 	 */
-	all(sel) {
+	queryAll(sel) {
 		return [...document.querySelectorAll(sel)];
 	},
 	/**
@@ -53,6 +53,8 @@ export const UI = {
 	 * 루트에 이벤트 위임 리스너 등록 — root 아래에서 `selector`와 일치하는
 	 * 자손이 이벤트를 받으면 handler(e, 해당 요소)를 호출한다.
 	 * (인라인 onclick 폐기·window 오염 제거를 위한 공용 대체 API)
+	 * 접근성 확장: 키보드(Enter/Space) 대응이 필요한 role=button/링크 요소는
+	 * 호출부에서 "keydown" 타입으로 별도 위임한다.
 	 * @param {Element|string} root 위임 루트(요소·선택자 또는 "document")
 	 * @param {string} type 리스너 종류 (예: "click", "input")
 	 * @param {string} selector 일치 기준 자손 선택자
@@ -63,7 +65,7 @@ export const UI = {
 			root === document || root === "document"
 				? document
 				: typeof root === "string"
-					? this.q(root)
+					? this.queryOne(root)
 					: root;
 		if (!base) return;
 		base.addEventListener(type, (e) => {

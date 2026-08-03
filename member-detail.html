@@ -6,35 +6,65 @@
     <title>회원 상세 — 위아짐 체크데이</title>
     <link rel="stylesheet" href="styles/colors.css" />
     <link rel="stylesheet" href="styles/font.css" />
-    <link rel="stylesheet" href="styles/layout-members.css" />
+    <link rel="stylesheet" href="styles/layout-shell.css" />
+    <link rel="stylesheet" href="styles/layout-member-detail.css" />
   </head>
   <body>
-    <!-- 파일 용도: 회원 상세 화면 — 현재 『준비중』 placeholder -->
+    <!-- 파일 용도: 회원 상세 조회 및 체크기록 비교 — ?memberID= 로 회원을 조회한다 -->
     <div class="container">
-      <header class="site-header">
-        <a class="logo" href="index.html">
-          <!-- 활성 로고: CSS 배경 이미지로 초록(밝은)&하양(어두운) 전환 -->
-          <span class="logo-mark" role="img" aria-label="위아짐 심볼"></span>
-          <span class="logo-text">
-            <span class="logo-name">위아짐</span>
-          </span>
-        </a>
-        <nav class="nav">
-          <a class="nav-link" href="members.html">회원 관리</a>
-          <!-- <a class="nav-link" href="check-sessions.html">체크회차 관리</a> -->
-        </nav>
-      </header>
+      <app-header logout crumb="회원 관리">
+        <app-gnb active="members"></app-gnb>
+        <app-help>
+          <h4>회원 상세</h4>
+          <p>회원 정보 카드에서 이름·성별·담당 트레이너·운동 목표를 확인합니다.</p>
+          <p>체크 기록 탭: 회차별 기록 목록. 변화 분석 탭: 두 회차의 인바디·움직임 점수를 비교합니다.</p>
+        </app-help>
+      </app-header>
 
       <main>
-        <div class="placeholder-card">
-          <h1>회원 상세</h1>
-          <p class="ready-msg">
-            『준비중』입니다. 회원의 상세 정보·체크데이 이력은 곧 제공될
-            예정입니다.
-          </p>
-          <a class="btn" href="members.html">회원 목록으로 돌아가기</a>
+        <!-- 회원 정보 카드 -->
+        <section class="info-card" aria-label="회원 정보">
+          <div class="info-row"><span class="info-label">이름</span><span class="info-value" id="md-name">―</span></div>
+          <div class="info-row"><span class="info-label">성별</span><span class="info-value" id="md-gender">―</span></div>
+          <div class="info-row"><span class="info-label">담당 트레이너</span><span class="info-value" id="md-trainer">―</span></div>
+          <div class="info-row"><span class="info-label">운동 목표</span><span class="info-value" id="md-goal">―</span></div>
+        </section>
+
+        <!-- 지표 카드 + 스파크라인 4종 -->
+        <section class="stat-cards" id="stat-cards" aria-label="회차별 추세"></section>
+
+        <!-- 탭 -->
+        <div class="detail-tabs" role="tablist" aria-label="회원 상세 탭">
+          <button class="tab-btn" role="tab" aria-selected="true" aria-controls="panel-records" data-tab="records">체크 기록</button>
+          <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-compare" data-tab="compare" tabindex="-1">변화 분석</button>
         </div>
+
+        <!-- 체크 기록 패널 -->
+        <section id="panel-records" role="tabpanel" aria-labelledby="tab-records">
+          <div class="records-head">
+            <h2 class="panel-title">체크 기록</h2>
+            <a class="btn btn-primary btn-sm" id="new-record-btn" href="check-doc-new.html">＋ 체크기록 작성</a>
+          </div>
+          <div class="record-list" id="record-list"></div>
+        </section>
+
+        <!-- 변화 분석 패널 -->
+        <section id="panel-compare" role="tabpanel" aria-labelledby="tab-compare" hidden>
+          <div class="compare-controls">
+            <label class="compare-field">
+              <span>기준 (이전)</span>
+              <select id="cmp-tgt" aria-label="기준 회차 선택"></select>
+            </label>
+            <label class="compare-field">
+              <span>비교 (최신)</span>
+              <select id="cmp-cur" aria-label="비교 회차 선택"></select>
+            </label>
+          </div>
+          <div class="compare-result" id="compare-result"></div>
+        </section>
       </main>
     </div>
+
+    <script type="module" src="scripts/member-detail.js"></script>
   </body>
 </html>

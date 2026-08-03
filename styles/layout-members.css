@@ -1,18 +1,6 @@
-/* 파일 용도: 회원 관리 화면(members.html) 레이아웃 — 공통 셸 + 회원 목록·검색·등록
-   색상·글꼴은 colors.css/font.css 참조 */
+/* 파일 용도: 회원 관리 화면(members.html) 레이아웃 — 회원 목록·검색·등록
+   헤더 셸은 layout-shell.css 참조, 색상·글꼴은 colors.css/font.css 참조 */
 .container { max-width:640px; margin:0 auto; }
-
-/* ── 헤더 (공통 셸) ── */
-.site-header { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:2rem; flex-wrap:wrap; }
-.logo { display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--text); }
-.logo-mark { width:40px; height:40px; flex-shrink:0; }
-.logo-text { display:flex; flex-direction:column; }
-.logo-name { font-size:20px; font-weight:700; letter-spacing:-0.3px; line-height:1.1; }
-.logo-sub { font-size:11px; color:var(--text3); }
-.nav { display:flex; gap:8px; flex-wrap:wrap; }
-.nav-link { font-size:13px; font-weight:500; padding:8px 14px; border-radius:99px; border:.5px solid var(--border2); background:var(--surface); color:var(--text2); text-decoration:none; transition:background .15s,color .15s; }
-.nav-link:hover { background:var(--surface2); color:var(--text); }
-.nav-link.active { background:var(--blue-bg); color:var(--blue-fg); border-color:var(--blue-fg); }
 
 /* ── 도구 모음 (검색·건수) ── */
 .member-toolbar { display:flex; align-items:center; gap:12px; margin-bottom:1.25rem; flex-wrap:wrap; }
@@ -31,15 +19,15 @@
 .member-row:focus-visible { outline:2px solid var(--blue); outline-offset:-2px; }
 .member-name { font-weight:600; color:var(--text); }
 .member-gender { font-size:12px; color:var(--text2); }
-.member-age { font-size:12px; color:var(--text2); }
-.member-phone { font-family:ui-monospace,monospace; font-size:12px; color:var(--text2); }
 .member-goal { font-size:12px; color:var(--blue-fg); }
+.member-trainer { font-size:12px; color:var(--text2); }
+.member-count { font-size:12px; color:var(--text3); }
 .member-remove { padding:4px 10px; border:.5px solid var(--red-bg); border-radius:var(--r); background:var(--red-bg); color:var(--red-fg); font-size:12px; font-weight:500; font-family:inherit; cursor:pointer; transition:filter .15s; }
 .member-remove:hover { filter:brightness(.95); }
 .member-empty { text-align:center; font-size:13px; color:var(--text3); padding:2rem 0; }
 
-/* ── 회원 등록 ── */
-.member-create { margin-top:2rem; background:var(--surface); border:.5px solid var(--border); border-radius:var(--rlg); padding:1.25rem; }
+/* ── 회원 등록 (member-create 공용) ── */
+.member-create { margin-top:1rem; background:var(--surface); border:.5px solid var(--border); border-radius:var(--rlg); padding:1.25rem; }
 .member-create-title { font-size:16px; font-weight:600; margin-bottom:1rem; }
 .member-form { display:flex; flex-direction:column; gap:12px; }
 .member-field { display:flex; flex-direction:column; gap:5px; }
@@ -48,13 +36,9 @@
 .member-field select { padding:9px 11px; border:.5px solid var(--border2); border-radius:var(--r); background:var(--surface2); color:var(--text); font-size:14px; font-family:inherit; outline:none; transition:border-color .15s; }
 .member-field input:focus,
 .member-field select:focus { border-color:var(--blue); background:var(--surface); }
-.btn { display:inline-block; padding:10px 18px; border-radius:var(--r); font-size:13px; font-weight:500; border:.5px solid var(--border2); background:var(--surface); color:var(--text2); text-decoration:none; transition:background .15s; cursor:pointer; }
-.btn:hover { background:var(--surface2); }
-.btn-primary { background:var(--blue); color:#fff; border-color:var(--blue); }
-.btn-primary:hover { background:var(--blue-fg); }
+.member-form-actions { display:flex; gap:10px; margin-top:4px; }
 
 @media (max-width:480px) {
-  .site-header { flex-direction:column; align-items:flex-start; }
   .member-table { font-size:12px; }
   .member-table th:nth-child(4),
   .member-table td:nth-child(4) { display:none; }

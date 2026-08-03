@@ -6,25 +6,19 @@
     <title>회원 관리 — 위아짐 체크데이</title>
     <link rel="stylesheet" href="styles/colors.css" />
     <link rel="stylesheet" href="styles/font.css" />
+    <link rel="stylesheet" href="styles/layout-shell.css" />
     <link rel="stylesheet" href="styles/layout-members.css" />
   </head>
   <body>
     <!-- 파일 용도: 회원 관리 화면 — 회원 목록·검색·생성·제거 (mock 데이터) -->
     <div class="container">
-      <header class="site-header">
-        <a class="logo" href="index.html">
-          <!-- 활성 로고: CSS 배경 이미지로 초록(밝은)&하양(어두운) 전환 -->
-          <span class="logo-mark" role="img" aria-label="위아짐 심볼"></span>
-          <span class="logo-text">
-            <span class="logo-name">위아짐</span>
-            <!-- <span class="logo-sub">체크데이</span> -->
-          </span>
-        </a>
-        <nav class="nav">
-          <a class="nav-link active" href="members.html">회원 관리</a>
-          <!-- <a class="nav-link" href="check-sessions.html">체크회차 관리</a> -->
-        </nav>
-      </header>
+      <app-header logout crumb="회원 관리">
+        <app-gnb active="members"></app-gnb>
+        <app-help>
+          <h4>회원 관리</h4>
+          <p>회원 행을 클릭하면 상세 화면으로 이동합니다. 제거 버튼은 즉시 목록에서 삭제합니다.</p>
+        </app-help>
+      </app-header>
 
       <main>
         <!-- 검색 -->
@@ -33,9 +27,10 @@
             id="search-input"
             class="member-search"
             type="search"
-            placeholder="이름·전화번호·목표로 검색"
-            aria-label="회원 검색"
+            placeholder="회원 이름으로 검색"
+            aria-label="회원 이름 검색"
           />
+          <a class="btn btn-primary" href="member-create.html">＋ 회원 정보 생성</a>
           <span
             class="member-count"
             id="member-count"
@@ -43,54 +38,11 @@
           ></span>
         </section>
 
-        <!-- 목록 -->
-        <table class="member-table">
-          <thead>
-            <tr>
-              <th>이름</th>
-              <th>성별</th>
-              <th>나이</th>
-              <th>전화번호</th>
-              <th>목표</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="member-list"></tbody>
-        </table>
+        <!-- 목록 (컴포넌트가 테이블 렌더링) -->
+        <member-table id="member-table"></member-table>
         <p class="member-empty" id="member-empty" hidden>
           등록된 회원이 없습니다.
         </p>
-
-        <!-- 생성 -->
-        <section class="member-create">
-          <h2 class="member-create-title">회원 등록</h2>
-          <form id="member-form" class="member-form">
-            <label class="member-field">
-              <span>이름</span>
-              <input id="f-name" type="text" required placeholder="이름" />
-            </label>
-            <label class="member-field">
-              <span>성별</span>
-              <select id="f-gender">
-                <option value="남">남</option>
-                <option value="여">여</option>
-              </select>
-            </label>
-            <label class="member-field">
-              <span>나이</span>
-              <input id="f-age" type="number" min="1" max="120" value="30" />
-            </label>
-            <label class="member-field">
-              <span>전화번호</span>
-              <input id="f-phone" type="tel" placeholder="010-0000-0000" />
-            </label>
-            <label class="member-field">
-              <span>목표</span>
-              <input id="f-goal" type="text" placeholder="체지방 감소" />
-            </label>
-            <button class="btn btn-primary" type="submit">회원 추가</button>
-          </form>
-        </section>
       </main>
     </div>
 

@@ -71,3 +71,15 @@ export const ASSESSMENT_ITEMS = [
 		],
 	},
 ];
+
+// 파일 용도: 움직임 평가 8개 항목 전체 — 공용 7개 + VO₂ 항목 (check-doc 화면 공용)
+// evaluation.js·check-doc-new에서 그대로 사용
+export const ASSESSMENT_ITEMS_FULL = [
+	...ASSESSMENT_ITEMS,
+	{
+		name: "VO₂ Max (스텝 테스트)",
+		desc: "심폐 지구력",
+		checks: ["1분 HR 과도하게 높음", "HRR 회복 불량"],
+		vo2: true,
+	},
+];

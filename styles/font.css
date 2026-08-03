@@ -2,7 +2,7 @@
    사용: 모든 페이지가 이 파일을 colors.css 다음으로 링크 */
 
 :root {
-	--font-sans: -apple-system, "Pretendard", "Apple SD Gothic Neo", sans-serif;
+	--font-sans: -apple-system, BlinkMacSystemFont, "Pretendard", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
 }
 
 body {

@@ -5,7 +5,7 @@ export const VAL = {
 	 * @param {string} v
 	 * @returns {number}
 	 */
-	num(v) {
+	parseToNum(v) {
 		return parseFloat(v);
 	},
 	/**
@@ -31,7 +31,7 @@ export const VAL = {
 	 * @param {number} max
 	 * @returns {number}
 	 */
-	bound(v, min, max) {
+	clamp(v, min, max) {
 		return Math.max(min, Math.min(max, v));
 	},
 };
