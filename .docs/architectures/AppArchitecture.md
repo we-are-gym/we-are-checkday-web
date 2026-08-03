@@ -50,3 +50,17 @@ JS는 **ES Modules**(`<script type="module">`)로 로드된다. 각 페이지는
 | 체크회차 관리      | `check-sessions.html`                 | placeholder('준비중')                                 |
 | 체크데이 상담지    | `checkday_1.html` / `checkday_2.html` | 동일 상태·모듈 공유, 파일 자체는 각각 유지            |
 | 베이직 펑션 평가지 | `basic_function_assessment_2.html`    | 베이직 7항목 + VO₂ Max Test                           |
+
+## 상태 구조
+
+평가 화면(checkday)은 `STATE`(단일 소스)가 평가 점수를 관리한다.
+
+- `STATE.init(count, max)` — `count`만큼 0점 배열 + 총점 상한(`max`) 초기화
+- `STATE.get(i)` / `STATE.set(i, v)` — 점수 조회·설정(set 시 0~3 clamp)
+- `STATE.total()` — 합계, `STATE.reset()` — 전부 0
+
+회원 관리(`members.js`)는 `MOCK_MEMBERS`에서 복제한 `members` 배열을 메모리 상태로 유지하며, 재로딩 시 초기 목록으로 복원된다.
+
+## 영속성
+
+현재 **영속 저장소 없음** — 모든 상태는 브라우저 메모리(mock/세션)에만 존재한다. 새로고침 시 회원 변경분이 초기값으로 되돌아간다. (추후 `localStorage`/백엔드 연동 시 확장 예정)
