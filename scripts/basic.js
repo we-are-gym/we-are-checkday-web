@@ -1,12 +1,12 @@
 // 파일 용도: 베이직 펑션 평가 전용 스크립트 — 항목 카드·체크·VO₂ Max Test·점수/등급·리포트 (basic_function_assessment_2 전용)
-// DEPENDS: ASSESSMENT_ITEMS, ARR, VAL, UI, calcVo2Value, getVo2Grade, getGradeMeta + 상수 모듈
+// DEPENDS: ASSESSMENT_ITEMS, ARR, VAL, UI, calcVo2Value, determineVO2Grade, getGradeMeta + 상수 모듈
 // Warning: `checkday.js`와 기능 중복 많음 (본 화면은 별도 상태·렌더링 구조 사용)
 import { ASSESSMENT_ITEMS } from "./assessment-data.js";
 import { ARR } from "./utils-array.js";
 import { VAL } from "./validation.js";
 import { UI } from "./UI.js";
 import { TPL } from "./templates.js";
-import { calcVo2Value, getVo2Grade } from "./vo2.js";
+import { calcVo2Value, determineVO2Grade } from "./vo2.js";
 import { getGradeMeta } from "./grade.js";
 import { GRADE_STYLES, VO2_GRADE_STYLES, getScoreColor } from "./grade-styles.js";
 import { SCORE_MIN, SCORE_MAX, DOT_COUNT, MOTION_TOTAL_MAX } from "./constants.js";
@@ -31,17 +31,17 @@ function toggleVo2() {
 	arrow.style.transform = open ? "rotate(180deg)" : "";
 }
 
-function calcVo2() {
-	const age = VAL.num(UI.byId("v-age").value);
-	const height = VAL.num(UI.byId("v-height").value);
-	const weight = VAL.num(UI.byId("v-weight").value);
-	const hr = VAL.num(UI.byId("v-hr").value);
+function updateVO2Disp() {
+	const age = VAL.parseToNum(UI.byId("v-age").value);
+	const height = VAL.parseToNum(UI.byId("v-height").value);
+	const weight = VAL.parseToNum(UI.byId("v-weight").value);
+	const hr = VAL.parseToNum(UI.byId("v-hr").value);
 	if (VAL.anyNaN(age, height, weight, hr)) return;
 
 	const vr = calcVo2Value(age, height, weight, hr);
 	vo2State.vo2 = vr;
 
-	const gradeInfo = getVo2Grade(vr, age);
+	const gradeInfo = determineVO2Grade(vr, age);
 	vo2State.grade = gradeInfo;
 	const color = VO2_GRADE_STYLES[gradeInfo.grade];
 
@@ -62,7 +62,7 @@ function calcVo2() {
 }
 
 function highlightNormTable(grade, col) {
-	const rows = UI.all("#vo2-table tbody tr");
+	const rows = UI.queryAll("#vo2-table tbody tr");
 	rows.forEach((row) => {
 		row.classList.remove("highlight-row");
 		// Reset all cell backgrounds
@@ -72,7 +72,7 @@ function highlightNormTable(grade, col) {
 			td.style.fontWeight = "";
 		});
 	});
-	const targetRow = UI.q(`#vo2-table tr[data-grade="${grade}"]`);
+	const targetRow = UI.queryOne(`#vo2-table tr[data-grade="${grade}"]`);
 	if (targetRow) {
 		targetRow.classList.add("highlight-row");
 		// Also highlight the age column cell
@@ -88,7 +88,7 @@ function setVo2Score(delta, suggested) {
 	if (typeof suggested === "number") {
 		vo2State.score = suggested;
 	} else {
-		vo2State.score = VAL.bound(vo2State.score + delta, SCORE_MIN, SCORE_MAX);
+		vo2State.score = VAL.clamp(vo2State.score + delta, SCORE_MIN, SCORE_MAX);
 	}
 	const el = UI.byId("vo2-score-display");
 	el.textContent = vo2State.score;
@@ -103,7 +103,7 @@ function setVo2Score(delta, suggested) {
 function buildItems() {
 	const container = UI.byId("items-container");
 	assessments.forEach((a) => {
-		const dotsHTML = ARR.zeros(DOT_COUNT)
+		const dotsHTML = ARR.createZeroArray(DOT_COUNT)
 			.map((_, i) => `<div class="dot" id="dot-${a.id}-${i}"></div>`)
 			.join("");
 		const checksHTML = a.checks
@@ -123,9 +123,9 @@ function buildItems() {
 	});
 }
 
-function toggleBasicFunctionDetail(id) {
-	const detail = UI.byId(`detail-${id}`);
-	const btn = UI.byId(`expand-${id}`);
+function toggleBasicFunctionDetail(index) {
+	const detail = UI.byId(`detail-${index}`);
+	const btn = UI.byId(`expand-${index}`);
 	detail.classList.toggle("open");
 	btn.classList.toggle("open");
 }
@@ -141,7 +141,7 @@ function toggleCheck(id, idx) {
 
 function adjustScore(id, delta) {
 	const s = state[id];
-	s.score = VAL.bound(s.score + delta, SCORE_MIN, SCORE_MAX);
+	s.score = VAL.clamp(s.score + delta, SCORE_MIN, SCORE_MAX);
 	const el = UI.byId(`score-${id}`);
 	el.textContent = s.score;
 	el.dataset.score = s.score;
@@ -230,7 +230,7 @@ function resetEntireForm() {
 		const d = UI.byId("vd" + i);
 		if (d) d.classList.remove("filled");
 	}
-	UI.all("#vo2-table tbody tr").forEach((r) =>
+	UI.queryAll("#vo2-table tbody tr").forEach((r) =>
 		r.classList.remove("highlight-row"),
 	);
 	updateTotal();
@@ -350,7 +350,7 @@ UI.delegate(document, "input", ".notes-area", (e, el) =>
 	saveNotes(Number(el.dataset.id), el.value),
 );
 // VO₂ 입력 계산
-UI.delegate(document, "input", ".vo2-input", () => calcVo2());
+UI.delegate(document, "input", ".vo2-input", () => updateVO2Disp());
 // 결과 모달 배경(overlay 자신) 클릭 시 닫기
 UI.delegate(document, "click", "#modal-overlay", (e, el) => {
 	if (e.target === el) closeModalDirect();

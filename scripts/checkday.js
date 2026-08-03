@@ -4,7 +4,7 @@ import { STR } from "./utils-string.js";
 import { UI } from "./UI.js";
 import { DOT_COUNT } from "./constants.js";
 import { STATE } from "./states.js";
-import { evals, calcVo2, renderBasicFunctionCards, toggleBasicFunctionDetail, adj, updateTotal } from "./evaluation.js";
+import { evals, updateVO2Disp, renderBasicFunctionCards, toggleBasicFunctionDetail, adjustScore, updateTotal } from "./evaluation.js";
 import { appendCheckMovementItemRow, appendCheckMovement, renderCheckMovementCards, resetFeedbacks } from "./feedback.js";
 import { openReportModal, copyReportToClipboard } from "./report.js";
 import { updateInbodyTags } from "./inbody.js";
@@ -78,7 +78,7 @@ UI.delegate(document, "click", ".expand-toggle", (e, el) =>
 );
 // 평가 점수 증감 (동적 생성 요소)
 UI.delegate(document, "click", "#eval-cards .score-btn", (e, el) =>
-	adj(Number(el.dataset.i), Number(el.dataset.delta)),
+	adjustScore(Number(el.dataset.i), Number(el.dataset.delta)),
 );
 // 동작 피드백 카드 CRUD (동적 생성 요소)
 UI.delegate(document, "click", ".fb-del-btn", (e, el) => el.closest(".fb-item")?.remove());
@@ -96,7 +96,7 @@ document.addEventListener("input", (e) => {
 	if (!id) return;
 	if (id.startsWith("ib-")) updateInbodyTags();
 	else if (id === "vo2-age" || id === "vo2-ht" || id === "vo2-wt" || id === "vo2-hr")
-		calcVo2();
+		updateVO2Disp();
 });
 
 // ── 시작 ──

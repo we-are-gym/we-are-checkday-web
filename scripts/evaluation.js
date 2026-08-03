@@ -7,7 +7,7 @@ import { UI } from "./UI.js";
 import { STATE } from "./states.js";
 import { TPL } from "./templates.js";
 import { DOT_COUNT, MOTION_TOTAL_MAX, SCORE_MIN, SCORE_MAX } from "./constants.js";
-import { calcVo2Value, getVo2Grade } from "./vo2.js";
+import { calcVo2Value, determineVO2Grade } from "./vo2.js";
 import { getGradeMeta } from "./grade.js";
 import { GRADE_STYLES, VO2_GRADE_STYLES } from "./grade-styles.js";
 
@@ -18,17 +18,17 @@ export const evals = ASSESSMENT_ITEMS_FULL;
 STATE.init(evals.length, MOTION_TOTAL_MAX);
 
 // ── VO₂ 계산 (8번 항목에만) — 공용 모듈 사용 ──
-export function calcVo2() {
-	const age = VAL.num(UI.byId("vo2-age").value);
-	const ht = VAL.num(UI.byId("vo2-ht").value);
-	const wt = VAL.num(UI.byId("vo2-wt").value);
-	const hr = VAL.num(UI.byId("vo2-hr").value);
+export function updateVO2Disp() {
+	const age = VAL.parseToNum(UI.byId("vo2-age").value);
+	const ht = VAL.parseToNum(UI.byId("vo2-ht").value);
+	const wt = VAL.parseToNum(UI.byId("vo2-wt").value);
+	const hr = VAL.parseToNum(UI.byId("vo2-hr").value);
 	if (VAL.anyNaN(age, ht, wt, hr)) {
 		UI.byId("vo2-result").style.display = "none";
 		return;
 	}
 	const vr = calcVo2Value(age, ht, wt, hr);
-	const gradeInfo = getVo2Grade(vr, age);
+	const gradeInfo = determineVO2Grade(vr, age);
 	const style = VO2_GRADE_STYLES[gradeInfo.grade];
 	UI.byId("vo2-val").textContent = vr.toFixed(1) + " ml/kg/min";
 	const badge = UI.byId("vo2-badge");
@@ -42,7 +42,7 @@ export function calcVo2() {
 export function renderBasicFunctionCards() {
 	const c = UI.byId("eval-cards");
 	evals.forEach((e, i) => {
-		const dots = ARR.zeros(DOT_COUNT)
+		const dots = ARR.createZeroArray(DOT_COUNT)
 			.map((_, j) => `<div class="dot" id="dot-${i}-${j}"></div>`)
 			.join("");
 		const tags = e.checks
@@ -75,24 +75,24 @@ function buildVo2Block() {
 				</div>`;
 }
 
-export function toggleBasicFunctionDetail(i) {
-	const sp = UI.byId(`sp-${i}`);
-	const et = UI.byId(`et-${i}`);
+export function toggleBasicFunctionDetail(index) {
+	const sp = UI.byId(`sp-${index}`);
+	const et = UI.byId(`et-${index}`);
 	sp.classList.toggle("open");
 	et.classList.toggle("open");
 }
 
-export function adj(i, d) {
-	const next = VAL.bound(STATE.get(i) + d, SCORE_MIN, SCORE_MAX);
-	STATE.set(i, next);
-	UI.byId(`sv-${i}`).textContent = next;
+export function adjustScore(index, delta) {
+	const next = VAL.clamp(STATE.get(index) + delta, SCORE_MIN, SCORE_MAX);
+	STATE.set(index, next);
+	UI.byId(`sv-${index}`).textContent = next;
 	for (let j = 0; j < DOT_COUNT; j++)
-		UI.byId(`dot-${i}-${j}`).classList.toggle("on", j < next);
+		UI.byId(`dot-${index}-${j}`).classList.toggle("on", j < next);
 	updateTotal();
 }
 
 export function updateTotal() {
-	const tot = STATE.total();
+	const tot = STATE.getTotal();
 	const max = STATE.max;
 	const pct = Math.round((tot / max) * 100);
 	UI.byId("total-num").innerHTML = `${tot} <span>/ ${max}</span>`;

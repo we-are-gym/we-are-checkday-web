@@ -13,7 +13,7 @@ export const UI = {
 	 * @param {string} sel
 	 * @returns {Element | null}
 	 */
-	q(sel) {
+	queryOne(sel) {
 		return document.querySelector(sel);
 	},
 	/**
@@ -21,7 +21,7 @@ export const UI = {
 	 * @param {string} sel
 	 * @returns {Array<Element>}
 	 */
-	all(sel) {
+	queryAll(sel) {
 		return [...document.querySelectorAll(sel)];
 	},
 	/**
@@ -65,7 +65,7 @@ export const UI = {
 			root === document || root === "document"
 				? document
 				: typeof root === "string"
-					? this.q(root)
+					? this.queryOne(root)
 					: root;
 		if (!base) return;
 		base.addEventListener(type, (e) => {

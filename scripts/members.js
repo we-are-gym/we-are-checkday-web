@@ -48,7 +48,7 @@ function renderMembers() {
 
   emptyEl.hidden = filtered.length !== 0;
   UI.setText("member-count", `${filtered.length}명`);
-  UI.all(".member-row").forEach((row) => {
+  UI.queryAll(".member-row").forEach((row) => {
     // 행 클릭 → 상세 이동
     row.addEventListener("click", () => {
       window.location.href = `member-detail.html?id=${row.dataset.id}`;
@@ -88,7 +88,7 @@ function bindMemberEvents() {
     e.preventDefault();
     const name = UI.byId("f-name").value.trim();
     const gender = UI.byId("f-gender").value;
-    const age = VAL.num(UI.byId("f-age").value);
+    const age = VAL.parseToNum(UI.byId("f-age").value);
     const phone = UI.byId("f-phone").value.trim();
     const goal = UI.byId("f-goal").value.trim() || "일반";
     if (!name) return;

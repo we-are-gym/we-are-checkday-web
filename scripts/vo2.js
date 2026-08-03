@@ -102,7 +102,7 @@ export function calcVo2Value(age, height, weight, hr) {
 /**
  * 연령대별 정상치(`VO2_NORMS`) 대비 등급 판정
  *
- * @param {number} vo2
+ * @param {number} VO2
  * @param {number} age
  *
  * @returns {{
@@ -112,36 +112,36 @@ export function calcVo2Value(age, height, weight, hr) {
  * 		col: any;
  * }}
  */
-export function getVo2Grade(vo2, age) {
+export function determineVO2Grade(VO2, age) {
 	const norm =
 		VO2_NORMS.find((n) => age >= n.ageMin && age <= n.ageMax) ||
 		VO2_NORMS[VO2_NORMS.length - 1];
-	if (vo2 > norm.excellent)
+	if (VO2 > norm.excellent)
 		return {
 			grade: "excellent",
 			label: "Excellent",
 			score: 3,
 			col: norm.col,
 		};
-	if (vo2 >= norm.good[0])
+	if (VO2 >= norm.good[0])
 		return { grade: "good", label: "Good", score: 3, col: norm.col };
-	if (vo2 >= norm.above_avg[0])
+	if (VO2 >= norm.above_avg[0])
 		return {
 			grade: "above_avg",
 			label: "Above average",
 			score: 2,
 			col: norm.col,
 		};
-	if (vo2 >= norm.average[0])
+	if (VO2 >= norm.average[0])
 		return { grade: "average", label: "Average", score: 2, col: norm.col };
-	if (vo2 >= norm.below_avg[0])
+	if (VO2 >= norm.below_avg[0])
 		return {
 			grade: "below_avg",
 			label: "Below average",
 			score: 1,
 			col: norm.col,
 		};
-	if (vo2 >= norm.poor[0])
+	if (VO2 >= norm.poor[0])
 		return { grade: "poor", label: "Poor", score: 1, col: norm.col };
 	return { grade: "very_poor", label: "Very poor", score: 0, col: norm.col };
 }

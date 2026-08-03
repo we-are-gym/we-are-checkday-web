@@ -13,7 +13,7 @@ export const ARR = {
 	 * @param {number} n
 	 * @returns {Array<number>}
 	 */
-	zeros(n) {
+	createZeroArray(n) {
 		return new Array(n).fill(0);
 	},
 };
