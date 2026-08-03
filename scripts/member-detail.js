@@ -162,6 +162,7 @@ function init() {
 	}
 	renderInfoCard(member);
 	UI.byId("new-record-btn").href = `check-doc-new.html?memberID=${memberId}`;
+	UI.byId("edit-member-btn").href = `member-edit.html?memberID=${memberId}`;
 	refreshRecords();
 }
 

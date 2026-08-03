@@ -30,7 +30,7 @@ defineComponent("member-form", {
 				</label>
 				<div class="member-form-actions">
 					<button class="btn btn-ghost" type="submit">저장</button>
-					<a class="btn btn-ghost" href="members.html">취소</a>
+					<button class="btn btn-ghost" type="button" data-cancel>취소</button>
 				</div>
 			</form>`;
 	},
@@ -53,5 +53,24 @@ defineComponent("member-form", {
 				});
 			}
 		});
+		// 취소: 콜백이 있으면 그것을, 없으면 members.html로 이동 (등록 화면 기본 동작)
+		const cancelBtn = this.querySelector("[data-cancel]");
+		if (cancelBtn) {
+			cancelBtn.addEventListener("click", () => {
+				if (this.onCancel) this.onCancel();
+				else window.location.href = this.cancelHref || "members.html";
+			});
+		}
+	},
+	/**
+	 * 기존 회원 데이터를 폼에 되돌려 채운다 (member-edit 편집 진입용)
+	 * @param {import("../store.js").Member} member 회원 데이터
+	 */
+	prefill(member) {
+		const q = (id) => this.querySelector(`#${id}`);
+		q("mf-name") && (q("mf-name").value = member.name || "");
+		q("mf-gender") && (q("mf-gender").value = member.gender || "");
+		q("mf-goal") && (q("mf-goal").value = member.goal || "");
+		q("mf-trainer") && (q("mf-trainer").value = member.trainer || "");
 	},
 });
