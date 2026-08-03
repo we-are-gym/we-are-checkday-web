@@ -90,7 +90,10 @@ app-header {
 	font-size: 12.5px;
 	color: var(--text3);
 	cursor: pointer;
-	text-decoration: underline;
+
+	/* 로그아웃 링크 밑줄 빼기 */
+	/* text-decoration: underline; */
+
 	text-underline-offset: 3px;
 }
 .link-btn:hover {
