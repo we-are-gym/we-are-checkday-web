@@ -36,10 +36,6 @@
 .member-field select { padding:9px 11px; border:.5px solid var(--border2); border-radius:var(--r); background:var(--surface2); color:var(--text); font-size:14px; font-family:inherit; outline:none; transition:border-color .15s; }
 .member-field input:focus,
 .member-field select:focus { border-color:var(--blue); background:var(--surface); }
-.btn { display:inline-block; padding:10px 18px; border-radius:var(--r); font-size:13px; font-weight:500; border:.5px solid var(--border2); background:var(--surface); color:var(--text2); text-decoration:none; transition:background .15s; cursor:pointer; }
-.btn:hover { background:var(--surface2); }
-.btn-primary { background:var(--blue); color:#fff; border-color:var(--blue); }
-.btn-primary:hover { background:var(--blue-fg); }
 
 @media (max-width:480px) {
   .member-table { font-size:12px; }

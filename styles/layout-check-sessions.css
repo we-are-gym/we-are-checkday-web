@@ -6,5 +6,3 @@
 .placeholder-card { background:var(--surface); border:.5px solid var(--border); border-radius:var(--rlg); padding:2.5rem 1.5rem; text-align:center; margin-top:1rem; }
 .placeholder-card h1 { font-size:20px; font-weight:600; margin-bottom:10px; }
 .ready-msg { font-size:14px; color:var(--text2); margin-bottom:1.25rem; }
-.btn { display:inline-block; padding:9px 18px; border-radius:var(--r); font-size:13px; font-weight:500; border:.5px solid var(--border2); background:var(--surface); color:var(--text2); text-decoration:none; transition:background .15s; }
-.btn:hover { background:var(--surface2); }
