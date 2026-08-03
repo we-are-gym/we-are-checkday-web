@@ -40,8 +40,14 @@
       <!-- 회원 정보 -->
       <div class="member-bar">
         <div class="mf">
+          <label>회원</label
+          ><select id="m-member" aria-label="회원 선택">
+            <option value="">회원을 선택하세요</option>
+          </select>
+        </div>
+        <div class="mf">
           <label>회원 이름</label
-          ><input id="m-name" type="text" placeholder="홍길동" />
+          ><input id="m-name" type="text" placeholder="홍길동" readonly />
         </div>
         <div class="mf">
           <label>회차</label
@@ -265,7 +271,8 @@
       <div class="actions">
         <button class="btn btn-ghost" data-action="reset">초기화</button>
         <button class="btn btn-ghost" data-action="report">📋 결과 보기</button>
-        <button class="btn btn-primary" data-action="print">인쇄 / PDF</button>
+        <button class="btn btn-primary" data-action="save">저장</button>
+        <button class="btn btn-ghost" data-action="print">인쇄 / PDF</button>
       </div>
     </div>
 

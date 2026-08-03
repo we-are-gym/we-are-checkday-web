@@ -1,11 +1,14 @@
 // 파일 용도: 체크데이 상담지 시작점 — 날짜 표기 · 초기화 오케스트레이션 (checkday_1·check-doc-new 공용)
-// check-doc-new.html?memberID= 로 열리면 회원 이름·트레이너를 프리필한다 (checkday_1은 무영향).
+// check-doc-new.html?memberID= 로 열리면 회원을 선택·프리필한다 (checkday_1은 무영향).
+// 저장(#m-member 존재 시)은 collectPayload→recordStore→조회 화면 이동으로 기록을 신규 생성한다.
 // DEPENDS: STR, UI, STATE, evals(evaluation), resetFeedbacks(feedback), renderBasicFunctionCards/updateTotal(evaluation)
 import { STR } from "./utils-string.js";
 import { UI } from "./UI.js";
 import { DOT_COUNT } from "./constants.js";
 import { STATE } from "./states.js";
 import { memberStore } from "./member-store.js";
+import { recordStore } from "./record-store.js";
+import { collectPayload } from "./check-form-payload.js";
 import { evals, updateVO2Disp, renderBasicFunctionCards, toggleBasicFunctionDetail, adjustScore, updateTotal } from "./evaluation.js";
 import { appendCheckMovementItemRow, appendCheckMovement, renderCheckMovementCards, resetFeedbacks } from "./feedback.js";
 import { openReportModal, copyReportToClipboard } from "./report.js";
@@ -15,14 +18,37 @@ import "./components/app-header.js";
 // ── 날짜 ──
 UI.setText("date-badge", STR.today());
 
-// ── 회원 프리필 — ?memberID= 파라미터가 있을 때만 (체크기록 작성 진입) ──
+// ── 회원 선택 및 트레이너 자동 기입 — #m-member(회원 셀렉트)가 있는 화면(check-doc-new)에서만 동작 ──
+// checkday_1은 #m-member가 없으므로 이 블록은 무영향이다.
 const memberId = Number(new URLSearchParams(window.location.search).get("memberID")) || 0;
-if (memberId) {
+const memberSelect = UI.byId("m-member");
+if (memberSelect) {
+	const members = memberStore.getState().members;
+	// 셀렉트 옵션 채우기 (?memberID= 와 일치하는 회원을 초기 선택)
+	memberSelect.insertAdjacentHTML(
+		"beforeend",
+		members
+			.map((m) => `<option value="${m.id}" ${m.id === memberId ? "selected" : ""}>${m.name}</option>`)
+			.join(""),
+	);
+	// 선택한 회원의 이름·담당 트레이너 자동 기입 (트레이너는 이후 수정 가능)
+	const applyMember = (id) => {
+		const mem = members.find((m) => m.id === Number(id));
+		if (!mem) return;
+		UI.byId("m-name").value = mem.name;
+		UI.byId("m-trainer").value = mem.trainer || "";
+	};
+	memberSelect.addEventListener("change", () => applyMember(memberSelect.value));
+	// ?memberID= 진입 시 해당 회원 프리필
+	if (memberId) applyMember(memberId);
+} else if (memberId) {
+	// checkday_1 등 #m-member가 없는 화면의 기존 동작 유지 (null-safe)
 	const member = memberStore.getState().members.find((m) => m.id === memberId);
 	if (member) {
-		["m-name", "m-trainer"].forEach((id) => (UI.byId(id).readOnly = true));
-		UI.byId("m-name").value = member.name;
-		UI.byId("m-trainer").value = member.trainer || "";
+		const nameEl = UI.byId("m-name");
+		const trainerEl = UI.byId("m-trainer");
+		if (nameEl) nameEl.value = member.name;
+		if (trainerEl) trainerEl.value = member.trainer || "";
 	}
 }
 
@@ -82,8 +108,30 @@ UI.delegate(document, "click", "[data-action]", (e, el) => {
 		case "close-modal":
 			UI.byId("overlay").classList.remove("open");
 			break;
+		case "save":
+			saveRecord();
+			break;
 	}
 });
+
+/**
+ * 체크기록 신규 저장 후 조회 화면으로 이동 (check-doc-new의 저장 버튼)
+ * 폼을 payload로 직렬화하고, 선택한 회원(memberId)과 오늘 날짜를 묶어 recordStore에 추가한다.
+ */
+function saveRecord() {
+	const payload = collectPayload();
+	const recMemberId = Number(UI.byId("m-member")?.value) || 0;
+	const recId = recordStore.getState().nextId;
+	recordStore.setState((prev) => ({
+		...prev,
+		records: [
+			...prev.records,
+			{ id: recId, memberId: recMemberId, date: STR.today(), payload },
+		],
+		nextId: prev.nextId + 1,
+	}));
+	window.location.href = `check-doc-view.html?docID=${recId}`;
+}
 // 목표·체크 문구 태그 토글
 UI.delegate(document, "click", ".goal-tag, .ctag", (e, el) => el.classList.toggle("on"));
 // 평가 카드 펼침 (동적 생성 요소)

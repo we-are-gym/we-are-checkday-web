@@ -76,6 +76,20 @@
 	color: var(--text3);
 	font-weight: 400;
 }
+.mf select {
+	width: 100%;
+	font-size: 14px;
+	font-weight: 500;
+	background: var(--surface);
+	color: var(--text);
+	border: 1px solid var(--border2);
+	border-radius: var(--r);
+	padding: 10px 11px;
+	outline: none;
+}
+.mf select:focus-visible {
+	border-color: var(--btn-blue);
+}
 
 /* ── 총점 바 ── */
 .total-bar {
@@ -521,12 +535,12 @@ textarea.consult-memo::placeholder {
 	background: var(--surface2);
 }
 .btn-primary {
-	background: var(--blue);
-	color: #fff;
-	border-color: var(--blue);
+	background: var(--btn-blue);
+	color: var(--btn-blue-text);
+	border-color: var(--btn-blue);
 }
 .btn-primary:hover {
-	opacity: 0.88;
+	background: var(--btn-blue-hover);
 }
 
 /* ── 모달 ── */
