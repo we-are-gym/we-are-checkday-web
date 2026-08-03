@@ -239,7 +239,7 @@ function resetEntireForm() {
 function openReportModal() {
 	const total = getTotal();
 	const container = UI.byId("report-content");
-	let html = `<div style="font-size:13px;color:#5a5a56;margin-bottom:12px;">총점 <strong style="color:#1a1a18">${total}점 / 24점</strong></div>`;
+	let html = `<div style="font-size:13px;color:var(--text2);margin-bottom:12px;">총점 <strong style="color:var(--text)">${total}점 / 24점</strong></div>`;
 
 	getAssessmentReportItems().forEach(({ name, score, flagged, notes }) => {
 		const { bg, fg } = getScoreColor(score);
@@ -250,15 +250,15 @@ function openReportModal() {
 					<span class="report-score-badge" style="background:${bg};color:${fg}">${score}점</span>
 				</div>
 				${flagged.length ? `<div class="report-flags">⚠ ${flagged.join(" · ")}</div>` : ""}
-				${notes ? `<div class="report-flags" style="color:#9a9a94">📝 ${notes}</div>` : ""}
+				${notes ? `<div class="report-flags" style="color:var(--text3)">📝 ${notes}</div>` : ""}
 			</div>
 		</div>`;
 	});
 
 	// VO2 row
 	const vGrade = vo2State.grade;
-	const vBg = vGrade ? vGrade.bg : "#f2f1ed";
-	const vFg = vGrade ? vGrade.fg : "#9a9a94";
+	const vBg = vGrade ? vGrade.bg : "var(--surface2)";
+	const vFg = vGrade ? vGrade.fg : "var(--text3)";
 	const vInfo =
 		vo2State.vo2 !== null
 			? `VO₂ Max: ${vo2State.vo2.toFixed(1)} ml/kg/min · ${vGrade ? vGrade.label : ""}`
