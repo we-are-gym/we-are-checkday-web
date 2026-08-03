@@ -154,7 +154,7 @@ export const TPL = {
 	},
 
 	/**
-	 * 회원 상세의 체크기록 로우 1개
+	 * 회원 상세의 체크기록 로우 1개 — to-be 지시에 따라 날짜는 표시하지 않는다
 	 * @param {{ id: number, session: string, date: string, total: number, max: number }} p
 	 * @returns {string}
 	 */
@@ -162,7 +162,6 @@ export const TPL = {
 		return `
 			<div class="record-row" data-record-id="${id}" tabindex="0">
 				<div class="cell-name">${escapeHtml(session)}</div>
-				<div class="cell-dim">${escapeHtml(date)}</div>
 				<div class="cell-dim">총점 ${total}/${max}</div>
 				<div><button type="button" class="btn btn-sm btn-danger" data-del-record="${id}" aria-label="기록 삭제">지우기</button></div>
 			</div>`;
