@@ -2,10 +2,9 @@
 // ?docID= 기록을 불러와 기존 상담지 폼(renderBasicFunctionCards 재사용)에 프리필하고, 수정 내용을 기록 스토어에 저장한다.
 import { UI } from "./UI.js";
 import { recordStore } from "./record-store.js";
-import { renderBasicFunctionCards, toggleBasicFunctionDetail, adjustScore, updateVO2Disp } from "./evaluation.js";
-import { appendCheckMovement, appendCheckMovementItemRow } from "./feedback.js";
+import { renderBasicFunctionCards } from "./evaluation.js";
 import { collectPayload, prefillForm } from "./check-form-payload.js";
-import { updateInbodyTags } from "./inbody.js";
+import { setupCheckFormEvents } from "./check-form-events.js";
 import "./components/app-header.js";
 
 /** ?docID= 파라미터 */
@@ -46,25 +45,12 @@ function init() {
 	prefillForm(rec);
 }
 
-// 이벤트 위임 (checkday 공용 폼과 동일 패턴)
+// 목표·체크·점수·피드백·인바디/VO₂ 위임은 checkday·편집 화면이 공유하는 check-form-events로 처리
+setupCheckFormEvents();
+// [data-action] 화면별 액션(초기화·저장)은 편집 화면 고유 — 여기서 등록
 UI.delegate(document, "click", "[data-action]", (e, el) => {
 	if (el.dataset.action === "reset") resetForm();
 	else if (el.dataset.action === "save-edit") saveRecord();
-});
-UI.delegate(document, "click", ".goal-tag, .ctag", (e, el) => el.classList.toggle("on"));
-UI.delegate(document, "click", ".expand-toggle", (e, el) => toggleBasicFunctionDetail(Number(el.dataset.i)));
-UI.delegate(document, "click", "#eval-cards .score-btn", (e, el) =>
-	adjustScore(Number(el.dataset.i), Number(el.dataset.delta)),
-);
-UI.delegate(document, "click", ".fb-del-btn", (e, el) => el.closest(".fb-item")?.remove());
-UI.delegate(document, "click", ".add-check-btn", (e, el) => appendCheckMovementItemRow(el));
-UI.delegate(document, "click", ".fb-check-del", (e, el) => el.closest(".fb-check-row")?.remove());
-UI.delegate(document, "click", ".add-fb-btn", () => appendCheckMovement());
-document.addEventListener("input", (e) => {
-	const id = e.target.id;
-	if (!id) return;
-	if (id.startsWith("ib-")) updateInbodyTags();
-	else if (id === "vo2-age" || id === "vo2-ht" || id === "vo2-wt" || id === "vo2-hr") updateVO2Disp();
 });
 
 init();

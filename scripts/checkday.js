@@ -9,10 +9,10 @@ import { STATE } from "./states.js";
 import { memberStore } from "./member-store.js";
 import { recordStore } from "./record-store.js";
 import { collectPayload } from "./check-form-payload.js";
-import { evals, updateVO2Disp, renderBasicFunctionCards, toggleBasicFunctionDetail, adjustScore, updateTotal } from "./evaluation.js";
-import { appendCheckMovementItemRow, appendCheckMovement, renderCheckMovementCards, resetFeedbacks } from "./feedback.js";
+import { setupCheckFormEvents } from "./check-form-events.js";
+import { evals, renderBasicFunctionCards, updateTotal } from "./evaluation.js";
+import { renderCheckMovementCards, resetFeedbacks } from "./feedback.js";
 import { openReportModal, copyReportToClipboard } from "./report.js";
-import { updateInbodyTags } from "./inbody.js";
 import "./components/app-header.js";
 
 // ── 날짜 ──
@@ -132,33 +132,11 @@ function saveRecord() {
 	}));
 	window.location.href = `check-doc-view.html?docID=${recId}`;
 }
-// 목표·체크 문구 태그 토글
-UI.delegate(document, "click", ".goal-tag, .ctag", (e, el) => el.classList.toggle("on"));
-// 평가 카드 펼침 (동적 생성 요소)
-UI.delegate(document, "click", ".expand-toggle", (e, el) =>
-	toggleBasicFunctionDetail(Number(el.dataset.i)),
-);
-// 평가 점수 증감 (동적 생성 요소)
-UI.delegate(document, "click", "#eval-cards .score-btn", (e, el) =>
-	adjustScore(Number(el.dataset.i), Number(el.dataset.delta)),
-);
-// 동작 피드백 카드 CRUD (동적 생성 요소)
-UI.delegate(document, "click", ".fb-del-btn", (e, el) => el.closest(".fb-item")?.remove());
-UI.delegate(document, "click", ".add-check-btn", (e, el) => appendCheckMovementItemRow(el));
-UI.delegate(document, "click", ".fb-check-del", (e, el) => el.closest(".fb-check-row")?.remove());
-UI.delegate(document, "click", ".add-fb-btn", () => appendCheckMovement());
+// 목표·체크·점수·피드백·인바디/VO₂ 위임은 checkday·편집 화면이 공유하는 check-form-events로 처리
+setupCheckFormEvents();
 // 결과 모달 배경(overlay 자신) 클릭 시 닫기
 UI.delegate(document, "click", "#overlay", (e) => {
 	if (e.target.id === "overlay") e.target.classList.remove("open");
-});
-
-// ── input 위임 — 인바디 수치·VO₂ 입력 갱신 ──
-document.addEventListener("input", (e) => {
-	const id = e.target.id;
-	if (!id) return;
-	if (id.startsWith("ib-")) updateInbodyTags();
-	else if (id === "vo2-age" || id === "vo2-ht" || id === "vo2-wt" || id === "vo2-hr")
-		updateVO2Disp();
 });
 
 // ── 시작 ──

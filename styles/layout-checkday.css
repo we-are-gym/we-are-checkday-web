@@ -505,7 +505,9 @@ textarea.consult-memo::placeholder {
 	color: var(--text3);
 }
 
-/* ── 버튼 ── */
+/* ── 버튼 ──
+   주의: checkday_1.html은 layout-shell을 로드하지 않고 이 시트만 사용하므로
+   .btn/.btn-ghost 기본은 여기서 자립해야 한다(삭제 금지). 색상은 --btn-blue 등 토큰으로 공용화한다. */
 .actions {
 	display: flex;
 	gap: 8px;
