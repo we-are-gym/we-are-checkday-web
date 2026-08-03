@@ -1,24 +1,18 @@
 // 파일 용도: 평가 논리 — 움직임 평가 목록 구성 · VO₂ 계산 연동 · 평가 카드 빌드 · 점수/등급/총점 갱신 (checkday 공용)
 // DEPENDS: ASSESSMENT_ITEMS, ARR, VAL, UI, STATE, STYLE 등
-import { ASSESSMENT_ITEMS } from "./assessment-data.js";
+import { ASSESSMENT_ITEMS_FULL } from "./assessment-data.js";
 import { ARR } from "./utils-array.js";
 import { VAL } from "./validation.js";
 import { UI } from "./UI.js";
 import { STATE } from "./states.js";
+import { TPL } from "./templates.js";
 import { DOT_COUNT, MOTION_TOTAL_MAX, SCORE_MIN, SCORE_MAX } from "./constants.js";
 import { calcVo2Value, getVo2Grade } from "./vo2.js";
 import { getGradeMeta } from "./grade.js";
 import { GRADE_STYLES, VO2_GRADE_STYLES } from "./grade-styles.js";
 
-// ── 움직임 평가 데이터 (공용 모듈 7개 + VO₂ 항목) ──
-export const evals = ASSESSMENT_ITEMS.concat([
-	{
-		name: "VO₂ Max (스텝 테스트)",
-		desc: "심폐 지구력",
-		checks: ["1분 HR 과도하게 높음", "HRR 회복 불량"],
-		vo2: true,
-	},
-]);
+// ── 움직임 평가 데이터 (공용 모듈 8개: 7개 + VO₂ 항목) ──
+export const evals = ASSESSMENT_ITEMS_FULL;
 
 /** 평가 점수 단일 소스 초기화 */
 STATE.init(evals.length, MOTION_TOTAL_MAX);
@@ -44,12 +38,10 @@ export function calcVo2() {
 	UI.byId("vo2-result").style.display = "flex";
 }
 
-// ── 평가 카드 빌드 ──
+// ── 평가 카드 빌드 (카드 셸은 공용 템플릿 함수 TPL.assessmentCard 사용) ──
 export function renderBasicFunctionCards() {
 	const c = UI.byId("eval-cards");
 	evals.forEach((e, i) => {
-		const div = document.createElement("div");
-		div.className = "eval-item";
 		const dots = ARR.zeros(DOT_COUNT)
 			.map((_, j) => `<div class="dot" id="dot-${i}-${j}"></div>`)
 			.join("");
@@ -59,26 +51,14 @@ export function renderBasicFunctionCards() {
 					`<span class="ctag">${ch}</span>`
 			)
 			.join("");
+		const extra = e.vo2 ? buildVo2Block() : "";
+		c.insertAdjacentHTML("beforeend", TPL.assessmentCard({ index: i, item: e, dots, tags, extra }));
+	});
+}
 
-		let inner = `
-			<div class="eval-top">
-				<div class="eval-num-badge">${i + 1}</div>
-				<div style="flex:1"><div class="eval-name">${e.name}</div><div class="eval-desc">${e.desc}</div></div>
-				<div class="score-ctrl">
-					<button class="score-btn" data-i="${i}" data-delta="-1">−</button>
-					<span class="score-val" id="sv-${i}">0</span>
-					<button class="score-btn" data-i="${i}" data-delta="1">+</button>
-					<div class="sdots">${dots}</div>
-				</div>
-			</div>
-			<button class="expand-toggle" id="et-${i}" data-i="${i}">
-				체크 항목 / 메모 <span class="arr">▾</span>
-			</button>
-			<div class="sub-panel" id="sp-${i}">
-				<div class="tag-row" style="margin-top:6px">${tags}</div>
-				<textarea class="eval-memo" placeholder="메모..."></textarea>`;
-		if (e.vo2) {
-			inner += `
+/** VO₂ 자동 계산 블록 (8번 항목 전용) — 카드 extra 조각 */
+function buildVo2Block() {
+	return `
 				<div style="margin-top:8px;padding:10px;background:var(--surface2);border-radius:8px;">
 					<div style="font-size:11px;font-weight:600;color:var(--text3);margin-bottom:8px;">VO₂ MAX 자동 계산</div>
 					<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
@@ -93,11 +73,6 @@ export function renderBasicFunctionCards() {
 					</div>
 					<div style="font-size:10px;color:var(--text3);margin-top:6px;">공식: 54.337 − 0.185(연령) + 0.097(신장) − 0.246(체중) − 0.112(심박수)</div>
 				</div>`;
-		}
-		inner += `</div>`;
-		div.innerHTML = inner;
-		c.appendChild(div);
-	});
 }
 
 export function toggleBasicFunctionDetail(i) {

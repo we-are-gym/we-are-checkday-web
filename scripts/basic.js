@@ -5,6 +5,7 @@ import { ASSESSMENT_ITEMS } from "./assessment-data.js";
 import { ARR } from "./utils-array.js";
 import { VAL } from "./validation.js";
 import { UI } from "./UI.js";
+import { TPL } from "./templates.js";
 import { calcVo2Value, getVo2Grade } from "./vo2.js";
 import { getGradeMeta } from "./grade.js";
 import { GRADE_STYLES, VO2_GRADE_STYLES, getScoreColor } from "./grade-styles.js";
@@ -98,14 +99,10 @@ function setVo2Score(delta, suggested) {
 	updateTotal();
 }
 
-// ── 항목 카드 빌드 ──
+// ── 항목 카드 빌드 (카드 셸은 공용 템플릿 함수 TPL.basicItemCard 사용) ──
 function buildItems() {
 	const container = UI.byId("items-container");
 	assessments.forEach((a) => {
-		const card = document.createElement("div");
-		card.className = "item-card";
-		card.id = `card-${a.id}`;
-
 		const dotsHTML = ARR.zeros(DOT_COUNT)
 			.map((_, i) => `<div class="dot" id="dot-${a.id}-${i}"></div>`)
 			.join("");
@@ -119,33 +116,10 @@ function buildItems() {
 		`,
 			)
 			.join("");
-
-		card.innerHTML = `
-			<div class="item-top">
-				<div class="item-num">${a.id}</div>
-				<div class="item-info">
-					<div class="item-name">${a.name}</div>
-					<div class="item-desc">${a.desc}</div>
-				</div>
-				<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
-					<div class="score-ctrl">
-						<button class="score-btn" data-aid="${a.id}" data-delta="-1" aria-label="감소">−</button>
-						<span class="score-display" id="score-${a.id}" data-score="0">0</span>
-						<button class="score-btn" data-aid="${a.id}" data-delta="1" aria-label="증가">+</button>
-					</div>
-					<div class="score-dots">${dotsHTML}</div>
-				</div>
-			</div>
-			<button class="expand-btn" id="expand-${a.id}" data-id="${a.id}">
-				체크 항목 / 메모
-				<span class="expand-arrow">▾</span>
-			</button>
-			<div class="item-detail" id="detail-${a.id}">
-				${checksHTML}
-				<textarea class="notes-area" id="notes-${a.id}" data-id="${a.id}" placeholder="메모를 입력하세요..."></textarea>
-			</div>
-		`;
-		container.appendChild(card);
+		container.insertAdjacentHTML(
+			"beforeend",
+			TPL.basicItemCard({ id: a.id, item: a, dots: dotsHTML, checks: checksHTML }),
+		);
 	});
 }
 
