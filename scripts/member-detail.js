@@ -150,6 +150,7 @@ function init() {
 		return;
 	}
 	renderInfoCard(member);
+	UI.byId("new-record-btn").href = `check-doc-new.html?memberID=${memberId}`;
 	refreshRecords();
 }
 
