@@ -47,6 +47,17 @@
 	font-size: 15px;
 	font-weight: 600;
 	text-align: center;
+
+	/* to-be: 두 진입 버튼(체크기록 작성·회원 관리)을 파랑(#3478d4)·흰 글씨로 통일
+	   — 색·크기 모두 before-advance 웹UI 메인 버튼과 동일하게 맞춤 */
+	background: var(--btn-blue);
+	border-color: var(--btn-blue);
+	color: var(--btn-blue-text);
+}
+.main-actions .btn:hover {
+	background: var(--btn-blue-hover);
+	border-color: var(--btn-blue-hover);
+	color: var(--btn-blue-text);
 }
 
 @media (max-width: 480px) {
