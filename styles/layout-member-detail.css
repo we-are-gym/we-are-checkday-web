@@ -69,54 +69,70 @@ main {
 	color: var(--text);
 }
 
-/* ── 지표 카드 4종 (스파크라인) ── */
-.stat-cards {
-	display: grid;
-	grid-template-columns: repeat(2, 1fr);
-	gap: 12px;
-}
-.stat-card {
+/* ── 통계 카드 (프로토타입: 단일 "통계 · 전체 회차 누적" 카드 + chart-stat 세로 누적) ── */
+.detail-card {
 	background: var(--surface);
 	border: 0.5px solid var(--border2);
-	border-radius: var(--r);
-	padding: 14px 16px;
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
+	border-radius: var(--rlg);
+	padding: 16px;
 }
-.stat-label {
-	font-size: 12px;
-	color: var(--text3);
-}
-.stat-value {
-	font-size: 22px;
+.stat-card-title {
+	font-size: 14px;
 	font-weight: 700;
 	color: var(--text);
+	margin-bottom: 14px;
 }
-.stat-unit {
-	font-size: 12px;
-	font-weight: 400;
-	color: var(--text3);
+.stat-charts {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+}
+.chart-stat {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+.chart-stat-top {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 8px;
+	font-size: 12.5px;
+}
+.chart-stat-top .k {
+	color: var(--text2);
+}
+.chart-latest {
+	color: var(--text);
+	font-size: 13px;
+	font-weight: 600;
 }
 .stat-delta {
 	font-size: 12px;
 	margin-left: 6px;
+	font-weight: 500;
 }
-.stat-range {
+.chart-stat-foot {
 	display: flex;
 	justify-content: space-between;
 	font-size: 10.5px;
 	color: var(--text3);
 }
 .sparkline {
-	width: 100%;
-	height: 40px;
 	display: block;
+	width: 100%;
+	height: auto;
 }
 .spark-empty {
 	font-size: 12px;
 	color: var(--text3);
 	padding: 10px 0;
+}
+.sparkline-empty {
+	text-align: center;
+	font-size: 13px;
+	color: var(--text3);
+	padding: 1.5rem 0;
 }
 
 /* ── 탭 ── */
@@ -219,7 +235,7 @@ main {
 	display: flex;
 	gap: 12px;
 	flex-wrap: wrap;
-	margin-bottom: 14px;
+	margin-bottom: 12px;
 }
 
 .compare-field {
@@ -281,6 +297,24 @@ main {
 .compare-table tbody tr:last-child {
 	font-weight: 700;
 	color: var(--text);
+}
+
+.compare-result .compare-table {
+	margin-bottom: 14px;
+}
+.compare-result .compare-table:last-child {
+	margin-bottom: 0;
+}
+.compare-result hr.div {
+	border: none;
+	border-top: 0.5px solid var(--border2);
+	margin: 14px 0;
+}
+.compare-result .section-title {
+	font-size: 13px;
+	font-weight: 700;
+	color: var(--text);
+	margin-bottom: 10px;
 }
 
 /* 상승·하강·유지 — to-be 색상 토큰 (#5a9bd8 / #d86b6b) */

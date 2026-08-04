@@ -210,6 +210,30 @@ export const TPL = {
 	},
 
 	/**
+	 * 비교 테이블 본문만 (헤더 없음) — 움직임 평가 총점 표용 (프로토타입 배치)
+	 * @param {{ rows: Array<import("./store.js").CompareRow> }} p
+	 * @returns {string}
+	 */
+	compareTableBody({ rows }) {
+		return `
+			<table class="compare-table">
+				<tbody>
+					${rows
+						.map(
+							(r) => `
+						<tr>
+							<td>${escapeHtml(r.label)}</td>
+							<td>${r.tgt}</td>
+							<td>${r.cur}</td>
+							<td>${r.delta}</td>
+						</tr>`,
+						)
+						.join("")}
+				</tbody>
+			</table>`;
+	},
+
+	/**
 	 * 로그인 폼
 	 * @returns {string}
 	 */
