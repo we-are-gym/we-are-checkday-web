@@ -1,6 +1,5 @@
 // 파일 용도: 인바디 관련 로직 — 수치→상태 태그 분류·태그 갱신 (checkday 공용)
-// DEPENDS: UI (전역 DOM 헬퍼)
-import { UI } from "./UI.js";
+// 기법: DOM 헬퍼를 쓰지 않고 document.getElementById 직접 사용 (화면 전용 배선 — 공용 헬퍼 미의존)
 
 /**
  * 인바디 수치→태그(정상/주의/위험) 분류

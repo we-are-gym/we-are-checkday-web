@@ -1,7 +1,7 @@
 // 파일 용도: 리포트 생성·복사 — 결과 요약 HTML 조립·클립보드 복사 (checkday 공용)
-// DEPENDS: UI, STATE, evals(evaluation), collectCheckMovementData(feedback)
-import { UI } from "./UI.js";
-import { STATE } from "./states.js";
+// DEPENDS: byId(UI), scoreState(states), evals(evaluation), collectCheckMovementData(feedback)
+import { byId } from "./UI.js";
+import { scoreState } from "./states.js";
 import { evals } from "./evaluation.js";
 import { collectCheckMovementData } from "./feedback.js";
 
@@ -21,18 +21,18 @@ function formatFbLine(fb, prefix = "") {
 
 // ── 결과 보기 공용 헬퍼 ──
 export function getTotal() {
-	return STATE.getTotal();
+	return scoreState.getTotal();
 }
 
 function getIbData() {
 	return {
-		w: UI.byId("ib-w").value,
-		m: UI.byId("ib-m").value,
-		fat: UI.byId("ib-fat").value,
-		bmi: UI.byId("ib-bmi").value,
-		bfp: UI.byId("ib-bfp").value,
-		bmr: UI.byId("ib-bmr").value,
-		vis: UI.byId("ib-vis").value,
+		w: byId("ib-w").value,
+		m: byId("ib-m").value,
+		fat: byId("ib-fat").value,
+		bmi: byId("ib-bmi").value,
+		bfp: byId("ib-bfp").value,
+		bmr: byId("ib-bmr").value,
+		vis: byId("ib-vis").value,
 	};
 }
 
@@ -49,20 +49,20 @@ function getEvalLines(prefix) {
 			(el) => el.textContent,
 		);
 		const memo = evalCards[i].querySelector(".eval-memo").value;
-		return formatEvalLine(e.name, STATE.get(i), checked, memo, prefix);
+		return formatEvalLine(e.name, scoreState.get(i), checked, memo, prefix);
 	});
 }
 
 // ── 결과 보기 ──
 export function openReportModal() {
-	const name = UI.byId("m-name").value || "(미입력)";
-	const session = UI.byId("m-session").value;
+	const name = byId("m-name").value || "(미입력)";
+	const session = byId("m-session").value;
 	const tot = getTotal();
 	const ib = getIbData();
-	const ibC = UI.byId("ib-comment").value;
+	const ibC = byId("ib-comment").value;
 	const goals = getSelectedGoals();
-	const gMemo = UI.byId("goal-memo").value;
-	const consult = UI.byId("consult-memo").value;
+	const gMemo = byId("goal-memo").value;
+	const consult = byId("consult-memo").value;
 
 	const evalLines = getEvalLines("");
 	const fbLines = collectCheckMovementData().map((fb) => formatFbLine(fb));
@@ -79,33 +79,33 @@ export function openReportModal() {
     <div class="rline"><div class="rlabel">다음 목표</div><div>${goals || "미선택"}${gMemo ? `<br><span style="font-size:12px;color:var(--text2)">${gMemo}</span>` : ""}</div></div>
     ${fbLines.length ? `<div class="rline"><div class="rlabel">동작 피드백</div><div style="font-size:12px">${fbLines.join("<br>")}</div></div>` : ""}
     ${consult ? `<div class="rline"><div class="rlabel">상담 메모</div><div style="font-size:12px">${consult}</div></div>` : ""}`;
-	UI.byId("report-body").innerHTML = html;
-	UI.byId("overlay").classList.add("open");
+	byId("report-body").innerHTML = html;
+	byId("overlay").classList.add("open");
 }
 
 export function copyReportToClipboard() {
-	const name = UI.byId("m-name").value || "(미입력)";
+	const name = byId("m-name").value || "(미입력)";
 	const tot = getTotal();
 	const ib = getIbData();
 	const goals = getSelectedGoals();
 	const evalLines = getEvalLines("  ");
 	const fbLines = collectCheckMovementData().map((fb) => formatFbLine(fb, "  "));
 	const lines = [
-		`[체크데이] ${name} / ${UI.byId("m-session").value}`,
+		`[체크데이] ${name} / ${byId("m-session").value}`,
 		`━ 인바디: 체중 ${ib.w || "—"}kg / 골격근 ${ib.m || "—"}kg / 체지방률 ${ib.bfp || "—"}% / BMI ${ib.bmi || "—"} / 내장지방 ${ib.vis || "—"}`,
-		UI.byId("ib-comment").value
-			? `  코멘트: ${UI.byId("ib-comment").value}`
+		byId("ib-comment").value
+			? `  코멘트: ${byId("ib-comment").value}`
 			: "",
 		`━ 움직임 총점: ${tot}/24점`,
 		...evalLines,
 		`━ 다음 목표: ${goals || "미선택"}`,
-		UI.byId("goal-memo").value
-			? `  ${UI.byId("goal-memo").value}`
+		byId("goal-memo").value
+			? `  ${byId("goal-memo").value}`
 			: "",
 		fbLines.length ? `━ 동작 피드백:` : "",
 		...fbLines,
-		UI.byId("consult-memo").value
-			? `━ 상담 메모: ${UI.byId("consult-memo").value}`
+		byId("consult-memo").value
+			? `━ 상담 메모: ${byId("consult-memo").value}`
 			: "",
 	].filter((l) => l !== "");
 	navigator.clipboard

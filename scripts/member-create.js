@@ -1,10 +1,10 @@
 // 파일 용도: 회원 등록 화면(member-create.html) — member-form 제출 시 스토어에 추가 후 목록으로 이동
-import { UI } from "./UI.js";
+import { byId } from "./UI.js";
 import { memberStore } from "./member-store.js";
 import "./components/app-header.js";
 import "./components/member-form.js";
 
-const formEl = UI.byId("member-form");
+const formEl = byId("member-form");
 
 formEl.onSubmit = (data) => {
 	memberStore.setState((prev) => ({

@@ -1,8 +1,9 @@
 // 파일 용도: 회원 상세 조회 및 체크기록 비교 화면(member-detail.html)
 // ?memberID= 로 회원을 조회하고, 회원 정보 카드·스파크라인 4종·체크 기록 탭·변화 분석 탭을 렌더링한다.
-import { UI } from "./UI.js";
+import { byId, delegate, queryAll, setHTML, setText } from "./UI.js";
 import { memberStore } from "./member-store.js";
 import { recordStore } from "./record-store.js";
+import { getMemberById } from "./member-utils.js";
 import { TPL, escapeHtml } from "./templates.js";
 import { buildCompareTable, recordTotal, sparkline } from "./record-stats.js";
 import { MOTION_TOTAL_MAX } from "./constants.js";
@@ -13,7 +14,7 @@ const memberId = Number(new URLSearchParams(window.location.search).get("memberI
 
 /** 현재 회원 */
 function getMember() {
-	return memberStore.getState().members.find((m) => m.id === memberId);
+	return getMemberById(memberStore.getState().members, memberId);
 }
 
 /** 회원의 기록을 날짜 오름차순으로 */
@@ -26,11 +27,11 @@ function getRecords() {
 
 /** 회원 정보 카드 렌더링 (to-be: 프로토타입처럼 이름·성별·담당 트레이너 3행만) */
 function renderInfoCard(member) {
-	UI.setText("md-title", member.name);
-	UI.setText("md-sub", `체크기록 ${getRecords().length}건`);
-	UI.setText("md-name", member.name);
-	UI.setText("md-gender", member.gender || "-");
-	UI.setText("md-trainer", member.trainer || "-");
+	setText("md-title", member.name);
+	setText("md-sub", `체크기록 ${getRecords().length}건`);
+	setText("md-name", member.name);
+	setText("md-gender", member.gender || "-");
+	setText("md-trainer", member.trainer || "-");
 	document.title = `${member.name} — 회원 상세`;
 }
 
@@ -38,7 +39,7 @@ function renderInfoCard(member) {
  *  (체지방률·체중·골격근량·체지방량 변화, 최신값+누적 델타+스파크라인+회차 범위) */
 function renderStatCards(records) {
 	if (!records.length) {
-		UI.setHTML("stat-charts", '<div class="sparkline-empty">아직 체크기록이 없어요</div>');
+		setHTML("stat-charts", '<div class="sparkline-empty">아직 체크기록이 없어요</div>');
 		return;
 	}
 	// 프로토타입 STAT_METRICS 순서: 체지방률 → 체중 → 골격근량 → 체지방량
@@ -50,7 +51,7 @@ function renderStatCards(records) {
 	];
 	const firstSession = records[0]?.payload.session ?? "";
 	const lastSession = records[records.length - 1]?.payload.session ?? "";
-	UI.setHTML(
+	setHTML(
 		"stat-charts",
 		metrics
 			.map((metric) => {
@@ -80,7 +81,7 @@ function renderStatCards(records) {
 /** 체크 기록 목록 렌더링 */
 function renderRecords(records) {
 	if (!records.length) {
-		UI.setHTML("record-list", '<p class="record-empty">아직 체크기록이 없습니다. ＋ 체크기록 작성으로 시작하세요.</p>');
+		setHTML("record-list", '<p class="record-empty">아직 체크기록이 없습니다. ＋ 체크기록 작성으로 시작하세요.</p>');
 		return;
 	}
 	const rows = records.map((r) => ({
@@ -90,16 +91,16 @@ function renderRecords(records) {
 		total: recordTotal(r.payload),
 		max: MOTION_TOTAL_MAX,
 	}));
-	UI.setHTML("record-list", rows.map((r) => TPL.recordRow(r)).join(""));
+	setHTML("record-list", rows.map((r) => TPL.recordRow(r)).join(""));
 }
 
 /** 비교 select 채우기 — 프로토타입과 동일하게 비교 대상(기준) 기본값은 첫 체크기록 */
 function fillCompareSelects(records) {
-	const cur = UI.byId("cmp-cur");
-	const tgt = UI.byId("cmp-tgt");
+	const cur = byId("cmp-cur");
+	const tgt = byId("cmp-tgt");
 	if (records.length === 0) {
 		cur.innerHTML = tgt.innerHTML = `<option>체크기록 없음</option>`;
-		UI.setHTML("compare-result", '<div class="sparkline-empty">비교할 체크기록이 없어요</div>');
+		setHTML("compare-result", '<div class="sparkline-empty">비교할 체크기록이 없어요</div>');
 		return;
 	}
 	const opts = records
@@ -114,25 +115,25 @@ function fillCompareSelects(records) {
 
 /** 비교 테이블 렌더링 */
 function renderCompare() {
-	const curId = Number(UI.byId("cmp-cur").value);
-	const tgtId = Number(UI.byId("cmp-tgt").value);
+	const curId = Number(byId("cmp-cur").value);
+	const tgtId = Number(byId("cmp-tgt").value);
 	const all = getRecords();
 	const cur = all.find((r) => r.id === curId);
 	const tgt = all.find((r) => r.id === tgtId);
 	if (!cur || !tgt) return;
-	UI.setHTML("compare-result", buildCompareTable(cur, tgt));
+	setHTML("compare-result", buildCompareTable(cur, tgt));
 }
 
 /** 탭 전환 (role=tablist 규약: aria-selected·tabindex 관리) */
 function switchTab(tabName) {
-	const tabs = UI.queryAll(".tab-btn");
+	const tabs = queryAll(".tab-btn");
 	tabs.forEach((btn) => {
 		const active = btn.dataset.tab === tabName;
 		btn.setAttribute("aria-selected", String(active));
 		btn.tabIndex = active ? 0 : -1;
 	});
-	UI.byId("panel-records").hidden = tabName !== "records";
-	UI.byId("panel-compare").hidden = tabName !== "compare";
+	byId("panel-records").hidden = tabName !== "records";
+	byId("panel-compare").hidden = tabName !== "compare";
 }
 
 /** 탭 키보드 방향키 이동 (role=tablist 규약) */
@@ -157,19 +158,19 @@ function refreshRecords() {
 function init() {
 	const member = getMember();
 	if (!member) {
-		UI.setHTML("stat-charts", "");
-		UI.setHTML("record-list", '<p class="record-empty">회원을 찾을 수 없습니다. 회원 목록에서 다시 선택하세요.</p>');
-		UI.byId("new-record-btn").style.display = "none";
+		setHTML("stat-charts", "");
+		setHTML("record-list", '<p class="record-empty">회원을 찾을 수 없습니다. 회원 목록에서 다시 선택하세요.</p>');
+		byId("new-record-btn").style.display = "none";
 		return;
 	}
 	renderInfoCard(member);
-	UI.byId("new-record-btn").href = `check-doc-new.html?memberID=${memberId}`;
-	UI.byId("edit-member-btn").href = `member-edit.html?memberID=${memberId}`;
+	byId("new-record-btn").href = `check-doc-new.html?memberID=${memberId}`;
+	byId("edit-member-btn").href = `member-edit.html?memberID=${memberId}`;
 	refreshRecords();
 }
 
 // 이벤트 1회 등록
-UI.delegate(document, "click", "[data-del-record]", (e, el) => {
+delegate(document, "click", "[data-del-record]", (e, el) => {
 	e.stopPropagation();
 	recordStore.setState((prev) => ({
 		...prev,
@@ -179,22 +180,22 @@ UI.delegate(document, "click", "[data-del-record]", (e, el) => {
 });
 // 기록 행 클릭/키보드 → 조회 화면 (삭제 버튼은 제외)
 const goView = (el) => (window.location.href = `check-doc-view.html?docID=${el.dataset.recordId}`);
-UI.delegate(document, "click", ".record-row", (e, el) => {
+delegate(document, "click", ".record-row", (e, el) => {
 	if (e.target.closest("[data-del-record]")) return;
 	goView(el);
 });
-UI.delegate(document, "keydown", ".record-row", (e, el) => {
+delegate(document, "keydown", ".record-row", (e, el) => {
 	if ((e.key === "Enter" || e.key === " ") && !e.target.closest("[data-del-record]")) {
 		e.preventDefault();
 		goView(el);
 	}
 });
-const tabs = UI.queryAll(".tab-btn");
+const tabs = queryAll(".tab-btn");
 tabs.forEach((btn) => {
 	btn.addEventListener("click", () => switchTab(btn.dataset.tab));
 	btn.addEventListener("keydown", (e) => onTabKeydown(e, tabs));
 });
-UI.byId("cmp-cur").addEventListener("change", renderCompare);
-UI.byId("cmp-tgt").addEventListener("change", renderCompare);
+byId("cmp-cur").addEventListener("change", renderCompare);
+byId("cmp-tgt").addEventListener("change", renderCompare);
 
 init();

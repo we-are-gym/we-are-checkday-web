@@ -145,5 +145,5 @@ export function buildCompareTable(cur, tgt) {
 		${TPL.compareTable({ curLabel, tgtLabel, rows: ibRows })}
 		<hr class="div">
 		<div class="section-title">움직임 평가 총점</div>
-		${TPL.compareTableBody({ rows: mvRows })}`;
+		${TPL.compareTable({ rows: mvRows, withHeader: false })}`;
 }
