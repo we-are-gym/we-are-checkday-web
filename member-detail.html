@@ -8,7 +8,20 @@
     <link rel="stylesheet" href="styles/font.css" />
     <link rel="stylesheet" href="styles/layout-shell.css" />
     <link rel="stylesheet" href="styles/layout-member-detail.css" />
+    <style type="text/css">
+      #new-record-btn {
+        border: solid 0.5px #3a3a3a;
+        color: var(--text2);
+        background: none;
+      }
+
+      #new-record-btn:hover {
+        color: var(--text);
+        background: var(--surface2);
+      }
+    </style>
   </head>
+
   <body>
     <!-- 파일 용도: 회원 상세 조회 및 체크기록 비교 — ?memberID= 로 회원을 조회한다 -->
     <div class="container">
@@ -59,8 +72,23 @@
             </section>
 
             <!-- 통계 카드 (프로토타입 배치: 단일 카드 + chart-stat 4종 세로 누적) -->
-            <section class="detail-card stat-card" aria-label="통계 · 전체 회차 누적">
-              <h2 class="stat-card-title">통계 · 전체 회차 누적</h2>
+            <section
+              class="detail-card stat-card"
+              aria-label="통계 · 전체 회차 누적"
+            >
+              <h2 class="stat-card-title">
+                통계 &nbsp;
+                <span
+                  style="
+                    font-size: 6.3px;
+                    font-weight: normal;
+                    color: var(--text3);
+                  "
+                >
+                  <!-- · -->
+                  전체 회차 누적</span
+                >
+              </h2>
               <div class="stat-charts" id="stat-charts"></div>
             </section>
           </div>
@@ -106,8 +134,9 @@
                   class="btn btn-primary btn-sm"
                   id="new-record-btn"
                   href="check-doc-new.html"
-                  >＋ 체크기록 작성</a
                 >
+                  ＋ 체크기록 작성
+                </a>
               </div>
               <div class="record-list" id="record-list"></div>
             </section>

@@ -33,36 +33,57 @@ export function recordTotal(payload) {
  */
 export function sparkline(values, { width = 260, height = 68 } = {}) {
 	const nums = values.filter((v) => !Number.isNaN(parseFloat(v))).map(Number);
+
 	if (nums.length === 0) {
 		return `<span class="spark-empty">기록 없음</span>`;
 	}
+
 	if (nums.length === 1) {
 		return `<span class="spark-empty">${nums[0]} · 첫 회차만 기록됨</span>`;
 	}
+
 	const padX = 10;
+
 	const padTop = 20;
 	const padBottom = 16;
+
 	const min = Math.min(...nums);
 	const max = Math.max(...nums);
+
 	const range = max - min || 1; // 값이 전부 같으면 평평한 직선 — 실제로 변화가 없었다는 뜻
 	const innerH = height - padTop - padBottom;
 	const stepX = (width - 2 * padX) / (nums.length - 1);
-	const pts = nums.map((v, i) => [padX + i * stepX, padTop + innerH * (1 - (v - min) / range)]);
+
+	const pts = nums.map((v, i) => [
+		padX + i * stepX,
+		padTop + innerH * (1 - (v - min) / range),
+	]);
+
 	const poly = pts.map((p) => p.join(",")).join(" ");
-	const dots = pts.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="2.6" fill="var(--spark)"/>`).join("");
+
+	const dots = pts
+		.map(
+			([x, y]) =>
+				`<circle cx="${x}" cy="${y}" r="2.6" fill="var(--spark)"/>`,
+		)
+		.join("");
+
 	// 각 지점 위(꼭대기에 가까우면 아래)에 실제 수치를 라벨로 표시 — 그래프만 봐도 바로 읽히도록
 	const labels = pts
 		.map(([x, y], i) => {
 			const nearTop = y < padTop + 10;
 			const ly = nearTop ? y + 13 : y - 8;
+
 			return `<text x="${x}" y="${ly}" font-size="9.5" text-anchor="middle" fill="var(--text3)">${nums[i]}</text>`;
 		})
 		.join("");
-	return `<svg class="sparkline" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" role="img" aria-label="회차별 추세 그래프" style="display:block; max-width:100%;">
-		<polyline points="${poly}" fill="none" stroke="var(--spark)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-		${dots}
-		${labels}
-	</svg>`;
+
+	return `
+		<svg class="sparkline" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" role="img" aria-label="회차별 추세 그래프" style="display:block; max-width:100%;">
+			<polyline points="${poly}" fill="none" stroke="var(--spark)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+			${dots}
+			${labels}
+		</svg>`;
 }
 
 /**
@@ -92,7 +113,12 @@ export function buildCompareTable(cur, tgt) {
 		const c = parseFloat(cur.payload.ib?.[key]);
 		const t = parseFloat(tgt.payload.ib?.[key]);
 		if (Number.isNaN(c) || Number.isNaN(t)) return;
-		ibRows.push({ label, cur: c.toFixed(1), tgt: t.toFixed(1), delta: deltaHTML(Number((c - t).toFixed(1))) });
+		ibRows.push({
+			label,
+			cur: c.toFixed(1),
+			tgt: t.toFixed(1),
+			delta: deltaHTML(Number((c - t).toFixed(1))),
+		});
 	});
 	// ② 움직임 평가 + 총점 표
 	const mvRows = [];
@@ -100,11 +126,21 @@ export function buildCompareTable(cur, tgt) {
 		const c = cur.payload.scores?.[i];
 		const t = tgt.payload.scores?.[i];
 		if (c == null || t == null) return;
-		mvRows.push({ label: item.name, cur: `${c}/3`, tgt: `${t}/3`, delta: deltaHTML(c - t) });
+		mvRows.push({
+			label: item.name,
+			cur: `${c}/3`,
+			tgt: `${t}/3`,
+			delta: deltaHTML(c - t),
+		});
 	});
 	const ct = recordTotal(cur.payload);
 	const tt = recordTotal(tgt.payload);
-	mvRows.push({ label: "총점", cur: `${ct}/${MOTION_TOTAL_MAX}`, tgt: `${tt}/${MOTION_TOTAL_MAX}`, delta: deltaHTML(ct - tt) });
+	mvRows.push({
+		label: "총점",
+		cur: `${ct}/${MOTION_TOTAL_MAX}`,
+		tgt: `${tt}/${MOTION_TOTAL_MAX}`,
+		delta: deltaHTML(ct - tt),
+	});
 	return `
 		${TPL.compareTable({ curLabel, tgtLabel, rows: ibRows })}
 		<hr class="div">

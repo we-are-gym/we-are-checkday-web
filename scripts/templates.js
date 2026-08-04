@@ -15,6 +15,21 @@ export function escapeHtml(text) {
 		.replaceAll('"', "&quot;")
 		.replaceAll("'", "&#39;");
 }
+/**
+ * 다음 목표 고정 태그 목록 (checkday_1·check-doc-new·check-doc-edit 공용 단일 소스)
+ * @type {string[]}
+ */
+export const GOAL_TAGS = [
+	"💪 근력 향상",
+	"🔥 체지방 감소",
+	"🧘 자세 교정",
+	"🏃 체력 향상",
+	"⚖️ 체중 유지",
+	"🦵 하체 강화",
+	"🤸 유연성 개선",
+	"🩺 통증 개선",
+	"📈 근육량 증가",
+];
 
 export const TPL = {
 	/**
@@ -55,7 +70,7 @@ export const TPL = {
 						<div class="sdots">${dots}</div>
 					</div>
 				</div>
-				<button class="expand-toggle" id="et-${index}" data-i="${index}">
+				<button class="expand-toggle" id="et-${index}" data-i="${index}" aria-expanded="false">
 					체크 항목 / 메모 <span class="arr">▾</span>
 				</button>
 				<div class="sub-panel" id="sp-${index}">
@@ -87,7 +102,7 @@ export const TPL = {
 						<div class="score-dots">${dots}</div>
 					</div>
 				</div>
-				<button class="expand-btn" id="expand-${id}" data-id="${id}">
+				<button class="expand-btn" id="expand-${id}" data-id="${id}" aria-expanded="false">
 					체크 항목 / 메모
 					<span class="expand-arrow">▾</span>
 				</button>
@@ -100,16 +115,35 @@ export const TPL = {
 
 	/**
 	 * 인바디 입력 셀 1개
-	 * @param {{ label: string, id: string, placeholder: string, step?: string, tagId: string }} p
+	 * @param {{ label: string, id: string, placeholder: string, step?: string, tagId: string, last?: boolean }} p
+	 *           step: 빈 문자열이면 step 속성 생략(기초대사량처럼 정수 입력용), last: 3열 마지막 행(하단 테두리 제거)
 	 * @returns {string}
 	 */
-	inbodyCell({ label, id, placeholder, step = "0.1", tagId }) {
+	inbodyCell({ label, id, placeholder, step = "0.1", tagId, last = false }) {
+		const cls = last ? "ib-cell no-border-b" : "ib-cell";
+		const stepAttr = step ? ` step="${escapeHtml(step)}"` : "";
 		return `
-			<div class="ib-cell">
+			<div class="${cls}">
 				<label>${escapeHtml(label)}</label>
-				<input class="ib-num" id="${id}" type="number" placeholder="${escapeHtml(placeholder)}" step="${step}" />
+				<input class="ib-num" id="${id}" type="number" placeholder="${escapeHtml(placeholder)}"${stepAttr} />
 				<div id="${tagId}"></div>
 			</div>`;
+	},
+
+	/**
+	 * 인바디 6셀 그리드 전체 (체중·골격근량·체지방량·BMI·체지방률·기초대사량)
+	 * 내장지방(ib-vis)·코멘트(ib-comment)는 1회성 배치라 화면 HTML에 고정으로 둔다.
+	 * @returns {string}
+	 */
+	inbodyGrid() {
+		return [
+			this.inbodyCell({ label: "체중 (kg)", id: "ib-w", placeholder: "65.0", tagId: "tag-w" }),
+			this.inbodyCell({ label: "골격근량 (kg)", id: "ib-m", placeholder: "28.0", tagId: "tag-m" }),
+			this.inbodyCell({ label: "체지방량 (kg)", id: "ib-fat", placeholder: "18.0", tagId: "tag-fat" }),
+			this.inbodyCell({ label: "BMI", id: "ib-bmi", placeholder: "23.5", tagId: "tag-bmi", last: true }),
+			this.inbodyCell({ label: "체지방률 (%)", id: "ib-bfp", placeholder: "27.0", tagId: "tag-bfp", last: true }),
+			this.inbodyCell({ label: "기초대사량 (kcal)", id: "ib-bmr", placeholder: "1450", step: "", tagId: "tag-bmr", last: true }),
+		].join("");
 	},
 
 	/**
@@ -119,6 +153,13 @@ export const TPL = {
 	 */
 	goalTag(text) {
 		return `<div class="goal-tag" role="button" tabindex="0" aria-pressed="false">${escapeHtml(text)}</div>`;
+	},
+	/**
+	 * 목표 태그 전체 (고정 9개) — 컨테이너(#goal-tags)는 각 화면 HTML이 보유
+	 * @returns {string}
+	 */
+	goalTags() {
+		return GOAL_TAGS.map((text) => this.goalTag(text)).join("");
 	},
 
 	/**
@@ -177,7 +218,7 @@ export const TPL = {
 	 */
 	recordRow({ id, session, date, total, max }) {
 		return `
-			<div class="record-row" data-record-id="${id}" tabindex="0">
+			<div class="record-row" data-record-id="${id}" tabindex="0" role="link">
 				<div class="cell-name">${escapeHtml(session)}</div>
 				<div class="cell-dim">총점 ${total}/${max}</div>
 				<div><button type="button" class="btn btn-sm btn-danger" data-del-record="${id}" aria-label="기록 삭제">삭제</button></div>

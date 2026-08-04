@@ -58,12 +58,18 @@ export function prefillForm(rec) {
 		if (memo) memo.value = ed.memo || "";
 	});
 
-	// 목표 (고정 태그 + 추가 목표 입력)
+	// 목표 (고정 태그 + 추가 목표 입력) — aria-pressed도 상태와 함께 동기화
 	const fixed = [...document.querySelectorAll(".goal-tag")];
-	fixed.forEach((el) => el.classList.remove("on"));
+	fixed.forEach((el) => {
+		el.classList.remove("on");
+		el.setAttribute("aria-pressed", "false");
+	});
 	(p.goals || []).forEach((g) => {
 		const hit = fixed.find((el) => el.textContent === g);
-		if (hit) hit.classList.add("on");
+		if (hit) {
+			hit.classList.add("on");
+			hit.setAttribute("aria-pressed", "true");
+		}
 	});
 	const custom = (p.goals || []).filter((g) => !fixed.some((el) => el.textContent === g));
 	const customEl = UI.byId("goal-custom");
