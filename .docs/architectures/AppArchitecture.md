@@ -72,19 +72,22 @@ JS는 **ES Modules**(`<script type="module">`)로 로드된다. 각 페이지는
 
 정적 HTML 파일로 이루어진 MPA(상대 경로 링크 이동)이며 진입점은 `index.html`이다.
 
-| 화면               | 파일                               | 비고                                                   |
-| ------------------ | ---------------------------------- | ------------------------------------------------------ |
-| 메인               | `index.html`                       | 로고·체크기록 작성/회원 관리 연결                      |
-| 회원 관리          | `members.html`                     | 목록·검색·제거·회원 등록(`?memberID=`)                 |
-| 회원 등록          | `member-create.html`               | 회원 정보 등록 폼                                      |
-| 회원 상세          | `member-detail.html`               | 정보 카드·스파크라인·체크 기록·변화 분석(`?memberID=`) |
-| 체크기록 작성      | `check-doc-new.html`               | 상담지 폼(`?memberID=` 프리필)                         |
-| 체크기록 조회      | `check-doc-view.html`              | 기록 읽기 전용(`?docID=`)                              |
-| 체크기록 편집      | `check-doc-edit.html`              | 기록 수정·저장(`?docID=`)                              |
-| 로그인             | `login.html`                       | 데모 로그인(checkday/1234)                             |
-| 체크회차 관리      | `check-sessions.html`              | placeholder('준비 중')                                 |
-| 레거시 상담지      | `checkday_1.html`                  | 무변경 유지                                            |
-| 베이직 펑션 평가지 | `basic_function_assessment_2.html` | 레거시 유지                                            |
+| 화면               | 파일                               | 컨테이너 최대 폭 | 비고                                                      |
+| ------------------ | ---------------------------------- | ---------------- | --------------------------------------------------------- |
+| 베이직 펑션 평가지 | `basic_function_assessment_2.html` | 640px            | 레거시 유지                                               |
+| 체크데이 상담지    | `checkday_1.html`                  | 640px            | 레거시 유지                                               |
+| 메인               | `index.html`                       | 640px            | 라우팅 허브 역할                                          |
+| 로그인             | `login.html`                       | 650px            | 데모 로그인 (`checkday`/`1234`)                           |
+| 회원 관리          | `members.html`                     | 640px            | 목록, 검색, 제거, 등록                                    |
+| 회원 정보          | `member-detail.html`               | 960px            | 정보 카드, 변화 차트, 체크 기록, 변화 분석 (`?memberID=`) |
+| 회원 등록          | `member-create.html`               | 640px            | 회원 등록 폼                                              |
+| 회원 정보 편집     | `member-edit.html`                 | 640px            | 회원 정보 수정·저장 폼                                    |
+| 체크기록 조회      | `check-doc-view.html`              | 720px            | 체크기록 읽기 전용 (`?docID=`)                            |
+| 체크기록 작성      | `check-doc-new.html`               | 640px            | 체크기록 작성·저장 폼 (`?memberID=` 프리필)               |
+| 체크기록 편집      | `check-doc-edit.html`              | 640px            | 체크기록 수정·저장 폼 (`?docID=`)                         |
+| 체크회차 관리      | `check-sessions.html`              | 640px            | placeholder(『준비중』)                                   |
+
+화면마다 컨테이너 최대 폭이 다를 수 있다.
 
 ## 상태 구조
 
