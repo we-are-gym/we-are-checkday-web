@@ -18,6 +18,11 @@ export const evals = ASSESSMENT_ITEMS_FULL;
 STATE.init(evals.length, MOTION_TOTAL_MAX);
 
 // ── VO₂ 계산 (8번 항목에만) — 공용 모듈 사용 ──
+/**
+ * VO₂ MAX 자동 계산 — 폼의 연령·신장·체중·심박수 입력으로 산출·표시를 갱신한다.
+ * 입력 중 하나라도 NaN이면 결과 블록을 숨긴다.
+ * @returns {void}
+ */
 export function updateVO2Disp() {
 	const age = VAL.parseToNum(UI.byId("vo2-age").value);
 	const ht = VAL.parseToNum(UI.byId("vo2-ht").value);
@@ -39,6 +44,10 @@ export function updateVO2Disp() {
 }
 
 // ── 평가 카드 빌드 (카드 셸은 공용 템플릿 함수 TPL.assessmentCard 사용) ──
+/**
+ * 움직임 평가 8개 카드를 #eval-cards에 렌더링한다. (VO₂ 항목은 자동계산 블록 포함)
+ * @returns {void}
+ */
 export function renderBasicFunctionCards() {
 	const c = UI.byId("eval-cards");
 	evals.forEach((e, i) => {
@@ -75,6 +84,11 @@ function buildVo2Block() {
 				</div>`;
 }
 
+/**
+ * 평가 카드의 펼침 서브패널(체크 항목·메모)을 토글하고 aria-expanded를 동기화한다.
+ * @param {number} index 평가 항목 인덱스
+ * @returns {void}
+ */
 export function toggleBasicFunctionDetail(index) {
 	const sp = UI.byId(`sp-${index}`);
 	const et = UI.byId(`et-${index}`);
@@ -83,6 +97,12 @@ export function toggleBasicFunctionDetail(index) {
 	et.setAttribute("aria-expanded", String(open));
 }
 
+/**
+ * i번째 평가 점수를 ±delta만큼 조정(0~3 클램프)하고 화면 표시를 갱신한다.
+ * @param {number} index 평가 항목 인덱스
+ * @param {number} delta 변화량 (예: -1, 1)
+ * @returns {void}
+ */
 export function adjustScore(index, delta) {
 	const next = VAL.clamp(STATE.get(index) + delta, SCORE_MIN, SCORE_MAX);
 	STATE.set(index, next);
@@ -92,6 +112,10 @@ export function adjustScore(index, delta) {
 	updateTotal();
 }
 
+/**
+ * 총점·진행률·등급 배지·힌트를 현재 STATE 기준으로 갱신한다.
+ * @returns {void}
+ */
 export function updateTotal() {
 	const tot = STATE.getTotal();
 	const max = STATE.max;

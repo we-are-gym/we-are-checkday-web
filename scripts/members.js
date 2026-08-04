@@ -21,7 +21,9 @@ function buildRows(list) {
 	return list.map((m) => ({ ...m, recordCount: countByMember.get(m.id) || 0 }));
 }
 
-/** 스토어 상태로 테이블·건수를 재렌더링 (빈 목록 안내는 member-table이 목록 안에 렌더링) */
+/** 스토어 상태로 테이블·건수를 재렌더링 (빈 목록 안내는 member-table이 목록 안에 렌더링)
+ * @returns {void}
+ */
 function render() {
 	const kw = keyword.trim().toLowerCase();
 	const { members } = memberStore.getState();
@@ -32,7 +34,11 @@ function render() {
 	tableEl.refresh();
 }
 
-/** 회원 삭제 (스토어 상태 갱신 → 구독자 재렌더링) */
+/**
+ * 회원 삭제 (스토어 상태 갱신 → 구독자 재렌더링)
+ * @param {number} id 삭제할 회원 고유 번호
+ * @returns {void}
+ */
 function removeMember(id) {
 	memberStore.setState((prev) => ({
 		...prev,
@@ -40,7 +46,9 @@ function removeMember(id) {
 	}));
 }
 
-/** 검색어 갱신 후 재렌더링 */
+/** 검색어 갱신 후 재렌더링
+ * @returns {void}
+ */
 function onSearch() {
 	keyword = UI.byId("search-input").value;
 	render();

@@ -3,6 +3,7 @@
 import { UI } from "./UI.js";
 import { memberStore } from "./member-store.js";
 import { recordStore } from "./record-store.js";
+import { getMemberById } from "./member-utils.js";
 import { TPL, escapeHtml } from "./templates.js";
 import { buildCompareTable, recordTotal, sparkline } from "./record-stats.js";
 import { MOTION_TOTAL_MAX } from "./constants.js";
@@ -13,7 +14,7 @@ const memberId = Number(new URLSearchParams(window.location.search).get("memberI
 
 /** 현재 회원 */
 function getMember() {
-	return memberStore.getState().members.find((m) => m.id === memberId);
+	return getMemberById(memberStore.getState().members, memberId);
 }
 
 /** 회원의 기록을 날짜 오름차순으로 */

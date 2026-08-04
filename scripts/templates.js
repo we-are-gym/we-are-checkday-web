@@ -202,7 +202,7 @@ export const TPL = {
 	 */
 	memberRow({ id, name, gender, trainer, recordCount }) {
 		return `
-			<tr class="member-row" data-member-id="${id}" tabindex="0">
+			<tr class="member-row" data-member-id="${id}" tabindex="0" role="link">
 				<td class="member-name">${escapeHtml(name)}</td>
 				<td class="member-gender">${escapeHtml(gender || "-")}</td>
 				<td class="member-trainer">${escapeHtml(trainer || "-")}</td>
