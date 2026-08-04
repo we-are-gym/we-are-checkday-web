@@ -52,7 +52,10 @@
 	--btn-blue-text: #ffffff;
 
 	/* 회원 상세·비교 화면 추세 스파크라인·상승·하강 색 */
-	--spark: #6b9bd8;
+
+	/* --spark: #6b9bd8; */
+	--spark: silver;
+
 	--delta-up: #5a9bd8;
 	--delta-down: #d86b6b;
 
