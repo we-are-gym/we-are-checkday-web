@@ -1,9 +1,13 @@
 /* 파일 용도: 회원 상세 화면 레이아웃 — 페이지 머리·좌우 2단 컬럼·정보 카드·지표 카드·탭·기록 목록·비교 테이블 (member-detail.html) */
 /* 프로토타입 참고: 2단 컬럼(좌측=정보+통계, 우측=탭+패널), 비교 테이블, 스파크라인 색상 토큰 사용 */
 
-main {
+/* ── 컨테이너: 아키텍처 문서 사양 960px — 헤더바(자식)가 컨테이너 폭을 따라가도록 container가 폭을 가진다 ── */
+.container {
 	max-width: 960px;
 	margin: 0 auto;
+}
+
+main {
 	padding: 24px 16px 64px;
 	display: flex;
 	flex-direction: column;
