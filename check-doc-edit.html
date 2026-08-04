@@ -73,73 +73,7 @@
           <div class="sec-sub">체성분 수치 입력</div>
         </div>
         <div class="card">
-          <div class="ib-grid">
-            <div class="ib-cell">
-              <label>체중 (kg)</label
-              ><input
-                class="ib-num"
-                id="ib-w"
-                type="number"
-                placeholder="65.0"
-                step="0.1"
-              />
-              <div id="tag-w"></div>
-            </div>
-            <div class="ib-cell">
-              <label>골격근량 (kg)</label
-              ><input
-                class="ib-num"
-                id="ib-m"
-                type="number"
-                placeholder="28.0"
-                step="0.1"
-              />
-              <div id="tag-m"></div>
-            </div>
-            <div class="ib-cell">
-              <label>체지방량 (kg)</label
-              ><input
-                class="ib-num"
-                id="ib-fat"
-                type="number"
-                placeholder="18.0"
-                step="0.1"
-              />
-              <div id="tag-fat"></div>
-            </div>
-            <div class="ib-cell no-border-b">
-              <label>BMI</label
-              ><input
-                class="ib-num"
-                id="ib-bmi"
-                type="number"
-                placeholder="23.5"
-                step="0.1"
-              />
-              <div id="tag-bmi"></div>
-            </div>
-            <div class="ib-cell no-border-b">
-              <label>체지방률 (%)</label
-              ><input
-                class="ib-num"
-                id="ib-bfp"
-                type="number"
-                placeholder="27.0"
-                step="0.1"
-              />
-              <div id="tag-bfp"></div>
-            </div>
-            <div class="ib-cell no-border-b">
-              <label>기초대사량 (kcal)</label
-              ><input
-                class="ib-num"
-                id="ib-bmr"
-                type="number"
-                placeholder="1450"
-              />
-              <div id="tag-bmr"></div>
-            </div>
-          </div>
+          <div class="ib-grid" id="ib-grid"></div>
           <!-- 내장지방 -->
           <div
             style="
@@ -203,17 +137,7 @@
           <div class="sec-sub">태그 선택 + 메모</div>
         </div>
         <div class="card">
-          <div class="goal-tags">
-            <div class="goal-tag">💪 근력 향상</div>
-            <div class="goal-tag">🔥 체지방 감소</div>
-            <div class="goal-tag">🧘 자세 교정</div>
-            <div class="goal-tag">🏃 체력 향상</div>
-            <div class="goal-tag">⚖️ 체중 유지</div>
-            <div class="goal-tag">🦵 하체 강화</div>
-            <div class="goal-tag">🤸 유연성 개선</div>
-            <div class="goal-tag">🩺 통증 개선</div>
-            <div class="goal-tag">📈 근육량 증가</div>
-          </div>
+          <div class="goal-tags" id="goal-tags"></div>
           <div class="goal-memo-wrap">
             <input
               class="goal-custom"

@@ -1,6 +1,8 @@
 // 파일 용도: 베이직 펑션 평가 전용 스크립트 — 항목 카드·체크·VO₂ Max Test·점수/등급·리포트 (basic_function_assessment_2 전용)
 // DEPENDS: ASSESSMENT_ITEMS, ARR, VAL, UI, calcVo2Value, determineVO2Grade, getGradeMeta + 상수 모듈
-// Warning: `checkday.js`와 기능 중복 많음 (본 화면은 별도 상태·렌더링 구조 사용)
+// 공용 경계: 순수 논리(VO₂ 계산 vo2.js·등급 grade.js·점수 색 grade-styles.js·상수 constants·카드 셸 TPL.basicItemCard)는
+//          공용 모듈을 그대로 쓰고, 화면 전용 DOM 배선(로컬 state·v-*/score-*/detail-* 요소 id)만 여기 남긴다.
+//          evaluation.js(checkday 공용)와 같은 논리가 일부 보이나 요소 id·상태 구조가 달라 화면 특화로 유지한다.
 import { ASSESSMENT_ITEMS } from "./assessment-data.js";
 import { ARR } from "./utils-array.js";
 import { VAL } from "./validation.js";
@@ -127,8 +129,9 @@ function buildItems() {
 function toggleBasicFunctionDetail(index) {
 	const detail = UI.byId(`detail-${index}`);
 	const btn = UI.byId(`expand-${index}`);
-	detail.classList.toggle("open");
+	const open = detail.classList.toggle("open");
 	btn.classList.toggle("open");
+	btn.setAttribute("aria-expanded", String(open));
 }
 
 function toggleCheck(id, idx) {

@@ -78,8 +78,9 @@ function buildVo2Block() {
 export function toggleBasicFunctionDetail(index) {
 	const sp = UI.byId(`sp-${index}`);
 	const et = UI.byId(`et-${index}`);
-	sp.classList.toggle("open");
+	const open = sp.classList.toggle("open");
 	et.classList.toggle("open");
+	et.setAttribute("aria-expanded", String(open));
 }
 
 export function adjustScore(index, delta) {

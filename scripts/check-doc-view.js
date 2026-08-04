@@ -11,7 +11,10 @@ import "./components/app-header.js";
 /** ?docID= 파라미터 (없으면 0 — 미조회 상태) */
 const docId = Number(new URLSearchParams(window.location.search).get("docID")) || 0;
 
-/** 조회 대상 기록 */
+/**
+ * 조회 대상 기록
+ * @returns {import("./store.js").CheckRecord | undefined} docID에 해당하는 기록 (없으면 undefined)
+ */
 function getRecord() {
 	return recordStore.getState().records.find((r) => r.id === docId);
 }
@@ -25,7 +28,11 @@ function scoreDots(score) {
 	return Array.from({ length: DOT_COUNT }, (_, i) => `<span class="sdot${i < score ? " on" : ""}"></span>`).join("");
 }
 
-/** 기록 헤더 (회차·날짜·회원·트레이너·총점) */
+/**
+ * 기록 헤더 (회차·날짜·회원·트레이너·총점)
+ * @param {import("./store.js").CheckRecord} rec
+ * @returns {void}
+ */
 function renderHead(rec) {
 	const p = rec.payload;
 	UI.setText("vh-title", p.session || rec.date);
@@ -39,7 +46,11 @@ function renderHead(rec) {
 	document.title = `${p.session || "체크기록"} — 조회`;
 }
 
-/** 인바디 7셀 + 코멘트 */
+/**
+ * 인바디 7셀 + 코멘트
+ * @param {import("./store.js").CheckRecord} rec
+ * @returns {void}
+ */
 function renderInbody(rec) {
 	const ib = rec.payload.ib || {};
 	UI.setHTML(
@@ -56,7 +67,11 @@ function renderInbody(rec) {
 	UI.byId("ib-comment").style.display = rec.payload.ibComment ? "" : "none";
 }
 
-/** 움직임 평가 8장 (점수 도트·체크 항목·메모) */
+/**
+ * 움직임 평가 8장 (점수 도트·체크 항목·메모)
+ * @param {import("./store.js").CheckRecord} rec
+ * @returns {void}
+ */
 function renderEvals(rec) {
 	const { scores = [], evalData = [] } = rec.payload;
 	UI.setHTML(
@@ -87,7 +102,11 @@ function renderEvals(rec) {
 	UI.setText("evals-total", `총점 ${recordTotal(rec.payload)}`);
 }
 
-/** 목표 태그 + 메모 */
+/**
+ * 목표 태그 + 메모
+ * @param {import("./store.js").CheckRecord} rec
+ * @returns {void}
+ */
 function renderGoals(rec) {
 	const { goals = [], goalMemo = "" } = rec.payload;
 	UI.setHTML("goal-chips", goals.length ? goals.map((g) => `<span class="goal-chip">${escapeHtml(g)}</span>`).join("") : '<span class="goal-empty">설정한 목표가 없습니다</span>');
@@ -95,7 +114,11 @@ function renderGoals(rec) {
 	UI.byId("goal-memo").style.display = goalMemo ? "" : "none";
 }
 
-/** 동작 피드백 목록 (읽기 전용) */
+/**
+ * 동작 피드백 목록 (읽기 전용)
+ * @param {import("./store.js").CheckRecord} rec
+ * @returns {void}
+ */
 function renderFeedbacks(rec) {
 	const fbs = rec.payload.feedbacks || [];
 	UI.setHTML(
@@ -115,7 +138,11 @@ function renderFeedbacks(rec) {
 	);
 }
 
-/** 종합 상담 메모 */
+/**
+ * 종합 상담 메모
+ * @param {import("./store.js").CheckRecord} rec
+ * @returns {void}
+ */
 function renderConsult(rec) {
 	const memo = rec.payload.consultMemo || "";
 	UI.setText("consult-memo", memo || "기록된 상담 메모가 없습니다.");
