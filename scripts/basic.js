@@ -1,14 +1,13 @@
 // 파일 용도: 베이직 펑션 평가 전용 스크립트 — 항목 카드·체크·VO₂ Max Test·점수/등급·리포트 (basic_function_assessment_2 전용)
-// DEPENDS: ASSESSMENT_ITEMS, createZeroArray(utils-array), anyNaN·clamp·parseToNum(validation), byId·delegate·queryAll·queryOne(UI), calcVo2Value, determineVO2Grade, getGradeMeta + 상수 모듈
-// 공용 경계: 순수 논리(VO₂ 계산 vo2.js·등급 grade.js·점수 색 grade-styles.js·상수 constants·카드 셸 TPL.basicItemCard)는
+// DEPENDS: ASSESSMENT_ITEMS, clamp·parseToNum(validation), byId·delegate·queryAll·queryOne(UI), calcVo2Assessment(vo2), getGradeMeta + 상수 모듈
+// 공용 경계: 순수 논리(VO₂ 계산·등급 vo2.js·점수 색 grade-styles.js·상수 constants·카드 셸 TPL.basicItemCard·도트 TPL.scoreDots)는
 //          공용 모듈을 그대로 쓰고, 화면 전용 DOM 배선(로컬 state·v-*/score-*/detail-* 요소 id)만 여기 남긴다.
 //          evaluation.js(checkday 공용)와 같은 논리가 일부 보이나 요소 id·상태 구조가 달라 화면 특화로 유지한다.
 import { ASSESSMENT_ITEMS } from "./assessment-data.js";
-import { createZeroArray } from "./utils-array.js";
-import { anyNaN, clamp, parseToNum } from "./validation.js";
+import { clamp, parseToNum } from "./validation.js";
 import { byId, delegate, queryAll, queryOne } from "./UI.js";
 import { TPL } from "./templates.js";
-import { calcVo2Value, determineVO2Grade } from "./vo2.js";
+import { calcVo2Assessment } from "./vo2.js";
 import { getGradeMeta } from "./grade.js";
 import { GRADE_STYLES, VO2_GRADE_STYLES, getScoreColor } from "./grade-styles.js";
 import { SCORE_MIN, SCORE_MAX, DOT_COUNT, MOTION_TOTAL_MAX } from "./constants.js";
@@ -35,16 +34,16 @@ function toggleVo2() {
 }
 
 function updateVO2Disp() {
-	const age = parseToNum(byId("v-age").value);
-	const height = parseToNum(byId("v-height").value);
-	const weight = parseToNum(byId("v-weight").value);
-	const hr = parseToNum(byId("v-hr").value);
-	if (anyNaN(age, height, weight, hr)) return;
+	const res = calcVo2Assessment({
+		age: parseToNum(byId("v-age").value),
+		height: parseToNum(byId("v-height").value),
+		weight: parseToNum(byId("v-weight").value),
+		hr: parseToNum(byId("v-hr").value),
+	});
+	if (!res) return;
 
-	const vr = calcVo2Value(age, height, weight, hr);
+	const { vr, gradeInfo } = res;
 	vo2State.vo2 = vr;
-
-	const gradeInfo = determineVO2Grade(vr, age);
 	vo2State.grade = gradeInfo;
 	const color = VO2_GRADE_STYLES[gradeInfo.grade];
 
@@ -106,9 +105,7 @@ function setVo2Score(delta, suggested) {
 function buildItems() {
 	const container = byId("items-container");
 	assessments.forEach((a) => {
-		const dotsHTML = createZeroArray(DOT_COUNT)
-			.map((_, i) => `<div class="dot" id="dot-${a.id}-${i}"></div>`)
-			.join("");
+		const dotsHTML = TPL.scoreDots({ prefix: a.id, count: DOT_COUNT });
 		const checksHTML = a.checks
 			.map(
 				(c, i) => `

@@ -3,6 +3,7 @@
 import { byId } from "./UI.js";
 import { memberStore } from "./member-store.js";
 import { recordStore } from "./record-store.js";
+import { getRecordCountsByMember } from "./member-utils.js";
 import "./components/app-header.js";
 import "./components/member-table.js";
 
@@ -10,14 +11,12 @@ const tableEl = byId("member-table");
 let keyword = "";
 
 /**
- * 목록 행 데이터 구성 (체크 횟수는 기록 스토어에서 실계산)
+ * 목록 행 데이터 구성 (체크 횟수는 공용 헬퍼로 기록 스토어에서 실계산)
  * @param {Array<{id:number,name:string,gender:string,goal:string,trainer:string}>} list
  * @returns {Array<{id:number,name:string,gender:string,goal:string,trainer:string,recordCount:number}>}
  */
 function buildRows(list) {
-	const { records } = recordStore.getState();
-	const countByMember = new Map();
-	records.forEach((r) => countByMember.set(r.memberId, (countByMember.get(r.memberId) || 0) + 1));
+	const countByMember = getRecordCountsByMember(recordStore.getState().records);
 	return list.map((m) => ({ ...m, recordCount: countByMember.get(m.id) || 0 }));
 }
 

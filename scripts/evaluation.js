@@ -1,13 +1,12 @@
 // 파일 용도: 평가 논리 — 움직임 평가 목록 구성 · VO₂ 계산 연동 · 평가 카드 빌드 · 점수/등급/총점 갱신 (checkday 공용)
-// DEPENDS: ASSESSMENT_ITEMS, createZeroArray(utils-array), anyNaN·clamp·parseToNum(validation), byId(UI), scoreState(states), STYLE 등
+// DEPENDS: ASSESSMENT_ITEMS, clamp·parseToNum(validation), byId(UI), scoreState(states), calcVo2Assessment(vo2), STYLE 등
 import { ASSESSMENT_ITEMS_FULL } from "./assessment-data.js";
-import { createZeroArray } from "./utils-array.js";
-import { anyNaN, clamp, parseToNum } from "./validation.js";
+import { clamp, parseToNum } from "./validation.js";
 import { byId } from "./UI.js";
 import { scoreState } from "./states.js";
 import { TPL } from "./templates.js";
 import { DOT_COUNT, MOTION_TOTAL_MAX, SCORE_MIN, SCORE_MAX } from "./constants.js";
-import { calcVo2Value, determineVO2Grade } from "./vo2.js";
+import { calcVo2Assessment } from "./vo2.js";
 import { getGradeMeta } from "./grade.js";
 import { GRADE_STYLES, VO2_GRADE_STYLES } from "./grade-styles.js";
 
@@ -24,16 +23,17 @@ scoreState.init(evals.length, MOTION_TOTAL_MAX);
  * @returns {void}
  */
 export function updateVO2Disp() {
-	const age = parseToNum(byId("vo2-age").value);
-	const ht = parseToNum(byId("vo2-ht").value);
-	const wt = parseToNum(byId("vo2-wt").value);
-	const hr = parseToNum(byId("vo2-hr").value);
-	if (anyNaN(age, ht, wt, hr)) {
+	const res = calcVo2Assessment({
+		age: parseToNum(byId("vo2-age").value),
+		height: parseToNum(byId("vo2-ht").value),
+		weight: parseToNum(byId("vo2-wt").value),
+		hr: parseToNum(byId("vo2-hr").value),
+	});
+	if (!res) {
 		byId("vo2-result").style.display = "none";
 		return;
 	}
-	const vr = calcVo2Value(age, ht, wt, hr);
-	const gradeInfo = determineVO2Grade(vr, age);
+	const { vr, gradeInfo } = res;
 	const style = VO2_GRADE_STYLES[gradeInfo.grade];
 	byId("vo2-val").textContent = vr.toFixed(1) + " ml/kg/min";
 	const badge = byId("vo2-badge");
@@ -51,9 +51,7 @@ export function updateVO2Disp() {
 export function renderBasicFunctionCards() {
 	const c = byId("eval-cards");
 	evals.forEach((e, i) => {
-		const dots = createZeroArray(DOT_COUNT)
-			.map((_, j) => `<div class="dot" id="dot-${i}-${j}"></div>`)
-			.join("");
+		const dots = TPL.scoreDots({ prefix: i, count: DOT_COUNT });
 		const tags = e.checks
 			.map(
 				(ch) =>

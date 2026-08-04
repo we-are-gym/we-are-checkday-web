@@ -145,3 +145,15 @@ export function determineVO2Grade(VO2_val, age) {
 		return { grade: "poor", label: "Poor", score: 1, col: norm.col };
 	return { grade: "very_poor", label: "Very poor", score: 0, col: norm.col };
 }
+
+/**
+ * VO₂ 계산 조합 헬퍼 — 입력 4종 검증(NaN) 후 VO₂ 값·등급을 한 번에 산정 (basic·checkday 화면 공용)
+ * @param {{ age: number, height: number, weight: number, hr: number }} input 입력 4종 (parseToNum 결과)
+ * @returns {{ vr: number, gradeInfo: import("./vo2.js").determineVO2Grade extends never ? never : ReturnType<typeof determineVO2Grade> } | null}
+ *           입력 중 NaN이 있으면 null (화면별로 입력 미완성 처리)
+ */
+export function calcVo2Assessment({ age, height, weight, hr }) {
+	if ([age, height, weight, hr].some(Number.isNaN)) return null;
+	const vr = calcVo2Value(age, height, weight, hr);
+	return { vr, gradeInfo: determineVO2Grade(vr, age) };
+}

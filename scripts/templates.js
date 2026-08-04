@@ -1,6 +1,9 @@
 // 파일 용도: 바닐라JS 템플릿 함수 — 화면 공용 HTML 조각을 순수 함수로 생성 (전체 화면 공용)
-// 기법: 바닐라JS 템플릿 함수 (의존성 없음, DOM·전역 비의존, 단위 테스트 용이)
+// DEPENDS: createZeroArray(utils-array) — scoreDots 도트 배열 생성용
+// 기법: 바닐라JS 템플릿 함수 (DOM·전역 비의존, 단위 테스트 용이)
 // 주의: 사용자 입력을 넣을 때는 반드시 escapeHtml()을 거쳐 XSS를 막는다.
+
+import { createZeroArray } from "./utils-array.js";
 
 /**
  * HTML 특수문자 이스케이프 (XSS 방지)
@@ -226,38 +229,28 @@ export const TPL = {
 	},
 
 	/**
-	 * 체크기록 비교 테이블 1개 (header + body)
-	 * @param {{ curLabel: string, tgtLabel: string, rows: Array<{ label: string, cur: string, tgt: string, delta: string }> }} p
+	 * 점수 도트 HTML 생성 (count개 점) — 평가 카드 점수 표시 공용 (checkday·베이직 펑션)
+	 * @param {{ prefix: string|number, count: number }} p prefix: 도트 id 접두어(항목 인덱스 또는 id), count: 도트 수
 	 * @returns {string}
 	 */
-	compareTable({ curLabel, tgtLabel, rows }) {
-		return `
-			<table class="compare-table">
-				<thead><tr><th>항목</th><th>${escapeHtml(tgtLabel)}</th><th>${escapeHtml(curLabel)}</th><th>변화</th></tr></thead>
-				<tbody>
-					${rows
-						.map(
-							(r) => `
-						<tr>
-							<td>${escapeHtml(r.label)}</td>
-							<td>${r.tgt}</td>
-							<td>${r.cur}</td>
-							<td>${r.delta}</td>
-						</tr>`,
-						)
-						.join("")}
-				</tbody>
-			</table>`;
+	scoreDots({ prefix, count }) {
+		return createZeroArray(count)
+			.map((_, j) => `<div class="dot" id="dot-${prefix}-${j}"></div>`)
+			.join("");
 	},
 
 	/**
-	 * 비교 테이블 본문만 (헤더 없음) — 움직임 평가 총점 표용 (프로토타입 배치)
-	 * @param {{ rows: Array<import("./store.js").CompareRow> }} p
+	 * 체크기록 비교 테이블 1개 — withHeader=false면 본문만(움직임 평가 총점 표용)
+	 * @param {{ curLabel?: string, tgtLabel?: string, rows: Array<{ label: string, cur: string, tgt: string, delta: string }>, withHeader?: boolean }} p
 	 * @returns {string}
 	 */
-	compareTableBody({ rows }) {
+	compareTable({ curLabel = "", tgtLabel = "", rows, withHeader = true }) {
+		const head = withHeader
+			? `<thead><tr><th>항목</th><th>${escapeHtml(tgtLabel)}</th><th>${escapeHtml(curLabel)}</th><th>변화</th></tr></thead>`
+			: "";
 		return `
 			<table class="compare-table">
+				${head}
 				<tbody>
 					${rows
 						.map(
