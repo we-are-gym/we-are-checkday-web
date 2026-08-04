@@ -3,7 +3,9 @@
 import { byId, delegate, queryAll } from "./UI.js";
 import { getNumberParam } from "./utils-url.js";
 import { recordStore } from "./record-store.js";
-import { renderBasicFunctionCards } from "./evaluation.js";
+import { recordMax } from "./record-stats.js";
+import { itemsForRecord } from "./assessment-data.js";
+import { configureEvaluation, renderBasicFunctionCards } from "./evaluation.js";
 import { collectPayload, prefillForm } from "./check-form-payload.js";
 import { setupCheckFormEvents } from "./check-form-events.js";
 import "./components/app-header.js";
@@ -47,6 +49,11 @@ function init() {
 		return;
 	}
 	byId("btn-cancel").href = `check-doc-view.html?docID=${docId}`;
+	// 기록의 항목 구성에 맞춰 평가를 설정한다 — 5항목 기록은 5장/15점, 레거시 8항목은 8장/24점 (카드 렌더 전 호출)
+	configureEvaluation({
+		items: itemsForRecord((rec.payload.scores || []).length),
+		max: recordMax(rec.payload),
+	});
 	renderBasicFunctionCards();
 	prefillForm(rec);
 }

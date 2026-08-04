@@ -4,9 +4,9 @@ import { byId, queryAll, setHTML, setText } from "./UI.js";
 import { getNumberParam } from "./utils-url.js";
 import { recordStore } from "./record-store.js";
 import { escapeHtml, TPL } from "./templates.js";
-import { IB_KEYS, recordTotal } from "./record-stats.js";
-import { ASSESSMENT_ITEMS_FULL } from "./assessment-data.js";
-import { DOT_COUNT, MOTION_TOTAL_MAX } from "./constants.js";
+import { IB_KEYS, recordMax, recordTotal } from "./record-stats.js";
+import { itemsForRecord } from "./assessment-data.js";
+import { DOT_COUNT } from "./constants.js";
 import "./components/app-header.js";
 
 /** ?docID= 파라미터 (없으면 0 — 미조회 상태) */
@@ -41,7 +41,7 @@ function renderHead(rec) {
 		["회원", p.name || "-"],
 		["작성일", rec.date],
 		["담당 트레이너", p.trainer || "-"],
-		["총점", `${recordTotal(p)} / ${MOTION_TOTAL_MAX}`],
+		["총점", `${recordTotal(p)} / ${recordMax(rec.payload)}`],
 	];
 	setHTML("vh-meta", items.map(([k, v]) => `<span class="meta-item"><b>${k}</b>${escapeHtml(v)}</span>`).join(""));
 	document.title = `${p.session || "체크기록"} — 조회`;
@@ -69,7 +69,7 @@ function renderInbody(rec) {
 }
 
 /**
- * 움직임 평가 8장 (점수 도트·체크 항목·메모)
+ * 움직임 평가 카드 목록 (5항목 기록은 5장·레거시 8항목은 8장 — itemsForRecord로 기록별 맞춤)
  * @param {import("./store.js").CheckRecord} rec
  * @returns {void}
  */
@@ -77,7 +77,7 @@ function renderEvals(rec) {
 	const { scores = [], evalData = [] } = rec.payload;
 	setHTML(
 		"eval-list",
-		ASSESSMENT_ITEMS_FULL.map((item, i) => {
+		itemsForRecord(scores.length).map((item, i) => {
 			const score = scores[i] ?? 0;
 			const ed = evalData[i] || { checked: [], memo: "" };
 			const checks = (ed.checked || []).map((c) => `<li>${escapeHtml(c)}</li>`).join("");

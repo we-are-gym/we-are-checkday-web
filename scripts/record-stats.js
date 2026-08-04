@@ -1,5 +1,5 @@
 // 파일 용도: 체크기록 통계 — 스파크라인·기록 지표·비교 테이블 생성 (회원 상세 공용, 순수 함수)
-import { ASSESSMENT_ITEMS_FULL } from "./assessment-data.js";
+import { ASSESSMENT_ITEMS_FULL, itemsForRecord } from "./assessment-data.js";
 import { SCORE_MAX } from "./constants.js";
 import { TPL } from "./templates.js";
 
@@ -141,11 +141,19 @@ export function buildCompareTable(cur, tgt) {
 			delta: deltaHTML(Number((c - t).toFixed(1))),
 		});
 	});
-	// ② 움직임 평가 + 총점 표
+	// ② 움직임 평가 + 총점 표 — 항목을 이름으로 정렬해 5항목(베이직 펑션)·8항목(레거시) 기록 혼재에도 올바르게 비교한다
 	const mvRows = [];
-	ASSESSMENT_ITEMS_FULL.forEach((item, i) => {
-		const c = cur.payload.scores?.[i];
-		const t = tgt.payload.scores?.[i];
+	const scoreByName = (payload) => {
+		const items = itemsForRecord(payload.scores?.length);
+		const map = new Map();
+		(payload.scores || []).forEach((s, i) => map.set(items[i]?.name, s));
+		return map;
+	};
+	const curScores = scoreByName(cur.payload);
+	const tgtScores = scoreByName(tgt.payload);
+	ASSESSMENT_ITEMS_FULL.forEach((item) => {
+		const c = curScores.get(item.name);
+		const t = tgtScores.get(item.name);
 		if (c == null || t == null) return;
 		mvRows.push({
 			label: item.name,

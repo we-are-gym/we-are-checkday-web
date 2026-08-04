@@ -71,7 +71,7 @@ function getEvalLines(prefix) {
  * @returns {void}
  */
 export function openReportModal() {
-	const name = byId("m-name").value || "(미입력)";
+	const name = (byId("m-name") || byId("m-member"))?.value || "(미입력)";
 	const session = byId("m-session").value;
 	const tot = getTotal();
 	const ib = getIbData();
@@ -90,7 +90,7 @@ export function openReportModal() {
       BMI ${ib.bmi || "—"} · 체지방률 ${ib.bfp || "—"}% · BMR ${ib.bmr || "—"}kcal · 내장지방 ${ib.vis || "—"}
       ${ibC ? `<br><span style="color:var(--text2)">${ibC}</span>` : ""}
     </div></div>
-    <div class="rline"><div class="rlabel">움직임 총점</div><div>${tot}/24점</div></div>
+    <div class="rline"><div class="rlabel">움직임 총점</div><div>${tot}/${scoreState.getMax()}점</div></div>
     ${evalLines.map((l) => `<div class="rline"><div style="font-size:12px;color:var(--text2)">${l}</div></div>`).join("")}
     <div class="rline"><div class="rlabel">다음 목표</div><div>${goals || "미선택"}${gMemo ? `<br><span style="font-size:12px;color:var(--text2)">${gMemo}</span>` : ""}</div></div>
     ${fbLines.length ? `<div class="rline"><div class="rlabel">동작 피드백</div><div style="font-size:12px">${fbLines.join("<br>")}</div></div>` : ""}
@@ -103,7 +103,7 @@ export function openReportModal() {
  * @returns {void}
  */
 export function copyReportToClipboard() {
-	const name = byId("m-name").value || "(미입력)";
+	const name = (byId("m-name") || byId("m-member"))?.value || "(미입력)";
 	const tot = getTotal();
 	const ib = getIbData();
 	const goals = getSelectedGoals();

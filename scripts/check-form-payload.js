@@ -131,7 +131,7 @@ export function collectPayload() {
 		}))
 		.filter((fb) => fb.name || fb.checkItems.some((c) => c.text) || fb.memo);
 	return {
-		name: byId("m-name").value,
+		name: (byId("m-name")?.value || byId("m-member")?.value || ""),
 		session: byId("m-session").value,
 		trainer: byId("m-trainer").value,
 		ib: Object.fromEntries(IB_IDS.map((k) => [k, byId(`ib-${k}`).value])),

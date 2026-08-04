@@ -106,3 +106,15 @@ export const ASSESSMENT_ITEMS_BASIC5 = [
 		vo2: true,
 	},
 ];
+
+/**
+ * 기록의 점수 배열 길이에 맞는 평가 항목 목록을 반환한다 —
+ * 5항목(BASIC5) 기록은 5장, 8항목(레거시) 기록은 8장으로 조회·편집·비교 화면이 양쪽 다 올바르게 표시한다.
+ * @param {number} [scoresLength] 기록의 scores 배열 길이 (없으면 레거시 8항목)
+ * @returns {Array<{ name: string, desc: string, checks: string[] }>} 평가 항목 목록
+ */
+export function itemsForRecord(scoresLength) {
+	return scoresLength === ASSESSMENT_ITEMS_BASIC5.length
+		? ASSESSMENT_ITEMS_BASIC5
+		: ASSESSMENT_ITEMS_FULL;
+}

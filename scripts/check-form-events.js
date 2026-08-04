@@ -5,9 +5,11 @@
 // 주의: [data-action] 화면별 액션(reset/save 등)은 화면마다 다르므로 여기서 다루지 않고 각 진입점이 등록한다.
 import { byId, delegate } from "./UI.js";
 import { TPL } from "./templates.js";
-import { toggleBasicFunctionDetail, adjustScore, updateVO2Disp } from "./evaluation.js";
+import { DOT_COUNT } from "./constants.js";
+import { scoreState } from "./states.js";
+import { toggleBasicFunctionDetail, adjustScore, updateVO2Disp, evals, updateTotal } from "./evaluation.js";
 import { updateInbodyTags } from "./inbody.js";
-import { appendCheckMovement, appendCheckMovementItemRow } from "./feedback.js";
+import { appendCheckMovement, appendCheckMovementItemRow, resetFeedbacks } from "./feedback.js";
 
 /**
  * 두 화면이 공유하는 상담지 폼 이벤트 위임을 등록한다 (1회 호출).
@@ -63,4 +65,34 @@ export function setupCheckFormEvents() {
 		else if (id === "vo2-age" || id === "vo2-ht" || id === "vo2-wt" || id === "vo2-hr")
 			updateVO2Disp();
 	});
+}
+
+/**
+ * 상담지 폼 전체를 초기 상태로 되돌린다 (check-day·check-doc-new 공용).
+ * 입력 필드·태그·점수 도트·인바디 태그·VO₂ 결과·피드백·총점을 모두 초기화한다.
+ * @returns {void}
+ */
+export function resetCheckForm() {
+	document
+		.querySelectorAll("input[type=text],input[type=number],textarea")
+		.forEach((el) => (el.value = ""));
+	document
+		.querySelectorAll(".ctag,.fbtag,.goal-tag")
+		.forEach((el) => el.classList.remove("on"));
+	scoreState.reset();
+	evals.forEach((_, i) => {
+		byId(`sv-${i}`).textContent = "0";
+		for (let j = 0; j < DOT_COUNT; j++)
+			byId(`dot-${i}-${j}`).classList.remove("on");
+	});
+	["tag-w", "tag-m", "tag-fat", "tag-bmi", "tag-bfp", "tag-bmr", "tag-vis", "vo2-result"].forEach((id) => {
+		const el = byId(id);
+		if (el)
+			el.innerHTML =
+				el.tagName === "DIV" && el.id === "vo2-result"
+					? ((el.style.display = "none"), "")
+					: "";
+	});
+	resetFeedbacks();
+	updateTotal();
 }
