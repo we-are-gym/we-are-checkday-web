@@ -10,13 +10,32 @@ import { calcVo2Assessment } from "./vo2.js";
 import { getGradeMeta } from "./grade.js";
 import { GRADE_STYLES, VO2_GRADE_STYLES } from "./grade-styles.js";
 
-// ── 움직임 평가 데이터 (공용 모듈 8개: 7개 + VO₂ 항목) ──
-export const evals = ASSESSMENT_ITEMS_FULL;
+// ── 움직임 평가 데이터 (공용 모듈 기본 8개: 7개 + VO₂ 항목) ──
+// 주의: `evals`는 `export let` 라이브 바인딩이다. 화면이 configureEvaluation()을 호출하면
+//       이 모듈과 report.js·check-form-payload.js가 참조하는 evals가 그 화면의 항목 목록으로 갱신된다.
+export let evals = ASSESSMENT_ITEMS_FULL;
 
-/** 평가 점수 단일 소스 초기화 */
-scoreState.init(evals.length, MOTION_TOTAL_MAX);
+/** 현재 평가 총점 최댓값 (기본 24 — configureEvaluation()으로 교체 가능) */
+let currentMax = MOTION_TOTAL_MAX;
 
-// ── VO₂ 계산 (8번 항목에만) — 공용 모듈 사용 ──
+/** 평가 점수 단일 소스 초기화 (기본: 8항목/24점 — 레거시 checkday_1·basic_function_assessment_2는 재구성 없이 이대로 동작) */
+scoreState.init(evals.length, currentMax);
+
+/**
+ * 화면별 평가 구성을 설정하고 점수 상태를 초기화한다.
+ * 체크기록 작성(check-doc-new)처럼 전용 항목·만점을 쓰는 화면이 렌더 전에 호출한다.
+ * (같은 페이지 로드 그래프 안에는 평가 구성이 1개뿐이므로 충돌이 없다.)
+ * @param {{ items: Array<{name: string, desc: string, checks?: string[], vo2?: boolean}>, max: number }} config
+ *           items: 평가 항목 목록 (예: ASSESSMENT_ITEMS_BASIC5), max: 총점 최댓값 (예: 15)
+ * @returns {void}
+ */
+export function configureEvaluation({ items, max }) {
+	evals = items;
+	currentMax = max;
+	scoreState.init(items.length, max);
+}
+
+// ── VO₂ 계산 (VO₂ 항목에만) — 공용 모듈 사용 ──
 /**
  * VO₂ MAX 자동 계산 — 폼의 연령·신장·체중·심박수 입력으로 산출·표시를 갱신한다.
  * 입력 중 하나라도 NaN이면 결과 블록을 숨긴다.
@@ -45,7 +64,7 @@ export function updateVO2Disp() {
 
 // ── 평가 카드 빌드 (카드 셸은 공용 템플릿 함수 TPL.assessmentCard 사용) ──
 /**
- * 움직임 평가 8개 카드를 #eval-cards에 렌더링한다. (VO₂ 항목은 자동계산 블록 포함)
+ * 평가 카드를 #eval-cards에 렌더링한다 — 항목 수는 evals 기준 (레거시 8장·체크기록 작성 5장). VO₂ 항목은 자동계산 블록 포함.
  * @returns {void}
  */
 export function renderBasicFunctionCards() {
@@ -63,7 +82,7 @@ export function renderBasicFunctionCards() {
 	});
 }
 
-/** VO₂ 자동 계산 블록 (8번 항목 전용) — 카드 extra 조각 */
+/** VO₂ 자동 계산 블록 (VO₂ 항목 전용) — 카드 extra 조각 */
 function buildVo2Block() {
 	return `
 				<div style="margin-top:8px;padding:10px;background:var(--surface2);border-radius:8px;">

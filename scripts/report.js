@@ -20,10 +20,16 @@ function formatFbLine(fb, prefix = "") {
 }
 
 // ── 결과 보기 공용 헬퍼 ──
+/** 전체 움직임 총점 반환 (states의 단일 scoreState에 위임)
+ * @returns {number} 전체 점수 합계
+ */
 export function getTotal() {
 	return scoreState.getTotal();
 }
 
+/** 폼에서 인바디 입력값을 읽어 묶음으로 반환
+ * @returns {import("./store.js").InbodyData} 인바디 입력 문자열 묶음
+ */
 function getIbData() {
 	return {
 		w: byId("ib-w").value,
@@ -36,12 +42,19 @@ function getIbData() {
 	};
 }
 
+/** 선택된 목표 태그를 공백 구분 문자열로 반환
+ * @returns {string} 선택된 목표 텍스트들 (공백 구분, 없으면 빈 문자열)
+ */
 function getSelectedGoals() {
 	return [...document.querySelectorAll(".goal-tag.on")]
 		.map((el) => el.textContent)
 		.join(" ");
 }
 
+/** 평가 줄 배열 생성 (prefix는 각 줄 앞 들여쓰기)
+ * @param {string} prefix 라인 앞 들여쓰기
+ * @returns {string[]} 평가 줄 문자열 배열
+ */
 function getEvalLines(prefix) {
 	const evalCards = document.querySelectorAll("#eval-cards .eval-item");
 	return evals.map((e, i) => {
@@ -54,8 +67,11 @@ function getEvalLines(prefix) {
 }
 
 // ── 결과 보기 ──
+/** 결과 요약 HTML을 조립해 결과 모달 본문에 표시하고 오버레이를 연다
+ * @returns {void}
+ */
 export function openReportModal() {
-	const name = byId("m-name").value || "(미입력)";
+	const name = (byId("m-name") || byId("m-member"))?.value || "(미입력)";
 	const session = byId("m-session").value;
 	const tot = getTotal();
 	const ib = getIbData();
@@ -74,7 +90,7 @@ export function openReportModal() {
       BMI ${ib.bmi || "—"} · 체지방률 ${ib.bfp || "—"}% · BMR ${ib.bmr || "—"}kcal · 내장지방 ${ib.vis || "—"}
       ${ibC ? `<br><span style="color:var(--text2)">${ibC}</span>` : ""}
     </div></div>
-    <div class="rline"><div class="rlabel">움직임 총점</div><div>${tot}/24점</div></div>
+    <div class="rline"><div class="rlabel">움직임 총점</div><div>${tot}/${scoreState.getMax()}점</div></div>
     ${evalLines.map((l) => `<div class="rline"><div style="font-size:12px;color:var(--text2)">${l}</div></div>`).join("")}
     <div class="rline"><div class="rlabel">다음 목표</div><div>${goals || "미선택"}${gMemo ? `<br><span style="font-size:12px;color:var(--text2)">${gMemo}</span>` : ""}</div></div>
     ${fbLines.length ? `<div class="rline"><div class="rlabel">동작 피드백</div><div style="font-size:12px">${fbLines.join("<br>")}</div></div>` : ""}
@@ -83,8 +99,11 @@ export function openReportModal() {
 	byId("overlay").classList.add("open");
 }
 
+/** 결과 요약을 텍스트로 조립해 클립보드에 복사하고 성공·실패를 안내한다
+ * @returns {void}
+ */
 export function copyReportToClipboard() {
-	const name = byId("m-name").value || "(미입력)";
+	const name = (byId("m-name") || byId("m-member"))?.value || "(미입력)";
 	const tot = getTotal();
 	const ib = getIbData();
 	const goals = getSelectedGoals();
@@ -96,7 +115,7 @@ export function copyReportToClipboard() {
 		byId("ib-comment").value
 			? `  코멘트: ${byId("ib-comment").value}`
 			: "",
-		`━ 움직임 총점: ${tot}/24점`,
+		`━ 움직임 총점: ${tot}/${scoreState.getMax()}점`,
 		...evalLines,
 		`━ 다음 목표: ${goals || "미선택"}`,
 		byId("goal-memo").value

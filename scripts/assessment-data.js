@@ -72,8 +72,8 @@ export const ASSESSMENT_ITEMS = [
 	},
 ];
 
-// 파일 용도: 움직임 평가 8개 항목 전체 — 공용 7개 + VO₂ 항목 (check-doc 화면 공용)
-// evaluation.js·check-doc-new에서 그대로 사용
+// 파일 용도: 움직임 평가 8개 항목 전체 — 공용 7개 + VO₂ 항목 (레거시 기본값·checkday_1)
+// evaluation.js 기본값(checkday_1)과 8항목 기록의 조회·편집·비교에서 사용한다. 체크기록 작성은 ASSESSMENT_ITEMS_BASIC5를 쓴다.
 export const ASSESSMENT_ITEMS_FULL = [
 	...ASSESSMENT_ITEMS,
 	{
@@ -83,3 +83,38 @@ export const ASSESSMENT_ITEMS_FULL = [
 		vo2: true,
 	},
 ];
+
+// 파일 용도: 체크기록 작성(check-doc-new) 전용 베이직 펑션 5항목 — 번호는 1~5로 재부여
+// 결정: to-be 지시에 따라 Lumbar ROM(바닥짚기)·Wall Angel Test·Over Head Squat·Single Balance Test·VO₂ Max(스텝 테스트)만
+//       사용하고, 호흡 테스트·One Leg Squat·원레그 브릿지는 제외한다. 5항목 × 3점 = 15점 만점.
+// 주의: 대상 4항목은 ASSESSMENT_ITEMS와 동일 객체를 재사용하므로 데이터 중복이 없다. (VO₂ 항목만 전용)
+/**
+ * 이름으로 ASSESSMENT_ITEMS에서 평가 항목 1개를 찾는다
+ * @param {string} name 항목 이름 (예: "Lumbar ROM (바닥짚기)")
+ * @returns {{ name: string, desc: string, checks: string[] } | undefined} 항목 데이터 (없으면 undefined)
+ */
+const pickByName = (name) => ASSESSMENT_ITEMS.find((it) => it.name === name);
+export const ASSESSMENT_ITEMS_BASIC5 = [
+	pickByName("Lumbar ROM (바닥짚기)"),
+	pickByName("Wall Angel Test"),
+	pickByName("Over Head Squat"),
+	pickByName("Single Balance Test"),
+	{
+		name: "VO₂ Max (스텝 테스트)",
+		desc: "심폐 지구력",
+		checks: ["1분 HR 과도하게 높음", "HRR 회복 불량"],
+		vo2: true,
+	},
+];
+
+/**
+ * 기록의 점수 배열 길이에 맞는 평가 항목 목록을 반환한다 —
+ * 5항목(BASIC5) 기록은 5장, 8항목(레거시) 기록은 8장으로 조회·편집·비교 화면이 양쪽 다 올바르게 표시한다.
+ * @param {number} [scoresLength] 기록의 scores 배열 길이 (없으면 레거시 8항목)
+ * @returns {Array<{ name: string, desc: string, checks: string[] }>} 평가 항목 목록
+ */
+export function itemsForRecord(scoresLength) {
+	return scoresLength === ASSESSMENT_ITEMS_BASIC5.length
+		? ASSESSMENT_ITEMS_BASIC5
+		: ASSESSMENT_ITEMS_FULL;
+}

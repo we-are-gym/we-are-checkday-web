@@ -13,5 +13,5 @@ export const GRADE_EXCELLENT_PCT = 83;
 export const GRADE_GOOD_PCT = 58;
 export const GRADE_AVERAGE_PCT = 33;
 
-/** 움직임 평가(8항목) 총점 최댓값 */
+/** 움직임 평가(8항목·레거시) 총점 최댓값 — 24. 체크기록 작성(5항목)은 15점으로 configureEvaluation()이 교체한다. */
 export const MOTION_TOTAL_MAX = 24;

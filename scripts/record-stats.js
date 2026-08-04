@@ -1,6 +1,6 @@
 // 파일 용도: 체크기록 통계 — 스파크라인·기록 지표·비교 테이블 생성 (회원 상세 공용, 순수 함수)
-import { ASSESSMENT_ITEMS_FULL } from "./assessment-data.js";
-import { MOTION_TOTAL_MAX } from "./constants.js";
+import { ASSESSMENT_ITEMS_FULL, itemsForRecord } from "./assessment-data.js";
+import { SCORE_MAX } from "./constants.js";
 import { TPL } from "./templates.js";
 
 /** 인바디 표시 키 순서 (라벨 포함) */
@@ -21,6 +21,16 @@ export const IB_KEYS = [
  */
 export function recordTotal(payload) {
 	return (payload.scores || []).reduce((a, b) => a + b, 0);
+}
+
+/**
+ * 기록 1건의 총점 최댓값 — 항목 수 × 항목당 만점(3점)으로 파생한다.
+ * 레거시 8항목 기록은 24, 체크기록 작성 5항목 기록은 15. (고정 상수 대신 scores 길이로 판단)
+ * @param {import("./store.js").CheckRecordPayload} payload
+ * @returns {number} 총점 최댓값 (scores 없으면 0)
+ */
+export function recordMax(payload) {
+	return (payload.scores || []).length * SCORE_MAX;
 }
 
 /**
@@ -91,6 +101,17 @@ export function sparkline(values, { width = 260, height = 68 } = {}) {
  * @param {number} d 변화량
  * @returns {string} 델타 마크업
  */
+/**
+ * 기록의 회차 표기만 추출한다 — 저장 형식 호환을 위해 "2026-04 (1회차)" 같은 레거시 문자열에서도 "1회차"를 뽑는다.
+ * @param {string} [session] 기록의 회차 문자열 (예: "1회차", "2026-04 (1회차)")
+ * @returns {string} 회차 표기 (추출 불가 시 원문)
+ */
+export function sessionLabel(session) {
+	if (!session) return "";
+	const m = String(session).match(/(\d+회차)/);
+	return m ? m[1] : String(session);
+}
+
 export function deltaHTML(d) {
 	if (d > 0) return `<span class="delta-up">▲ ${d}</span>`;
 	if (d < 0) return `<span class="delta-down">▼ ${Math.abs(d)}</span>`;
@@ -120,11 +141,19 @@ export function buildCompareTable(cur, tgt) {
 			delta: deltaHTML(Number((c - t).toFixed(1))),
 		});
 	});
-	// ② 움직임 평가 + 총점 표
+	// ② 움직임 평가 + 총점 표 — 항목을 이름으로 정렬해 5항목(베이직 펑션)·8항목(레거시) 기록 혼재에도 올바르게 비교한다
 	const mvRows = [];
-	ASSESSMENT_ITEMS_FULL.forEach((item, i) => {
-		const c = cur.payload.scores?.[i];
-		const t = tgt.payload.scores?.[i];
+	const scoreByName = (payload) => {
+		const items = itemsForRecord(payload.scores?.length);
+		const map = new Map();
+		(payload.scores || []).forEach((s, i) => map.set(items[i]?.name, s));
+		return map;
+	};
+	const curScores = scoreByName(cur.payload);
+	const tgtScores = scoreByName(tgt.payload);
+	ASSESSMENT_ITEMS_FULL.forEach((item) => {
+		const c = curScores.get(item.name);
+		const t = tgtScores.get(item.name);
 		if (c == null || t == null) return;
 		mvRows.push({
 			label: item.name,
@@ -137,8 +166,8 @@ export function buildCompareTable(cur, tgt) {
 	const tt = recordTotal(tgt.payload);
 	mvRows.push({
 		label: "총점",
-		cur: `${ct}/${MOTION_TOTAL_MAX}`,
-		tgt: `${tt}/${MOTION_TOTAL_MAX}`,
+		cur: `${ct}/${recordMax(cur.payload)}`,
+		tgt: `${tt}/${recordMax(tgt.payload)}`,
 		delta: deltaHTML(ct - tt),
 	});
 	return `

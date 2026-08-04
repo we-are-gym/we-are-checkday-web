@@ -4,15 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>위아짐 체크데이</title>
-    <link rel="stylesheet" href="styles/colors.css" />
-    <link rel="stylesheet" href="styles/font.css" />
-    <link rel="stylesheet" href="styles/layout-shell.css" />
-    <link rel="stylesheet" href="styles/layout-index.css" />
+    <link rel="stylesheet" href="styles/colors.css?v=20260805" />
+    <link rel="stylesheet" href="styles/font.css?v=20260805" />
+    <link rel="stylesheet" href="styles/layout-shell.css?v=20260805" />
+    <link rel="stylesheet" href="styles/layout-index.css?v=20260805" />
   </head>
   <body>
     <!-- 파일 용도: 메인 화면 — 위아짐 로고와 회원 관리·체크회차 관리 링크 제공 -->
     <div class="container">
-      <app-header logout>
+      <app-header logout crumb="메인" back="login.html">
         <!-- 네비게이션 삭제 -->
         <!-- <app-gnb></app-gnb> -->
         <!-- 내장 도움말 삭제 -->
@@ -42,6 +42,6 @@
       </main>
     </div>
 
-    <script type="module" src="scripts/index.js"></script>
+    <script type="module" src="scripts/index.js?v=20260805"></script>
   </body>
 </html>

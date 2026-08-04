@@ -5,6 +5,10 @@ import { defineComponent } from "../component-factory.js";
 import { TPL } from "../templates.js";
 
 defineComponent("member-table", {
+	/**
+	 * 회원 목록 테이블 HTML을 생성한다 (빈 목록이면 안내 행 포함)
+	 * @returns {string} 테이블 HTML
+	 */
 	render() {
 		const rows = this.rows || [];
 		// to-be: 프로토타입 배치와 동일하게 「목표」 열을 두지 않는다 (5열)
@@ -28,6 +32,9 @@ defineComponent("member-table", {
 				</tbody>
 			</table>`;
 	},
+	/**
+	 * 행 선택·제거 이벤트를 루트 위임으로 연결하고 키보드(Enter/Space) 선택을 지원한다
+	 */
 	onConnect() {
 		// 행 선택·제거는 컴포넌트 루트 위임 (refresh로 tbody가 바뀌어도 유지)
 		this.addEventListener("click", (e) => {

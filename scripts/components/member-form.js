@@ -5,6 +5,10 @@
 import { defineComponent } from "../component-factory.js";
 
 defineComponent("member-form", {
+	/**
+	 * 회원 정보 입력 폼 HTML을 생성한다
+	 * @returns {string} 폼 HTML
+	 */
 	render() {
 		return `
 			<form class="member-form" id="member-form" novalidate>
@@ -34,6 +38,9 @@ defineComponent("member-form", {
 				</div>
 			</form>`;
 	},
+	/**
+	 * 폼 제출(검증 후 onSubmit 호출)·취소(onCancel 또는 members.html 이동) 동작을 연결한다
+	 */
 	onConnect() {
 		const form = this.querySelector("form");
 		form.addEventListener("submit", (e) => {

@@ -10,7 +10,9 @@ const redirect =
 
 // ── 시작 ──
 setHTML("login-box", TPL.loginForm());
+/** 로그인 폼 엘리먼트 */
 const form = byId("login-form");
+/** 오류 안내 문구 엘리먼트 */
 const errEl = byId("login-error");
 
 // 이미 로그인 상태면 바로 이동

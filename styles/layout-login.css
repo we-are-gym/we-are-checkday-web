@@ -1,9 +1,12 @@
 /* 파일 용도: 로그인 화면 레이아웃 — 중앙 정렬 카드·브랜드·폼·오류/힌트 (login.html) */
+/* 컨테이너: 아키텍처 문서 사양 650px — 헤더바는 없으나 화면 전체 폭 규격을 문서와 맞춘다 */
 
 .login-wrap {
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
+	max-width: 650px;
+	margin: 0 auto;
 }
 
 .login-card {

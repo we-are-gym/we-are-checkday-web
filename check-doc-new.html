@@ -4,22 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>체크기록 작성 — 위아짐 체크데이</title>
-    <link rel="stylesheet" href="styles/colors.css" />
-    <link rel="stylesheet" href="styles/font.css" />
-    <link rel="stylesheet" href="styles/layout-shell.css" />
-    <link rel="stylesheet" href="styles/layout-checkday.css" />
+    <link rel="stylesheet" href="styles/colors.css?v=20260805" />
+    <link rel="stylesheet" href="styles/font.css?v=20260805" />
+    <link rel="stylesheet" href="styles/layout-shell.css?v=20260805" />
+    <link rel="stylesheet" href="styles/layout-checkday.css?v=20260805" />
   </head>
   <body>
     <!-- 파일 용도: 체크데이 상담지 화면 — 그룹 트레이닝 격월 점검 · 회복 움직임 평가와 상담 기록 -->
     <div class="container">
-      <app-header logout crumb="체크기록 작성">
+      <app-header logout crumb="체크기록 작성" back="index.html">
         <!-- 네비게이션 삭제 -->
         <!-- <app-gnb></app-gnb> -->
         <!-- 내장 도움말 삭제 -->
         <!-- <app-help>
           <h4>체크기록 작성</h4>
           <p>
-            ① 인바디 수치 입력 → ② 움직임 평가 8개 항목 점수(0–3)·체크·메모 → ③
+            ① 인바디 수치 입력 → ② 움직임 평가 5개 항목 점수(0–3)·체크·메모 → ③
             목표 선택 → ④ 동작 피드백 → ⑤ 저장 순서로 기록합니다.
           </p>
           <p>
@@ -40,24 +40,20 @@
       <!-- 회원 정보 -->
       <div class="member-bar">
         <div class="mf">
-          <label>회원</label
+          <label>회원 이름</label
           ><input
             id="m-member"
             type="text"
             list="member-list"
-            placeholder="회원 이름 입력 또는 선택"
+            placeholder="이름 입력 또는 선택"
             autocomplete="off"
             aria-label="회원 이름 선택"
           />
           <datalist id="member-list"></datalist>
         </div>
         <div class="mf">
-          <label>회원 이름</label
-          ><input id="m-name" type="text" placeholder="홍길동" readonly />
-        </div>
-        <div class="mf">
           <label>회차</label
-          ><input id="m-session" type="text" placeholder="2025-06 (2회차)" />
+          ><input id="m-session" type="text" placeholder="1회차" />
         </div>
         <div class="mf">
           <label>트레이너</label
@@ -69,7 +65,7 @@
       <div class="total-bar">
         <div class="tl">
           <div class="tl-label">움직임 총점</div>
-          <div class="tl-num" id="total-num">0 <span>/ 24</span></div>
+          <div class="tl-num" id="total-num">0 <span>/ 15</span></div>
         </div>
         <div class="tr">
           <div class="prog-track">
@@ -147,7 +143,7 @@
         <div class="sec-header">
           <div class="sec-num">2</div>
           <div class="sec-title">움직임 평가</div>
-          <div class="sec-sub">8개 항목 · 각 0–3점</div>
+          <div class="sec-sub">5개 항목 · 각 0–3점</div>
         </div>
         <div class="card" id="eval-cards"></div>
       </div>
@@ -220,6 +216,6 @@
       </div>
     </div>
 
-    <script type="module" src="scripts/checkday.js"></script>
+    <script type="module" src="scripts/check-form-new.js?v=20260805"></script>
   </body>
 </html>

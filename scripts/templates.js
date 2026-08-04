@@ -53,7 +53,7 @@ export const TPL = {
 		const attr = displayAttr ? ` data-${displayAttr}="0"` : "";
 		return `
 			<button class="score-btn" ${data} data-delta="-1" aria-label="감소">−</button>
-			<span class="${displayClass}"${idAttr}${attr}>0</span>
+			<span class="${displayClass}"${idAttr}${attr} aria-live="polite">0</span>
 			<button class="score-btn" ${data} data-delta="1" aria-label="증가">+</button>`;
 	},
 
@@ -127,7 +127,7 @@ export const TPL = {
 		const stepAttr = step ? ` step="${escapeHtml(step)}"` : "";
 		return `
 			<div class="${cls}">
-				<label>${escapeHtml(label)}</label>
+				<label for="${id}">${escapeHtml(label)}</label>
 				<input class="ib-num" id="${id}" type="number" placeholder="${escapeHtml(placeholder)}"${stepAttr} />
 				<div id="${tagId}"></div>
 			</div>`;
@@ -174,7 +174,7 @@ export const TPL = {
 		return `
 			<div class="fb-check-row">
 				<input type="checkbox" style="accent-color:var(--blue);flex-shrink:0;" aria-label="체크 선택">
-				<input class="fb-check-input" type="text" value="${escapeHtml(text)}" placeholder="체크 항목...">
+				<input class="fb-check-input" type="text" value="${escapeHtml(text)}" placeholder="체크 항목..." aria-label="체크 항목">
 				<button class="fb-check-del" title="삭제" aria-label="체크 항목 삭제">✕</button>
 			</div>`;
 	},
@@ -205,7 +205,7 @@ export const TPL = {
 	 */
 	memberRow({ id, name, gender, trainer, recordCount }) {
 		return `
-			<tr class="member-row" data-member-id="${id}" tabindex="0" role="link">
+			<tr class="member-row" data-member-id="${id}" tabindex="0" role="link" aria-label="${escapeHtml(name)} 상세 보기">
 				<td class="member-name">${escapeHtml(name)}</td>
 				<td class="member-gender">${escapeHtml(gender || "-")}</td>
 				<td class="member-trainer">${escapeHtml(trainer || "-")}</td>
@@ -215,14 +215,16 @@ export const TPL = {
 	},
 
 	/**
-	 * 회원 상세의 체크기록 로우 1개 — to-be 지시에 따라 날짜는 표시하지 않는다
+	 * 회원 상세의 체크기록 로우 1개 — 회차·날짜·총점을 한 줄로 표시 (to-be 지시 반영)
 	 * @param {{ id: number, session: string, date: string, total: number, max: number }} p
+	 *           session: 회차 표기(예: "1회차"), date: 기록 날짜(YYYY.MM.DD)
 	 * @returns {string}
 	 */
 	recordRow({ id, session, date, total, max }) {
 		return `
-			<div class="record-row" data-record-id="${id}" tabindex="0" role="link">
+			<div class="record-row" data-record-id="${id}" tabindex="0" role="link" aria-label="${escapeHtml(session)} ${escapeHtml(date)} 총점 ${total}/${max}">
 				<div class="cell-name">${escapeHtml(session)}</div>
+				<div class="cell-dim">${escapeHtml(date)}</div>
 				<div class="cell-dim">총점 ${total}/${max}</div>
 				<div><button type="button" class="btn btn-sm btn-danger" data-del-record="${id}" aria-label="기록 삭제">삭제</button></div>
 			</div>`;
@@ -285,10 +287,17 @@ export const TPL = {
 
 	/**
 	 * 헤더 막대 (app-header 컴포넌트 내부용) — navHtml은 우측 영역의 <app-gnb> 등 이동 대상
-	 * @param {{ crumb?: string, showLogout?: boolean, navHtml?: string }} [p]
+	 * 크럼은 현재 화면 명칭이며, backUrl(前화면)이 있으면 그 링크, 없으면 클릭 시 히스토리 뒤로가기로 동작한다.
+	 * @param {{ crumb?: string, showLogout?: boolean, navHtml?: string, backUrl?: string }} [p]
+	 *           backUrl: 크럼 클릭 시 이동할 前화면 URL (없으면 app-header가 history.back() 처리)
 	 * @returns {string}
 	 */
-	headerBar({ crumb = "", showLogout = true, navHtml = "" } = {}) {
+	headerBar({ crumb = "", showLogout = true, navHtml = "", backUrl = "" } = {}) {
+		const crumbHtml = crumb
+			? backUrl
+				? `<a class="crumb" href="${escapeHtml(backUrl)}" data-header-crumb>${escapeHtml(crumb)}</a>`
+				: `<a class="crumb" role="link" tabindex="0" data-header-crumb>${escapeHtml(crumb)}</a>`
+			: "";
 		return `
 			<header class="site-header" role="banner">
 				<a class="logo" href="index.html" aria-label="메인으로 이동">
@@ -297,7 +306,7 @@ export const TPL = {
 				</a>
 				<div class="header-right">
 					${navHtml}
-					${crumb ? `<span class="crumb">${escapeHtml(crumb)}</span>` : ""}
+					${crumbHtml}
 					${showLogout ? `<button type="button" class="link-btn" data-header-logout>로그아웃</button>` : ""}
 				</div>
 			</header>`;
