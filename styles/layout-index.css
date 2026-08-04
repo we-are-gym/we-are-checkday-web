@@ -6,10 +6,12 @@
 }
 
 /* ── 메인 (index 고유) ── */
+
 .main-screen {
 	text-align: center;
 	padding: 3.5rem 0 1rem;
 }
+
 .main-screen .hero-mark {
 	/* 메인 로고 크기 키우기 */
 
@@ -23,16 +25,19 @@
 
 	margin-bottom: 1.1rem;
 }
+
 .main-screen h1 {
 	font-size: 32px;
 	font-weight: 700;
 	letter-spacing: -0.5px;
 	margin-bottom: 8px;
 }
+
 .main-screen p {
 	font-size: 13px;
 	color: var(--text2);
 }
+
 .main-actions {
 	display: flex;
 	flex-direction: column;
@@ -40,6 +45,7 @@
 	gap: 12px;
 	margin-top: 1.75rem;
 }
+
 .main-actions .btn {
 	width: 100%;
 	max-width: 280px;
@@ -55,6 +61,7 @@
 	color: var(--text);
 	border-radius: var(--rlg);
 }
+
 .main-actions .btn:hover {
 	background: var(--surface2);
 	border-color: var(--border2);
