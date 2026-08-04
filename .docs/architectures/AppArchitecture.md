@@ -6,39 +6,39 @@ JS는 **ES Modules**(`<script type="module">`)로 로드된다. 각 페이지는
 
 ### 공용 인프라 모듈 (임포트 그래프의 잎·화면 공용)
 
-| 모듈                   | 내보내기                      | 책임                                                               | 의존                      |
-| ---------------------- | ----------------------------- | ------------------------------------------------------------------ | ------------------------- |
-| `store.js`             | `createStore`                 | 관찰자 패턴 GUI 상태 스토어 — `getState`/`setState`/`subscribe`    | 없음                      |
-| `component-factory.js` | `defineComponent`             | 순수 함수형 컴포넌트 + 네이티브 웹 컴포넌트(light DOM) 팩토리      | 없음                      |
-| `templates.js`         | `TPL`, `escapeHtml`           | 바닐라JS 템플릿 함수 — 화면 공용 HTML 조각 (카드·행·헤더·GNB·모달) | 없음                      |
-| `auth.js`              | `isAuthed`, `login`, `logout` | 세션 기반 데모 로그인 상태                                         | 없음                      |
-| `utils-array.js`       | `ARR`                         | 배열 합계·0 배열                                                   | 없음                      |
-| `utils-string.js`      | `STR`                         | 날짜 포맷·숫자 2자리                                               | 없음                      |
-| `validation.js`        | `VAL`                         | 수치 파싱·NaN 판별·범위 clamp                                      | 없음                      |
-| `constants.js`         | 상수                          | 마법 숫자 중앙화 (점수·임계점·총점)                                | 없음                      |
-| `UI.js`                | `UI`                          | DOM 조회·내용 설정·클래스 토글·이벤트 위임                         | 없음                      |
-| `states.js`            | `STATE`                       | 평가 점수 배열·총점·초기화 단일 소스                               | `ARR`, `VAL`, `constants` |
+| 모듈                   | 내보내기                                                                   | 책임                                                                               | 의존                                     |
+| ---------------------- | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------- |
+| `store.js`             | `createStore`                                                              | 관찰자 패턴 GUI 상태 스토어 — `getState`/`setState`/`subscribe`                    | 없음                                     |
+| `component-factory.js` | `defineComponent`                                                          | 순수 함수형 컴포넌트 + 네이티브 웹 컴포넌트(light DOM) 팩토리                      | 없음                                     |
+| `templates.js`         | `TPL`, `escapeHtml`                                                        | 바닐라JS 템플릿 함수 — 화면 공용 HTML 조각 (카드·행·도트·비교테이블·헤더·GNB·모달) | `utils-array`                            |
+| `auth.js`              | `isAuthed`, `login`, `logout`                                              | 세션 기반 데모 로그인 상태                                                         | 없음                                     |
+| `utils-array.js`       | `sum`, `createZeroArray`                                                   | 배열 합계·0 배열                                                                   | 없음                                     |
+| `utils-string.js`      | `pad2`, `today`                                                            | 날짜 포맷·숫자 2자리                                                               | 없음                                     |
+| `validation.js`        | `parseToNum`, `anyNaN`, `clamp`                                            | 수치 파싱·NaN 판별·범위 clamp                                                      | 없음                                     |
+| `constants.js`         | 상수                                                                       | 마법 숫자 중앙화 (점수·임계점·총점)                                                | 없음                                     |
+| `UI.js`                | `byId`, `queryOne`, `queryAll`, `setHTML`, `setText`, `toggle`, `delegate` | DOM 조회·내용 설정·클래스 토글·이벤트 위임                                         | 없음                                     |
+| `states.js`            | `createScoreState`, `scoreState`                                           | 평가 점수 배열·총점·초기화 단일 소스 (팩토리 + 전역 인스턴스)                      | `utils-array`, `validation`, `constants` |
 
 ### 앱 상태·정적 스토어 (관찰자 패턴, sessionStorage mock 영속화)
 
 | 모듈              | 내보내기                                           | 상태                                        | 저장 키               |
 | ----------------- | -------------------------------------------------- | ------------------------------------------- | --------------------- |
-| `member-store.js` | `memberStore`                                      | 회원 목록 5명 시드                          | `checkday.members.v1` |
-| `record-store.js` | `recordStore`                                      | 체크기록 시드 6건(있음)                     | `checkday.records.v1` |
+| `member-store.js` | `memberStore`                                      | 회원 목록 6명 시드 (김씨 2인 포함)          | `checkday.members.v1` |
+| `record-store.js` | `recordStore`                                      | 체크기록 시드 14건(김하늘 8건 포함, 있음)   | `checkday.records.v1` |
 | `record-stats.js` | `sparkline`, `recordTotal`, `buildCompareTable` 등 | 기록 통계·스파크라인·비교 테이블(순수 함수) | —                     |
 
 ### 평가 공용 모듈 (레거시 체크데이 상담지·베이직 펑션)
 
-| 모듈                 | 내보내기                                                                                                        | 용도                                                            | 의존                                                                                               |
-| -------------------- | --------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| `assessment-data.js` | `ASSESSMENT_ITEMS`, `ASSESSMENT_ITEMS_FULL`                                                                     | 움직임 평가 7개·8개(VO₂ 포함) 항목 데이터 (basic·checkday 공용) | 없음                                                                                               |
-| `vo2.js`             | `VO2_NORMS`, `calcVo2Value`, `determineVO2Grade`                                                                | VO₂ Max 공식·정상치·등급 산정                                   | 없음                                                                                               |
-| `grade.js`           | `getGradeMeta`                                                                                                  | 총점 → 등급 라벨 산정                                           | `constants`                                                                                        |
-| `grade-styles.js`    | `GRADE_STYLES`, `VO2_GRADE_STYLES`, `getScoreColor`                                                             | 등급·VO₂ 라벨 스타일 공용                                       | 없음                                                                                               |
-| `inbody.js`          | `generateInbodyTags`, `updateInbodyTags`                                                                        | 인바디 수치 → 상태 태그 분류·갱신                               | `UI`                                                                                               |
-| `evaluation.js`      | `evals`, `renderBasicFunctionCards`, `adjustScore`, `toggleBasicFunctionDetail`, `updateVO2Disp`, `updateTotal` | 움직임 평가 카드 빌드·점수/등급/총점 갱신                       | `assessment-data`, `arr`, `validation`, `UI`, `STATE`, `constants`, `vo2`, `grade`, `grade-styles` |
-| `feedback.js`        | `appendCheckMovement`, `appendCheckMovementItemRow`, `renderCheckMovementCards`, `collectCheckMovementData` 등  | 체크동작 CRUD 등                                                | `UI`                                                                                               |
-| `report.js`          | `openReportModal`, `copyReportToClipboard`                                                                      | 리포트 조립·클립보드                                            | `UI`, `STATE`, `evaluation`, `feedback`                                                            |
+| 모듈                 | 내보내기                                                                                                        | 용도                                                            | 의존                                                                                                      |
+| -------------------- | --------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `assessment-data.js` | `ASSESSMENT_ITEMS`, `ASSESSMENT_ITEMS_FULL`                                                                     | 움직임 평가 7개·8개(VO₂ 포함) 항목 데이터 (basic·checkday 공용) | 없음                                                                                                      |
+| `vo2.js`             | `VO2_NORMS`, `calcVo2Value`, `determineVO2Grade`, `calcVo2Assessment`                                           | VO₂ Max 공식·정상치·등급 산정·입력 검증 조합                    | 없음                                                                                                      |
+| `grade.js`           | `getGradeMeta`                                                                                                  | 총점 → 등급 라벨 산정                                           | `constants`                                                                                               |
+| `grade-styles.js`    | `GRADE_STYLES`, `VO2_GRADE_STYLES`, `getScoreColor`                                                             | 등급·VO₂ 라벨 스타일 공용                                       | 없음                                                                                                      |
+| `inbody.js`          | `generateInbodyTags`, `updateInbodyTags`                                                                        | 인바디 수치 → 상태 태그 분류·갱신                               | 없음                                                                                                      |
+| `evaluation.js`      | `evals`, `renderBasicFunctionCards`, `adjustScore`, `toggleBasicFunctionDetail`, `updateVO2Disp`, `updateTotal` | 움직임 평가 카드 빌드·점수/등급/총점 갱신                       | `assessment-data`, `validation`, `UI`, `states`, `templates`, `constants`, `vo2`, `grade`, `grade-styles` |
+| `feedback.js`        | `appendCheckMovement`, `appendCheckMovementItemRow`, `renderCheckMovementCards`, `collectCheckMovementData` 등  | 체크동작 CRUD 등                                                | `UI`, `templates`                                                                                         |
+| `report.js`          | `openReportModal`, `copyReportToClipboard`                                                                      | 리포트 조립·클립보드                                            | `UI`, `states`, `evaluation`, `feedback`                                                                  |
 
 ### 웹 컴포넌트 (light DOM — `scripts/components/`)
 
@@ -66,7 +66,7 @@ JS는 **ES Modules**(`<script type="module">`)로 로드된다. 각 페이지는
 | `basic.js`          | `basic_function_assessment_2.html` | 레거시 베이직 펑션 평가지                                             |
 | `check-sessions.js` | `check-sessions.html`              | placeholder('준비중')                                                 |
 
-> 이벤트는 `addEventListener` 위임 패턴(`UI.delegate`)으로 바인딩되며, 인라인 `onclick`·`oninput`과 `window` 오염은 사용하지 않는다.
+> 이벤트는 `addEventListener` 위임 패턴(`delegate`(UI.js))으로 바인딩되며, 인라인 `onclick`·`oninput`과 `window` 오염은 사용하지 않는다.
 
 ## 화면 구성
 

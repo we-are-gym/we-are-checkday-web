@@ -24,6 +24,10 @@
     - `component-factory.js`
     - `constants.js`
     - `templates.js`
+    - `validation.js`
+    - `utils-array.js`
+    - `utils-string.js`
+    - `member-utils.js`
   - 상태 스토어
     - `member-store.js`
     - `record-stats.js`
