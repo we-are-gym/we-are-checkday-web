@@ -1,6 +1,6 @@
 // 파일 용도: 체크기록 스토어 — 세션(sessionStorage) 영속화된 mock 저장소 (회원 상세·조회·작성·편집 공용)
 // 주의: API 미배포 상태이므로 브라우저 세션 동안만 유지되는 mock이다. 탭을 닫으면 시드로 복원된다.
-import { createStore } from "./store.js";
+import { createPersistentStore } from "./store.js";
 
 /** 세션 저장 키 */
 const STORAGE_KEY = "checkday.records.v1";
@@ -113,31 +113,10 @@ const SEED_RECORDS = [
 		}),
 ];
 
-/**
- * 저장된 상태를 읽고, 없거나 손상됐으면 시드로 초기화
- * @returns {{ records: import("./store.js").CheckRecord[], nextId: number }}
- */
-function loadInitial() {
-	try {
-		const raw = sessionStorage.getItem(STORAGE_KEY);
-		if (raw) {
-			const data = JSON.parse(raw);
-			if (Array.isArray(data.records)) return data;
-		}
-	} catch (err) {
-		// 손상된 데이터는 시드로 폴백
-	}
-	return { records: SEED_RECORDS, nextId: SEED_RECORDS.length + 1 };
-}
-
-/** 체크기록 스토어 (전 화면 공용 단일 인스턴스) */
-export const recordStore = createStore(loadInitial());
-
-// 상태가 바뀔 때마다 세션 저장 (관찰자 패턴 — mock 영속화)
-recordStore.subscribe((state) => {
-	try {
-		sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-	} catch (err) {
-		// 저장 실패는 mock이므로 무시
-	}
-});
+/** 체크기록 스토어 (전 화면 공용 단일 인스턴스) — 저장값이 손상되면 시드로 폴백 */
+export const recordStore = createPersistentStore(
+	STORAGE_KEY,
+	{ records: SEED_RECORDS, nextId: SEED_RECORDS.length + 1 },
+	/** 저장값에 records 배열이 있어야 유효 */
+	(data) => Array.isArray(data.records),
+);

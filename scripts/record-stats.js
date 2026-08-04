@@ -50,18 +50,18 @@ export function sparkline(values, { width = 140, height = 36 } = {}) {
 }
 
 /**
- * 변화 표기 (증가 ▲ / 감소 ▼ / 유지 ―)
- * @param {number} d
- * @returns {string}
+ * 변화 표기 (증가 ▲ / 감소 ▼ / 유지 ―) — 상세·비교 화면 공용
+ * @param {number} d 변화량
+ * @returns {string} 델타 마크업
  */
-function deltaHTML(d) {
+export function deltaHTML(d) {
 	if (d > 0) return `<span class="delta-up">▲ ${d}</span>`;
 	if (d < 0) return `<span class="delta-down">▼ ${Math.abs(d)}</span>`;
 	return `<span class="delta-flat">―</span>`;
 }
 
 /**
- * 두 기록의 인바디·움직임 평가·총점 비교 테이블 생성
+ * 두 기록의 인바디·움직임 평가·총점 비교 테이블 생성 (인바디 표 + 움직임 평가 표)
  * @param {import("./store.js").CheckRecord} cur 최신(비교 대상)
  * @param {import("./store.js").CheckRecord} tgt 기준(이전)
  * @returns {string} 비교 테이블 HTML
