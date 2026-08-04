@@ -140,12 +140,46 @@ export const TPL = {
 	 */
 	inbodyGrid() {
 		return [
-			this.inbodyCell({ label: "체중 (kg)", id: "ib-w", placeholder: "65.0", tagId: "tag-w" }),
-			this.inbodyCell({ label: "골격근량 (kg)", id: "ib-m", placeholder: "28.0", tagId: "tag-m" }),
-			this.inbodyCell({ label: "체지방량 (kg)", id: "ib-fat", placeholder: "18.0", tagId: "tag-fat" }),
-			this.inbodyCell({ label: "BMI", id: "ib-bmi", placeholder: "23.5", tagId: "tag-bmi", last: true }),
-			this.inbodyCell({ label: "체지방률 (%)", id: "ib-bfp", placeholder: "27.0", tagId: "tag-bfp", last: true }),
-			this.inbodyCell({ label: "기초대사량 (kcal)", id: "ib-bmr", placeholder: "1450", step: "", tagId: "tag-bmr", last: true }),
+			this.inbodyCell({
+				label: "체중 (kg)",
+				id: "ib-w",
+				placeholder: "65.0",
+				tagId: "tag-w",
+			}),
+			this.inbodyCell({
+				label: "골격근량 (kg)",
+				id: "ib-m",
+				placeholder: "28.0",
+				tagId: "tag-m",
+			}),
+			this.inbodyCell({
+				label: "체지방량 (kg)",
+				id: "ib-fat",
+				placeholder: "18.0",
+				tagId: "tag-fat",
+			}),
+			this.inbodyCell({
+				label: "BMI",
+				id: "ib-bmi",
+				placeholder: "23.5",
+				tagId: "tag-bmi",
+				last: true,
+			}),
+			this.inbodyCell({
+				label: "체지방률 (%)",
+				id: "ib-bfp",
+				placeholder: "27.0",
+				tagId: "tag-bfp",
+				last: true,
+			}),
+			this.inbodyCell({
+				label: "기초대사량 (kcal)",
+				id: "ib-bmr",
+				placeholder: "1450",
+				step: "",
+				tagId: "tag-bmr",
+				last: true,
+			}),
 		].join("");
 	},
 
@@ -186,6 +220,7 @@ export const TPL = {
 	 */
 	feedbackCard({ id, name, checkItems }) {
 		const checksHTML = checkItems.map((ch) => TPL.fbCheckRow(ch)).join("");
+
 		return `
 			<div class="fb-item" id="fb-item-${id}">
 				<div class="fb-item-header">
@@ -243,7 +278,14 @@ export const TPL = {
 
 	/**
 	 * 체크기록 비교 테이블 1개 — withHeader=false면 본문만(움직임 평가 총점 표용)
-	 * @param {{ curLabel?: string, tgtLabel?: string, rows: Array<{ label: string, cur: string, tgt: string, delta: string }>, withHeader?: boolean }} p
+	 *
+	 * @param {{
+	 * 	curLabel?: string;
+	 * 	tgtLabel?: string;
+	 * 	rows: Array<{ label: string, cur: string, tgt: string, delta: string }>;
+	 *	withHeader?: boolean;
+	 * }} p
+	 *
 	 * @returns {string}
 	 */
 	compareTable({ curLabel = "", tgtLabel = "", rows, withHeader = true }) {
@@ -292,7 +334,12 @@ export const TPL = {
 	 *           backUrl: 크럼 클릭 시 이동할 前화면 URL (없으면 app-header가 history.back() 처리)
 	 * @returns {string}
 	 */
-	headerBar({ crumb = "", showLogout = true, navHtml = "", backUrl = "" } = {}) {
+	headerBar({
+		crumb = "",
+		showLogout = true,
+		navHtml = "",
+		backUrl = "",
+	} = {}) {
 		const crumbHtml = crumb
 			? backUrl
 				? `<a class="crumb" href="${escapeHtml(backUrl)}" data-header-crumb>${escapeHtml(crumb)}</a>`
