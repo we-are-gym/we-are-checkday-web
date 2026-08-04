@@ -283,18 +283,49 @@ export const TPL = {
 	 * 	curLabel?: string;
 	 * 	tgtLabel?: string;
 	 * 	rows: Array<{ label: string, cur: string, tgt: string, delta: string }>;
+	 * 	footRows?: Array<{ label: string, cur: string, tgt: string, delta: string }>;
 	 *	withHeader?: boolean;
 	 * }} p
 	 *
 	 * @returns {string}
 	 */
-	compareTable({ curLabel = "", tgtLabel = "", rows, withHeader = true }) {
+	compareTable({
+		curLabel = "",
+		tgtLabel = "",
+		rows,
+		footRows,
+		withHeader = true,
+	}) {
 		const head = withHeader
 			? `<thead><tr><th>항목</th><th>${escapeHtml(tgtLabel)}</th><th>${escapeHtml(curLabel)}</th><th>변화</th></tr></thead>`
 			: "";
+
+		const foot = (() => {
+			if (footRows === undefined) {
+				return "";
+			}
+
+			return `
+				<tfoot>
+					${footRows
+						.map(
+							(row) => `
+								<tr>
+									<td>${escapeHtml(row.label)}</td>
+									<td>${row.tgt}</td>
+									<td>${row.cur}</td>
+									<td>${row.delta}</td>
+								</tr>`,
+						)
+						.join("")}
+				</tfoot>
+			`;
+		})();
+
 		return `
 			<table class="compare-table">
 				${head}
+				${foot}
 				<tbody>
 					${rows
 						.map(
@@ -345,6 +376,7 @@ export const TPL = {
 				? `<a class="crumb" href="${escapeHtml(backUrl)}" data-header-crumb>${escapeHtml(crumb)}</a>`
 				: `<a class="crumb" role="link" tabindex="0" data-header-crumb>${escapeHtml(crumb)}</a>`
 			: "";
+
 		return `
 			<header class="site-header" role="banner">
 				<a class="logo" href="index.html" aria-label="메인으로 이동">
@@ -367,6 +399,7 @@ export const TPL = {
 	gnb({ active = "" } = {}) {
 		const link = (href, label, key) => `
 			<a class="nav-link${active === key ? " active" : ""}" href="${href}"${active === key ? ' aria-current="page"' : ""}>${escapeHtml(label)}</a>`;
+
 		return `<nav class="nav" aria-label="주요 메뉴">${link("members.html", "회원 관리", "members")}</nav>`;
 	},
 

@@ -179,16 +179,28 @@ export function buildCompareTable(cur, tgt) {
 	const ct = recordTotal(cur.payload);
 	const tt = recordTotal(tgt.payload);
 
-	mvRows.push({
-		label: "총점",
-		cur: `${ct}/${recordMax(cur.payload)}`,
-		tgt: `${tt}/${recordMax(tgt.payload)}`,
-		delta: deltaHTML(ct - tt),
-	});
+	// mvRows.push({
+	// 	label: "총점",
+	// 	cur: `${ct}/${recordMax(cur.payload)}`,
+	// 	tgt: `${tt}/${recordMax(tgt.payload)}`,
+	// 	delta: deltaHTML(ct - tt),
+	// });
 
 	return `
 		${TPL.compareTable({ curLabel, tgtLabel, rows: ibRows })}
-		<hr class="div">
+		<hr class="div" />
 		<div class="section-title">움직임 평가 총점</div>
-		${TPL.compareTable({ rows: mvRows, withHeader: false })}`;
+
+		${TPL.compareTable({
+			rows: mvRows,
+			footRows: [
+				{
+					label: "총점",
+					cur: `${ct}/${recordMax(cur.payload)}`,
+					tgt: `${tt}/${recordMax(tgt.payload)}`,
+					delta: deltaHTML(ct - tt),
+				},
+			],
+			withHeader: false,
+		})}`;
 }
