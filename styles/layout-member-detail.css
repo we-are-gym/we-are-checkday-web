@@ -294,11 +294,11 @@ main {
 }
 */
 
-.compare-table tbody tr:last-child td {
+.compare-table tfoot tr td {
 	border-bottom: none;
 }
 
-.compare-table tbody tr:last-child {
+.compare-table tfoot tr {
 	font-weight: 700;
 	color: var(--text);
 }

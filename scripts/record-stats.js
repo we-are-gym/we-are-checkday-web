@@ -128,12 +128,17 @@ export function deltaHTML(d) {
 export function buildCompareTable(cur, tgt) {
 	const curLabel = cur.payload.session || cur.date;
 	const tgtLabel = tgt.payload.session || tgt.date;
+
 	// ① 인바디 표
+
 	const ibRows = [];
+
 	IB_KEYS.forEach(({ key, label }) => {
 		const c = parseFloat(cur.payload.ib?.[key]);
 		const t = parseFloat(tgt.payload.ib?.[key]);
+
 		if (Number.isNaN(c) || Number.isNaN(t)) return;
+
 		ibRows.push({
 			label,
 			cur: c.toFixed(1),
@@ -141,20 +146,28 @@ export function buildCompareTable(cur, tgt) {
 			delta: deltaHTML(Number((c - t).toFixed(1))),
 		});
 	});
+
 	// ② 움직임 평가 + 총점 표 — 항목을 이름으로 정렬해 5항목(베이직 펑션)·8항목(레거시) 기록 혼재에도 올바르게 비교한다
+
 	const mvRows = [];
+
 	const scoreByName = (payload) => {
 		const items = itemsForRecord(payload.scores?.length);
 		const map = new Map();
+
 		(payload.scores || []).forEach((s, i) => map.set(items[i]?.name, s));
 		return map;
 	};
+
 	const curScores = scoreByName(cur.payload);
 	const tgtScores = scoreByName(tgt.payload);
+
 	ASSESSMENT_ITEMS_FULL.forEach((item) => {
 		const c = curScores.get(item.name);
 		const t = tgtScores.get(item.name);
+
 		if (c == null || t == null) return;
+
 		mvRows.push({
 			label: item.name,
 			cur: `${c}/3`,
@@ -162,17 +175,32 @@ export function buildCompareTable(cur, tgt) {
 			delta: deltaHTML(c - t),
 		});
 	});
+
 	const ct = recordTotal(cur.payload);
 	const tt = recordTotal(tgt.payload);
-	mvRows.push({
-		label: "총점",
-		cur: `${ct}/${recordMax(cur.payload)}`,
-		tgt: `${tt}/${recordMax(tgt.payload)}`,
-		delta: deltaHTML(ct - tt),
-	});
+
+	// mvRows.push({
+	// 	label: "총점",
+	// 	cur: `${ct}/${recordMax(cur.payload)}`,
+	// 	tgt: `${tt}/${recordMax(tgt.payload)}`,
+	// 	delta: deltaHTML(ct - tt),
+	// });
+
 	return `
 		${TPL.compareTable({ curLabel, tgtLabel, rows: ibRows })}
-		<hr class="div">
+		<hr class="div" />
 		<div class="section-title">움직임 평가 총점</div>
-		${TPL.compareTable({ rows: mvRows, withHeader: false })}`;
+
+		${TPL.compareTable({
+			rows: mvRows,
+			footRows: [
+				{
+					label: "총점",
+					cur: `${ct}/${recordMax(cur.payload)}`,
+					tgt: `${tt}/${recordMax(tgt.payload)}`,
+					delta: deltaHTML(ct - tt),
+				},
+			],
+			withHeader: false,
+		})}`;
 }
