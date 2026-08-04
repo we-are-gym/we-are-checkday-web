@@ -98,23 +98,41 @@ export function createStore(initialState) {
 	/** @type {Set<(state: T) => void>} */
 	const listeners = new Set();
 
+	/** 등록된 구독자 모두에게 현재 상태를 알린다
+	 * @returns {void}
+	 */
 	function notify() {
 		listeners.forEach((listener) => listener(state));
 	}
 
 	return {
+		/** 현재 상태 반환
+		 * @returns {T} 현재 상태
+		 */
 		getState() {
 			return state;
 		},
+		/** updater(이전 상태)가 돌려준 새 상태로 교체하고 구독자에게 알린다
+		 * @param {(prev: T) => T} updater 상태 갱신 함수
+		 * @returns {void}
+		 */
 		setState(updater) {
 			const next = updater(state);
 			if (next === state) return;
 			state = next;
 			notify();
 		},
+		/** 주어진 필드를 얕은 병합해 상태를 갱신한다
+		 * @param {Partial<T>} partial 병합할 필드
+		 * @returns {void}
+		 */
 		update(partial) {
 			this.setState((prev) => ({ ...prev, ...partial }));
 		},
+		/** 상태 변경 시 호출할 리스너를 등록하고, 구독 해제 함수를 반환한다
+		 * @param {(state: T) => void} listener 상태 변경 리스너
+		 * @returns {() => void} 구독 해제 함수
+		 */
 		subscribe(listener) {
 			listeners.add(listener);
 			return () => listeners.delete(listener);

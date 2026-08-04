@@ -4,6 +4,7 @@
 // DEPENDS: today(utils-string), byId·delegate·setText(UI), scoreState(states), evals(evaluation), resetFeedbacks(feedback), renderBasicFunctionCards/updateTotal(evaluation)
 import { today } from "./utils-string.js";
 import { byId, delegate, setText } from "./UI.js";
+import { getNumberParam } from "./utils-url.js";
 import { DOT_COUNT } from "./constants.js";
 import { scoreState } from "./states.js";
 import { memberStore } from "./member-store.js";
@@ -21,7 +22,7 @@ setText("date-badge", today());
 
 // ── 회원 이름 자동완성 및 트레이너 자동 기입 — #m-member(회원 이름 입력+datalist)가 있는 화면(check-doc-new)에서만 동작 ──
 // checkday_1은 #m-member가 없으므로 이 블록은 무영향이다.
-const memberId = Number(new URLSearchParams(window.location.search).get("memberID")) || 0;
+const memberId = getNumberParam("memberID");
 const memberInput = byId("m-member");
 if (memberInput) {
 	const members = memberStore.getState().members;

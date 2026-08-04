@@ -1,6 +1,7 @@
 // 파일 용도: 체크기록 편집 화면(check-doc-edit.html)
 // ?docID= 기록을 불러와 기존 상담지 폼(renderBasicFunctionCards 재사용)에 프리필하고, 수정 내용을 기록 스토어에 저장한다.
 import { byId, delegate, queryAll } from "./UI.js";
+import { getNumberParam } from "./utils-url.js";
 import { recordStore } from "./record-store.js";
 import { renderBasicFunctionCards } from "./evaluation.js";
 import { collectPayload, prefillForm } from "./check-form-payload.js";
@@ -8,7 +9,7 @@ import { setupCheckFormEvents } from "./check-form-events.js";
 import "./components/app-header.js";
 
 /** ?docID= 파라미터 */
-const docId = Number(new URLSearchParams(window.location.search).get("docID")) || 0;
+const docId = getNumberParam("docID");
 
 /** 편집 대상 기록 */
 function getRecord() {
@@ -31,6 +32,7 @@ function resetForm() {
 }
 
 // ── 시작 ──
+/** 초기화: 편집 대상 기록을 불러와 평가 카드를 렌더링하고 폼을 프리필한다 */
 function init() {
 	const rec = getRecord();
 	if (!rec) {

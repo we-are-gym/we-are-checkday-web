@@ -1,6 +1,7 @@
 // 파일 용도: 회원 상세 조회 및 체크기록 비교 화면(member-detail.html)
 // ?memberID= 로 회원을 조회하고, 회원 정보 카드·스파크라인 4종·체크 기록 탭·변화 분석 탭을 렌더링한다.
 import { byId, delegate, queryAll, setHTML, setText } from "./UI.js";
+import { getNumberParam } from "./utils-url.js";
 import { memberStore } from "./member-store.js";
 import { recordStore } from "./record-store.js";
 import { getMemberById } from "./member-utils.js";
@@ -10,7 +11,7 @@ import { MOTION_TOTAL_MAX } from "./constants.js";
 import "./components/app-header.js";
 
 /** ?memberID= 파라미터 (없으면 0 — 미조회 상태) */
-const memberId = Number(new URLSearchParams(window.location.search).get("memberID")) || 0;
+const memberId = getNumberParam("memberID");
 
 /** 현재 회원 */
 function getMember() {
@@ -155,6 +156,9 @@ function refreshRecords() {
 }
 
 // ── 시작 ──
+/** 초기 렌더링 — 회원을 조회해 정보 카드·통계·기록·비교 select를 채운다 (회원이 없으면 안내만 표시)
+ * @returns {void}
+ */
 function init() {
 	const member = getMember();
 	if (!member) {
@@ -179,6 +183,10 @@ delegate(document, "click", "[data-del-record]", (e, el) => {
 	refreshRecords();
 });
 // 기록 행 클릭/키보드 → 조회 화면 (삭제 버튼은 제외)
+/** 기록 행을 클릭/키보드로 선택하면 해당 기록 조회 화면으로 이동
+ * @param {HTMLElement} el 클릭된 기록 행 (data-record-id 보유)
+ * @returns {void}
+ */
 const goView = (el) => (window.location.href = `check-doc-view.html?docID=${el.dataset.recordId}`);
 delegate(document, "click", ".record-row", (e, el) => {
 	if (e.target.closest("[data-del-record]")) return;

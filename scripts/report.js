@@ -20,10 +20,16 @@ function formatFbLine(fb, prefix = "") {
 }
 
 // ── 결과 보기 공용 헬퍼 ──
+/** 전체 움직임 총점 반환 (states의 단일 scoreState에 위임)
+ * @returns {number} 전체 점수 합계
+ */
 export function getTotal() {
 	return scoreState.getTotal();
 }
 
+/** 폼에서 인바디 입력값을 읽어 묶음으로 반환
+ * @returns {import("./store.js").InbodyData} 인바디 입력 문자열 묶음
+ */
 function getIbData() {
 	return {
 		w: byId("ib-w").value,
@@ -36,12 +42,19 @@ function getIbData() {
 	};
 }
 
+/** 선택된 목표 태그를 공백 구분 문자열로 반환
+ * @returns {string} 선택된 목표 텍스트들 (공백 구분, 없으면 빈 문자열)
+ */
 function getSelectedGoals() {
 	return [...document.querySelectorAll(".goal-tag.on")]
 		.map((el) => el.textContent)
 		.join(" ");
 }
 
+/** 평가 줄 배열 생성 (prefix는 각 줄 앞 들여쓰기)
+ * @param {string} prefix 라인 앞 들여쓰기
+ * @returns {string[]} 평가 줄 문자열 배열
+ */
 function getEvalLines(prefix) {
 	const evalCards = document.querySelectorAll("#eval-cards .eval-item");
 	return evals.map((e, i) => {
@@ -54,6 +67,9 @@ function getEvalLines(prefix) {
 }
 
 // ── 결과 보기 ──
+/** 결과 요약 HTML을 조립해 결과 모달 본문에 표시하고 오버레이를 연다
+ * @returns {void}
+ */
 export function openReportModal() {
 	const name = byId("m-name").value || "(미입력)";
 	const session = byId("m-session").value;
@@ -83,6 +99,9 @@ export function openReportModal() {
 	byId("overlay").classList.add("open");
 }
 
+/** 결과 요약을 텍스트로 조립해 클립보드에 복사하고 성공·실패를 안내한다
+ * @returns {void}
+ */
 export function copyReportToClipboard() {
 	const name = byId("m-name").value || "(미입력)";
 	const tot = getTotal();

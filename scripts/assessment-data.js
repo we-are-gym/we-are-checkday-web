@@ -83,3 +83,26 @@ export const ASSESSMENT_ITEMS_FULL = [
 		vo2: true,
 	},
 ];
+
+// 파일 용도: 체크기록 작성(check-doc-new) 전용 베이직 펑션 5항목 — 번호는 1~5로 재부여
+// 결정: to-be 지시에 따라 Lumbar ROM(바닥짚기)·Wall Angel Test·Over Head Squat·Single Balance Test·VO₂ Max(스텝 테스트)만
+//       사용하고, 호흡 테스트·One Leg Squat·원레그 브릿지는 제외한다. 5항목 × 3점 = 15점 만점.
+// 주의: 대상 4항목은 ASSESSMENT_ITEMS와 동일 객체를 재사용하므로 데이터 중복이 없다. (VO₂ 항목만 전용)
+/**
+ * 이름으로 ASSESSMENT_ITEMS에서 평가 항목 1개를 찾는다
+ * @param {string} name 항목 이름 (예: "Lumbar ROM (바닥짚기)")
+ * @returns {{ name: string, desc: string, checks: string[] } | undefined} 항목 데이터 (없으면 undefined)
+ */
+const pickByName = (name) => ASSESSMENT_ITEMS.find((it) => it.name === name);
+export const ASSESSMENT_ITEMS_BASIC5 = [
+	pickByName("Lumbar ROM (바닥짚기)"),
+	pickByName("Wall Angel Test"),
+	pickByName("Over Head Squat"),
+	pickByName("Single Balance Test"),
+	{
+		name: "VO₂ Max (스텝 테스트)",
+		desc: "심폐 지구력",
+		checks: ["1분 HR 과도하게 높음", "HRR 회복 불량"],
+		vo2: true,
+	},
+];

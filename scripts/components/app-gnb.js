@@ -5,6 +5,10 @@ import { defineComponent } from "../component-factory.js";
 import { TPL } from "../templates.js";
 
 defineComponent("app-gnb", {
+	/**
+	 * GNB 메뉴 HTML을 생성한다 (active 속성에 해당하는 링크를 강조)
+	 * @returns {string} GNB HTML
+	 */
 	render() {
 		return TPL.gnb({ active: this.getAttribute("active") || "" });
 	},

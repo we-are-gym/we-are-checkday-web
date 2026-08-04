@@ -7,7 +7,9 @@ import { getRecordCountsByMember } from "./member-utils.js";
 import "./components/app-header.js";
 import "./components/member-table.js";
 
+/** 회원 목록 테이블 컴포넌트 엘리먼트 */
 const tableEl = byId("member-table");
+/** 현재 검색어 (빈 문자열이면 전체 목록) */
 let keyword = "";
 
 /**
@@ -56,9 +58,17 @@ function onSearch() {
 // ── 시작 ──
 memberStore.subscribe(render);
 recordStore.subscribe(render);
+/** 회원 선택 시 상세 화면으로 이동
+ * @param {number} id 선택한 회원 고유 번호
+ * @returns {void}
+ */
 tableEl.onSelect = (id) => {
 	window.location.href = `member-detail.html?memberID=${id}`;
 };
+/** 회원 삭제 요청 처리 (스토어에서 제거 → 재렌더링)
+ * @param {number} id 삭제할 회원 고유 번호
+ * @returns {void}
+ */
 tableEl.onRemove = (id) => removeMember(id);
 byId("search-input").addEventListener("input", onSearch);
 render();

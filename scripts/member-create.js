@@ -4,8 +4,13 @@ import { memberStore } from "./member-store.js";
 import "./components/app-header.js";
 import "./components/member-form.js";
 
+/** 회원 등록 폼 컴포넌트 엘리먼트 */
 const formEl = byId("member-form");
 
+/** 폼 제출 시 회원을 스토어에 추가하고 회원 목록으로 이동
+ * @param {Omit<import("./store.js").Member, "id">} data 폼 입력값 (이름·성별·목표·트레이너)
+ * @returns {void}
+ */
 formEl.onSubmit = (data) => {
 	memberStore.setState((prev) => ({
 		...prev,

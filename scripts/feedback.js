@@ -4,6 +4,7 @@
 import { byId } from "./UI.js";
 import { TPL } from "./templates.js";
 
+/** 동작 피드백 프리셋 정의 (동작명 → 체크 문구 목록) */
 const FB_PRESET = [
 	{
 		name: "스쿼트",
@@ -40,9 +41,15 @@ const FB_PRESET = [
 ];
 
 // ── 동작 피드백 데이터(카피)·ID 카운터 ──
+/** 화면 렌더링용 프리셋 복사본 */
 const feedbacks = FB_PRESET.slice(0);
+/** 피드백 카드 고유 ID 카운터 */
 let fbIdCounter = 0;
 
+/** 체크 행 추가 버튼의 이전 요소(체크 목록)에 새 체크 입력 행을 추가하고 입력에 포커스를 준다
+ * @param {HTMLButtonElement} btn 체크 행 추가 버튼
+ * @returns {void}
+ */
 export function appendCheckMovementItemRow(btn) {
 	const checksWrap = btn.previousElementSibling;
 	const div = document.createElement("div");
@@ -51,6 +58,10 @@ export function appendCheckMovementItemRow(btn) {
 	checksWrap.lastElementChild.querySelector(".fb-check-input").focus();
 }
 
+/** 프리셋(또는 빈) 피드백 카드를 카드 영역에 추가한다
+ * @param {{ name: string, checks: string[] }} [preset] 동작 프리셋 (없으면 빈 카드)
+ * @returns {void}
+ */
 export function appendCheckMovement(preset) {
 	fbIdCounter++;
 	const id = fbIdCounter;
@@ -61,6 +72,9 @@ export function appendCheckMovement(preset) {
 	byId("fb-cards").appendChild(wrap.firstElementChild);
 }
 
+/** 현재 피드백 데이터를 순회하며 카드를 다시 렌더링한다
+ * @returns {void}
+ */
 export function renderCheckMovementCards() {
 	feedbacks.forEach((fb) => appendCheckMovement(fb));
 }
@@ -72,6 +86,9 @@ export function resetFeedbacks() {
 	renderCheckMovementCards();
 }
 
+/** 화면의 피드백 항목에서 체크 문구·메모를 수집해 배열로 반환한다 (체크·메모 둘 다 없으면 제외)
+ * @returns {Array<{ name: string, checked: string[], memo: string }>} 수집된 피드백 데이터
+ */
 export function collectCheckMovementData() {
 	return [...document.querySelectorAll(".fb-item")]
 		.map((item) => {

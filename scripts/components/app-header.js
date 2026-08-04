@@ -10,17 +10,27 @@ import "./app-gnb.js";
 import "./app-help.js";
 
 defineComponent("app-header", {
-	// innerHTML 재작성 전에 원래 light-DOM 자식을 캡처 (refresh가 자식을 지우기 때문)
+	/**
+	 * 재렌더(innerHTML 재작성) 전에 원래 light-DOM 자식을 캡처해 보존한다
+	 */
 	connectedCallback() {
+		// innerHTML 재작성 전에 원래 light-DOM 자식을 캡처 (refresh가 자식을 지우기 때문)
 		/** @type {Element[]} */
 		this._lightChildren = [...this.children];
 	},
+	/**
+	 * 헤더 막대 HTML을 생성한다 (crumb·logout 속성 반영)
+	 * @returns {string} 헤더 HTML
+	 */
 	render() {
 		return TPL.headerBar({
 			crumb: this.getAttribute("crumb") || "",
 			showLogout: this.hasAttribute("logout"),
 		});
 	},
+	/**
+	 * 캡처한 light-DOM 자식을 .header-right로 옮기고 로그아웃 버튼 동작을 연결한다
+	 */
 	onConnect() {
 		const right = this.querySelector(".header-right");
 		this._lightChildren.forEach((child) => right.appendChild(child));

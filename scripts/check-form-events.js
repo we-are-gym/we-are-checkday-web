@@ -27,6 +27,11 @@ export function setupCheckFormEvents() {
 	if (goalTags) goalTags.innerHTML = TPL.goalTags();
 
 	// 목표·체크 문구 태그 토글 (aria-pressed 동기화 + role=button 태그의 Enter/Space 키보드 대응)
+	/**
+	 * 목표·체크 문구 태그의 on 클래스를 토글하고 aria-pressed 속성을 동기화한다.
+	 * @param {Element} el 토글할 태그 요소
+	 * @returns {void}
+	 */
 	const toggleTag = (el) => {
 		const on = el.classList.toggle("on");
 		el.setAttribute("aria-pressed", String(on));

@@ -1,6 +1,6 @@
 // 파일 용도: 체크기록 통계 — 스파크라인·기록 지표·비교 테이블 생성 (회원 상세 공용, 순수 함수)
 import { ASSESSMENT_ITEMS_FULL } from "./assessment-data.js";
-import { MOTION_TOTAL_MAX } from "./constants.js";
+import { MOTION_TOTAL_MAX, SCORE_MAX } from "./constants.js";
 import { TPL } from "./templates.js";
 
 /** 인바디 표시 키 순서 (라벨 포함) */
@@ -21,6 +21,16 @@ export const IB_KEYS = [
  */
 export function recordTotal(payload) {
 	return (payload.scores || []).reduce((a, b) => a + b, 0);
+}
+
+/**
+ * 기록 1건의 총점 최댓값 — 항목 수 × 항목당 만점(3점)으로 파생한다.
+ * 레거시 8항목 기록은 24, 체크기록 작성 5항목 기록은 15. (고정 상수 대신 scores 길이로 판단)
+ * @param {import("./store.js").CheckRecordPayload} payload
+ * @returns {number} 총점 최댓값 (scores 없으면 0)
+ */
+export function recordMax(payload) {
+	return (payload.scores || []).length * SCORE_MAX;
 }
 
 /**
