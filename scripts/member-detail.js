@@ -6,8 +6,7 @@ import { memberStore } from "./member-store.js";
 import { recordStore } from "./record-store.js";
 import { getMemberById } from "./member-utils.js";
 import { TPL, escapeHtml } from "./templates.js";
-import { buildCompareTable, recordTotal, sparkline } from "./record-stats.js";
-import { MOTION_TOTAL_MAX } from "./constants.js";
+import { buildCompareTable, recordMax, recordTotal, sessionLabel, sparkline } from "./record-stats.js";
 import "./components/app-header.js";
 
 /** ?memberID= 파라미터 (없으면 0 — 미조회 상태) */
@@ -43,12 +42,14 @@ function renderStatCards(records) {
 		setHTML("stat-charts", '<div class="sparkline-empty">아직 체크기록이 없어요</div>');
 		return;
 	}
-	// 프로토타입 STAT_METRICS 순서: 체지방률 → 체중 → 골격근량 → 체지방량
+	// 프로토타입 STAT_METRICS 순서: 체지방률 → 체중 → 골격근량 → 체지방량, + 내장지방(to-be 추가)
+	// deltaUnit: 변화량의 단위 — 체지방률은 퍼센트가 아닌 퍼센트포인트(%p)를 쓴다 (member-detail.html Caution 주석)
 	const metrics = [
-		{ label: "체지방률 변화", key: "bfp", unit: "%", fmt: (v) => v.toFixed(1) },
-		{ label: "체중 변화", key: "w", unit: "kg", fmt: (v) => v.toFixed(1) },
-		{ label: "골격근량 변화", key: "m", unit: "kg", fmt: (v) => v.toFixed(1) },
-		{ label: "체지방량 변화", key: "fat", unit: "kg", fmt: (v) => v.toFixed(1) },
+		{ label: "체지방률 변화", key: "bfp", unit: "%", deltaUnit: "%p", deltaDigits: 1, fmt: (v) => v.toFixed(1) },
+		{ label: "체중 변화", key: "w", unit: "kg", deltaUnit: "kg", deltaDigits: 1, fmt: (v) => v.toFixed(1) },
+		{ label: "골격근량 변화", key: "m", unit: "kg", deltaUnit: "kg", deltaDigits: 1, fmt: (v) => v.toFixed(1) },
+		{ label: "체지방량 변화", key: "fat", unit: "kg", deltaUnit: "kg", deltaDigits: 1, fmt: (v) => v.toFixed(1) },
+		{ label: "내장지방 변화", key: "vis", unit: "레벨", deltaUnit: "레벨", deltaDigits: 0, fmt: (v) => v.toFixed(0) },
 	];
 	const firstSession = records[0]?.payload.session ?? "";
 	const lastSession = records[records.length - 1]?.payload.session ?? "";
@@ -63,7 +64,7 @@ function renderStatCards(records) {
 				const first = nums[0];
 				const delta =
 					nums.length > 1 && latest != null && first != null
-						? `<span class="stat-delta ${latest >= first ? "delta-up" : "delta-down"}">${latest >= first ? "▲" : "▼"} ${Math.abs(latest - first).toFixed(1)}</span>`
+						? `<span class="stat-delta ${latest >= first ? "delta-up" : "delta-down"}">${latest >= first ? "▲" : "▼"} ${Math.abs(latest - first).toFixed(metric.deltaDigits)}${metric.deltaUnit}</span>`
 						: "";
 				return `
 					<div class="chart-stat">
@@ -85,12 +86,13 @@ function renderRecords(records) {
 		setHTML("record-list", '<p class="record-empty">아직 체크기록이 없습니다. ＋ 체크기록 작성으로 시작하세요.</p>');
 		return;
 	}
+	// to-be: 회차·날짜·총점 — 회차는 sessionLabel로 레거시 "2026-04 (1회차)"에서도 "1회차"만 추출
 	const rows = records.map((r) => ({
 		id: r.id,
-		session: r.payload.session || r.date,
+		session: sessionLabel(r.payload.session || r.date),
 		date: r.date,
 		total: recordTotal(r.payload),
-		max: MOTION_TOTAL_MAX,
+		max: recordMax(r.payload),
 	}));
 	setHTML("record-list", rows.map((r) => TPL.recordRow(r)).join(""));
 }

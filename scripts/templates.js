@@ -215,14 +215,16 @@ export const TPL = {
 	},
 
 	/**
-	 * 회원 상세의 체크기록 로우 1개 — to-be 지시에 따라 날짜는 표시하지 않는다
+	 * 회원 상세의 체크기록 로우 1개 — 회차·날짜·총점을 한 줄로 표시 (to-be 지시 반영)
 	 * @param {{ id: number, session: string, date: string, total: number, max: number }} p
+	 *           session: 회차 표기(예: "1회차"), date: 기록 날짜(YYYY.MM.DD)
 	 * @returns {string}
 	 */
 	recordRow({ id, session, date, total, max }) {
 		return `
 			<div class="record-row" data-record-id="${id}" tabindex="0" role="link" aria-label="${escapeHtml(session)} ${escapeHtml(date)} 총점 ${total}/${max}">
 				<div class="cell-name">${escapeHtml(session)}</div>
+				<div class="cell-dim">${escapeHtml(date)}</div>
 				<div class="cell-dim">총점 ${total}/${max}</div>
 				<div><button type="button" class="btn btn-sm btn-danger" data-del-record="${id}" aria-label="기록 삭제">삭제</button></div>
 			</div>`;

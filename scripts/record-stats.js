@@ -1,6 +1,6 @@
 // 파일 용도: 체크기록 통계 — 스파크라인·기록 지표·비교 테이블 생성 (회원 상세 공용, 순수 함수)
 import { ASSESSMENT_ITEMS_FULL } from "./assessment-data.js";
-import { MOTION_TOTAL_MAX, SCORE_MAX } from "./constants.js";
+import { SCORE_MAX } from "./constants.js";
 import { TPL } from "./templates.js";
 
 /** 인바디 표시 키 순서 (라벨 포함) */
@@ -101,6 +101,17 @@ export function sparkline(values, { width = 260, height = 68 } = {}) {
  * @param {number} d 변화량
  * @returns {string} 델타 마크업
  */
+/**
+ * 기록의 회차 표기만 추출한다 — 저장 형식 호환을 위해 "2026-04 (1회차)" 같은 레거시 문자열에서도 "1회차"를 뽑는다.
+ * @param {string} [session] 기록의 회차 문자열 (예: "1회차", "2026-04 (1회차)")
+ * @returns {string} 회차 표기 (추출 불가 시 원문)
+ */
+export function sessionLabel(session) {
+	if (!session) return "";
+	const m = String(session).match(/(\d+회차)/);
+	return m ? m[1] : String(session);
+}
+
 export function deltaHTML(d) {
 	if (d > 0) return `<span class="delta-up">▲ ${d}</span>`;
 	if (d < 0) return `<span class="delta-down">▼ ${Math.abs(d)}</span>`;
@@ -147,8 +158,8 @@ export function buildCompareTable(cur, tgt) {
 	const tt = recordTotal(tgt.payload);
 	mvRows.push({
 		label: "총점",
-		cur: `${ct}/${MOTION_TOTAL_MAX}`,
-		tgt: `${tt}/${MOTION_TOTAL_MAX}`,
+		cur: `${ct}/${recordMax(cur.payload)}`,
+		tgt: `${tt}/${recordMax(tgt.payload)}`,
 		delta: deltaHTML(ct - tt),
 	});
 	return `
