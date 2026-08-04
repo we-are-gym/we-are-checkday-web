@@ -1,6 +1,6 @@
 // 파일 용도: 체크기록 편집 화면(check-doc-edit.html)
 // ?docID= 기록을 불러와 기존 상담지 폼(renderBasicFunctionCards 재사용)에 프리필하고, 수정 내용을 기록 스토어에 저장한다.
-import { UI } from "./UI.js";
+import { byId, delegate, queryAll } from "./UI.js";
 import { recordStore } from "./record-store.js";
 import { renderBasicFunctionCards } from "./evaluation.js";
 import { collectPayload, prefillForm } from "./check-form-payload.js";
@@ -34,13 +34,13 @@ function resetForm() {
 function init() {
 	const rec = getRecord();
 	if (!rec) {
-		UI.byId("eval-cards").innerHTML = '<p class="goal-empty">기록을 찾을 수 없습니다. 목록에서 다시 선택하세요.</p>';
-		UI.byId("fb-cards").style.display = "none";
-		UI.byId("btn-cancel").href = "members.html";
-		UI.queryAll("[data-action]").forEach((el) => (el.style.display = "none"));
+		byId("eval-cards").innerHTML = '<p class="goal-empty">기록을 찾을 수 없습니다. 목록에서 다시 선택하세요.</p>';
+		byId("fb-cards").style.display = "none";
+		byId("btn-cancel").href = "members.html";
+		queryAll("[data-action]").forEach((el) => (el.style.display = "none"));
 		return;
 	}
-	UI.byId("btn-cancel").href = `check-doc-view.html?docID=${docId}`;
+	byId("btn-cancel").href = `check-doc-view.html?docID=${docId}`;
 	renderBasicFunctionCards();
 	prefillForm(rec);
 }
@@ -48,7 +48,7 @@ function init() {
 // 목표·체크·점수·피드백·인바디/VO₂ 위임은 checkday·편집 화면이 공유하는 check-form-events로 처리
 setupCheckFormEvents();
 // [data-action] 화면별 액션(초기화·저장)은 편집 화면 고유 — 여기서 등록
-UI.delegate(document, "click", "[data-action]", (e, el) => {
+delegate(document, "click", "[data-action]", (e, el) => {
 	if (el.dataset.action === "reset") resetForm();
 	else if (el.dataset.action === "save-edit") saveRecord();
 });

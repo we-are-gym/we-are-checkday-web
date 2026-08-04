@@ -1,6 +1,6 @@
 // 파일 용도: 회원 정보 편집 화면(member-edit.html)
 // ?memberID= 회원을 조회해 member-form에 프리필하고, 저장 시 memberStore의 해당 회원 정보를 갱신한다.
-import { UI } from "./UI.js";
+import { byId } from "./UI.js";
 import { memberStore } from "./member-store.js";
 import { getMemberById } from "./member-utils.js";
 import "./components/app-header.js";
@@ -17,7 +17,7 @@ function getMember() {
 /** 상세 화면으로 복귀하는 URL */
 const detailUrl = `member-detail.html?memberID=${memberId}`;
 
-const formEl = UI.byId("member-form");
+const formEl = byId("member-form");
 const member = getMember();
 
 if (!member) {

@@ -1,5 +1,5 @@
 // 파일 용도: 로그인 화면(login.html) — 폼 렌더·검증·로그인 상태 기록·이동 (데모 계정 checkday/1234)
-import { UI } from "./UI.js";
+import { byId, setHTML } from "./UI.js";
 import { isAuthed, login } from "./auth.js";
 import { TPL } from "./templates.js";
 import "./components/app-header.js";
@@ -9,9 +9,9 @@ const redirect =
 	new URLSearchParams(window.location.search).get("redirect") || "index.html";
 
 // ── 시작 ──
-UI.setHTML("login-box", TPL.loginForm());
-const form = UI.byId("login-form");
-const errEl = UI.byId("login-error");
+setHTML("login-box", TPL.loginForm());
+const form = byId("login-form");
+const errEl = byId("login-error");
 
 // 이미 로그인 상태면 바로 이동
 if (isAuthed()) {
@@ -19,8 +19,8 @@ if (isAuthed()) {
 } else {
 	form.addEventListener("submit", (e) => {
 		e.preventDefault();
-		const id = UI.byId("login-id").value.trim();
-		const pw = UI.byId("login-pw").value;
+		const id = byId("login-id").value.trim();
+		const pw = byId("login-pw").value;
 		if (!id || !pw) {
 			errEl.textContent = "아이디와 비밀번호를 모두 입력하세요.";
 			errEl.hidden = false;
@@ -35,5 +35,5 @@ if (isAuthed()) {
 		login();
 		window.location.href = redirect;
 	});
-	UI.byId("login-id").focus();
+	byId("login-id").focus();
 }

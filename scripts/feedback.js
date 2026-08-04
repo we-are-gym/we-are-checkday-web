@@ -1,7 +1,7 @@
 // 파일 용도: 피드백 CRUD — 동작 피드백 카드 생성·체크 행 추가/삭제·데이터 수집 (checkday 공용)
 // 기법: 카드·체크 행 마크업은 공용 템플릿(TPL.feedbackCard·TPL.fbCheckRow)을 단일 소스로 사용
-// DEPENDS: UI, TPL
-import { UI } from "./UI.js";
+// DEPENDS: byId(UI), TPL
+import { byId } from "./UI.js";
 import { TPL } from "./templates.js";
 
 const FB_PRESET = [
@@ -58,7 +58,7 @@ export function appendCheckMovement(preset) {
 	const checks = preset ? preset.checks : [""];
 	const wrap = document.createElement("div");
 	wrap.innerHTML = TPL.feedbackCard({ id, name, checkItems: checks });
-	UI.byId("fb-cards").appendChild(wrap.firstElementChild);
+	byId("fb-cards").appendChild(wrap.firstElementChild);
 }
 
 export function renderCheckMovementCards() {
@@ -67,7 +67,7 @@ export function renderCheckMovementCards() {
 
 /** 초기용: 피드백 카드를 비우고 프리셋 재빌드 */
 export function resetFeedbacks() {
-	UI.byId("fb-cards").innerHTML = "";
+	byId("fb-cards").innerHTML = "";
 	fbIdCounter = 0;
 	renderCheckMovementCards();
 }

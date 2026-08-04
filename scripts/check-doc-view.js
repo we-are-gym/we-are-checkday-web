@@ -1,6 +1,6 @@
 // 파일 용도: 체크기록 조회 화면(check-doc-view.html)
 // ?docID= 로 기록 1건을 읽기 전용으로 렌더링한다. 수정은 check-doc-edit.html?docID= 로 이동(커밋 13에서 실링크).
-import { UI } from "./UI.js";
+import { byId, queryAll, setHTML, setText } from "./UI.js";
 import { recordStore } from "./record-store.js";
 import { escapeHtml, TPL } from "./templates.js";
 import { IB_KEYS, recordTotal } from "./record-stats.js";
@@ -35,14 +35,14 @@ function scoreDots(score) {
  */
 function renderHead(rec) {
 	const p = rec.payload;
-	UI.setText("vh-title", p.session || rec.date);
+	setText("vh-title", p.session || rec.date);
 	const items = [
 		["회원", p.name || "-"],
 		["작성일", rec.date],
 		["담당 트레이너", p.trainer || "-"],
 		["총점", `${recordTotal(p)} / ${MOTION_TOTAL_MAX}`],
 	];
-	UI.setHTML("vh-meta", items.map(([k, v]) => `<span class="meta-item"><b>${k}</b>${escapeHtml(v)}</span>`).join(""));
+	setHTML("vh-meta", items.map(([k, v]) => `<span class="meta-item"><b>${k}</b>${escapeHtml(v)}</span>`).join(""));
 	document.title = `${p.session || "체크기록"} — 조회`;
 }
 
@@ -53,7 +53,7 @@ function renderHead(rec) {
  */
 function renderInbody(rec) {
 	const ib = rec.payload.ib || {};
-	UI.setHTML(
+	setHTML(
 		"ib-grid",
 		IB_KEYS.map(
 			({ key, label }) => `
@@ -63,8 +63,8 @@ function renderInbody(rec) {
 				</div>`,
 		).join(""),
 	);
-	UI.setText("ib-comment", rec.payload.ibComment || "");
-	UI.byId("ib-comment").style.display = rec.payload.ibComment ? "" : "none";
+	setText("ib-comment", rec.payload.ibComment || "");
+	byId("ib-comment").style.display = rec.payload.ibComment ? "" : "none";
 }
 
 /**
@@ -74,7 +74,7 @@ function renderInbody(rec) {
  */
 function renderEvals(rec) {
 	const { scores = [], evalData = [] } = rec.payload;
-	UI.setHTML(
+	setHTML(
 		"eval-list",
 		ASSESSMENT_ITEMS_FULL.map((item, i) => {
 			const score = scores[i] ?? 0;
@@ -99,7 +99,7 @@ function renderEvals(rec) {
 				</div>`;
 		}).join(""),
 	);
-	UI.setText("evals-total", `총점 ${recordTotal(rec.payload)}`);
+	setText("evals-total", `총점 ${recordTotal(rec.payload)}`);
 }
 
 /**
@@ -109,9 +109,9 @@ function renderEvals(rec) {
  */
 function renderGoals(rec) {
 	const { goals = [], goalMemo = "" } = rec.payload;
-	UI.setHTML("goal-chips", goals.length ? goals.map((g) => `<span class="goal-chip">${escapeHtml(g)}</span>`).join("") : '<span class="goal-empty">설정한 목표가 없습니다</span>');
-	UI.setText("goal-memo", goalMemo || "");
-	UI.byId("goal-memo").style.display = goalMemo ? "" : "none";
+	setHTML("goal-chips", goals.length ? goals.map((g) => `<span class="goal-chip">${escapeHtml(g)}</span>`).join("") : '<span class="goal-empty">설정한 목표가 없습니다</span>');
+	setText("goal-memo", goalMemo || "");
+	byId("goal-memo").style.display = goalMemo ? "" : "none";
 }
 
 /**
@@ -121,7 +121,7 @@ function renderGoals(rec) {
  */
 function renderFeedbacks(rec) {
 	const fbs = rec.payload.feedbacks || [];
-	UI.setHTML(
+	setHTML(
 		"fb-views",
 		fbs.length
 			? fbs
@@ -145,17 +145,17 @@ function renderFeedbacks(rec) {
  */
 function renderConsult(rec) {
 	const memo = rec.payload.consultMemo || "";
-	UI.setText("consult-memo", memo || "기록된 상담 메모가 없습니다.");
+	setText("consult-memo", memo || "기록된 상담 메모가 없습니다.");
 }
 
 // ── 시작 ──
 function init() {
 	const rec = getRecord();
 	if (!rec) {
-		UI.byId("vh-title").textContent = "기록을 찾을 수 없습니다";
-		UI.byId("vh-meta").textContent = "목록에서 다시 선택하세요.";
-		UI.queryAll(".view-section").forEach((s) => (s.style.display = "none"));
-		UI.byId("btn-edit").style.display = "none";
+		byId("vh-title").textContent = "기록을 찾을 수 없습니다";
+		byId("vh-meta").textContent = "목록에서 다시 선택하세요.";
+		queryAll(".view-section").forEach((s) => (s.style.display = "none"));
+		byId("btn-edit").style.display = "none";
 		return;
 	}
 	renderHead(rec);
@@ -165,9 +165,9 @@ function init() {
 	renderFeedbacks(rec);
 	renderConsult(rec);
 	// 편집 링크에 docID 부여 (check-doc-edit.html은 커밋 13에서 실링크)
-	UI.byId("btn-edit").href = `check-doc-edit.html?docID=${docId}`;
+	byId("btn-edit").href = `check-doc-edit.html?docID=${docId}`;
 }
 
-UI.byId("btn-back").addEventListener("click", () => window.history.length > 1 ? window.history.back() : (window.location.href = "members.html"));
+byId("btn-back").addEventListener("click", () => window.history.length > 1 ? window.history.back() : (window.location.href = "members.html"));
 
 init();
