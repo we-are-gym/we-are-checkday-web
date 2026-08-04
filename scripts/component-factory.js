@@ -39,6 +39,13 @@ export function defineComponent(tag, spec) {
 		}
 	}
 
+	// 지정된 커스텀 메서드(onConnect·render·refreshAfter·connectedCallback 제외)를
+	// 프로토타입에 복사해 외부에서 this.prefill() 등으로 호출할 수 있게 한다.
+	for (const key of Object.keys(spec)) {
+		if (key === "render" || key === "onConnect" || key === "refreshAfter" || key === "connectedCallback") continue;
+		if (typeof spec[key] === "function") Component.prototype[key] = spec[key];
+	}
+
 	customElements.define(tag, Component);
 	return Component;
 }

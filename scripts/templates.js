@@ -18,6 +18,22 @@ export function escapeHtml(text) {
 
 export const TPL = {
 	/**
+	 * 점수 조절 컨트롤 3종 (감소 − · 현재 점수 · 증가 +) — checkday 평가 카드·베이직 펑션 카드 공용
+	 * @param {{ dataKey: string, index: number|string, displayClass: string, displayId?: string, displayAttr?: string }} p
+	 *           dataKey: 전체 속성명 (예: "data-i") — 점수 증감 버튼이 참조할 인덱스 속성
+	 * @returns {string}
+	 */
+	scoreCtrl({ dataKey, index, displayClass, displayId = "", displayAttr = "" }) {
+		const data = `${dataKey}="${index}"`;
+		const idAttr = displayId ? ` id="${displayId}"` : "";
+		const attr = displayAttr ? ` data-${displayAttr}="0"` : "";
+		return `
+			<button class="score-btn" ${data} data-delta="-1" aria-label="감소">−</button>
+			<span class="${displayClass}"${idAttr}${attr}>0</span>
+			<button class="score-btn" ${data} data-delta="1" aria-label="증가">+</button>`;
+	},
+
+	/**
 	 * 평가 카드 1장 (checkday 화면 스타일) — eval-item 래퍼 포함
 	 * @param {{ index: number, item: { name: string, desc: string }, dots: string, tags: string, extra?: string }} p
 	 * @returns {string}
@@ -29,9 +45,7 @@ export const TPL = {
 					<div class="eval-num-badge">${index + 1}</div>
 					<div style="flex:1"><div class="eval-name">${escapeHtml(item.name)}</div><div class="eval-desc">${escapeHtml(item.desc)}</div></div>
 					<div class="score-ctrl">
-						<button class="score-btn" data-i="${index}" data-delta="-1" aria-label="감소">−</button>
-						<span class="score-val" id="sv-${index}">0</span>
-						<button class="score-btn" data-i="${index}" data-delta="1" aria-label="증가">+</button>
+						${TPL.scoreCtrl({ dataKey: "data-i", index, displayClass: "score-val", displayId: `sv-${index}` })}
 						<div class="sdots">${dots}</div>
 					</div>
 				</div>
@@ -62,9 +76,7 @@ export const TPL = {
 					</div>
 					<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
 						<div class="score-ctrl">
-							<button class="score-btn" data-aid="${id}" data-delta="-1" aria-label="감소">−</button>
-							<span class="score-display" id="score-${id}" data-score="0">0</span>
-							<button class="score-btn" data-aid="${id}" data-delta="1" aria-label="증가">+</button>
+							${TPL.scoreCtrl({ dataKey: "data-aid", index: id, displayClass: "score-display", displayId: `score-${id}`, displayAttr: "score" })}
 						</div>
 						<div class="score-dots">${dots}</div>
 					</div>
@@ -154,7 +166,7 @@ export const TPL = {
 	},
 
 	/**
-	 * 회원 상세의 체크기록 로우 1개
+	 * 회원 상세의 체크기록 로우 1개 — to-be 지시에 따라 날짜는 표시하지 않는다
 	 * @param {{ id: number, session: string, date: string, total: number, max: number }} p
 	 * @returns {string}
 	 */
@@ -162,7 +174,6 @@ export const TPL = {
 		return `
 			<div class="record-row" data-record-id="${id}" tabindex="0">
 				<div class="cell-name">${escapeHtml(session)}</div>
-				<div class="cell-dim">${escapeHtml(date)}</div>
 				<div class="cell-dim">총점 ${total}/${max}</div>
 				<div><button type="button" class="btn btn-sm btn-danger" data-del-record="${id}" aria-label="기록 삭제">지우기</button></div>
 			</div>`;

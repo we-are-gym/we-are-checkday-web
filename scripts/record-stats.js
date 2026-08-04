@@ -45,7 +45,7 @@ export function sparkline(values, { width = 140, height = 36 } = {}) {
 		})
 		.join(" ");
 	return `<svg class="sparkline" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" role="img" aria-label="회차별 추세 그래프">
-		<polyline points="${pts}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+		<polyline points="${pts}" fill="none" stroke="var(--spark)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 	</svg>`;
 }
 

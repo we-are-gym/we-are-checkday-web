@@ -3,7 +3,7 @@
 import { UI } from "./UI.js";
 import { memberStore } from "./member-store.js";
 import { recordStore } from "./record-store.js";
-import { TPL } from "./templates.js";
+import { TPL, escapeHtml } from "./templates.js";
 import { buildCompareTable, recordTotal, sparkline } from "./record-stats.js";
 import { MOTION_TOTAL_MAX } from "./constants.js";
 import "./components/app-header.js";
@@ -26,6 +26,8 @@ function getRecords() {
 
 /** 회원 정보 카드 렌더링 */
 function renderInfoCard(member) {
+	UI.setText("md-title", member.name);
+	UI.setText("md-sub", `체크기록 ${getRecords().length}건`);
 	UI.setText("md-name", member.name);
 	UI.setText("md-gender", member.gender || "-");
 	UI.setText("md-trainer", member.trainer || "-");
@@ -33,7 +35,7 @@ function renderInfoCard(member) {
 	document.title = `${member.name} — 회원 상세`;
 }
 
-/** 스파크라인 4종 (체중·골격근량·체지방량·총점) */
+/** 스파크라인 4종 (체중·골격근량·체지방량·총점) — 프로토타입 chart-stat 구조(최신값·변화 델타·회차 범위) */
 function renderStatCards(records) {
 	const series = (key) =>
 		records.map((r) => {
@@ -47,16 +49,25 @@ function renderStatCards(records) {
 		{ label: "체지방량", unit: "kg", values: series("fat"), fmt: (v) => v.toFixed(1) },
 		{ label: "총점", unit: "/ 24", values: totalSeries, fmt: (v) => String(v) },
 	];
+	const firstSession = records[0]?.payload.session ?? "";
+	const lastSession = records[records.length - 1]?.payload.session ?? "";
 	UI.setHTML(
 		"stat-cards",
 		cards
 			.map((c) => {
-				const latest = [...c.values].reverse().find((v) => !Number.isNaN(v));
+				const nums = c.values.filter((v) => !Number.isNaN(v));
+				const latest = nums[nums.length - 1];
+				const first = nums[0];
+				const delta =
+					nums.length > 1 && latest != null && first != null
+						? `<span class="stat-delta ${latest >= first ? "delta-up" : "delta-down"}">${latest >= first ? "▲" : "▼"} ${Math.abs(latest - first).toFixed(1)}</span>`
+						: "";
 				return `
 					<div class="stat-card">
 						<div class="stat-label">${c.label}</div>
-						<div class="stat-value">${latest != null ? c.fmt(latest) : "―"}<span class="stat-unit"> ${c.unit}</span></div>
+						<div class="stat-value">${latest != null ? c.fmt(latest) : "―"}<span class="stat-unit"> ${c.unit}</span>${delta}</div>
 						${sparkline(c.values)}
+						<div class="stat-range"><span>${escapeHtml(firstSession)}</span><span>${escapeHtml(lastSession)}</span></div>
 					</div>`;
 			})
 			.join(""),
@@ -151,6 +162,7 @@ function init() {
 	}
 	renderInfoCard(member);
 	UI.byId("new-record-btn").href = `check-doc-new.html?memberID=${memberId}`;
+	UI.byId("edit-member-btn").href = `member-edit.html?memberID=${memberId}`;
 	refreshRecords();
 }
 

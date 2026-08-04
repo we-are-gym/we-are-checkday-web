@@ -8,7 +8,7 @@ defineComponent("member-table", {
 	render() {
 		const rows = this.rows || [];
 		return `
-			<table class="member-table">
+			<table class="member-table" aria-label="회원 목록">
 				<thead>
 					<tr>
 						<th>이름</th>

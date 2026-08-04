@@ -31,7 +31,6 @@ function render() {
 	tableEl.rows = buildRows(filtered);
 	tableEl.refresh();
 	UI.byId("member-empty").hidden = filtered.length !== 0;
-	UI.setText("member-count", `${filtered.length}명`);
 }
 
 /** 회원 삭제 (스토어 상태 갱신 → 구독자 재렌더링) */
