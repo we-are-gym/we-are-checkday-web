@@ -45,16 +45,20 @@
 	--accent-text: #182015;
 
 	/* ── to-be 팔레트 전용 토큰 (버튼 파랑·추세/변화 색상) ── */
+
 	/* 메인·저장 버튼 파랑 — before-advance 웹UI와 동일 (#3478d4) 배경 + 흰 글씨 */
 	--btn-blue: #3478d4;
 	--btn-blue-hover: #2e68bd;
 	--btn-blue-text: #ffffff;
+
 	/* 회원 상세·비교 화면 추세 스파크라인·상승·하강 색 */
 	--spark: #6b9bd8;
 	--delta-up: #5a9bd8;
 	--delta-down: #d86b6b;
+
 	/* 제거·삭제 버튼 글자색 — 프로토타입 btn-danger (#c97a72) */
 	--btn-danger-fg: #c97a72;
+
 	/* 체크데이 날짜 배지 파랑 — to-be: before-advance 파랑(#3478d4) 계열 (기존 --blue-bg/--blue-fg는 녹색) */
 	--blue-badge-bg: rgba(52, 120, 212, 0.14);
 	--blue-badge-fg: #7eb3f5;
