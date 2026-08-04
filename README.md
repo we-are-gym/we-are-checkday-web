@@ -49,6 +49,14 @@
 - `styles/colors.css`(공용 단일 다크 팔레트 + 코랄 포인트)와 `styles/font.css`(공용 글꼴)를 모든 페이지가 먼저 로드하고, 화면별 레이아웃(`layout-*.css`)을 뒤에 로드한다.
 - 각 화면은 `:root` 색상·글꼴을 재정의하지 않는다.
 
+### 캐시 버전 관리
+
+- 정적 서빙 환경에서 브라우저가 이전 CSS·진입 스크립트를 캐시해 최신 코드가 반영되지 않는 문제를 막기 위해,
+  각 화면 HTML의 `<link rel="stylesheet">`·`<script type="module">` 태그에 `?v=YYYYMMDD` 캐시 버전 쿼리를 붙인다.
+- 코드를 바꾼 뒤에는 다음 명령으로 모든 화면의 버전을 오늘 날짜로 일괄 갱신한다:
+  `node scripts/bump-version.mjs [YYYYMMDD]` (인자 없으면 오늘 날짜)
+- 레거시 화면(`checkday_1.html`·`basic_function_assessment_2.html`)은 변경 대상에서 제외한다.
+
 ## 코드 스타일
 
 - 파일마다 시작 부분에 그 파일의 용도를 밝히는 주석을 다십시오.
