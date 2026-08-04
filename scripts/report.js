@@ -115,7 +115,7 @@ export function copyReportToClipboard() {
 		byId("ib-comment").value
 			? `  코멘트: ${byId("ib-comment").value}`
 			: "",
-		`━ 움직임 총점: ${tot}/24점`,
+		`━ 움직임 총점: ${tot}/${scoreState.getMax()}점`,
 		...evalLines,
 		`━ 다음 목표: ${goals || "미선택"}`,
 		byId("goal-memo").value

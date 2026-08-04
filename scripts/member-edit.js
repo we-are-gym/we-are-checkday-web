@@ -2,7 +2,7 @@
 // ?memberID= 회원을 조회해 member-form에 프리필하고, 저장 시 memberStore의 해당 회원 정보를 갱신한다.
 import { byId } from "./UI.js";
 import { getNumberParam } from "./utils-url.js";
-import { memberStore } from "./member-store.js";
+import { memberStore, updateMember } from "./member-store.js";
 import { getMemberById } from "./member-utils.js";
 import "./components/app-header.js";
 import "./components/member-form.js";
@@ -44,10 +44,7 @@ if (!member) {
 	 * @returns {void}
 	 */
 	formEl.onSubmit = (data) => {
-		memberStore.setState((prev) => ({
-			...prev,
-			members: prev.members.map((m) => (m.id === memberId ? { ...m, ...data } : m)),
-		}));
+		updateMember(memberId, data);
 		// 저장 후 상세 화면으로 복귀
 		window.location.href = detailUrl;
 	};

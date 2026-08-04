@@ -72,8 +72,8 @@ export const ASSESSMENT_ITEMS = [
 	},
 ];
 
-// 파일 용도: 움직임 평가 8개 항목 전체 — 공용 7개 + VO₂ 항목 (check-doc 화면 공용)
-// evaluation.js·check-doc-new에서 그대로 사용
+// 파일 용도: 움직임 평가 8개 항목 전체 — 공용 7개 + VO₂ 항목 (레거시 기본값·checkday_1)
+// evaluation.js 기본값(checkday_1)과 8항목 기록의 조회·편집·비교에서 사용한다. 체크기록 작성은 ASSESSMENT_ITEMS_BASIC5를 쓴다.
 export const ASSESSMENT_ITEMS_FULL = [
 	...ASSESSMENT_ITEMS,
 	{

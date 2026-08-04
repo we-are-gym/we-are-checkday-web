@@ -23,3 +23,31 @@ export const memberStore = createPersistentStore(
 	/** 저장값에 members 배열이 있어야 유효 */
 	(data) => Array.isArray(data.members),
 );
+
+/**
+ * 회원 1명을 추가하고 새 id를 부여한다 (등록 화면 공용)
+ * @param {Omit<import("./store.js").Member, "id">} data 신규 회원 데이터 (이름·성별·목표·트레이너)
+ * @returns {number} 부여된 회원 id
+ */
+export function addMember(data) {
+	const id = memberStore.getState().nextId;
+	memberStore.setState((prev) => ({
+		...prev,
+		members: [...prev.members, { id, ...data }],
+		nextId: prev.nextId + 1,
+	}));
+	return id;
+}
+
+/**
+ * 회원 1명의 정보를 갱신한다 (편집 화면 공용)
+ * @param {number} id 대상 회원 id
+ * @param {Partial<import("./store.js").Member>} patch 갱신할 필드 (이름·성별·목표·트레이너 등)
+ * @returns {void}
+ */
+export function updateMember(id, patch) {
+	memberStore.setState((prev) => ({
+		...prev,
+		members: prev.members.map((m) => (m.id === id ? { ...m, ...patch } : m)),
+	}));
+}
