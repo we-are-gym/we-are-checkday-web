@@ -683,10 +683,12 @@ textarea.consult-memo::placeholder {
 	outline: none;
 	padding: 2px 0 4px;
 }
+
 .fb-move-input::placeholder {
 	color: var(--text3);
 	font-weight: 400;
 }
+
 .fb-del-btn {
 	background: none;
 	border: none;
@@ -697,15 +699,18 @@ textarea.consult-memo::placeholder {
 	line-height: 1;
 	transition: color 0.12s;
 }
+
 .fb-del-btn:hover {
 	color: var(--red-fg);
 }
+
 .fb-check-row {
 	display: flex;
 	align-items: center;
 	gap: 6px;
 	margin-bottom: 4px;
 }
+
 .fb-check-input {
 	flex: 1;
 	font-size: 12px;
@@ -717,9 +722,11 @@ textarea.consult-memo::placeholder {
 	outline: none;
 	padding: 3px 0;
 }
+
 .fb-check-input::placeholder {
 	color: var(--text3);
 }
+
 .fb-check-del {
 	background: none;
 	border: none;
@@ -729,6 +736,7 @@ textarea.consult-memo::placeholder {
 	padding: 0;
 	line-height: 1;
 }
+
 .fb-check-del:hover {
 	color: var(--red-fg);
 }
