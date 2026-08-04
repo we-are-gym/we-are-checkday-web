@@ -16,6 +16,10 @@ function getRecord() {
 	return recordStore.getState().records.find((r) => r.id === docId);
 }
 
+// 헤더 크럼(前화면)을 동적 값으로 설정 — 편집 대상 기록의 조회 화면
+const header = document.querySelector("app-header");
+if (header) header.setAttribute("back", `check-doc-view.html?docID=${docId}`);
+
 /** 저장: 기록 payload 교체 후 조회 화면 이동 */
 function saveRecord() {
 	recordStore.setState((prev) => ({

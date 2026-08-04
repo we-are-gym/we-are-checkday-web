@@ -23,6 +23,9 @@ setText("date-badge", today());
 // ── 회원 이름 자동완성 및 트레이너 자동 기입 — #m-member(회원 이름 입력+datalist)가 있는 화면(check-doc-new)에서만 동작 ──
 // checkday_1은 #m-member가 없으므로 이 블록은 무영향이다.
 const memberId = getNumberParam("memberID");
+// 크럼(前화면) 동적 지정 — ?memberID= 로 진입(check-doc-new)하면 해당 회원 상세 화면으로 되돌아간다. checkday_1은 헤더가 없어 무영향.
+const header = document.querySelector("app-header");
+if (header && memberId) header.setAttribute("back", `member-detail.html?memberID=${memberId}`);
 const memberInput = byId("m-member");
 if (memberInput) {
 	const members = memberStore.getState().members;

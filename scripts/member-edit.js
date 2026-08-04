@@ -18,6 +18,10 @@ function getMember() {
 /** 상세 화면으로 복귀하는 URL */
 const detailUrl = `member-detail.html?memberID=${memberId}`;
 
+// 헤더 크럼(前화면)을 동적 값으로 설정 — ?memberID= 가 포함된 상세 화면으로
+const header = document.querySelector("app-header");
+if (header) header.setAttribute("back", detailUrl);
+
 /** 회원 편집 폼 컴포넌트 엘리먼트 */
 const formEl = byId("member-form");
 /** 편집 대상 회원 (없으면 undefined) */

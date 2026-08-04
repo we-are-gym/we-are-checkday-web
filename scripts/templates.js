@@ -285,10 +285,17 @@ export const TPL = {
 
 	/**
 	 * 헤더 막대 (app-header 컴포넌트 내부용) — navHtml은 우측 영역의 <app-gnb> 등 이동 대상
-	 * @param {{ crumb?: string, showLogout?: boolean, navHtml?: string }} [p]
+	 * 크럼은 현재 화면 명칭이며, backUrl(前화면)이 있으면 그 링크, 없으면 클릭 시 히스토리 뒤로가기로 동작한다.
+	 * @param {{ crumb?: string, showLogout?: boolean, navHtml?: string, backUrl?: string }} [p]
+	 *           backUrl: 크럼 클릭 시 이동할 前화면 URL (없으면 app-header가 history.back() 처리)
 	 * @returns {string}
 	 */
-	headerBar({ crumb = "", showLogout = true, navHtml = "" } = {}) {
+	headerBar({ crumb = "", showLogout = true, navHtml = "", backUrl = "" } = {}) {
+		const crumbHtml = crumb
+			? backUrl
+				? `<a class="crumb" href="${escapeHtml(backUrl)}" data-header-crumb>${escapeHtml(crumb)}</a>`
+				: `<a class="crumb" role="link" tabindex="0" data-header-crumb>${escapeHtml(crumb)}</a>`
+			: "";
 		return `
 			<header class="site-header" role="banner">
 				<a class="logo" href="index.html" aria-label="메인으로 이동">
@@ -297,7 +304,7 @@ export const TPL = {
 				</a>
 				<div class="header-right">
 					${navHtml}
-					${crumb ? `<span class="crumb">${escapeHtml(crumb)}</span>` : ""}
+					${crumbHtml}
 					${showLogout ? `<button type="button" class="link-btn" data-header-logout>로그아웃</button>` : ""}
 				</div>
 			</header>`;
