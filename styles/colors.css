@@ -33,9 +33,14 @@
 	--rlg: 14px;
 
 	/* ── 프로토타입 팔레트 전용 토큰 ── */
+
 	--logo-coral: #ff6f5e;
-	--accent: #7ca463;
-	--accent-hover: #6f9457;
+
+	/* --accent: #7ca463; */
+	/* --accent-hover: #6f9457; */
+	--accent: #3478d4;
+	--accent-hover: #2e68bd;
+
 	--accent-dim: rgba(124, 164, 99, 0.14);
 	--accent-text: #182015;
 
