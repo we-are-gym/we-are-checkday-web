@@ -68,7 +68,7 @@
 	font-size: 11px;
 	font-weight: 600;
 	color: var(--text3);
-	text-align: left;
+	/* text-align: left; */
 	padding: 10px 12px;
 	background: var(--surface2);
 	border-bottom: 0.5px solid var(--border);
@@ -120,6 +120,7 @@
 
 /* 이름은 프로토타입처럼 굵게 (기본 셀보다 강조) */
 .member-row .member-name {
+	text-align: center;
 	font-weight: 700;
 	color: var(--text);
 }
