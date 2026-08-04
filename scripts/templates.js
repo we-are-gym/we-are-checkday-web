@@ -23,7 +23,13 @@ export const TPL = {
 	 *           dataKey: 전체 속성명 (예: "data-i") — 점수 증감 버튼이 참조할 인덱스 속성
 	 * @returns {string}
 	 */
-	scoreCtrl({ dataKey, index, displayClass, displayId = "", displayAttr = "" }) {
+	scoreCtrl({
+		dataKey,
+		index,
+		displayClass,
+		displayId = "",
+		displayAttr = "",
+	}) {
 		const data = `${dataKey}="${index}"`;
 		const idAttr = displayId ? ` id="${displayId}"` : "";
 		const attr = displayAttr ? ` data-${displayAttr}="0"` : "";
