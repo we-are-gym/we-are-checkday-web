@@ -33,8 +33,9 @@
 .date-badge {
 	font-size: 11px;
 	font-weight: 600;
-	background: var(--blue-bg);
-	color: var(--blue-fg);
+	/* to-be: 파랑 계열 배지 — advance colors가 --blue를 녹색(#7ca463)으로 재정의했으므로 전용 파랑 토큰을 쓴다 */
+	background: var(--blue-badge-bg);
+	color: var(--blue-badge-fg);
 	padding: 4px 10px;
 	border-radius: 99px;
 	white-space: nowrap;
@@ -683,10 +684,12 @@ textarea.consult-memo::placeholder {
 	outline: none;
 	padding: 2px 0 4px;
 }
+
 .fb-move-input::placeholder {
 	color: var(--text3);
 	font-weight: 400;
 }
+
 .fb-del-btn {
 	background: none;
 	border: none;
@@ -697,15 +700,18 @@ textarea.consult-memo::placeholder {
 	line-height: 1;
 	transition: color 0.12s;
 }
+
 .fb-del-btn:hover {
 	color: var(--red-fg);
 }
+
 .fb-check-row {
 	display: flex;
 	align-items: center;
 	gap: 6px;
 	margin-bottom: 4px;
 }
+
 .fb-check-input {
 	flex: 1;
 	font-size: 12px;
@@ -717,9 +723,11 @@ textarea.consult-memo::placeholder {
 	outline: none;
 	padding: 3px 0;
 }
+
 .fb-check-input::placeholder {
 	color: var(--text3);
 }
+
 .fb-check-del {
 	background: none;
 	border: none;
@@ -729,12 +737,17 @@ textarea.consult-memo::placeholder {
 	padding: 0;
 	line-height: 1;
 }
+
 .fb-check-del:hover {
 	color: var(--red-fg);
 }
 .add-check-btn {
 	font-size: 11px;
-	color: var(--blue);
+
+	/* +체크항목추가 -> 얘도 파랑으로 변경 */
+	/* color: var(--blue); */
+	color: #3478d4;
+
 	background: none;
 	border: none;
 	cursor: pointer;

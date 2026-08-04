@@ -7,20 +7,24 @@ import { TPL } from "../templates.js";
 defineComponent("member-table", {
 	render() {
 		const rows = this.rows || [];
+		// to-be: 프로토타입 배치와 동일하게 「목표」 열을 두지 않는다 (5열)
+		// 빈 목록이면 목록 안에 안내 행을 렌더링한다 (프로토타입 "검색 결과가 없어요" 대응)
+		const body = rows.length
+			? rows.map((m) => TPL.memberRow(m)).join("")
+			: `<tr class="member-empty-cell"><td colspan="5">검색 결과가 없어요</td></tr>`;
 		return `
 			<table class="member-table" aria-label="회원 목록">
 				<thead>
 					<tr>
 						<th>이름</th>
 						<th>성별</th>
-						<th>목표</th>
 						<th>담당 트레이너</th>
 						<th>체크 횟수</th>
 						<th></th>
 					</tr>
 				</thead>
 				<tbody>
-					${rows.map((m) => TPL.memberRow(m)).join("")}
+					${body}
 				</tbody>
 			</table>`;
 	},

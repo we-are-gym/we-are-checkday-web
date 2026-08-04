@@ -50,6 +50,33 @@
  */
 
 /**
+ * 총점 → 등급 라벨·스타일 메타
+ * @typedef {Object} GradeMeta
+ * @property {"평가 전" | "우수" | "양호" | "보통" | "개선 필요"} label 등급 라벨
+ * @property {string} bg 배경색 (CSS 변수 또는 색상)
+ * @property {string} fg 글자색
+ * @property {string} hint 등급 힌트 문구
+ */
+
+/**
+ * 변화 분석 비교 테이블의 행 1개
+ * @typedef {Object} CompareRow
+ * @property {string} label 항목명
+ * @property {string} cur 비교(최신) 값 표기
+ * @property {string} tgt 기준(이전) 값 표기
+ * @property {string} delta 변화 델타 HTML
+ */
+
+/**
+ * 회원 상세 통계 카드 1종 정의
+ * @typedef {Object} ChartStatCard
+ * @property {string} label 지표명
+ * @property {string} unit 단위 표기
+ * @property {Array<number>} values 회차별 수치 (시간순)
+ * @property {(v: number) => string} fmt 최신값 표기 변환 함수
+ */
+
+/**
  * 관찰자 패턴 기반 GUI 상태 스토어 생성
  *
  * - `getState()`: 현재 상태 조회
@@ -93,4 +120,46 @@ export function createStore(initialState) {
 			return () => listeners.delete(listener);
 		},
 	};
+}
+
+/**
+ * 관찰자 패턴 스토어를 sessionStorage에 영속화하는 스토어 생성
+ *
+ * - 초기 상태: `storageKey`에 저장된 값을 읽어 되돌리되, 없거나 손상됐거나
+ *   `validate`를 통과하지 못하면 `seed`로 시작한다.
+ * - 상태가 바뀔 때마다 `storageKey`에 직렬화해 저장한다. (mock 영속화)
+ *
+ * @template T
+ * @param {string} storageKey sessionStorage 키
+ * @param {T} seed 손상·부재 시 초기 상태
+ * @param {(data: T) => boolean} [validate] 저장값 형식 검증 (기본: 항상 통과)
+ * @returns {ReturnType<typeof createStore<T>>}
+ */
+export function createPersistentStore(storageKey, seed, validate = () => true) {
+	/** 저장된 상태를 읽고 없거나 손상됐으면 시드로 폴백 */
+	function loadInitial() {
+		try {
+			const raw = sessionStorage.getItem(storageKey);
+			if (raw) {
+				const data = JSON.parse(raw);
+				if (validate(data)) return data;
+			}
+		} catch (err) {
+			// 손상된 데이터는 시드로 폴백
+		}
+		return seed;
+	}
+
+	const store = createStore(loadInitial());
+
+	// 상태가 바뀔 때마다 세션 저장 (관찰자 패턴 — mock 영속화)
+	store.subscribe((state) => {
+		try {
+			sessionStorage.setItem(storageKey, JSON.stringify(state));
+		} catch (err) {
+			// 저장 실패는 mock이므로 무시
+		}
+	});
+
+	return store;
 }

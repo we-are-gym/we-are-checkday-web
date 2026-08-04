@@ -53,6 +53,11 @@
 	--spark: #6b9bd8;
 	--delta-up: #5a9bd8;
 	--delta-down: #d86b6b;
+	/* 제거·삭제 버튼 글자색 — 프로토타입 btn-danger (#c97a72) */
+	--btn-danger-fg: #c97a72;
+	/* 체크데이 날짜 배지 파랑 — to-be: before-advance 파랑(#3478d4) 계열 (기존 --blue-bg/--blue-fg는 녹색) */
+	--blue-badge-bg: rgba(52, 120, 212, 0.14);
+	--blue-badge-fg: #7eb3f5;
 
 	/* ── 하위 호환 별칭 (기존 basic 화면 등에서 사용) ── */
 	--blue-light: var(--blue-bg);

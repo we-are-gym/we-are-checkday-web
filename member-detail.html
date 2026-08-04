@@ -56,18 +56,13 @@
                 <span class="info-label">담당 트레이너</span
                 ><span class="info-value" id="md-trainer">―</span>
               </div>
-              <div class="info-row">
-                <span class="info-label">운동 목표</span
-                ><span class="info-value" id="md-goal">―</span>
-              </div>
             </section>
 
-            <!-- 지표 카드 + 스파크라인 4종 -->
-            <section
-              class="stat-cards"
-              id="stat-cards"
-              aria-label="회차별 추세"
-            ></section>
+            <!-- 통계 카드 (프로토타입 배치: 단일 카드 + chart-stat 4종 세로 누적) -->
+            <section class="detail-card stat-card" aria-label="통계 · 전체 회차 누적">
+              <h2 class="stat-card-title">통계 · 전체 회차 누적</h2>
+              <div class="stat-charts" id="stat-charts"></div>
+            </section>
           </div>
 
           <!-- 우측 스택: 탭 + 패널 -->
@@ -79,6 +74,7 @@
                 role="tab"
                 aria-selected="true"
                 aria-controls="panel-records"
+                id="tab-records"
                 data-tab="records"
               >
                 체크 기록
@@ -88,6 +84,7 @@
                 role="tab"
                 aria-selected="false"
                 aria-controls="panel-compare"
+                id="tab-compare"
                 data-tab="compare"
                 tabindex="-1"
               >
@@ -122,17 +119,19 @@
               aria-labelledby="tab-compare"
               hidden
             >
-              <div class="compare-controls">
+              <!-- 비교 선택 (프로토타입: 카드 + 2열 그리드) -->
+              <div class="detail-card compare-controls">
                 <label class="compare-field">
-                  <span>기준 (이전)</span>
-                  <select id="cmp-tgt" aria-label="기준 회차 선택"></select>
+                  <span>현재 체크기록</span>
+                  <select id="cmp-cur" aria-label="현재 체크기록 선택"></select>
                 </label>
                 <label class="compare-field">
-                  <span>비교 (최신)</span>
-                  <select id="cmp-cur" aria-label="비교 회차 선택"></select>
+                  <span>비교 대상</span>
+                  <select id="cmp-tgt" aria-label="비교 대상 선택"></select>
                 </label>
               </div>
-              <div class="compare-result" id="compare-result"></div>
+              <!-- 비교 결과 (프로토타입: 카드 안 인바디 표 + 움직임 평가 총점 표) -->
+              <div class="detail-card compare-result" id="compare-result"></div>
             </section>
           </div>
         </div>

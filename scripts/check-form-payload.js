@@ -1,6 +1,7 @@
 // 파일 용도: 체크기록 폼(상담지) 직렬화·프리필 공용 모듈 — check-doc-edit와 check-doc-new(저장)가 공유
-// 기법: 폼 DOM→기록 payload, 기록 payload→폼 DOM 변환을 순수 시맨틱 함수로 추출하여
-//       편집·작성 화면에서 중복 직렬화 코드가 생기지 않게 한다. DOM·전역 비의존이므로 단위 테스트 용이.
+// 기법: 폼 DOM→기록 payload, 기록 payload→폼 DOM 변환을 함수로 추출하여
+//       편집·작성 화면에서 중복 직렬화 코드가 생기지 않게 한다.
+//       (DOM 헬퍼 UI·document 쿼리에 의존하는 화면 로직 계층이다 — 순수 연산은 별도 모듈에서 담당한다.)
 // 주의: `#goal-custom`(추가 목표 입력)은 본 앱의 어떤 화면에는 있고(check-doc-edit) 어떤 화면에는
 //   없(check-doc-new)므로, 부재 시 빈 값으로 처리한다(null-safe).
 import { UI } from "./UI.js";

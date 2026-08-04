@@ -12,35 +12,47 @@ import { collectPayload } from "./check-form-payload.js";
 import { setupCheckFormEvents } from "./check-form-events.js";
 import { evals, renderBasicFunctionCards, updateTotal } from "./evaluation.js";
 import { renderCheckMovementCards, resetFeedbacks } from "./feedback.js";
+import { escapeHtml } from "./templates.js";
 import { openReportModal, copyReportToClipboard } from "./report.js";
 import "./components/app-header.js";
 
 // ── 날짜 ──
 UI.setText("date-badge", STR.today());
 
-// ── 회원 선택 및 트레이너 자동 기입 — #m-member(회원 셀렉트)가 있는 화면(check-doc-new)에서만 동작 ──
+// ── 회원 이름 자동완성 및 트레이너 자동 기입 — #m-member(회원 이름 입력+datalist)가 있는 화면(check-doc-new)에서만 동작 ──
 // checkday_1은 #m-member가 없으므로 이 블록은 무영향이다.
 const memberId = Number(new URLSearchParams(window.location.search).get("memberID")) || 0;
-const memberSelect = UI.byId("m-member");
-if (memberSelect) {
+const memberInput = UI.byId("m-member");
+if (memberInput) {
 	const members = memberStore.getState().members;
-	// 셀렉트 옵션 채우기 (?memberID= 와 일치하는 회원을 초기 선택)
-	memberSelect.insertAdjacentHTML(
-		"beforeend",
-		members
-			.map((m) => `<option value="${m.id}" ${m.id === memberId ? "selected" : ""}>${m.name}</option>`)
-			.join(""),
-	);
-	// 선택한 회원의 이름·담당 트레이너 자동 기입 (트레이너는 이후 수정 가능)
-	const applyMember = (id) => {
-		const mem = members.find((m) => m.id === Number(id));
-		if (!mem) return;
+	// datalist에 등록 회원 이름 채우기 (자동완성 후보)
+	UI.byId("member-list").innerHTML = members
+		.map((m) => `<option value="${escapeHtml(m.name)}">`)
+		.join("");
+	// 입력한 이름과 일치하는 회원을 찾아 확정값(이름)·트레이너 자동 기입 (트레이너는 이후 수정 가능)
+	const applyMemberByName = (name) => {
+		const mem = members.find((m) => m.name === name.trim());
+		if (!mem) return false;
 		UI.byId("m-name").value = mem.name;
 		UI.byId("m-trainer").value = mem.trainer || "";
+		return true;
 	};
-	memberSelect.addEventListener("change", () => applyMember(memberSelect.value));
-	// ?memberID= 진입 시 해당 회원 프리필
-	if (memberId) applyMember(memberId);
+	memberInput.addEventListener("input", () => {
+		// 일치하는 회원이 없으면 이름은 입력값 그대로 두고 회원 미연결 상태로 둔다
+		if (!applyMemberByName(memberInput.value)) {
+			UI.byId("m-name").value = memberInput.value;
+		}
+	});
+	// ?memberID= 진입 시 해당 회원으로 고정 (이름 입력 잠금)
+	if (memberId) {
+		const mem = members.find((m) => m.id === memberId);
+		if (mem) {
+			memberInput.value = mem.name;
+			memberInput.setAttribute("readonly", "");
+			UI.byId("m-name").value = mem.name;
+			UI.byId("m-trainer").value = mem.trainer || "";
+		}
+	}
 } else if (memberId) {
 	// checkday_1 등 #m-member가 없는 화면의 기존 동작 유지 (null-safe)
 	const member = memberStore.getState().members.find((m) => m.id === memberId);
@@ -120,7 +132,14 @@ UI.delegate(document, "click", "[data-action]", (e, el) => {
  */
 function saveRecord() {
 	const payload = collectPayload();
-	const recMemberId = Number(UI.byId("m-member")?.value) || 0;
+	// 회원 이름(자동완성 입력)을 회원 id로 해석 — 등록 회원 이름과 일치해야 저장한다
+	const name = (UI.byId("m-member")?.value || "").trim();
+	const matched = memberStore.getState().members.find((m) => m.name === name);
+	if (!matched) {
+		alert("등록된 회원 이름을 입력하거나 선택해 주세요.");
+		return;
+	}
+	const recMemberId = matched.id;
 	const recId = recordStore.getState().nextId;
 	recordStore.setState((prev) => ({
 		...prev,

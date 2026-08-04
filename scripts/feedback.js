@@ -1,6 +1,8 @@
 // 파일 용도: 피드백 CRUD — 동작 피드백 카드 생성·체크 행 추가/삭제·데이터 수집 (checkday 공용)
-// DEPENDS: UI
+// 기법: 카드·체크 행 마크업은 공용 템플릿(TPL.feedbackCard·TPL.fbCheckRow)을 단일 소스로 사용
+// DEPENDS: UI, TPL
 import { UI } from "./UI.js";
+import { TPL } from "./templates.js";
 
 const FB_PRESET = [
 	{
@@ -41,18 +43,10 @@ const FB_PRESET = [
 const feedbacks = FB_PRESET.slice(0);
 let fbIdCounter = 0;
 
-export function makeFbCheckRow(text = "") {
-	return `<div class="fb-check-row">
-    <input type="checkbox" style="accent-color:var(--blue);flex-shrink:0;">
-    <input class="fb-check-input" type="text" value="${text}" placeholder="체크 항목...">
-    <button class="fb-check-del" title="삭제">✕</button>
-  </div>`;
-}
-
 export function appendCheckMovementItemRow(btn) {
 	const checksWrap = btn.previousElementSibling;
 	const div = document.createElement("div");
-	div.innerHTML = makeFbCheckRow();
+	div.innerHTML = TPL.fbCheckRow();
 	checksWrap.appendChild(div.firstElementChild);
 	checksWrap.lastElementChild.querySelector(".fb-check-input").focus();
 }
@@ -60,22 +54,11 @@ export function appendCheckMovementItemRow(btn) {
 export function appendCheckMovement(preset) {
 	fbIdCounter++;
 	const id = fbIdCounter;
-	const c = UI.byId("fb-cards");
-	const div = document.createElement("div");
-	div.className = "fb-item";
-	div.id = `fb-item-${id}`;
 	const name = preset ? preset.name : "";
 	const checks = preset ? preset.checks : [""];
-	const checksHTML = checks.map((ch) => makeFbCheckRow(ch)).join("");
-	div.innerHTML = `
-    <div class="fb-item-header">
-      <input class="fb-move-input" type="text" value="${name}" placeholder="동작명 (예: 스쿼트)">
-      <button class="fb-del-btn" title="삭제">✕</button>
-    </div>
-    <div class="fb-checks-wrap">${checksHTML}</div>
-    <button class="add-check-btn">+ 체크 항목 추가</button>
-    <textarea class="eval-memo" placeholder="코칭 포인트 메모..." style="margin-top:6px;"></textarea>`;
-	c.appendChild(div);
+	const wrap = document.createElement("div");
+	wrap.innerHTML = TPL.feedbackCard({ id, name, checkItems: checks });
+	UI.byId("fb-cards").appendChild(wrap.firstElementChild);
 }
 
 export function renderCheckMovementCards() {

@@ -24,38 +24,39 @@ function getRecords() {
 		.sort((a, b) => a.date.localeCompare(b.date));
 }
 
-/** 회원 정보 카드 렌더링 */
+/** 회원 정보 카드 렌더링 (to-be: 프로토타입처럼 이름·성별·담당 트레이너 3행만) */
 function renderInfoCard(member) {
 	UI.setText("md-title", member.name);
 	UI.setText("md-sub", `체크기록 ${getRecords().length}건`);
 	UI.setText("md-name", member.name);
 	UI.setText("md-gender", member.gender || "-");
 	UI.setText("md-trainer", member.trainer || "-");
-	UI.setText("md-goal", member.goal || "-");
 	document.title = `${member.name} — 회원 상세`;
 }
 
-/** 스파크라인 4종 (체중·골격근량·체지방량·총점) — 프로토타입 chart-stat 구조(최신값·변화 델타·회차 범위) */
+/** 통계 카드 — 프로토타입 배치: 단일 카드(통계 · 전체 회차 누적) 안에 chart-stat 4종 세로 누적
+ *  (체지방률·체중·골격근량·체지방량 변화, 최신값+누적 델타+스파크라인+회차 범위) */
 function renderStatCards(records) {
-	const series = (key) =>
-		records.map((r) => {
-			const v = parseFloat(r.payload.ib?.[key]);
-			return Number.isNaN(v) ? NaN : v;
-		});
-	const totalSeries = records.map((r) => recordTotal(r.payload));
-	const cards = [
-		{ label: "체중", unit: "kg", values: series("w"), fmt: (v) => v.toFixed(1) },
-		{ label: "골격근량", unit: "kg", values: series("m"), fmt: (v) => v.toFixed(1) },
-		{ label: "체지방량", unit: "kg", values: series("fat"), fmt: (v) => v.toFixed(1) },
-		{ label: "총점", unit: "/ 24", values: totalSeries, fmt: (v) => String(v) },
+	if (!records.length) {
+		UI.setHTML("stat-charts", '<div class="sparkline-empty">아직 체크기록이 없어요</div>');
+		return;
+	}
+	// 프로토타입 STAT_METRICS 순서: 체지방률 → 체중 → 골격근량 → 체지방량
+	const metrics = [
+		{ label: "체지방률 변화", key: "bfp", unit: "%", fmt: (v) => v.toFixed(1) },
+		{ label: "체중 변화", key: "w", unit: "kg", fmt: (v) => v.toFixed(1) },
+		{ label: "골격근량 변화", key: "m", unit: "kg", fmt: (v) => v.toFixed(1) },
+		{ label: "체지방량 변화", key: "fat", unit: "kg", fmt: (v) => v.toFixed(1) },
 	];
 	const firstSession = records[0]?.payload.session ?? "";
 	const lastSession = records[records.length - 1]?.payload.session ?? "";
 	UI.setHTML(
-		"stat-cards",
-		cards
-			.map((c) => {
-				const nums = c.values.filter((v) => !Number.isNaN(v));
+		"stat-charts",
+		metrics
+			.map((metric) => {
+				const nums = records
+					.map((r) => parseFloat(r.payload.ib?.[metric.key]))
+					.filter((v) => !Number.isNaN(v));
 				const latest = nums[nums.length - 1];
 				const first = nums[0];
 				const delta =
@@ -63,11 +64,13 @@ function renderStatCards(records) {
 						? `<span class="stat-delta ${latest >= first ? "delta-up" : "delta-down"}">${latest >= first ? "▲" : "▼"} ${Math.abs(latest - first).toFixed(1)}</span>`
 						: "";
 				return `
-					<div class="stat-card">
-						<div class="stat-label">${c.label}</div>
-						<div class="stat-value">${latest != null ? c.fmt(latest) : "―"}<span class="stat-unit"> ${c.unit}</span>${delta}</div>
-						${sparkline(c.values)}
-						<div class="stat-range"><span>${escapeHtml(firstSession)}</span><span>${escapeHtml(lastSession)}</span></div>
+					<div class="chart-stat">
+						<div class="chart-stat-top">
+							<span class="k">${metric.label}</span>
+							<span class="chart-latest">${latest != null ? metric.fmt(latest) : "―"}${metric.unit} ${delta}</span>
+						</div>
+						${sparkline(nums, { width: 260, height: 68 })}
+						<div class="chart-stat-foot"><span>${escapeHtml(firstSession)}</span><span>${escapeHtml(lastSession)}</span></div>
 					</div>`;
 			})
 			.join(""),
@@ -90,14 +93,13 @@ function renderRecords(records) {
 	UI.setHTML("record-list", rows.map((r) => TPL.recordRow(r)).join(""));
 }
 
-/** 비교 select 채우기 */
+/** 비교 select 채우기 — 프로토타입과 동일하게 비교 대상(기준) 기본값은 첫 체크기록 */
 function fillCompareSelects(records) {
 	const cur = UI.byId("cmp-cur");
 	const tgt = UI.byId("cmp-tgt");
-	if (records.length < 2) {
-		cur.innerHTML = `<option>비교할 기록 ${records.length}건 (2건 이상 필요)</option>`;
-		tgt.innerHTML = `<option>―</option>`;
-		UI.setHTML("compare-result", "");
+	if (records.length === 0) {
+		cur.innerHTML = tgt.innerHTML = `<option>체크기록 없음</option>`;
+		UI.setHTML("compare-result", '<div class="sparkline-empty">비교할 체크기록이 없어요</div>');
 		return;
 	}
 	const opts = records
@@ -106,7 +108,7 @@ function fillCompareSelects(records) {
 	cur.innerHTML = opts;
 	tgt.innerHTML = opts;
 	cur.value = String(records[records.length - 1].id);
-	tgt.value = String(records[records.length - 2].id);
+	tgt.value = String(records[0].id);
 	renderCompare();
 }
 
@@ -155,7 +157,7 @@ function refreshRecords() {
 function init() {
 	const member = getMember();
 	if (!member) {
-		UI.setHTML("stat-cards", "");
+		UI.setHTML("stat-charts", "");
 		UI.setHTML("record-list", '<p class="record-empty">회원을 찾을 수 없습니다. 회원 목록에서 다시 선택하세요.</p>');
 		UI.byId("new-record-btn").style.display = "none";
 		return;
