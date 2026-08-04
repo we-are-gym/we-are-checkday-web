@@ -23,7 +23,13 @@ export const TPL = {
 	 *           dataKey: 전체 속성명 (예: "data-i") — 점수 증감 버튼이 참조할 인덱스 속성
 	 * @returns {string}
 	 */
-	scoreCtrl({ dataKey, index, displayClass, displayId = "", displayAttr = "" }) {
+	scoreCtrl({
+		dataKey,
+		index,
+		displayClass,
+		displayId = "",
+		displayAttr = "",
+	}) {
 		const data = `${dataKey}="${index}"`;
 		const idAttr = displayId ? ` id="${displayId}"` : "";
 		const attr = displayAttr ? ` data-${displayAttr}="0"` : "";
@@ -175,7 +181,7 @@ export const TPL = {
 			<div class="record-row" data-record-id="${id}" tabindex="0">
 				<div class="cell-name">${escapeHtml(session)}</div>
 				<div class="cell-dim">총점 ${total}/${max}</div>
-				<div><button type="button" class="btn btn-sm btn-danger" data-del-record="${id}" aria-label="기록 삭제">지우기</button></div>
+				<div><button type="button" class="btn btn-sm btn-danger" data-del-record="${id}" aria-label="기록 삭제">삭제</button></div>
 			</div>`;
 	},
 
