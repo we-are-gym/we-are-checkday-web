@@ -155,16 +155,15 @@ export const TPL = {
 	},
 
 	/**
-	 * 회원 목록 행 1개 (member-table tbody용)
-	 * @param {{ id: number, name: string, gender: string, goal: string, trainer: string, recordCount: number }} p
+	 * 회원 목록 행 1개 (member-table tbody용) — to-be 지시에 따라 「목표」 열은 표시하지 않는다 (데이터는 유지)
+	 * @param {{ id: number, name: string, gender: string, trainer: string, recordCount: number }} p
 	 * @returns {string}
 	 */
-	memberRow({ id, name, gender, goal, trainer, recordCount }) {
+	memberRow({ id, name, gender, trainer, recordCount }) {
 		return `
 			<tr class="member-row" data-member-id="${id}" tabindex="0">
 				<td class="member-name">${escapeHtml(name)}</td>
 				<td class="member-gender">${escapeHtml(gender || "-")}</td>
-				<td class="member-goal">${escapeHtml(goal || "-")}</td>
 				<td class="member-trainer">${escapeHtml(trainer || "-")}</td>
 				<td class="member-count">${recordCount}회</td>
 				<td class="member-action"><button type="button" class="member-remove" data-remove-id="${id}" aria-label="${escapeHtml(name)} 삭제">제거</button></td>

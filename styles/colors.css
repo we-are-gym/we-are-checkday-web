@@ -53,6 +53,8 @@
 	--spark: #6b9bd8;
 	--delta-up: #5a9bd8;
 	--delta-down: #d86b6b;
+	/* 제거·삭제 버튼 글자색 — 프로토타입 btn-danger (#c97a72) */
+	--btn-danger-fg: #c97a72;
 
 	/* ── 하위 호환 별칭 (기존 basic 화면 등에서 사용) ── */
 	--blue-light: var(--blue-bg);

@@ -21,7 +21,7 @@ function buildRows(list) {
 	return list.map((m) => ({ ...m, recordCount: countByMember.get(m.id) || 0 }));
 }
 
-/** 스토어 상태로 테이블·건수·빈 상태를 재렌더링 */
+/** 스토어 상태로 테이블·건수를 재렌더링 (빈 목록 안내는 member-table이 목록 안에 렌더링) */
 function render() {
 	const kw = keyword.trim().toLowerCase();
 	const { members } = memberStore.getState();
@@ -30,7 +30,6 @@ function render() {
 		: members.slice();
 	tableEl.rows = buildRows(filtered);
 	tableEl.refresh();
-	UI.byId("member-empty").hidden = filtered.length !== 0;
 }
 
 /** 회원 삭제 (스토어 상태 갱신 → 구독자 재렌더링) */

@@ -61,6 +61,8 @@
 	border: 0.5px solid var(--border);
 	border-radius: var(--rlg);
 	overflow: hidden;
+	/* to-be: 프로토타입 열비율(이름1.3fr·성별.8fr·트레이너1fr·횟수.8fr·제거72px)에 맞춰 고정 폭 */
+	table-layout: fixed;
 }
 .member-table th {
 	font-size: 11px;
@@ -77,6 +79,29 @@
 	color: var(--text2);
 	padding: 12px;
 	border-bottom: 0.5px solid var(--border);
+}
+/* 열 비율: 이름 1.3fr, 성별 .8fr, 트레이너 1fr, 횟수 .8fr, 제거 72px 상당 */
+.member-table th:first-child,
+.member-table td:first-child {
+	width: 29%;
+}
+.member-table th:nth-child(2),
+.member-table td:nth-child(2) {
+	width: 18%;
+}
+.member-table th:nth-child(3),
+.member-table td:nth-child(3) {
+	width: 23%;
+}
+.member-table th:nth-child(4),
+.member-table td:nth-child(4) {
+	width: 18%;
+}
+.member-table th:last-child,
+.member-table td:last-child {
+	width: 12%;
+	text-align: right;
+	white-space: nowrap;
 }
 .member-table tbody tr:last-child td {
 	border-bottom: none;
@@ -102,39 +127,43 @@
 .member-gender {
 	font-size: 12px;
 	color: var(--text2);
-}
-.member-goal {
-	font-size: 12px;
-	color: var(--blue-fg);
+	text-align: center;
 }
 .member-trainer {
 	font-size: 12px;
 	color: var(--text2);
+	text-align: center;
 }
 .member-count {
 	font-size: 12px;
 	color: var(--text3);
+	text-align: center;
 }
+/* to-be: 프로토타입 btn-danger — 투명 배경 + 테두리 + #c97a72 글자, hover는 테두리만 진하게 */
 .member-remove {
 	padding: 4px 10px;
-	border: 0.5px solid var(--red-bg);
+	border: 1px solid var(--border);
 	border-radius: var(--r);
-	background: var(--red-bg);
-	color: var(--red-fg);
+	background: transparent;
+	color: var(--btn-danger-fg);
 	font-size: 12px;
 	font-weight: 500;
 	font-family: inherit;
 	cursor: pointer;
-	transition: filter 0.15s;
+	transition:
+		border-color 0.15s,
+		color 0.15s;
 }
 .member-remove:hover {
-	filter: brightness(0.95);
+	border-color: var(--btn-danger-fg);
 }
-.member-empty {
+/* 빈 목록 안내 행 (목록 안에 표시 — 프로토타입 "검색 결과가 없어요" 대응) */
+.member-empty-cell td {
 	text-align: center;
 	font-size: 13px;
 	color: var(--text3);
 	padding: 2rem 0;
+	cursor: default;
 }
 
 /* ── 회원 등록 (member-create 공용) ── */
