@@ -297,7 +297,7 @@ export const TPL = {
 		withHeader = true,
 	}) {
 		const head = withHeader
-			? `<thead><tr><th>항목</th><th>${escapeHtml(tgtLabel)}</th><th>${escapeHtml(curLabel)}</th><th>변화</th></tr></thead>`
+			? `<thead><tr><th>인바디 항목</th><th>${escapeHtml(tgtLabel)}</th><th>${escapeHtml(curLabel)}</th><th>변화</th></tr></thead>`
 			: "";
 
 		const foot = (() => {
