@@ -414,6 +414,14 @@ textarea.ib-comment::placeholder {
 	color: var(--red-fg);
 	border-color: var(--red-fg);
 }
+/* 키보드 상호작용 태그·버튼이 role=button/tabindex로 포커스될 때 시각적 초점 표시 */
+.ctag:focus-visible,
+.goal-tag:focus-visible,
+.expand-toggle:focus-visible,
+.score-btn:focus-visible {
+	outline: 2px solid var(--blue);
+	outline-offset: 2px;
+}
 .fbtag.on {
 	background: var(--orange-bg);
 	color: var(--orange-fg);

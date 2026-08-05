@@ -206,5 +206,6 @@ export function buildCompareTable(cur, tgt) {
 				},
 			],
 			withHeader: false,
+			ariaLabel: "움직임 평가 항목별 점수 비교",
 		})}`;
 }

@@ -104,7 +104,7 @@ export function renderBasicFunctionCards() {
 		const tags = e.checks
 			.map(
 				(ch) =>
-					`<span class="ctag">${ch}</span>`
+					`<span class="ctag" role="button" tabindex="0" aria-pressed="false">${ch}</span>`
 			)
 			.join("");
 		const extra = e.vo2 ? buildVo2Block() : "";

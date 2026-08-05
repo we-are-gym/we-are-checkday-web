@@ -79,7 +79,7 @@ export const TPL = {
 						<div class="sdots">${dots}</div>
 					</div>
 				</div>
-				<button class="expand-toggle" id="et-${index}" data-i="${index}" aria-expanded="false">
+				<button class="expand-toggle" id="et-${index}" data-i="${index}" aria-expanded="false" aria-controls="sp-${index}">
 					체크 항목 / 메모 <span class="arr">▾</span>
 				</button>
 				<div class="sub-panel" id="sp-${index}">
@@ -278,7 +278,7 @@ export const TPL = {
 	 */
 	scoreDots({ prefix, count }) {
 		return createZeroArray(count)
-			.map((_, j) => `<div class="dot" id="dot-${prefix}-${j}"></div>`)
+			.map((_, j) => `<div class="dot" id="dot-${prefix}-${j}" aria-hidden="true"></div>`)
 			.join("");
 	},
 
@@ -316,7 +316,9 @@ export const TPL = {
 		rows,
 		footRows,
 		withHeader = true,
+		ariaLabel = "",
 	}) {
+		const ariaAttr = ariaLabel ? ` aria-label="${escapeHtml(ariaLabel)}"` : "";
 		const head = withHeader
 			? `<thead><tr><th>인바디 항목</th><th>${escapeHtml(tgtLabel)}</th><th>${escapeHtml(curLabel)}</th><th>변화</th></tr></thead>`
 			: "";
@@ -334,7 +336,7 @@ export const TPL = {
 		})();
 
 		return `
-			<table class="compare-table">
+			<table class="compare-table"${ariaAttr}>
 				${head}
 				${foot}
 				<tbody>
