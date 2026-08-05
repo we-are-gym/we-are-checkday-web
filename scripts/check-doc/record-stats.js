@@ -1,7 +1,7 @@
 // 파일 용도: 체크기록 통계 — 스파크라인·기록 지표·비교 테이블 생성 (회원 상세 공용, 순수 함수)
 import { ASSESSMENT_ITEMS_FULL, itemsForRecord } from "./assessment-data.js";
-import { SCORE_MAX } from "./constants.js";
-import { TPL } from "./templates.js";
+import { SCORE_MAX } from "@base/constants.js";
+import { TPL } from "@base/templates.js";
 
 /** 인바디 표시 키 순서 (라벨 포함) */
 export const IB_KEYS = [
@@ -16,7 +16,7 @@ export const IB_KEYS = [
 
 /**
  * 기록 1건의 총점 (scores 합계)
- * @param {import("./store.js").CheckRecordPayload} payload
+ * @param {import("@base/store.js").CheckRecordPayload} payload
  * @returns {number}
  */
 export function recordTotal(payload) {
@@ -26,7 +26,7 @@ export function recordTotal(payload) {
 /**
  * 기록 1건의 총점 최댓값 — 항목 수 × 항목당 만점(3점)으로 파생한다.
  * 레거시 8항목 기록은 24, 체크기록 작성 5항목 기록은 15. (고정 상수 대신 scores 길이로 판단)
- * @param {import("./store.js").CheckRecordPayload} payload
+ * @param {import("@base/store.js").CheckRecordPayload} payload
  * @returns {number} 총점 최댓값 (scores 없으면 0)
  */
 export function recordMax(payload) {
@@ -121,8 +121,8 @@ export function deltaHTML(d) {
 /**
  * 두 기록의 비교 마크업 생성 — 프로토타입 배치:
  * ① 인바디 표(헤더: 항목·기준·현재·변화) ② <hr> + 「움직임 평가 총점」 표(헤더 없음, 총점 행 포함)
- * @param {import("./store.js").CheckRecord} cur 최신(현재 체크기록)
- * @param {import("./store.js").CheckRecord} tgt 기준(비교 대상)
+ * @param {import("@base/store.js").CheckRecord} cur 최신(현재 체크기록)
+ * @param {import("@base/store.js").CheckRecord} tgt 기준(비교 대상)
  * @returns {string} 비교 테이블 HTML
  */
 export function buildCompareTable(cur, tgt) {

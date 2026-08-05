@@ -1,13 +1,13 @@
 // 파일 용도: 회원 상세 조회 및 체크기록 비교 화면(member-detail.html)
 // ?memberID= 로 회원을 조회하고, 회원 정보 카드·스파크라인 4종·체크 기록 탭·변화 분석 탭을 렌더링한다.
-import { byId, delegate, queryAll, setHTML, setText } from "./UI.js";
-import { getNumberParam } from "./utils-url.js";
-import { memberStore } from "./member-store.js";
-import { recordStore } from "./record-store.js";
-import { getMemberById } from "./member-utils.js";
-import { TPL, escapeHtml } from "./templates.js";
-import { buildCompareTable, recordMax, recordTotal, sessionLabel, sparkline } from "./record-stats.js";
-import "./components/app-header.js";
+import { byId, delegate, queryAll, setHTML, setText } from "@base/UI.js";
+import { getNumberParam } from "@base/utils-url.js";
+import { memberStore } from "@member/member-store.js";
+import { recordStore } from "@check-doc/record-store.js";
+import { getMemberById } from "@member/member-utils.js";
+import { TPL, escapeHtml } from "@base/templates.js";
+import { buildCompareTable, recordMax, recordTotal, sessionLabel, sparkline } from "@check-doc/record-stats.js";
+import "@base/components/app-header.js";
 
 /** ?memberID= 파라미터 (없으면 0 — 미조회 상태) */
 const memberId = getNumberParam("memberID");

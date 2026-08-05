@@ -4,11 +4,11 @@
 //       (DOM 헬퍼 byId·document 쿼리에 의존하는 화면 로직 계층이다 — 순수 연산은 별도 모듈에서 담당한다.)
 // 주의: `#goal-custom`(추가 목표 입력)은 본 앱의 어떤 화면에는 있고(check-doc-edit) 어떤 화면에는
 //   없(check-doc-new)므로, 부재 시 빈 값으로 처리한다(null-safe).
-import { byId } from "./UI.js";
-import { scoreState } from "./states.js";
+import { byId } from "@base/UI.js";
+import { scoreState } from "@base/states.js";
 import { evals } from "./evaluation.js";
-import { DOT_COUNT } from "./constants.js";
-import { updateInbodyTags } from "./inbody.js";
+import { DOT_COUNT } from "@base/constants.js";
+import { updateInbodyTags } from "@base/inbody.js";
 import { updateTotal } from "./evaluation.js";
 import { appendCheckMovement } from "./feedback.js";
 
@@ -27,7 +27,7 @@ function paintDots(index, score) {
 
 /**
  * 기록 payload를 현재 상담지 폼에 되돌려 채운다 (편집·조회 공용)
- * @param {import("./store.js").CheckRecord} rec 프리필할 기록
+ * @param {import("@base/store.js").CheckRecord} rec 프리필할 기록
  */
 export function prefillForm(rec) {
 	const p = rec.payload;
@@ -98,7 +98,7 @@ export function prefillForm(rec) {
 
 /**
  * 현재 상담지 폼을 기록 payload로 직렬화 (저장·편집 공용)
- * @returns {import("./store.js").CheckRecordPayload}
+ * @returns {import("@base/store.js").CheckRecordPayload}
  */
 export function collectPayload() {
 	const evalData = evals.map((_, i) => {

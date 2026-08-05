@@ -1,14 +1,14 @@
 // 파일 용도: 체크기록 편집 화면(check-doc-edit.html)
 // ?docID= 기록을 불러와 기존 상담지 폼(renderBasicFunctionCards 재사용)에 프리필하고, 수정 내용을 기록 스토어에 저장한다.
-import { byId, delegate, queryAll } from "./UI.js";
-import { getNumberParam } from "./utils-url.js";
-import { recordStore } from "./record-store.js";
-import { recordMax } from "./record-stats.js";
-import { itemsForRecord } from "./assessment-data.js";
-import { configureEvaluation, renderBasicFunctionCards } from "./evaluation.js";
-import { collectPayload, prefillForm } from "./check-form-payload.js";
-import { setupCheckFormEvents } from "./check-form-events.js";
-import "./components/app-header.js";
+import { byId, delegate, queryAll } from "@base/UI.js";
+import { getNumberParam } from "@base/utils-url.js";
+import { recordStore } from "@check-doc/record-store.js";
+import { recordMax } from "@check-doc/record-stats.js";
+import { itemsForRecord } from "@check-doc/assessment-data.js";
+import { configureEvaluation, renderBasicFunctionCards } from "@check-doc/evaluation.js";
+import { collectPayload, prefillForm } from "@check-doc/check-form-payload.js";
+import { setupCheckFormEvents } from "@check-doc/check-form-events.js";
+import "@base/components/app-header.js";
 
 /** ?docID= 파라미터 */
 const docId = getNumberParam("docID");

@@ -1,6 +1,6 @@
 // 파일 용도: 체크기록 스토어 — 세션(sessionStorage) 영속화된 mock 저장소 (회원 상세·조회·작성·편집 공용)
 // 주의: API 미배포 상태이므로 브라우저 세션 동안만 유지되는 mock이다. 탭을 닫으면 시드로 복원된다.
-import { createPersistentStore } from "./store.js";
+import { createPersistentStore } from "@base/store.js";
 
 /** 세션 저장 키 */
 const STORAGE_KEY = "checkday.records.v1";
@@ -14,7 +14,7 @@ const STORAGE_KEY = "checkday.records.v1";
  * @param {string} bfp 체지방률
  * @param {string} bmr 기초대사량
  * @param {string} vis 내장지방
- * @returns {import("./store.js").InbodyData}
+ * @returns {import("@base/store.js").InbodyData}
  */
 function ib(w, m, fat, bmi, bfp, bmr, vis) {
 	return { w, m, fat, bmi, bfp, bmr, vis };
@@ -26,10 +26,10 @@ function ib(w, m, fat, bmi, bfp, bmr, vis) {
  * @param {number} memberId
  * @param {string} date YYYY-MM-DD
  * @param {string} session
- * @param {import("./store.js").InbodyData} ibData
+ * @param {import("@base/store.js").InbodyData} ibData
  * @param {number[]} scores 점수 8개 (0~3)
- * @param {Partial<import("./store.js").CheckRecordPayload>} [opts]
- * @returns {import("./store.js").CheckRecord}
+ * @param {Partial<import("@base/store.js").CheckRecordPayload>} [opts]
+ * @returns {import("@base/store.js").CheckRecord}
  */
 function mkRec(id, memberId, date, session, ibData, scores, opts = {}) {
 	return {

@@ -4,9 +4,9 @@
 
 /**
  * ID로 회원 1명 조회 (없으면 undefined)
- * @param {import("./store.js").Member[]} members 회원 배열
+ * @param {import("@base/store.js").Member[]} members 회원 배열
  * @param {number} id 회원 고유 번호
- * @returns {import("./store.js").Member | undefined}
+ * @returns {import("@base/store.js").Member | undefined}
  */
 export function getMemberById(members, id) {
 	return members.find((m) => m.id === id);

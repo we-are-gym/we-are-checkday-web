@@ -1,8 +1,8 @@
 // 파일 용도: 로그인 화면(login.html) — 폼 렌더·검증·로그인 상태 기록·이동 (데모 계정 checkday/1234)
-import { byId, setHTML } from "./UI.js";
-import { isAuthed, login } from "./auth.js";
-import { TPL } from "./templates.js";
-import "./components/app-header.js";
+import { byId, setHTML } from "@base/UI.js";
+import { isAuthed, login } from "@base/auth.js";
+import { TPL } from "@base/templates.js";
+import "@base/components/app-header.js";
 
 /** 로그인 성공 후 이동 대상 (?redirect=, 기본 index.html) */
 const redirect =

@@ -5,20 +5,20 @@
 // DEPENDS: today(utils-string), byId·delegate·setText(UI), configureEvaluation/renderBasicFunctionCards/updateTotal(evaluation),
 //          setupCheckFormEvents/resetCheckForm(check-form-events), collectPayload(check-form-payload),
 //          renderCheckMovementCards(feedback), openReportModal/copyReportToClipboard(report)
-import { today } from "./utils-string.js";
-import { byId, delegate, setText } from "./UI.js";
-import { getNumberParam } from "./utils-url.js";
-import { memberStore } from "./member-store.js";
-import { recordStore } from "./record-store.js";
-import { getRecordCountsByMember } from "./member-utils.js";
-import { ASSESSMENT_ITEMS_BASIC5 } from "./assessment-data.js";
-import { collectPayload } from "./check-form-payload.js";
-import { setupCheckFormEvents, resetCheckForm } from "./check-form-events.js";
-import { configureEvaluation, renderBasicFunctionCards, updateTotal } from "./evaluation.js";
-import { renderCheckMovementCards } from "./feedback.js";
-import { openReportModal, copyReportToClipboard } from "./report.js";
-import { escapeHtml } from "./templates.js";
-import "./components/app-header.js";
+import { today } from "@base/utils-string.js";
+import { byId, delegate, setText } from "@base/UI.js";
+import { getNumberParam } from "@base/utils-url.js";
+import { memberStore } from "@member/member-store.js";
+import { recordStore } from "@check-doc/record-store.js";
+import { getRecordCountsByMember } from "@member/member-utils.js";
+import { ASSESSMENT_ITEMS_BASIC5 } from "@check-doc/assessment-data.js";
+import { collectPayload } from "@check-doc/check-form-payload.js";
+import { setupCheckFormEvents, resetCheckForm } from "@check-doc/check-form-events.js";
+import { configureEvaluation, renderBasicFunctionCards, updateTotal } from "@check-doc/evaluation.js";
+import { renderCheckMovementCards } from "@check-doc/feedback.js";
+import { openReportModal, copyReportToClipboard } from "@check-doc/report.js";
+import { escapeHtml } from "@base/templates.js";
+import "@base/components/app-header.js";
 
 // ── 날짜 ──
 setText("date-badge", today());
@@ -46,7 +46,7 @@ byId("member-list").innerHTML = members
 
 /**
  * 선택한 회원에 맞춰 트레이너·회차를 자동 기입한다 — 회차는 기존 체크기록 수 + 1 (예: 3건이면 "4회차")
- * @param {import("./store.js").Member} mem 확정된 회원
+ * @param {import("@base/store.js").Member} mem 확정된 회원
  * @returns {void}
  */
 function applyMember(mem) {

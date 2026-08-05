@@ -3,15 +3,15 @@
 // ?memberID= 로 열리면 회원 이름·트레이너를 프리필한다 (checkday_1은 헤더·자동완성 없음).
 // DEPENDS: today(utils-string), byId·delegate·setText(UI), renderBasicFunctionCards/updateTotal(evaluation),
 //          setupCheckFormEvents/resetCodeForm(check-form-events), renderCheckMovementCards(feedback)
-import { today } from "./utils-string.js";
-import { byId, delegate, setText } from "./UI.js";
-import { getNumberParam } from "./utils-url.js";
-import { memberStore } from "./member-store.js";
-import { renderBasicFunctionCards, updateTotal } from "./evaluation.js";
-import { renderCheckMovementCards } from "./feedback.js";
-import { setupCheckFormEvents, resetCheckForm } from "./check-form-events.js";
-import { openReportModal, copyReportToClipboard } from "./report.js";
-import "./components/app-header.js";
+import { today } from "@base/utils-string.js";
+import { byId, delegate, setText } from "@base/UI.js";
+import { getNumberParam } from "@base/utils-url.js";
+import { memberStore } from "@member/member-store.js";
+import { renderBasicFunctionCards, updateTotal } from "@check-doc/evaluation.js";
+import { renderCheckMovementCards } from "@check-doc/feedback.js";
+import { setupCheckFormEvents, resetCheckForm } from "@check-doc/check-form-events.js";
+import { openReportModal, copyReportToClipboard } from "@check-doc/report.js";
+import "@base/components/app-header.js";
 
 // ── 날짜 ──
 setText("date-badge", today());

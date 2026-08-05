@@ -1,7 +1,7 @@
 // 파일 용도: 리포트 생성·복사 — 결과 요약 HTML 조립·클립보드 복사 (checkday 공용)
 // DEPENDS: byId(UI), scoreState(states), evals(evaluation), collectCheckMovementData(feedback)
-import { byId } from "./UI.js";
-import { scoreState } from "./states.js";
+import { byId } from "@base/UI.js";
+import { scoreState } from "@base/states.js";
 import { evals } from "./evaluation.js";
 import { collectCheckMovementData } from "./feedback.js";
 
@@ -28,7 +28,7 @@ export function getTotal() {
 }
 
 /** 폼에서 인바디 입력값을 읽어 묶음으로 반환
- * @returns {import("./store.js").InbodyData} 인바디 입력 문자열 묶음
+ * @returns {import("@base/store.js").InbodyData} 인바디 입력 문자열 묶음
  */
 function getIbData() {
 	return {

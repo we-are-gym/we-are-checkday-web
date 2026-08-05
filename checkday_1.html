@@ -206,6 +206,15 @@
       </div>
     </div>
 
-    <script type="module" src="scripts/checkday.js"></script>
+    <script type="importmap">
+	{
+		"imports": {
+			"@base/": "./scripts/base/",
+			"@member/": "./scripts/member/",
+			"@check-doc/": "./scripts/check-doc/"
+		}
+	}
+</script>
+<script type="module" src="scripts/entries/checkday.js"></script>
   </body>
 </html>

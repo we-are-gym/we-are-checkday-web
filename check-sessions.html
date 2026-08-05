@@ -33,6 +33,15 @@
       </main>
     </div>
 
-    <script type="module" src="scripts/check-sessions.js?v=2026080505"></script>
+    <script type="importmap">
+	{
+		"imports": {
+			"@base/": "./scripts/base/",
+			"@member/": "./scripts/member/",
+			"@check-doc/": "./scripts/check-doc/"
+		}
+	}
+</script>
+<script type="module" src="scripts/entries/check-sessions.js?v=2026080505"></script>
   </body>
 </html>

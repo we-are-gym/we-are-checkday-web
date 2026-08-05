@@ -1,11 +1,11 @@
 // 파일 용도: 회원 관리 화면(members.html) — 스토어 기반 회원 목록·검색·제거·상세 이동
 // 상태: memberStore(공용 스토어, 관찰자 패턴) 구독, subscribe 콜백에서 member-table 컴포넌트를 재렌더링한다.
-import { byId } from "./UI.js";
-import { memberStore } from "./member-store.js";
-import { recordStore } from "./record-store.js";
-import { getRecordCountsByMember } from "./member-utils.js";
-import "./components/app-header.js";
-import "./components/member-table.js";
+import { byId } from "@base/UI.js";
+import { memberStore } from "@member/member-store.js";
+import { recordStore } from "@check-doc/record-store.js";
+import { getRecordCountsByMember } from "@member/member-utils.js";
+import "@base/components/app-header.js";
+import "@member/components/member-table.js";
 
 /** 회원 목록 테이블 컴포넌트 엘리먼트 */
 const tableEl = byId("member-table");
