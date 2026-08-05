@@ -184,6 +184,18 @@ main {
 	margin-bottom: 10px;
 }
 
+/* 체크기록 작성 버튼 — 내장 <style>에서 추출 (토큰 치환은 색상 통합 커밋에서) */
+#new-record-btn {
+	border: solid 0.5px #3a3a3a;
+	color: var(--text2);
+	background: none;
+}
+
+#new-record-btn:hover {
+	color: var(--text);
+	background: var(--surface2);
+}
+
 .panel-title {
 	font-size: 15px;
 	font-weight: 600;
