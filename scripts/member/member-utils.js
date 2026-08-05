@@ -13,6 +13,26 @@ export function getMemberById(members, id) {
 }
 
 /**
+ * 이름으로 회원 1명 조회 (없으면 undefined)
+ * @param {import("@base/store.js").Member[]} members 회원 배열
+ * @param {string} name 회원 이름
+ * @returns {import("@base/store.js").Member | undefined}
+ */
+export function getMemberByName(members, name) {
+	return members.find((m) => m.name === name);
+}
+
+/**
+ * ID로 체크기록 1건 조회 (없으면 undefined)
+ * @param {import("@base/store.js").CheckRecord[]} records 체크기록 배열
+ * @param {number} id 기록 고유 번호
+ * @returns {import("@base/store.js").CheckRecord | undefined}
+ */
+export function getRecordById(records, id) {
+	return records.find((r) => r.id === id);
+}
+
+/**
  * 회원별 체크기록 건수 맵 (memberId → 기록 수)
  * @param {Array<{ memberId: number }>} records 체크기록 배열
  * @returns {Map<number, number>} 회원 id → 기록 건수 (기록 없는 회원은 키 부재)

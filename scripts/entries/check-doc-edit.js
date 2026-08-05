@@ -4,6 +4,7 @@
 import { byId, delegate, queryAll } from "@base/UI.js";
 import { getNumberParam } from "@base/utils-url.js";
 import { recordStore } from "@check-doc/record-store.js";
+import { getRecordById } from "@member/member-utils.js";
 import { resolveRecordItems, ASSESSMENT_ITEMS_FULL } from "@check-doc/assessment-data.js";
 import { configureEvaluation, getEvals, renderBasicFunctionCards, updateTotal } from "@check-doc/evaluation.js";
 import { collectPayload, prefillEvalState, prefillForm } from "@check-doc/check-form-payload.js";
@@ -17,7 +18,7 @@ const docId = getNumberParam("docID");
 
 /** 편집 대상 기록 */
 function getRecord() {
-	return recordStore.getState().records.find((r) => r.id === docId);
+	return getRecordById(recordStore.getState().records, docId);
 }
 
 // 헤더 브레드크럼은 HTML의 crumb-path 속성(홈 > 회원 관리 > 체크기록 편집)으로 고정 표시

@@ -3,6 +3,7 @@
 import { byId, queryAll, setHTML, setText } from "@base/UI.js";
 import { getNumberParam } from "@base/utils-url.js";
 import { recordStore } from "@check-doc/record-store.js";
+import { getRecordById } from "@member/member-utils.js";
 import { escapeHtml, TPL } from "@base/templates.js";
 import { IB_KEYS, recordMax, recordTotal } from "@check-doc/record-stats.js";
 import { resolveRecordItems } from "@check-doc/assessment-data.js";
@@ -16,7 +17,7 @@ const docId = getNumberParam("docID");
  * @returns {import("@base/store.js").CheckRecord | undefined} docID에 해당하는 기록 (없으면 undefined)
  */
 function getRecord() {
-	return recordStore.getState().records.find((r) => r.id === docId);
+	return getRecordById(recordStore.getState().records, docId);
 }
 
 /**

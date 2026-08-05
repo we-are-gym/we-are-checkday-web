@@ -4,7 +4,7 @@ import { byId, delegate, queryAll, setHTML, setText } from "@base/UI.js";
 import { getNumberParam } from "@base/utils-url.js";
 import { memberStore } from "@member/member-store.js";
 import { recordStore } from "@check-doc/record-store.js";
-import { getMemberById } from "@member/member-utils.js";
+import { getMemberById, getRecordById } from "@member/member-utils.js";
 import { TPL, escapeHtml } from "@base/templates.js";
 import { buildCompareTable, recordMax, recordTotal, sessionLabel, sparkline } from "@check-doc/record-stats.js";
 import "@base/components/app-header.js";
@@ -116,8 +116,8 @@ function renderCompare() {
 	const curId = Number(byId("cmp-cur").value);
 	const tgtId = Number(byId("cmp-tgt").value);
 	const all = getRecords();
-	const cur = all.find((r) => r.id === curId);
-	const tgt = all.find((r) => r.id === tgtId);
+	const cur = getRecordById(all, curId);
+	const tgt = getRecordById(all, tgtId);
 	if (!cur || !tgt) return;
 	setHTML("compare-result", buildCompareTable(cur, tgt));
 }

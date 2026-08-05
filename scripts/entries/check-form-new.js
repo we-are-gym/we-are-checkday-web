@@ -11,7 +11,7 @@ import { byId, delegate } from "@base/UI.js";
 import { getNumberParam } from "@base/utils-url.js";
 import { memberStore } from "@member/member-store.js";
 import { recordStore } from "@check-doc/record-store.js";
-import { getRecordCountsByMember } from "@member/member-utils.js";
+import { getMemberById, getMemberByName, getRecordCountsByMember } from "@member/member-utils.js";
 import { ASSESSMENT_ITEMS_BASIC5 } from "@check-doc/assessment-data.js";
 import { collectPayload } from "@check-doc/check-form-payload.js";
 import { setupCheckFormEvents, resetCheckForm } from "@check-doc/check-form-events.js";
@@ -57,13 +57,13 @@ function applyMember(mem) {
 
 // 입력한 이름과 일치하는 회원을 찾아 트레이너·회차 자동 기입 (회차는 읽기전용, 트레이너는 이후 수정 가능)
 memberInput.addEventListener("input", () => {
-	const mem = members.find((m) => m.name === memberInput.value.trim());
+	const mem = getMemberByName(members, memberInput.value.trim());
 	if (mem) applyMember(mem);
 });
 
 // ?memberID= 진입 시 해당 회원으로 고정 (이름 입력 잠금) 후 자동 기입
 if (memberId) {
-	const mem = members.find((m) => m.id === memberId);
+	const mem = getMemberById(members, memberId);
 	if (mem) {
 		memberInput.value = mem.name;
 		memberInput.setAttribute("readonly", "");
@@ -114,7 +114,7 @@ function saveRecord() {
 	const payload = collectPayload();
 	// 회원 이름(자동완성 입력)을 회원 id로 해석 — 등록 회원 이름과 일치해야 저장한다
 	const name = (memberInput.value || "").trim();
-	const matched = members.find((m) => m.name === name);
+	const matched = getMemberByName(members, name);
 	if (!matched) {
 		alert("등록된 회원 이름을 입력하거나 선택해 주세요.");
 		return;
