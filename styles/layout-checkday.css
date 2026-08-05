@@ -693,6 +693,40 @@ textarea.consult-memo::placeholder {
 	background: var(--surface2);
 }
 
+/* ── 움직임 평가 항목 추가/삭제 (편집 화면 전용) ── */
+.add-eval-btn {
+	width: 100%;
+	margin-top: 6px;
+	padding: 9px;
+	background: none;
+	border: 0.5px dashed var(--border2);
+	border-radius: var(--r);
+	color: var(--text2);
+	font-size: 13px;
+	font-family: inherit;
+	cursor: pointer;
+	transition: background 0.15s;
+}
+.add-eval-btn:hover {
+	background: var(--surface2);
+}
+.eval-remove {
+	flex-shrink: 0;
+	margin-left: auto;
+	background: none;
+	border: 0.5px solid var(--border2);
+	border-radius: var(--r);
+	color: var(--text3);
+	font-size: 11px;
+	line-height: 1;
+	padding: 4px 8px;
+	cursor: pointer;
+}
+.eval-remove:hover {
+	color: var(--btn-danger-fg);
+	border-color: var(--btn-danger-fg);
+}
+
 .fb-item {
 	border-bottom: 0.5px solid var(--border);
 	padding: 10px 13px;

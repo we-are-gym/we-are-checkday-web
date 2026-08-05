@@ -26,6 +26,31 @@ function paintDots(index, score) {
 }
 
 /**
+ * 평가 카드의 점수·체크 문구·메모 상태를 폼에 되돌려 채운다 — prefillForm(편집 프리필)과
+ * 편집 화면의 항목 추가/삭제 후 재렌더 복원이 공용한다. 카드 렌더(renderBasicFunctionCards) 후 호출해야 한다.
+ * @param {number[]} scores 항목별 점수 (0~3)
+ * @param {Array<{ checked: string[], memo: string }>} evalData 항목별 체크 문구·메모
+ */
+export function prefillEvalState(scores, evalData) {
+	(scores || []).forEach((score, i) => {
+		scoreState.set(i, score);
+		byId(`sv-${i}`).textContent = score;
+		paintDots(i, score);
+	});
+	evals.forEach((_, i) => {
+		const ed = (evalData || [])[i];
+		if (!ed) return;
+		const sp = byId(`sp-${i}`);
+		(ed.checked || []).forEach((text) => {
+			const tag = [...sp.querySelectorAll(".ctag")].find((el) => el.textContent === text);
+			if (tag) tag.classList.add("on");
+		});
+		const memo = sp.querySelector(".eval-memo");
+		if (memo) memo.value = ed.memo || "";
+	});
+}
+
+/**
  * 기록 payload를 현재 상담지 폼에 되돌려 채운다 (편집·조회 공용)
  * @param {import("@base/store.js").CheckRecord} rec 프리필할 기록
  */
@@ -41,22 +66,7 @@ export function prefillForm(rec) {
 	updateInbodyTags();
 
 	// 점수·체크 항목·메모
-	(p.scores || []).forEach((score, i) => {
-		scoreState.set(i, score);
-		byId(`sv-${i}`).textContent = score;
-		paintDots(i, score);
-	});
-	evals.forEach((_, i) => {
-		const ed = (p.evalData || [])[i];
-		if (!ed) return;
-		const sp = byId(`sp-${i}`);
-		(ed.checked || []).forEach((text) => {
-			const tag = [...sp.querySelectorAll(".ctag")].find((el) => el.textContent === text);
-			if (tag) tag.classList.add("on");
-		});
-		const memo = sp.querySelector(".eval-memo");
-		if (memo) memo.value = ed.memo || "";
-	});
+	prefillEvalState(p.scores, p.evalData);
 
 	// 목표 (고정 태그 + 추가 목표 입력) — aria-pressed도 상태와 함께 동기화
 	const fixed = [...document.querySelectorAll(".goal-tag")];
@@ -137,6 +147,8 @@ export function collectPayload() {
 		ib: Object.fromEntries(IB_IDS.map((k) => [k, byId(`ib-${k}`).value])),
 		ibComment: byId("ib-comment").value,
 		scores: evals.map((_, i) => scoreState.get(i)),
+		// 항목 이름 배열 — 기록별 항목 수(예: 편집 화면에서 추가/삭제한 7항목)를 조회·비교 화면이 그대로 재현한다
+		items: evals.map((it) => it.name),
 		evalData,
 		goals,
 		goalMemo: byId("goal-memo").value,
