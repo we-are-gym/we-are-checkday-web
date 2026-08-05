@@ -46,6 +46,14 @@ main {
 	gap: 20px;
 }
 
+/* 우측 스택: 탭 + 패널이 남은 높이를 채우도록 flex column (비교 카드 하단 정렬 기반) */
+.detail-main {
+	align-self: stretch;
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+}
+
 /* ── 회원 정보 카드 ── */
 .info-card {
 	background: var(--surface);
@@ -85,6 +93,11 @@ main {
 	font-weight: 700;
 	color: var(--text);
 	margin-bottom: 14px;
+}
+.stat-card-title-note {
+	font-size: 10px;
+	font-weight: normal;
+	color: var(--text3);
 }
 .stat-charts {
 	display: flex;
@@ -148,6 +161,14 @@ main {
 	margin-bottom: 14px;
 }
 
+/* 보이는 탭패널만 남은 높이를 채워, 변화 분석 패널은 비교 카드를 아래로 밀어 붙인다 ([hidden]은 UA 스타일 유지) */
+.detail-main > [role="tabpanel"]:not([hidden]) {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-height: 0;
+}
+
 .tab-btn {
 	background: none;
 	border: none;
@@ -177,6 +198,18 @@ main {
 	justify-content: space-between;
 	gap: 12px;
 	margin-bottom: 10px;
+}
+
+/* 체크기록 작성 버튼 — 내장 <style>에서 추출 (토큰 치환은 색상 통합 커밋에서) */
+#new-record-btn {
+	border: solid 0.5px var(--border2);
+	color: var(--text2);
+	background: none;
+}
+
+#new-record-btn:hover {
+	color: var(--text);
+	background: var(--surface2);
 }
 
 .panel-title {
@@ -219,7 +252,7 @@ main {
 
 .record-row:hover {
 	background: var(--surface);
-	border-color: #3a3a3a;
+	border-color: var(--border2);
 }
 
 .cell-name {
@@ -282,7 +315,7 @@ main {
 
 .compare-table th {
 	/* color: var(--text3); */
-	color: #9a9a9a;
+	color: var(--text2);
 
 	/* font-weight: 500; */
 	font-weight: 600;
@@ -305,6 +338,11 @@ main {
 	color: var(--text);
 }
 
+.compare-result {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+}
 .compare-result .compare-table {
 	margin-bottom: 14px;
 }
@@ -314,7 +352,8 @@ main {
 .compare-result hr.div {
 	border: none;
 	border-top: 0.5px solid var(--border2);
-	margin: 14px 0;
+	margin-top: auto; /* 움직임 평가 표를 카드 하단에 고정 (비교 카드 하단 정렬) */
+	margin-bottom: 14px;
 }
 .compare-result .section-title {
 	font-size: 13px;

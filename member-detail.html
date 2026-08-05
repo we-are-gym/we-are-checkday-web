@@ -4,22 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>회원 상세 — 위아짐 체크데이</title>
-    <link rel="stylesheet" href="styles/colors.css?v=2026080505" />
-    <link rel="stylesheet" href="styles/font.css?v=2026080505" />
-    <link rel="stylesheet" href="styles/layout-shell.css?v=2026080505" />
-    <link rel="stylesheet" href="styles/layout-member-detail.css?v=2026080505" />
-    <style type="text/css">
-      #new-record-btn {
-        border: solid 0.5px #3a3a3a;
-        color: var(--text2);
-        background: none;
-      }
-
-      #new-record-btn:hover {
-        color: var(--text);
-        background: var(--surface2);
-      }
-    </style>
+    <link rel="stylesheet" href="styles/colors.css?v=2026080517" />
+    <link rel="stylesheet" href="styles/font.css?v=2026080517" />
+    <link rel="stylesheet" href="styles/layout-shell.css?v=2026080517" />
+    <link rel="stylesheet" href="styles/layout-member-detail.css?v=2026080517" />
   </head>
 
   <!--
@@ -31,7 +19,7 @@
   <body>
     <!-- 파일 용도: 회원 상세 조회 및 체크기록 비교 — ?memberID= 로 회원을 조회한다 -->
     <div class="container">
-      <app-header logout crumb="회원 정보" back="members.html"> </app-header>
+      <app-header logout crumb-path="index.html>홈|members.html>회원 관리|회원 정보"> </app-header>
 
       <main>
         <!-- 페이지 머리 (프로토타입 배치) — 회원 이름 + 기록 건수 + 편집 버튼 -->
@@ -72,16 +60,7 @@
             >
               <h2 class="stat-card-title">
                 통계 &nbsp;
-                <span
-                  style="
-                    font-size: 10px;
-                    font-weight: normal;
-                    color: var(--text3);
-                  "
-                >
-                  <!-- · -->
-                  전체 회차 누적</span
-                >
+                <span class="stat-card-title-note">전체 회차 누적</span>
               </h2>
               <div class="stat-charts" id="stat-charts"></div>
             </section>
@@ -162,6 +141,7 @@
                 class="detail-card compare-result"
                 id="compare-result"
                 aria-live="polite"
+                aria-atomic="true"
               ></div>
             </section>
           </div>
@@ -169,6 +149,15 @@
       </main>
     </div>
 
-    <script type="module" src="scripts/member-detail.js?v=2026080505"></script>
+    <script type="importmap">
+	{
+		"imports": {
+			"@base/": "./scripts/base/",
+			"@member/": "./scripts/member/",
+			"@check-doc/": "./scripts/check-doc/"
+		}
+	}
+</script>
+<script type="module" src="scripts/entries/member-detail.js?v=2026080517"></script>
   </body>
 </html>

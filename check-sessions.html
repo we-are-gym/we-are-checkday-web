@@ -4,15 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>체크회차 관리 — 위아짐 체크데이</title>
-    <link rel="stylesheet" href="styles/colors.css?v=2026080505" />
-    <link rel="stylesheet" href="styles/font.css?v=2026080505" />
-    <link rel="stylesheet" href="styles/layout-shell.css?v=2026080505" />
-    <link rel="stylesheet" href="styles/layout-check-sessions.css?v=2026080505" />
+    <link rel="stylesheet" href="styles/colors.css?v=2026080517" />
+    <link rel="stylesheet" href="styles/font.css?v=2026080517" />
+    <link rel="stylesheet" href="styles/layout-shell.css?v=2026080517" />
+    <link rel="stylesheet" href="styles/layout-check-sessions.css?v=2026080517" />
   </head>
   <body>
     <!-- 파일 용도: 체크회차 관리 화면 — 현재 『준비중』 placeholder -->
     <div class="container">
-      <app-header logout crumb="체크회차 관리" back="index.html">
+      <app-header logout crumb-path="index.html>홈|체크회차 관리">
         <!-- 네비게이션 삭제 -->
         <!-- <app-gnb></app-gnb> -->
         <!-- 내장 도움말 삭제 -->
@@ -33,6 +33,15 @@
       </main>
     </div>
 
-    <script type="module" src="scripts/check-sessions.js?v=2026080505"></script>
+    <script type="importmap">
+	{
+		"imports": {
+			"@base/": "./scripts/base/",
+			"@member/": "./scripts/member/",
+			"@check-doc/": "./scripts/check-doc/"
+		}
+	}
+</script>
+<script type="module" src="scripts/entries/check-sessions.js?v=2026080517"></script>
   </body>
 </html>

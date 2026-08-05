@@ -52,6 +52,11 @@
 	gap: 10px;
 	margin-bottom: 1rem;
 }
+
+/* 상담일(date picker) 필드를 가진 회원 바만 4열 — checkday_1(레거시 3필드) 레이아웃은 유지 */
+.member-bar:has(#m-date) {
+	grid-template-columns: 1fr 1fr 1fr 1fr;
+}
 .mf label {
 	font-size: 10px;
 	font-weight: 600;
@@ -89,7 +94,7 @@
 	outline: none;
 }
 .mf select:focus-visible {
-	border-color: var(--btn-blue);
+	border-color: var(--accent);
 }
 
 /* ── 총점 바 ── */
@@ -139,6 +144,7 @@
 	border-radius: 99px;
 	background: var(--blue);
 	transition: width 0.35s;
+	width: 0; /* 초기값 — JS가 인라인 width로 갱신 */
 }
 .total-grade {
 	display: flex;
@@ -150,6 +156,8 @@
 	font-weight: 600;
 	padding: 3px 10px;
 	border-radius: 99px;
+	background: var(--surface2); /* 초기(평가 전) 색 — JS가 인라인 background/color로 갱신 */
+	color: var(--text3);
 }
 .grade-hint {
 	font-size: 11px;
@@ -266,6 +274,32 @@ textarea.ib-comment {
 	outline: none;
 	resize: none;
 	min-height: 32px;
+}
+
+/* ── 인바디: 내장지방 레벨 행 (작성·편집·checkday 인라인에서 추출) ── */
+.ib-vis-row {
+	padding: 10px 13px;
+	border-top: 0.5px solid var(--border);
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+.ib-vis-field {
+	flex: 0 0 auto;
+}
+.ib-vis-label {
+	font-size: 10px;
+	font-weight: 600;
+	color: var(--text3);
+	display: block;
+	margin-bottom: 4px;
+	letter-spacing: 0.3px;
+}
+.ib-vis-input {
+	width: 70px;
+}
+.tag-vis {
+	padding-top: 18px;
 }
 textarea.ib-comment::placeholder {
 	color: var(--text3);
@@ -508,7 +542,7 @@ textarea.consult-memo::placeholder {
 
 /* ── 버튼 ──
    주의: checkday_1.html은 layout-shell을 로드하지 않고 이 시트만 사용하므로
-   .btn/.btn-ghost 기본은 여기서 자립해야 한다(삭제 금지). 색상은 --btn-blue 등 토큰으로 공용화한다. */
+   .btn/.btn-ghost 기본은 여기서 자립해야 한다(삭제 금지). 색상은 --accent 등 토큰으로 공용화한다. */
 .actions {
 	display: flex;
 	gap: 8px;
@@ -538,12 +572,12 @@ textarea.consult-memo::placeholder {
 	background: var(--surface2);
 }
 .btn-primary {
-	background: var(--btn-blue);
-	color: var(--btn-blue-text);
-	border-color: var(--btn-blue);
+	background: var(--accent);
+	color: var(--on-accent);
+	border-color: var(--accent);
 }
 .btn-primary:hover {
-	background: var(--btn-blue-hover);
+	background: var(--accent-hover);
 }
 
 /* ── 모달 ── */
@@ -659,6 +693,40 @@ textarea.consult-memo::placeholder {
 	background: var(--surface2);
 }
 
+/* ── 움직임 평가 항목 추가/삭제 (편집 화면 전용) ── */
+.add-eval-btn {
+	width: 100%;
+	margin-top: 6px;
+	padding: 9px;
+	background: none;
+	border: 0.5px dashed var(--border2);
+	border-radius: var(--r);
+	color: var(--text2);
+	font-size: 13px;
+	font-family: inherit;
+	cursor: pointer;
+	transition: background 0.15s;
+}
+.add-eval-btn:hover {
+	background: var(--surface2);
+}
+.eval-remove {
+	flex-shrink: 0;
+	margin-left: auto;
+	background: none;
+	border: 0.5px solid var(--border2);
+	border-radius: var(--r);
+	color: var(--text3);
+	font-size: 11px;
+	line-height: 1;
+	padding: 4px 8px;
+	cursor: pointer;
+}
+.eval-remove:hover {
+	color: var(--btn-danger-fg);
+	border-color: var(--btn-danger-fg);
+}
+
 .fb-item {
 	border-bottom: 0.5px solid var(--border);
 	padding: 10px 13px;
@@ -746,7 +814,7 @@ textarea.consult-memo::placeholder {
 
 	/* +체크항목추가 -> 얘도 파랑으로 변경 */
 	/* color: var(--blue); */
-	color: #3478d4;
+	color: var(--accent);
 
 	background: none;
 	border: none;
