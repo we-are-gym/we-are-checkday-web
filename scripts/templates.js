@@ -78,7 +78,7 @@ export const TPL = {
 				</button>
 				<div class="sub-panel" id="sp-${index}">
 					<div class="tag-row" style="margin-top:6px">${tags}</div>
-					<textarea class="eval-memo" placeholder="메모..."></textarea>
+					<textarea class="eval-memo" placeholder="메모..." title="메모"></textarea>
 					${extra}
 				</div>
 			</div>`;
@@ -229,7 +229,7 @@ export const TPL = {
 				</div>
 				<div class="fb-checks-wrap">${checksHTML}</div>
 				<button class="add-check-btn">+ 체크 항목 추가</button>
-				<textarea class="eval-memo" placeholder="코칭 포인트 메모..." style="margin-top:6px;"></textarea>
+				<textarea class="eval-memo" placeholder="코칭 포인트 메모..." style="margin-top:6px;" title="코칭 포인트 메모"></textarea>
 			</div>`;
 	},
 
