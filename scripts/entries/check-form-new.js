@@ -5,7 +5,7 @@
 // 저장 시 payload.session은 #m-session 값을 그대로 기록한다.
 // DEPENDS: todayISO(utils-string), byId·delegate(UI), configureEvaluation/renderBasicFunctionCards/updateTotal(evaluation),
 //          setupCheckFormEvents/resetCheckForm(check-form-events), collectPayload(check-form-payload),
-//          renderCheckMovementCards(feedback), openReportModal/copyReportToClipboard(report)
+//          renderCheckMovementCards(feedback), sessionReport(session-report)
 import { todayISO } from "@base/utils-string.js";
 import { byId, delegate } from "@base/UI.js";
 import { getNumberParam } from "@base/utils-url.js";
@@ -17,7 +17,7 @@ import { collectPayload } from "@check-doc/check-form-payload.js";
 import { setupCheckFormEvents, resetCheckForm } from "@check-doc/check-form-events.js";
 import { configureEvaluation, renderBasicFunctionCards, updateTotal } from "@check-doc/evaluation.js";
 import { renderCheckMovementCards } from "@check-doc/feedback.js";
-import { openReportModal, copyReportToClipboard } from "@check-doc/report.js";
+import { sessionReport } from "@check-doc/session-report.js";
 import { escapeHtml } from "@base/templates.js";
 import "@base/components/app-header.js";
 
@@ -88,13 +88,13 @@ delegate(document, "click", "[data-action]", (e, el) => {
 			resetEntireForm();
 			break;
 		case "report":
-			openReportModal();
+			sessionReport.openModal();
 			break;
 		case "print":
 			window.print();
 			break;
 		case "copy":
-			copyReportToClipboard();
+			sessionReport.copyToClipboard();
 			break;
 		case "close-modal":
 			byId("overlay").classList.remove("open");

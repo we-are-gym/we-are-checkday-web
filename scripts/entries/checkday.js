@@ -3,7 +3,8 @@
 // ?memberID= 로 열리면 회원 이름·트레이너를 프리필한다 (checkday_1은 헤더·자동완성 없음).
 // DEPENDS: today(utils-string), byId·delegate·setText(UI), getMemberById(member-utils),
 //          renderBasicFunctionCards/updateTotal(evaluation),
-//          setupCheckFormEvents/resetCodeForm(check-form-events), renderCheckMovementCards(feedback)
+//          setupCheckFormEvents/resetCodeForm(check-form-events), renderCheckMovementCards(feedback),
+//          sessionReport(session-report)
 import { today } from "@base/utils-string.js";
 import { byId, delegate, setText } from "@base/UI.js";
 import { getNumberParam } from "@base/utils-url.js";
@@ -12,7 +13,7 @@ import { getMemberById } from "@member/member-utils.js";
 import { renderBasicFunctionCards, updateTotal } from "@check-doc/evaluation.js";
 import { renderCheckMovementCards } from "@check-doc/feedback.js";
 import { setupCheckFormEvents, resetCheckForm } from "@check-doc/check-form-events.js";
-import { openReportModal, copyReportToClipboard } from "@check-doc/report.js";
+import { sessionReport } from "@check-doc/session-report.js";
 import "@base/components/app-header.js";
 
 // ── 날짜 ──
@@ -47,13 +48,13 @@ delegate(document, "click", "[data-action]", (e, el) => {
 			resetEntireForm();
 			break;
 		case "report":
-			openReportModal();
+			sessionReport.openModal();
 			break;
 		case "print":
 			window.print();
 			break;
 		case "copy":
-			copyReportToClipboard();
+			sessionReport.copyToClipboard();
 			break;
 		case "close-modal":
 			byId("overlay").classList.remove("open");

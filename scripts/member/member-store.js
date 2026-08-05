@@ -1,6 +1,6 @@
 // 파일 용도: 회원 스토어 단일 인스턴스 — 세션(sessionStorage) 영속화된 mock 저장소 (회원 관리·등록·상세 공용)
 // 주의: API 미배포 상태이므로 브라우저 세션 동안만 유지되는 mock이다. 탭을 닫으면 시드로 복원된다.
-import { createPersistentStore } from "@base/store.js";
+import { Store } from "@base/store.js";
 
 /** 세션 저장 키 */
 const STORAGE_KEY = "checkday.members.v2";
@@ -18,11 +18,13 @@ export const SEED_MEMBERS = [
 ];
 
 /** 회원 스토어 (전 화면 공용 단일 인스턴스) — 저장값이 손상되면 시드로 폴백 */
-export const memberStore = createPersistentStore(
-	STORAGE_KEY,
+export const memberStore = new Store(
 	{ members: SEED_MEMBERS, nextId: SEED_MEMBERS.length + 1 },
-	/** 저장값에 members 배열이 있어야 유효 */
-	(data) => Array.isArray(data.members),
+	{
+		storageKey: STORAGE_KEY,
+		/** 저장값에 members 배열이 있어야 유효 */
+		validate: (data) => Array.isArray(data.members),
+	},
 );
 
 /**

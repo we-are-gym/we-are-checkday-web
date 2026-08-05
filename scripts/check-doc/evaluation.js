@@ -35,6 +35,36 @@ export function configureEvaluation({ items, max }) {
 	scoreState.init(items.length, max);
 }
 
+// ── 평가 상태 읽기 (세션 리포트 등 공용 읽기 API — scoreState 직접 접근 대신 사용) ──
+/** 현재 평가 항목 목록 반환 (configureEvaluation()으로 교체된 값 포함)
+ * @returns {Array<{ name: string, desc: string, checks?: string[], vo2?: boolean }>} 평가 항목 목록
+ */
+export function getEvals() {
+	return evals;
+}
+
+/** i번째 평가 점수 반환 (범위 밖이면 0)
+ * @param {number} i 항목 인덱스
+ * @returns {number} 점수
+ */
+export function getScore(i) {
+	return scoreState.get(i);
+}
+
+/** 전체 점수 합계 반환
+ * @returns {number} 전체 점수 합계
+ */
+export function getTotal() {
+	return scoreState.getTotal();
+}
+
+/** 총점 최댓값 반환
+ * @returns {number} 총점 최댓값
+ */
+export function getMax() {
+	return scoreState.getMax();
+}
+
 // ── VO₂ 계산 (VO₂ 항목에만) — 공용 모듈 사용 ──
 /**
  * VO₂ MAX 자동 계산 — 폼의 연령·신장·체중·심박수 입력으로 산출·표시를 갱신한다.

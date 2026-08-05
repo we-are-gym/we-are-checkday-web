@@ -1,6 +1,6 @@
-// 파일 용도: GUI 상태 스토어 — 관찰자 패턴 기반 단일 상태 관리 (전체 화면 공용)
-// 기법: 관찰자 패턴 + GUI 상태 스토어 (손수 구현, 의존성 없음)
-// 사용: 화면 진입점이 createStore로 스토어를 만들고, UI는 subscribe로 구독해 상태가 바뀌면 재렌더링한다.
+// 파일 용도: GUI 상태 스토어 — 관찰자 패턴 기반 단일 상태 관리 + sessionStorage 영속화 (전체 화면 공용)
+// 기법: 관찰자 패턴 + 상태 컨테이너 클래스 (손수 구현, 의존성 없음)
+// 사용: 화면 진입점이 `new Store(시드, { storageKey })`로 스토어를 만들고, UI는 subscribe로 구독해 상태가 바뀌면 재렌더링한다.
 
 /**
  * 회원 1명
@@ -78,107 +78,96 @@
  */
 
 /**
- * 관찰자 패턴 기반 GUI 상태 스토어 생성
+ * 옵저버 패턴 기반 상태 스토어 — 선택적으로 sessionStorage에 영속화
  *
- * - `getState()`: 현재 상태 조회
+ * - `getState()`: 현재 상태 반환
  * - `setState(updater)`: `updater(이전 상태)`가 돌려준 새 상태로 교체 후 구독자 알림
  * - `update(partial)`: 일부 필드만 얕은 병합
  * - `subscribe(listener)`: 상태 변경 시 `listener(새 상태)` 호출, 반환값은 구독 해제 함수
  *
+ * `storageKey`를 주면 초기 상태를 해당 키의 저장값으로 되돌리되, 없거나 손상됐거나
+ * `validate`를 통과하지 못하면 `seed`로 시작하고, 상태가 바뀔 때마다 키에 직렬화해 저장한다. (mock 영속화)
+ *
  * @template T
- * @param {T} initialState
- * @returns {{
- *   getState: () => T,
- *   setState: (updater: (prev: T) => T) => void,
- *   update: (partial: Partial<T>) => void,
- *   subscribe: (listener: (state: T) => void) => () => void,
- * }}
  */
-export function createStore(initialState) {
-	let state = initialState;
-	/** @type {Set<(state: T) => void>} */
-	const listeners = new Set();
-
-	/** 등록된 구독자 모두에게 현재 상태를 알린다
-	 * @returns {void}
+export class Store {
+	/**
+	 * @param {T} seed 초기(시드) 상태 — 저장값이 없거나 손상됐을 때 사용
+	 * @param {Object} [options]
+	 * @param {string} [options.storageKey] sessionStorage 키 — 주어지면 영속화
+	 * @param {(data: T) => boolean} [options.validate] 저장값 형식 검증 (기본: 항상 통과)
 	 */
-	function notify() {
-		listeners.forEach((listener) => listener(state));
+	constructor(seed, { storageKey, validate = () => true } = {}) {
+		/** @type {T} */
+		this._state = storageKey ? loadStored(storageKey, seed, validate) : seed;
+		/** @type {Set<(state: T) => void>} */
+		this._listeners = new Set();
+
+		if (storageKey) {
+			// 상태가 바뀔 때마다 세션 저장 (관찰자 패턴 — mock 영속화)
+			this.subscribe((state) => {
+				try {
+					sessionStorage.setItem(storageKey, JSON.stringify(state));
+				} catch (err) {
+					// 저장 실패는 mock이므로 무시
+				}
+			});
+		}
 	}
 
-	return {
-		/** 현재 상태 반환
-		 * @returns {T} 현재 상태
-		 */
-		getState() {
-			return state;
-		},
-		/** updater(이전 상태)가 돌려준 새 상태로 교체하고 구독자에게 알린다
-		 * @param {(prev: T) => T} updater 상태 갱신 함수
-		 * @returns {void}
-		 */
-		setState(updater) {
-			const next = updater(state);
-			if (next === state) return;
-			state = next;
-			notify();
-		},
-		/** 주어진 필드를 얕은 병합해 상태를 갱신한다
-		 * @param {Partial<T>} partial 병합할 필드
-		 * @returns {void}
-		 */
-		update(partial) {
-			this.setState((prev) => ({ ...prev, ...partial }));
-		},
-		/** 상태 변경 시 호출할 리스너를 등록하고, 구독 해제 함수를 반환한다
-		 * @param {(state: T) => void} listener 상태 변경 리스너
-		 * @returns {() => void} 구독 해제 함수
-		 */
-		subscribe(listener) {
-			listeners.add(listener);
-			return () => listeners.delete(listener);
-		},
-	};
+	/** 현재 상태 반환
+	 * @returns {T} 현재 상태
+	 */
+	getState() {
+		return this._state;
+	}
+
+	/** updater(이전 상태)가 돌려준 새 상태로 교체하고 구독자에게 알린다
+	 * @param {(prev: T) => T} updater 상태 갱신 함수
+	 * @returns {void}
+	 */
+	setState(updater) {
+		const next = updater(this._state);
+		if (next === this._state) return;
+		this._state = next;
+		this._listeners.forEach((listener) => listener(this._state));
+	}
+
+	/** 주어진 필드를 얕은 병합해 상태를 갱신한다
+	 * @param {Partial<T>} partial 병합할 필드
+	 * @returns {void}
+	 */
+	update(partial) {
+		this.setState((prev) => ({ ...prev, ...partial }));
+	}
+
+	/** 상태 변경 시 호출할 리스너를 등록하고, 구독 해제 함수를 반환한다
+	 * @param {(state: T) => void} listener 상태 변경 리스너
+	 * @returns {() => void} 구독 해제 함수
+	 */
+	subscribe(listener) {
+		this._listeners.add(listener);
+		return () => this._listeners.delete(listener);
+	}
 }
 
 /**
- * 관찰자 패턴 스토어를 sessionStorage에 영속화하는 스토어 생성
- *
- * - 초기 상태: `storageKey`에 저장된 값을 읽어 되돌리되, 없거나 손상됐거나
- *   `validate`를 통과하지 못하면 `seed`로 시작한다.
- * - 상태가 바뀔 때마다 `storageKey`에 직렬화해 저장한다. (mock 영속화)
- *
+ * 저장된 상태를 읽고 없거나 손상됐으면 시드로 폴백한다
  * @template T
  * @param {string} storageKey sessionStorage 키
  * @param {T} seed 손상·부재 시 초기 상태
- * @param {(data: T) => boolean} [validate] 저장값 형식 검증 (기본: 항상 통과)
- * @returns {ReturnType<typeof createStore<T>>}
+ * @param {(data: T) => boolean} validate 저장값 형식 검증
+ * @returns {T} 복원된 상태 또는 시드
  */
-export function createPersistentStore(storageKey, seed, validate = () => true) {
-	/** 저장된 상태를 읽고 없거나 손상됐으면 시드로 폴백 */
-	function loadInitial() {
-		try {
-			const raw = sessionStorage.getItem(storageKey);
-			if (raw) {
-				const data = JSON.parse(raw);
-				if (validate(data)) return data;
-			}
-		} catch (err) {
-			// 손상된 데이터는 시드로 폴백
+function loadStored(storageKey, seed, validate) {
+	try {
+		const raw = sessionStorage.getItem(storageKey);
+		if (raw) {
+			const data = JSON.parse(raw);
+			if (validate(data)) return data;
 		}
-		return seed;
+	} catch (err) {
+		// 손상된 데이터는 시드로 폴백
 	}
-
-	const store = createStore(loadInitial());
-
-	// 상태가 바뀔 때마다 세션 저장 (관찰자 패턴 — mock 영속화)
-	store.subscribe((state) => {
-		try {
-			sessionStorage.setItem(storageKey, JSON.stringify(state));
-		} catch (err) {
-			// 저장 실패는 mock이므로 무시
-		}
-	});
-
-	return store;
+	return seed;
 }

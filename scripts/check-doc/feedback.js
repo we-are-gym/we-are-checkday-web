@@ -1,8 +1,10 @@
 // 파일 용도: 피드백 CRUD — 동작 피드백 카드 생성·체크 행 추가/삭제·데이터 수집 (checkday 공용)
-// 기법: 카드·체크 행 마크업은 공용 템플릿(TPL.feedbackCard·TPL.fbCheckRow)을 단일 소스로 사용
-// DEPENDS: byId(UI), TPL
+// 기법: 카드·체크 행 마크업은 공용 템플릿(TPL.feedbackCard·TPL.fbCheckRow)을 단일 소스로 사용,
+//       카드 목록·ID 카운터는 CheckMovementStore에 보관한다.
+// DEPENDS: byId(UI), TPL, CheckMovementStore
 import { byId } from "@base/UI.js";
 import { TPL } from "@base/templates.js";
+import { CheckMovementStore } from "./check-movement-store.js";
 
 /** 동작 피드백 프리셋 정의 (동작명 → 체크 문구 목록) */
 const FB_PRESET = [
@@ -41,10 +43,8 @@ const FB_PRESET = [
 ];
 
 // ── 동작 피드백 데이터(카피)·ID 카운터 ──
-/** 화면 렌더링용 프리셋 복사본 */
-const feedbacks = FB_PRESET.slice(0);
-/** 피드백 카드 고유 ID 카운터 */
-let fbIdCounter = 0;
+/** 동작 피드백 저장소 — 프리셋 복사본 카드와 ID 카운터를 한 곳에서 관리한다 */
+export const checkMovementStore = new CheckMovementStore(FB_PRESET);
 
 /** 체크 행 추가 버튼의 이전 요소(체크 목록)에 새 체크 입력 행을 추가하고 입력에 포커스를 준다
  * @param {HTMLButtonElement} btn 체크 행 추가 버튼
@@ -58,31 +58,33 @@ export function appendCheckMovementItemRow(btn) {
 	checksWrap.lastElementChild.querySelector(".fb-check-input").focus();
 }
 
-/** 프리셋(또는 빈) 피드백 카드를 카드 영역에 추가한다
+/** 프리셋(또는 빈) 피드백 카드를 저장소에 추가하고 카드 영역에 렌더링한다
  * @param {{ name: string, checks: string[] }} [preset] 동작 프리셋 (없으면 빈 카드)
  * @returns {void}
  */
 export function appendCheckMovement(preset) {
-	fbIdCounter++;
-	const id = fbIdCounter;
-	const name = preset ? preset.name : "";
-	const checks = preset ? preset.checks : [""];
+	const item = checkMovementStore.add(preset);
 	const wrap = document.createElement("div");
-	wrap.innerHTML = TPL.feedbackCard({ id, name, checkItems: checks });
+	wrap.innerHTML = TPL.feedbackCard({ id: item.id, name: item.name, checkItems: item.checks });
 	byId("fb-cards").appendChild(wrap.firstElementChild);
 }
 
-/** 현재 피드백 데이터를 순회하며 카드를 다시 렌더링한다
+/** 현재 저장소의 피드백 데이터를 순회하며 카드를 다시 렌더링한다
  * @returns {void}
  */
 export function renderCheckMovementCards() {
-	feedbacks.forEach((fb) => appendCheckMovement(fb));
+	checkMovementStore.getItems().forEach((item) => {
+		const wrap = document.createElement("div");
+		wrap.innerHTML = TPL.feedbackCard({ id: item.id, name: item.name, checkItems: item.checks });
+		byId("fb-cards").appendChild(wrap.firstElementChild);
+	});
 }
 
-/** 초기용: 피드백 카드를 비우고 프리셋 재빌드 */
+/** 초기용: 피드백 카드를 비우고 저장소를 프리셋으로 재빌드 */
 export function resetFeedbacks() {
 	byId("fb-cards").innerHTML = "";
-	fbIdCounter = 0;
+	checkMovementStore.clear();
+	FB_PRESET.forEach((preset) => checkMovementStore.add(preset));
 	renderCheckMovementCards();
 }
 

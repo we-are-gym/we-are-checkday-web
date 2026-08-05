@@ -1,6 +1,7 @@
 // 파일 용도: 체크기록 스토어 — 세션(sessionStorage) 영속화된 mock 저장소 (회원 상세·조회·작성·편집 공용)
 // 주의: API 미배포 상태이므로 브라우저 세션 동안만 유지되는 mock이다. 탭을 닫으면 시드로 복원된다.
-import { createPersistentStore } from "@base/store.js";
+import { Store } from "@base/store.js";
+import { InbodyData } from "@base/inbody-data.js";
 import { ASSESSMENT_ITEMS_FULL } from "./assessment-data.js";
 
 /** 세션 저장 키 */
@@ -15,10 +16,10 @@ const STORAGE_KEY = "checkday.records.v2";
  * @param {string} bfp 체지방률
  * @param {string} bmr 기초대사량
  * @param {string} vis 내장지방
- * @returns {import("@base/store.js").InbodyData}
+ * @returns {InbodyData} 인바디 데이터 인스턴스
  */
 function ib(w, m, fat, bmi, bfp, bmr, vis) {
-	return { w, m, fat, bmi, bfp, bmr, vis };
+	return new InbodyData({ w, m, fat, bmi, bfp, bmr, vis });
 }
 
 /**
@@ -41,7 +42,7 @@ function mkRec(id, memberId, date, session, ibData, scores, opts = {}) {
 			name: opts.name || "",
 			session,
 			trainer: opts.trainer || "",
-			ib: ibData,
+			ib: ibData.toObject(),
 			ibComment: opts.ibComment || "",
 			scores,
 			// 항목 이름 배열 — scores 길이 기준으로 해석 (기록별 항목 수가 다른 시드·편집 화면 추가/삭제 반영)
@@ -261,9 +262,11 @@ const SEED_RECORDS = [
 ];
 
 /** 체크기록 스토어 (전 화면 공용 단일 인스턴스) — 저장값이 손상되면 시드로 폴백 */
-export const recordStore = createPersistentStore(
-	STORAGE_KEY,
+export const recordStore = new Store(
 	{ records: SEED_RECORDS, nextId: SEED_RECORDS.length + 1 },
-	/** 저장값에 records 배열이 있어야 유효 */
-	(data) => Array.isArray(data.records),
+	{
+		storageKey: STORAGE_KEY,
+		/** 저장값에 records 배열이 있어야 유효 */
+		validate: (data) => Array.isArray(data.records),
+	},
 );
