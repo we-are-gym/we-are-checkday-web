@@ -1,5 +1,5 @@
 // 파일 용도: 체크기록 통계 — 스파크라인·기록 지표·비교 테이블 생성 (회원 상세 공용, 순수 함수)
-import { ASSESSMENT_ITEMS_FULL, itemsForRecord } from "./assessment-data.js";
+import { resolveRecordItems } from "./assessment-data.js";
 import { SCORE_MAX } from "@base/constants.js";
 import { TPL } from "@base/templates.js";
 
@@ -147,29 +147,33 @@ export function buildCompareTable(cur, tgt) {
 		});
 	});
 
-	// ② 움직임 평가 + 총점 표 — 항목을 이름으로 정렬해 5항목(베이직 펑션)·8항목(레거시) 기록 혼재에도 올바르게 비교한다
+	// ② 움직임 평가 + 총점 표 — 기록별 항목(payload.items·폴백)을 이름으로 정렬해 5항목(베이직 펑션)·8항목(레거시) 등
+	//    항목 수가 다른 기록이 섞여도, 양쪽에 모두 존재하는 항목(교집합)만 표시한다
 
 	const mvRows = [];
 
-	const scoreByName = (payload) => {
-		const items = itemsForRecord(payload.scores?.length);
+	const resolveScores = (payload) => {
+		const items = resolveRecordItems(payload);
 		const map = new Map();
 
 		(payload.scores || []).forEach((s, i) => map.set(items[i]?.name, s));
 		return map;
 	};
 
-	const curScores = scoreByName(cur.payload);
-	const tgtScores = scoreByName(tgt.payload);
+	const curScores = resolveScores(cur.payload);
+	const tgtScores = resolveScores(tgt.payload);
 
-	ASSESSMENT_ITEMS_FULL.forEach((item) => {
-		const c = curScores.get(item.name);
-		const t = tgtScores.get(item.name);
+	// 양쪽 기록의 항목 이름 합집합을 순회하며, 양쪽 점수가 모두 있는 항목만 행으로 남긴다 (교집합)
+	const itemNames = [...new Set([...resolveRecordItems(cur.payload), ...resolveRecordItems(tgt.payload)].map((it) => it.name))];
+
+	itemNames.forEach((name) => {
+		const c = curScores.get(name);
+		const t = tgtScores.get(name);
 
 		if (c == null || t == null) return;
 
 		mvRows.push({
-			label: item.name,
+			label: name,
 			cur: `${c}/3`,
 			tgt: `${t}/3`,
 			delta: deltaHTML(c - t),

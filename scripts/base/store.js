@@ -32,7 +32,8 @@
  * @property {string} trainer 담당 트레이너
  * @property {InbodyData} ib 인바디 수치
  * @property {string} ibComment 인바디 코멘트
- * @property {number[]} scores 항목별 점수 (8개, 0~3)
+ * @property {number[]} scores 항목별 점수 (5~8개, 0~3)
+ * @property {string[]} items 항목 이름 배열 (있으면 기록별 항목명, 없으면 scores 길이로 폴백)
  * @property {Array<{ checked: string[], memo: string }>} evalData 항목별 체크 문구·메모
  * @property {string[]} goals 선택한 목표 태그
  * @property {string} goalMemo 목표 메모

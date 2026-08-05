@@ -118,3 +118,18 @@ export function itemsForRecord(scoresLength) {
 		? ASSESSMENT_ITEMS_BASIC5
 		: ASSESSMENT_ITEMS_FULL;
 }
+
+/**
+ * 기록 1건의 평가 항목 목록을 결정한다 — payload.items(항목 이름 배열)가 있으면 이름으로 항목을 재구성하고,
+ * 없으면(레거시 기록) scores 길이로 기본 항목(itemsForRecord)에 폴백한다.
+ * 기록별 항목 수가 5·8이 아닌(예: 7항목) 훼이크 데이터의 오매칭을 막기 위해 반드시 items를 우선 사용한다.
+ * @param {import("@base/store.js").CheckRecordPayload} payload 기록 payload
+ * @returns {Array<{ name: string, desc: string, checks: string[] }>} 평가 항목 목록
+ */
+export function resolveRecordItems(payload) {
+	const items = payload?.items;
+	if (Array.isArray(items) && items.length) {
+		return items.map((name) => ASSESSMENT_ITEMS_FULL.find((it) => it.name === name) || { name, desc: "", checks: [] });
+	}
+	return itemsForRecord(payload?.scores?.length ?? 0);
+}
