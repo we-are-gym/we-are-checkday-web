@@ -24,7 +24,7 @@
 .score-summary {
   background: var(--surface);
   border: 0.5px solid var(--border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--rlg);
   padding: 1.25rem 1.5rem;
   margin-bottom: 1.5rem;
   display: flex;
@@ -100,7 +100,7 @@
 .item-card {
   background: var(--surface);
   border: 0.5px solid var(--border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--rlg);
   overflow: hidden;
   transition: border-color 0.2s;
 }
@@ -259,7 +259,7 @@
     border-color 0.15s;
 }
 .check-box.checked {
-  background: var(--blue-light);
+  background: var(--blue-bg);
   border-color: var(--blue);
 }
 .check-box.checked::after {
@@ -267,8 +267,8 @@
   display: block;
   width: 8px;
   height: 6px;
-  border-left: 1.5px solid var(--blue-dark);
-  border-bottom: 1.5px solid var(--blue-dark);
+  border-left: 1.5px solid var(--blue-fg);
+  border-bottom: 1.5px solid var(--blue-fg);
   transform: rotate(-45deg) translateY(-1px);
 }
 .check-label {
@@ -288,7 +288,7 @@
   font-size: 13px;
   font-family: inherit;
   border: 0.5px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--r);
   background: var(--surface2);
   color: var(--text);
   resize: vertical;
@@ -312,7 +312,7 @@
 }
 .btn {
   padding: 9px 18px;
-  border-radius: var(--radius);
+  border-radius: var(--r);
   font-size: 13px;
   font-weight: 500;
   font-family: inherit;
@@ -364,7 +364,7 @@
 }
 .modal {
   background: var(--surface);
-  border-radius: var(--radius-lg);
+  border-radius: var(--rlg);
   padding: 1.5rem;
   max-width: 500px;
   width: 100%;
@@ -416,7 +416,7 @@
 .vo2-card {
   background: var(--surface);
   border: 0.5px solid var(--border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--rlg);
   overflow: hidden;
   margin-bottom: 8px;
 }
@@ -478,7 +478,7 @@
 .vo2-input {
   padding: 8px 10px;
   border: 0.5px solid var(--border2);
-  border-radius: var(--radius);
+  border-radius: var(--r);
   background: var(--surface2);
   color: var(--text);
   font-size: 14px;
@@ -497,7 +497,7 @@
 
 .vo2-result-box {
   margin: 0 1rem 1rem;
-  border-radius: var(--radius);
+  border-radius: var(--r);
   padding: 1rem;
   background: var(--surface2);
   border: 0.5px solid var(--border);
@@ -566,7 +566,7 @@
 
 .vo2-norms {
   margin: 0 1rem 1rem;
-  border-radius: var(--radius);
+  border-radius: var(--r);
   overflow: hidden;
   border: 0.5px solid var(--border);
 }
@@ -611,12 +611,12 @@
   border-bottom: none;
 }
 .vo2-norms tr.highlight-row td {
-  background: var(--blue-light);
-  color: var(--blue-dark);
+  background: var(--blue-bg);
+  color: var(--blue-fg);
   font-weight: 500;
 }
 .vo2-norms tr.highlight-row td:first-child {
-  color: var(--blue-dark);
+  color: var(--blue-fg);
 }
 
 @media (max-width: 480px) {
