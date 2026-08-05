@@ -10,11 +10,6 @@ import "./components/member-form.js";
 /** ?memberID= 파라미터 (없으면 0 — 미조회 상태) */
 const memberId = getNumberParam("memberID");
 
-/** 편집 대상 회원 */
-function getMember() {
-	return getMemberById(memberStore.getState().members, memberId);
-}
-
 /** 상세 화면으로 복귀하는 URL */
 const detailUrl = `member-detail.html?memberID=${memberId}`;
 
@@ -25,7 +20,7 @@ if (header) header.setAttribute("back", detailUrl);
 /** 회원 편집 폼 컴포넌트 엘리먼트 */
 const formEl = byId("member-form");
 /** 편집 대상 회원 (없으면 undefined) */
-const member = getMember();
+const member = getMemberById(memberStore.getState().members, memberId);
 
 if (!member) {
 	// 대상 회원이 없으면 등록 화면 취소처럼 목록으로 이동하며 안내 (UI는 렌더링되지 않음)

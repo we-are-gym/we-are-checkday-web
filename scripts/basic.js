@@ -26,6 +26,9 @@ assessments.forEach((a) => {
 const vo2State = { score: 0, vo2: null, grade: null };
 
 // ── VO₂ 확장/계산 ──
+/** VO₂ 입력 패널 펼침/접기를 토글한다
+ * @returns {void}
+ */
 function toggleVo2() {
 	const body = byId("vo2-body");
 	const arrow = byId("vo2-arrow");
@@ -33,6 +36,9 @@ function toggleVo2() {
 	arrow.style.transform = open ? "rotate(180deg)" : "";
 }
 
+/** VO₂ 입력 4종(연령·신장·체중·심박수)으로 값을 계산해 화면 표시·정상치표 하이라이트·점수 제안을 갱신한다
+ * @returns {void}
+ */
 function updateVO2Disp() {
 	const res = calcVo2Assessment({
 		age: parseToNum(byId("v-age").value),
@@ -63,6 +69,11 @@ function updateVO2Disp() {
 	setVo2Score(0, gradeInfo.score);
 }
 
+/** 정상치 표에서 해당 등급 행·연령 열을 강조 표시한다
+ * @param {string} grade 등급 키 (예: "excellent")
+ * @param {number} col 강조할 열 인덱스 (연령대)
+ * @returns {void}
+ */
 function highlightNormTable(grade, col) {
 	const rows = queryAll("#vo2-table tbody tr");
 	rows.forEach((row) => {
@@ -86,6 +97,11 @@ function highlightNormTable(grade, col) {
 	}
 }
 
+/** VO₂ 점수를 ±delta 조정하거나 제안값으로 설정하고 도트·총점을 갱신한다
+ * @param {number} delta 점수 증감량 (제안 모드에서는 무시)
+ * @param {number} [suggested] 제안 점수 (지정 시 그 값으로 설정)
+ * @returns {void}
+ */
 function setVo2Score(delta, suggested) {
 	if (typeof suggested === "number") {
 		vo2State.score = suggested;
@@ -102,6 +118,9 @@ function setVo2Score(delta, suggested) {
 }
 
 // ── 항목 카드 빌드 (카드 셸은 공용 템플릿 함수 TPL.basicItemCard 사용) ──
+/** 평가 항목 카드 전체를 #items-container에 빌드한다 (도트·체크 목록 포함)
+ * @returns {void}
+ */
 function buildItems() {
 	const container = byId("items-container");
 	assessments.forEach((a) => {
@@ -123,6 +142,10 @@ function buildItems() {
 	});
 }
 
+/** 항목 카드의 펼침 서브패널(체크·메모)을 토글하고 aria-expanded를 동기화한다
+ * @param {number} index 항목 id
+ * @returns {void}
+ */
 function toggleBasicFunctionDetail(index) {
 	const detail = byId(`detail-${index}`);
 	const btn = byId(`expand-${index}`);
@@ -131,6 +154,11 @@ function toggleBasicFunctionDetail(index) {
 	btn.setAttribute("aria-expanded", String(open));
 }
 
+/** 체크 항목 1개의 on/off를 토글하고 표시를 갱신한다
+ * @param {number|string} id 항목 id
+ * @param {number} idx 체크 문구 인덱스
+ * @returns {void}
+ */
 function toggleCheck(id, idx) {
 	const key = `${id}-${idx}`;
 	state[id].checks[key] = !state[id].checks[key];
@@ -140,6 +168,11 @@ function toggleCheck(id, idx) {
 	lbl.classList.toggle("checked-text", state[id].checks[key]);
 }
 
+/** 항목 점수를 ±delta 조정(0~3 클램프)하고 도트·총점을 갱신한다
+ * @param {number|string} id 항목 id
+ * @param {number} delta 점수 증감량
+ * @returns {void}
+ */
 function adjustScore(id, delta) {
 	const s = state[id];
 	s.score = clamp(s.score + delta, SCORE_MIN, SCORE_MAX);
@@ -153,10 +186,18 @@ function adjustScore(id, delta) {
 	updateTotal();
 }
 
+/** 항목 메모를 상태에 저장한다
+ * @param {number|string} id 항목 id
+ * @param {string} val 메모 내용
+ * @returns {void}
+ */
 function saveNotes(id, val) {
 	state[id].notes = val;
 }
 
+/** 현재 총점 (항목 합계 + VO₂ 점수)
+ * @returns {number} 총점
+ */
 function getTotal() {
 	return (
 		assessments.reduce((sum, a) => sum + state[a.id].score, 0) +
@@ -164,6 +205,9 @@ function getTotal() {
 	);
 }
 
+/** 총점·진행률·등급 배지·힌트를 현재 상태 기준으로 갱신한다
+ * @returns {void}
+ */
 function updateTotal() {
 	const total = getTotal();
 	const max = MOTION_TOTAL_MAX;
@@ -184,6 +228,9 @@ function updateTotal() {
 }
 
 // 항목별 리포트 정보를 한 곳에서만 수집 — 모달·클립보드 양쪽 공용
+/** 리포트용 항목별 정보를 수집한다 (점수·플래그 체크·메모)
+ * @returns {Array<{ id: number, name: string, score: number, flagged: string[], notes: string }>}
+ */
 function getAssessmentReportItems() {
 	return assessments.map((a) => {
 		const s = state[a.id];
@@ -192,6 +239,9 @@ function getAssessmentReportItems() {
 	});
 }
 
+/** 폼 전체를 초기 상태로 되돌린다 (점수·체크·메모·VO₂ 입력·표시)
+ * @returns {void}
+ */
 function resetEntireForm() {
 	if (!confirm("모든 점수와 체크를 초기화할까요?")) return;
 	assessments.forEach((a) => {
@@ -237,6 +287,9 @@ function resetEntireForm() {
 	updateTotal();
 }
 
+/** 결과 보고 모달을 열고 항목별 점수·플래그·메모·VO₂ 행을 렌더링한다
+ * @returns {void}
+ */
 function openReportModal() {
 	const total = getTotal();
 	const container = byId("report-content");
@@ -278,10 +331,16 @@ function openReportModal() {
 	byId("modal-overlay").classList.add("open");
 }
 
+/** 결과 보고 모달을 닫는다
+ * @returns {void}
+ */
 function closeModalDirect() {
 	byId("modal-overlay").classList.remove("open");
 }
 
+/** 보고서 텍스트를 클립보드로 복사한다 (실패 시 안내)
+ * @returns {void}
+ */
 function copyReportToClipboard() {
 	const total = getTotal();
 	const lines = [

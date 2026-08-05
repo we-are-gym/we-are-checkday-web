@@ -4,6 +4,7 @@
 // 주의: 사용자 입력을 넣을 때는 반드시 escapeHtml()을 거쳐 XSS를 막는다.
 
 import { createZeroArray } from "./utils-array.js";
+import { DOT_COUNT } from "./constants.js";
 
 /**
  * HTML 특수문자 이스케이프 (XSS 방지)
@@ -277,6 +278,21 @@ export const TPL = {
 	},
 
 	/**
+	 * 비교 테이블 행 1개 (본문·합계 공용) — label만 이스케이프하고 값은 호출부에서 이미 안전하게 가공한다
+	 * @param {{ label: string, tgt: string, cur: string, delta: string }} r 비교 행 데이터
+	 * @returns {string}
+	 */
+	compareTableRow({ label, tgt, cur, delta }) {
+		return `
+			<tr>
+				<td>${escapeHtml(label)}</td>
+				<td>${tgt}</td>
+				<td>${cur}</td>
+				<td>${delta}</td>
+			</tr>`;
+	},
+
+	/**
 	 * 체크기록 비교 테이블 1개 — withHeader=false면 본문만(움직임 평가 총점 표용)
 	 *
 	 * @param {{
@@ -307,17 +323,7 @@ export const TPL = {
 
 			return `
 				<tfoot>
-					${footRows
-						.map(
-							(row) => `
-								<tr>
-									<td>${escapeHtml(row.label)}</td>
-									<td>${row.tgt}</td>
-									<td>${row.cur}</td>
-									<td>${row.delta}</td>
-								</tr>`,
-						)
-						.join("")}
+					${footRows.map((row) => TPL.compareTableRow(row)).join("")}
 				</tfoot>
 			`;
 		})();
@@ -327,19 +333,18 @@ export const TPL = {
 				${head}
 				${foot}
 				<tbody>
-					${rows
-						.map(
-							(r) => `
-						<tr>
-							<td>${escapeHtml(r.label)}</td>
-							<td>${r.tgt}</td>
-							<td>${r.cur}</td>
-							<td>${r.delta}</td>
-						</tr>`,
-						)
-						.join("")}
+					${rows.map((r) => TPL.compareTableRow(r)).join("")}
 				</tbody>
 			</table>`;
+	},
+
+	/**
+	 * 읽기 전용 점수 도트 (조회 화면) — 채워진 개수 = 점수
+	 * @param {{ score: number, max?: number }} p score: 점수(0~max), max: 도트 총개수(기본 DOT_COUNT)
+	 * @returns {string}
+	 */
+	viewScoreDots({ score, max = DOT_COUNT }) {
+		return Array.from({ length: max }, (_, i) => `<span class="sdot${i < score ? " on" : ""}"></span>`).join("");
 	},
 
 	/**

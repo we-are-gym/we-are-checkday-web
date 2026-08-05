@@ -6,7 +6,6 @@ import { recordStore } from "./record-store.js";
 import { escapeHtml, TPL } from "./templates.js";
 import { IB_KEYS, recordMax, recordTotal } from "./record-stats.js";
 import { itemsForRecord } from "./assessment-data.js";
-import { DOT_COUNT } from "./constants.js";
 import "./components/app-header.js";
 
 /** ?docID= 파라미터 (없으면 0 — 미조회 상태) */
@@ -18,15 +17,6 @@ const docId = getNumberParam("docID");
  */
 function getRecord() {
 	return recordStore.getState().records.find((r) => r.id === docId);
-}
-
-/**
- * 점수 도트 (읽기 전용) — 채워진 개수 = 점수
- * @param {number} score
- * @returns {string}
- */
-function scoreDots(score) {
-	return Array.from({ length: DOT_COUNT }, (_, i) => `<span class="sdot${i < score ? " on" : ""}"></span>`).join("");
 }
 
 /**
@@ -91,7 +81,7 @@ function renderEvals(rec) {
 						</div>
 						<div class="ev-score">
 							<span class="ev-score-val">${score}점</span>
-							<span class="score-dots">${scoreDots(score)}</span>
+							<span class="score-dots">${TPL.viewScoreDots({ score })}</span>
 						</div>
 					</div>
 					${checks ? `<ul class="ev-checks">${checks}</ul>` : ""}

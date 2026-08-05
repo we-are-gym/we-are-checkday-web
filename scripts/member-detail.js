@@ -12,11 +12,6 @@ import "./components/app-header.js";
 /** ?memberID= 파라미터 (없으면 0 — 미조회 상태) */
 const memberId = getNumberParam("memberID");
 
-/** 현재 회원 */
-function getMember() {
-	return getMemberById(memberStore.getState().members, memberId);
-}
-
 /** 회원의 기록을 날짜 오름차순으로 */
 function getRecords() {
 	return recordStore
@@ -162,7 +157,7 @@ function refreshRecords() {
  * @returns {void}
  */
 function init() {
-	const member = getMember();
+	const member = getMemberById(memberStore.getState().members, memberId);
 	if (!member) {
 		setHTML("stat-charts", "");
 		setHTML("record-list", '<p class="record-empty">회원을 찾을 수 없습니다. 회원 목록에서 다시 선택하세요.</p>');

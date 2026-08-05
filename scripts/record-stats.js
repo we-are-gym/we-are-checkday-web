@@ -97,11 +97,6 @@ export function sparkline(values, { width = 260, height = 68 } = {}) {
 }
 
 /**
- * 변화 표기 (증가 ▲ / 감소 ▼ / 유지 ―) — 상세·비교 화면 공용
- * @param {number} d 변화량
- * @returns {string} 델타 마크업
- */
-/**
  * 기록의 회차 표기만 추출한다 — 저장 형식 호환을 위해 "2026-04 (1회차)" 같은 레거시 문자열에서도 "1회차"를 뽑는다.
  * @param {string} [session] 기록의 회차 문자열 (예: "1회차", "2026-04 (1회차)")
  * @returns {string} 회차 표기 (추출 불가 시 원문)
@@ -112,6 +107,11 @@ export function sessionLabel(session) {
 	return m ? m[1] : String(session);
 }
 
+/**
+ * 변화 표기 (증가 ▲ / 감소 ▼ / 유지 ―) — 상세·비교 화면 공용
+ * @param {number} d 변화량
+ * @returns {string} 델타 마크업
+ */
 export function deltaHTML(d) {
 	if (d > 0) return `<span class="delta-up">▲ ${d}</span>`;
 	if (d < 0) return `<span class="delta-down">▼ ${Math.abs(d)}</span>`;

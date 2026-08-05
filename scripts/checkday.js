@@ -29,6 +29,9 @@ if (memberId) {
 }
 
 // ── 초기화 ──
+/** 폼 전체를 초기 상태로 되돌린다 (확인 후 resetCheckForm 호출)
+ * @returns {void}
+ */
 function resetEntireForm() {
 	if (!confirm("이 회원의 상담 내용을 모두 초기화할까요?")) return;
 	resetCheckForm();
