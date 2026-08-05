@@ -139,6 +139,7 @@
 	border-radius: 99px;
 	background: var(--blue);
 	transition: width 0.35s;
+	width: 0; /* 초기값 — JS가 인라인 width로 갱신 */
 }
 .total-grade {
 	display: flex;
@@ -150,6 +151,8 @@
 	font-weight: 600;
 	padding: 3px 10px;
 	border-radius: 99px;
+	background: var(--surface2); /* 초기(평가 전) 색 — JS가 인라인 background/color로 갱신 */
+	color: var(--text3);
 }
 .grade-hint {
 	font-size: 11px;
@@ -266,6 +269,32 @@ textarea.ib-comment {
 	outline: none;
 	resize: none;
 	min-height: 32px;
+}
+
+/* ── 인바디: 내장지방 레벨 행 (작성·편집·checkday 인라인에서 추출) ── */
+.ib-vis-row {
+	padding: 10px 13px;
+	border-top: 0.5px solid var(--border);
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+.ib-vis-field {
+	flex: 0 0 auto;
+}
+.ib-vis-label {
+	font-size: 10px;
+	font-weight: 600;
+	color: var(--text3);
+	display: block;
+	margin-bottom: 4px;
+	letter-spacing: 0.3px;
+}
+.ib-vis-input {
+	width: 70px;
+}
+.tag-vis {
+	padding-top: 18px;
 }
 textarea.ib-comment::placeholder {
 	color: var(--text3);

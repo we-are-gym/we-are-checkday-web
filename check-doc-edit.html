@@ -50,16 +50,10 @@
         </div>
         <div class="tr">
           <div class="prog-track">
-            <div class="prog-fill" id="prog-fill" style="width: 0%"></div>
+            <div class="prog-fill" id="prog-fill"></div>
           </div>
           <div class="total-grade">
-            <div
-              class="grade-pill"
-              id="grade-pill"
-              style="background: var(--surface2); color: var(--text3)"
-            >
-              평가 전
-            </div>
+            <div class="grade-pill" id="grade-pill">평가 전</div>
             <span class="grade-hint" id="grade-hint"></span>
           </div>
         </div>
@@ -75,38 +69,21 @@
         <div class="card">
           <div class="ib-grid" id="ib-grid"></div>
           <!-- 내장지방 -->
-          <div
-            style="
-              padding: 10px 13px;
-              border-top: 0.5px solid var(--border);
-              display: flex;
-              align-items: center;
-              gap: 12px;
-            "
-          >
-            <div style="flex: 0 0 auto">
-              <label
-                style="
-                  font-size: 10px;
-                  font-weight: 600;
-                  color: var(--text3);
-                  display: block;
-                  margin-bottom: 4px;
-                  letter-spacing: 0.3px;
-                "
+          <div class="ib-vis-row">
+            <div class="ib-vis-field">
+              <label class="ib-vis-label"
                 >내장지방 레벨</label
               >
               <input
-                class="ib-num"
+                class="ib-num ib-vis-input"
                 id="ib-vis"
                 type="number"
                 placeholder="8"
                 min="1"
                 max="20"
-                style="width: 70px"
               />
             </div>
-            <div id="tag-vis" style="padding-top: 18px"></div>
+            <div id="tag-vis" class="tag-vis"></div>
           </div>
           <div class="ib-comment-row">
             <span class="ib-comment-lbl">코멘트</span>

@@ -40,20 +40,10 @@
         </div>
         <div class="score-right">
           <div class="progress-track">
-            <div
-              class="progress-fill"
-              id="progress-fill"
-              style="width: 0%"
-            ></div>
+            <div class="progress-fill" id="progress-fill"></div>
           </div>
           <div class="grade-row">
-            <div
-              class="grade-badge"
-              id="grade-badge"
-              style="background: var(--surface2); color: var(--text3)"
-            >
-              평가 전
-            </div>
+            <div class="grade-badge" id="grade-badge">평가 전</div>
             <span class="grade-hint" id="grade-hint"></span>
           </div>
         </div>
@@ -62,39 +52,13 @@
       <!-- VO2 Max Calculator Card -->
       <div class="vo2-card" id="vo2-card">
         <div class="vo2-header">
-          <div
-            class="item-num"
-            style="
-              background: var(--surface2);
-              color: var(--text3);
-              font-size: 11px;
-              font-weight: 600;
-              width: 24px;
-              height: 24px;
-              border-radius: 50%;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              flex-shrink: 0;
-            "
-          >
-            8
-          </div>
+          <div class="item-num">8</div>
           <div class="vo2-title-area">
             <div class="vo2-title">VO₂ Max Test</div>
             <div class="vo2-desc">심폐 지구력 평가 · 스텝 테스트 자동 계산</div>
           </div>
           <div id="vo2-preview" class="vo2-result-preview">—</div>
-          <span
-            id="vo2-arrow"
-            style="
-              display: inline-block;
-              transition: transform 0.2s;
-              margin-left: 6px;
-              color: var(--text3);
-            "
-            >▾</span
-          >
+          <span id="vo2-arrow" class="vo2-arrow">▾</span>
         </div>
 
         <div class="vo2-body" id="vo2-body">
@@ -145,7 +109,7 @@
             </div>
           </div>
 
-          <div class="vo2-result-box" id="vo2-result-box" style="display: none">
+          <div class="vo2-result-box" id="vo2-result-box">
             <div class="vo2-result-top">
               <div class="vo2-value-group">
                 <div class="vo2-value-label">VO₂ Max 추정치</div>
@@ -157,17 +121,9 @@
                 <div class="vo2-grade-badge" id="vo2-grade-badge">—</div>
               </div>
             </div>
-            <div
-              style="
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                flex-wrap: wrap;
-                margin-top: 10px;
-              "
-            >
+            <div class="vo2-score-row">
               <div class="vo2-score-label">평가 점수</div>
-              <div style="display: flex; align-items: center; gap: 6px">
+              <div class="vo2-score-group">
                 <button class="score-btn" data-vo2-delta="-1" aria-label="감소">
                   −
                 </button>
@@ -181,7 +137,7 @@
                   +
                 </button>
               </div>
-              <div style="display: flex; gap: 4px">
+              <div class="vo2-dots">
                 <div class="dot" id="vd0"></div>
                 <div class="dot" id="vd1"></div>
                 <div class="dot" id="vd2"></div>
