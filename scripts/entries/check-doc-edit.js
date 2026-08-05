@@ -5,7 +5,7 @@ import { byId, delegate, queryAll } from "@base/UI.js";
 import { getNumberParam } from "@base/utils-url.js";
 import { recordStore } from "@check-doc/record-store.js";
 import { resolveRecordItems, ASSESSMENT_ITEMS_FULL } from "@check-doc/assessment-data.js";
-import { configureEvaluation, evals, renderBasicFunctionCards, updateTotal } from "@check-doc/evaluation.js";
+import { configureEvaluation, getEvals, renderBasicFunctionCards, updateTotal } from "@check-doc/evaluation.js";
 import { collectPayload, prefillEvalState, prefillForm } from "@check-doc/check-form-payload.js";
 import { setupCheckFormEvents } from "@check-doc/check-form-events.js";
 import { scoreState } from "@base/states.js";
@@ -65,8 +65,8 @@ function init() {
  */
 function rebuildEvalItems(nextItems) {
 	// 재렌더로 사라지기 전에 현재 폼 상태를 캡처 (configureEvaluation은 점수를 0으로 초기화한다)
-	const scores = evals.map((_, i) => scoreState.get(i));
-	const evalData = evals.map((_, i) => {
+	const scores = getEvals().map((_, i) => scoreState.get(i));
+	const evalData = getEvals().map((_, i) => {
 		const sp = byId(`sp-${i}`);
 		return {
 			checked: [...sp.querySelectorAll(".ctag.on")].map((el) => el.textContent),
@@ -97,19 +97,19 @@ function attachRemoveButtons() {
 
 /** 움직임 평가 항목 1개 추가 — 아직 사용하지 않은 항목을 목록 끝에 붙인다 (전부 사용 시 안내) */
 function addEvalItem() {
-	const used = new Set(evals.map((it) => it.name));
+	const used = new Set(getEvals().map((it) => it.name));
 	const next = ASSESSMENT_ITEMS_FULL.find((it) => !used.has(it.name));
 	if (!next) {
 		alert("추가할 평가 항목이 없습니다. (전체 8개 항목 사용 중)");
 		return;
 	}
-	rebuildEvalItems([...evals, next]);
+	rebuildEvalItems([...getEvals(), next]);
 }
 
 /** i번째 평가 항목 삭제 — 최소 1개는 남긴다 */
 function removeEvalItem(i) {
-	if (evals.length <= 1) return;
-	rebuildEvalItems(evals.filter((_, idx) => idx !== i));
+	if (getEvals().length <= 1) return;
+	rebuildEvalItems(getEvals().filter((_, idx) => idx !== i));
 }
 
 // 목표·체크·점수·피드백·인바디/VO₂ 위임은 checkday·편집 화면이 공유하는 check-form-events로 처리

@@ -6,7 +6,7 @@
 //   없(check-doc-new)므로, 부재 시 빈 값으로 처리한다(null-safe).
 import { byId } from "@base/UI.js";
 import { scoreState } from "@base/states.js";
-import { evals } from "./evaluation.js";
+import { getEvals } from "./evaluation.js";
 import { DOT_COUNT } from "@base/constants.js";
 import { updateInbodyTags } from "@base/inbody.js";
 import { updateTotal } from "./evaluation.js";
@@ -37,7 +37,7 @@ export function prefillEvalState(scores, evalData) {
 		byId(`sv-${i}`).textContent = score;
 		paintDots(i, score);
 	});
-	evals.forEach((_, i) => {
+	getEvals().forEach((_, i) => {
 		const ed = (evalData || [])[i];
 		if (!ed) return;
 		const sp = byId(`sp-${i}`);
@@ -111,7 +111,7 @@ export function prefillForm(rec) {
  * @returns {import("@base/store.js").CheckRecordPayload}
  */
 export function collectPayload() {
-	const evalData = evals.map((_, i) => {
+	const evalData = getEvals().map((_, i) => {
 		const sp = byId(`sp-${i}`);
 		return {
 			checked: [...sp.querySelectorAll(".ctag.on")].map((el) => el.textContent),
@@ -146,9 +146,9 @@ export function collectPayload() {
 		trainer: byId("m-trainer").value,
 		ib: Object.fromEntries(IB_IDS.map((k) => [k, byId(`ib-${k}`).value])),
 		ibComment: byId("ib-comment").value,
-		scores: evals.map((_, i) => scoreState.get(i)),
+		scores: getEvals().map((_, i) => scoreState.get(i)),
 		// 항목 이름 배열 — 기록별 항목 수(예: 편집 화면에서 추가/삭제한 7항목)를 조회·비교 화면이 그대로 재현한다
-		items: evals.map((it) => it.name),
+		items: getEvals().map((it) => it.name),
 		evalData,
 		goals,
 		goalMemo: byId("goal-memo").value,

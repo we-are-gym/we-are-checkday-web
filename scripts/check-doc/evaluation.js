@@ -11,9 +11,9 @@ import { getGradeMeta } from "@base/grade.js";
 import { GRADE_STYLES, VO2_GRADE_STYLES } from "@base/grade-styles.js";
 
 // ── 움직임 평가 데이터 (공용 모듈 기본 8개: 7개 + VO₂ 항목) ──
-// 주의: `evals`는 `export let` 라이브 바인딩이다. 화면이 configureEvaluation()을 호출하면
-//       이 모듈과 report.js·check-form-payload.js가 참조하는 evals가 그 화면의 항목 목록으로 갱신된다.
-export let evals = ASSESSMENT_ITEMS_FULL;
+// 주의: `evals`는 모듈 내부 상태다. 화면이 configureEvaluation()을 호출하면 갱신되고,
+//       외부는 getEvals()로만 읽는다 (check-form-payload·check-doc-edit·세션 리포트 공용).
+let evals = ASSESSMENT_ITEMS_FULL;
 
 /** 현재 평가 총점 최댓값 (기본 24 — configureEvaluation()으로 교체 가능) */
 let currentMax = MOTION_TOTAL_MAX;

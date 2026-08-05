@@ -7,7 +7,7 @@ import { byId, delegate } from "@base/UI.js";
 import { TPL } from "@base/templates.js";
 import { DOT_COUNT } from "@base/constants.js";
 import { scoreState } from "@base/states.js";
-import { toggleBasicFunctionDetail, adjustScore, updateVO2Disp, evals, updateTotal } from "./evaluation.js";
+import { toggleBasicFunctionDetail, adjustScore, updateVO2Disp, getEvals, updateTotal } from "./evaluation.js";
 import { updateInbodyTags } from "@base/inbody.js";
 import { appendCheckMovement, appendCheckMovementItemRow, resetFeedbacks } from "./feedback.js";
 
@@ -80,7 +80,7 @@ export function resetCheckForm() {
 		.querySelectorAll(".ctag,.fbtag,.goal-tag")
 		.forEach((el) => el.classList.remove("on"));
 	scoreState.reset();
-	evals.forEach((_, i) => {
+	getEvals().forEach((_, i) => {
 		byId(`sv-${i}`).textContent = "0";
 		for (let j = 0; j < DOT_COUNT; j++)
 			byId(`dot-${i}-${j}`).classList.remove("on");

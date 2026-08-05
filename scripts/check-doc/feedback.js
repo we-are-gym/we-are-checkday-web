@@ -58,26 +58,29 @@ export function appendCheckMovementItemRow(btn) {
 	checksWrap.lastElementChild.querySelector(".fb-check-input").focus();
 }
 
+/** 피드백 카드 1장을 카드 영역에 렌더링한다
+ * @param {import("./check-movement-item.js").CheckMovementItem} item 카드 데이터
+ * @returns {void}
+ */
+function renderFbCard(item) {
+	const wrap = document.createElement("div");
+	wrap.innerHTML = TPL.feedbackCard({ id: item.id, name: item.name, checkItems: item.checks });
+	byId("fb-cards").appendChild(wrap.firstElementChild);
+}
+
 /** 프리셋(또는 빈) 피드백 카드를 저장소에 추가하고 카드 영역에 렌더링한다
  * @param {{ name: string, checks: string[] }} [preset] 동작 프리셋 (없으면 빈 카드)
  * @returns {void}
  */
 export function appendCheckMovement(preset) {
-	const item = checkMovementStore.add(preset);
-	const wrap = document.createElement("div");
-	wrap.innerHTML = TPL.feedbackCard({ id: item.id, name: item.name, checkItems: item.checks });
-	byId("fb-cards").appendChild(wrap.firstElementChild);
+	renderFbCard(checkMovementStore.add(preset));
 }
 
 /** 현재 저장소의 피드백 데이터를 순회하며 카드를 다시 렌더링한다
  * @returns {void}
  */
 export function renderCheckMovementCards() {
-	checkMovementStore.getItems().forEach((item) => {
-		const wrap = document.createElement("div");
-		wrap.innerHTML = TPL.feedbackCard({ id: item.id, name: item.name, checkItems: item.checks });
-		byId("fb-cards").appendChild(wrap.firstElementChild);
-	});
+	checkMovementStore.getItems().forEach(renderFbCard);
 }
 
 /** 초기용: 피드백 카드를 비우고 저장소를 프리셋으로 재빌드 */
