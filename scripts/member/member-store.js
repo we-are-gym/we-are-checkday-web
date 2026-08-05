@@ -3,9 +3,9 @@
 import { createPersistentStore } from "@base/store.js";
 
 /** 세션 저장 키 */
-const STORAGE_KEY = "checkday.members.v1";
+const STORAGE_KEY = "checkday.members.v2";
 
-/** 시드 회원 6명 — 김씨 2인(김민준·김하늘) 포함 */
+/** 시드 회원 7명 — 김씨 3인(김민준·김하늘·김도윤) 포함 */
 export const SEED_MEMBERS = [
 	{ id: 1, name: "김민준", gender: "남", goal: "체지방 감소", trainer: "김지훈" },
 	{ id: 2, name: "이서연", gender: "여", goal: "근력 향상", trainer: "박소연" },
@@ -14,6 +14,7 @@ export const SEED_MEMBERS = [
 	{ id: 5, name: "정우진", gender: "남", goal: "근력 향상", trainer: "박소연" },
 	// 훼이크 데이터 보강: 체크기록 8건(스파크라인·변화 분석 데모용)을 가진 김씨 회원
 	{ id: 6, name: "김하늘", gender: "여", goal: "체지방 감소", trainer: "김지훈" },
+	{ id: 7, name: "김도윤", gender: "남", goal: "근육량 증가", trainer: "김지훈" },
 ];
 
 /** 회원 스토어 (전 화면 공용 단일 인스턴스) — 저장값이 손상되면 시드로 폴백 */
