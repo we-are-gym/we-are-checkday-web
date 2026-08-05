@@ -1,12 +1,14 @@
 // 파일 용도: 체크데이 상담지 시작점 — 날짜 표기 · 초기화 오케스트레이션 (checkday_1 전용, 레거시 8항목/24점 유지)
 // 새 체크기록 작성(check-doc-new) 화면은 전용 진입점 scripts/check-form-new.js를 사용한다 (5항목/15점).
 // ?memberID= 로 열리면 회원 이름·트레이너를 프리필한다 (checkday_1은 헤더·자동완성 없음).
-// DEPENDS: today(utils-string), byId·delegate·setText(UI), renderBasicFunctionCards/updateTotal(evaluation),
+// DEPENDS: today(utils-string), byId·delegate·setText(UI), getMemberById(member-utils),
+//          renderBasicFunctionCards/updateTotal(evaluation),
 //          setupCheckFormEvents/resetCodeForm(check-form-events), renderCheckMovementCards(feedback)
 import { today } from "@base/utils-string.js";
 import { byId, delegate, setText } from "@base/UI.js";
 import { getNumberParam } from "@base/utils-url.js";
 import { memberStore } from "@member/member-store.js";
+import { getMemberById } from "@member/member-utils.js";
 import { renderBasicFunctionCards, updateTotal } from "@check-doc/evaluation.js";
 import { renderCheckMovementCards } from "@check-doc/feedback.js";
 import { setupCheckFormEvents, resetCheckForm } from "@check-doc/check-form-events.js";
@@ -19,7 +21,7 @@ setText("date-badge", today());
 // ── 회원 정보 — ?memberID= 로 열릴 때만 이름·트레이너를 채운다 (null-safe) ──
 const memberId = getNumberParam("memberID");
 if (memberId) {
-	const member = memberStore.getState().members.find((m) => m.id === memberId);
+	const member = getMemberById(memberStore.getState().members, memberId);
 	if (member) {
 		const nameEl = byId("m-name");
 		const trainerEl = byId("m-trainer");

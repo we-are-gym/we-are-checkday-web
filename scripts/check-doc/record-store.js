@@ -27,7 +27,7 @@ function ib(w, m, fat, bmi, bfp, bmr, vis) {
  * @param {string} date YYYY-MM-DD
  * @param {string} session
  * @param {import("@base/store.js").InbodyData} ibData
- * @param {number[]} scores 점수 8개 (0~3)
+ * @param {number[]} scores 점수 배열 (항목별 0~3)
  * @param {Partial<import("@base/store.js").CheckRecordPayload>} [opts]
  * @returns {import("@base/store.js").CheckRecord}
  */

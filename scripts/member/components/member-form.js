@@ -2,7 +2,7 @@
 // 기법: 순수 함수형 컴포넌트 팩토리 + 네이티브 웹 컴포넌트 (light DOM 모드)
 // 사용: el.onSubmit = (data) => {} 콜백 설정
 // 결정: 저장 버튼은 to-be 지시에 따라 채색(btn-primary)을 주지 않는다 — 프로토타입과 달리 이 화면의 버튼은 무채색으로 둔다.
-import { defineComponent } from "../component-factory.js";
+import { defineComponent } from "@base/component-factory.js";
 
 defineComponent("member-form", {
 	/**
@@ -71,7 +71,7 @@ defineComponent("member-form", {
 	},
 	/**
 	 * 기존 회원 데이터를 폼에 되돌려 채운다 (member-edit 편집 진입용)
-	 * @param {import("../store.js").Member} member 회원 데이터
+	 * @param {import("@base/store.js").Member} member 회원 데이터
 	 */
 	prefill(member) {
 		const q = (id) => this.querySelector(`#${id}`);

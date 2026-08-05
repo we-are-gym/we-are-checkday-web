@@ -1,8 +1,8 @@
 // 파일 용도: 회원 목록 테이블 컴포넌트 — rows 속성으로 렌더, 행 선택·제거 이벤트 위임 (회원 관리 공용)
 // 기법: 순수 함수형 컴포넌트 팩토리 + 네이티브 웹 컴포넌트 (light DOM 모드)
 // 사용: el.rows = [...]; el.refresh(); / el.onSelect(id), el.onRemove(id) 콜백 설정
-import { defineComponent } from "../component-factory.js";
-import { TPL } from "../templates.js";
+import { defineComponent } from "@base/component-factory.js";
+import { TPL } from "@base/templates.js";
 
 defineComponent("member-table", {
 	/**
