@@ -52,6 +52,11 @@
 	gap: 10px;
 	margin-bottom: 1rem;
 }
+
+/* 상담일(date picker) 필드를 가진 회원 바만 4열 — checkday_1(레거시 3필드) 레이아웃은 유지 */
+.member-bar:has(#m-date) {
+	grid-template-columns: 1fr 1fr 1fr 1fr;
+}
 .mf label {
 	font-size: 10px;
 	font-weight: 600;

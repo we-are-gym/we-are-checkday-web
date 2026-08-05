@@ -19,7 +19,6 @@
           <h1>체크데이 상담지</h1>
           <p>그룹 트레이닝 격월 점검 · 30분</p>
         </div>
-        <div class="date-badge" id="date-badge" title="작성일"></div>
       </div>
 
       <!-- 회원 정보 -->
@@ -37,8 +36,12 @@
           <datalist id="member-list"></datalist>
         </div>
         <div class="mf">
+          <label for="m-date">상담일</label
+          ><input id="m-date" type="date" aria-label="상담일" />
+        </div>
+        <div class="mf">
           <label>회차</label
-          ><input id="m-session" type="text" placeholder="1회차" />
+          ><input id="m-session" type="text" placeholder="1회차" readonly />
         </div>
         <div class="mf">
           <label>트레이너</label

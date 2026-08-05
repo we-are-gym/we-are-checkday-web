@@ -1,12 +1,13 @@
 // 파일 용도: 체크기록 작성 화면(check-doc-new.html) 전용 진입점 — 베이직 펑션 5항목 × 3점 = 15점 만점
 // 회원 선택은 #m-member(이름 입력 + datalist) 1개로 통합하고(기존 #m-name 읽기전용 상자는 제거),
-// 회차는 선택 회원의 기존 체크기록 수 + 1로 자동 계산하여 "N회차" 형식으로 #m-session에 채운다.
-// 저장 시 payload.session은 사용자가 수정할 수 있는 #m-session 값을 그대로 기록한다.
-// DEPENDS: today(utils-string), byId·delegate·setText(UI), configureEvaluation/renderBasicFunctionCards/updateTotal(evaluation),
+// 회차는 선택 회원의 기존 체크기록 수 + 1로 자동 계산하여 "N회차" 형식으로 #m-session(읽기전용)에 채운다.
+// 상담일(#m-date)은 기본적으로 오늘(todayISO)이고, 저장 시 기록의 date로 사용한다.
+// 저장 시 payload.session은 #m-session 값을 그대로 기록한다.
+// DEPENDS: todayISO(utils-string), byId·delegate(UI), configureEvaluation/renderBasicFunctionCards/updateTotal(evaluation),
 //          setupCheckFormEvents/resetCheckForm(check-form-events), collectPayload(check-form-payload),
 //          renderCheckMovementCards(feedback), openReportModal/copyReportToClipboard(report)
-import { today } from "@base/utils-string.js";
-import { byId, delegate, setText } from "@base/UI.js";
+import { todayISO } from "@base/utils-string.js";
+import { byId, delegate } from "@base/UI.js";
 import { getNumberParam } from "@base/utils-url.js";
 import { memberStore } from "@member/member-store.js";
 import { recordStore } from "@check-doc/record-store.js";
@@ -21,7 +22,8 @@ import { escapeHtml } from "@base/templates.js";
 import "@base/components/app-header.js";
 
 // ── 날짜 ──
-setText("date-badge", today());
+// 상담일(date picker) 기본값 = 오늘 (기록 date는 YYYY-MM-DD 형식으로 저장)
+byId("m-date").value = todayISO();
 
 // ── 평가 구성: 베이직 펑션 5항목 × 3점 = 15점 만점 (카드 렌더 전에 설정) ──
 configureEvaluation({
@@ -53,7 +55,7 @@ function applyMember(mem) {
 	sessionInput.value = `${count + 1}회차`;
 }
 
-// 입력한 이름과 일치하는 회원을 찾아 트레이너·회차 자동 기입 (회차·트레이너는 이후 수정 가능)
+// 입력한 이름과 일치하는 회원을 찾아 트레이너·회차 자동 기입 (회차는 읽기전용, 트레이너는 이후 수정 가능)
 memberInput.addEventListener("input", () => {
 	const mem = members.find((m) => m.name === memberInput.value.trim());
 	if (mem) applyMember(mem);
@@ -122,7 +124,7 @@ function saveRecord() {
 		...prev,
 		records: [
 			...prev.records,
-			{ id: recId, memberId: matched.id, date: today(), payload },
+			{ id: recId, memberId: matched.id, date: byId("m-date").value || todayISO(), payload },
 		],
 		nextId: prev.nextId + 1,
 	}));
