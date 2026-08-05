@@ -31,9 +31,7 @@ configureEvaluation({
 
 // ── 회원 선택·트레이너 기입·회차 자동 계산 ──
 const memberId = getNumberParam("memberID");
-// 크럼(前화면) 동적 지정 — ?memberID= 로 진입하면 해당 회원 상세 화면으로 되돌아간다
-const header = document.querySelector("app-header");
-if (header && memberId) header.setAttribute("back", `member-detail.html?memberID=${memberId}`);
+// 헤더 브레드크럼은 HTML의 crumb-path 속성(홈 > 체크기록 작성)으로 고정 표시
 
 const members = memberStore.getState().members;
 const memberInput = byId("m-member");

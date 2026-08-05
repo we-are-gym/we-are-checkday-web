@@ -1,7 +1,7 @@
 // 파일 용도: 공용 헤더 막대 컴포넌트 — 브랜드(로고)·헤더 우측 영역(로그아웃) 제공 (전 화면 공용)
 // 기법: 순수 함수형 컴포넌트 팩토리 + 네이티브 웹 컴포넌트 (light DOM 모드)
 // light-DOM 자식(<app-gnb>, <app-help>)은 연결 시점에 .header-right로 옮겨 헤더 안에 배치한다.
-// 속성: crumb="페이지명" (브레드크럼 표시·클릭 시 前화면 이동), back="前화면 URL", logout (로그아웃 버튼 표시 → login.html 이동)
+// 속성: crumb-path="href>라벨|...|현재화면" (브레드크럼 경로 — 마지막 구간은 현재 화면, index.html 구간은 홈 아이콘), logout (로그아웃 버튼 표시 → login.html 이동)
 // 부수 임포트: app-gnb·app-help 등록까지 이 모듈 하나로 처리
 import { defineComponent } from "../component-factory.js";
 import { TPL } from "../templates.js";
@@ -19,13 +19,12 @@ defineComponent("app-header", {
 		this._lightChildren = [...this.children];
 	},
 	/**
-	 * 헤더 막대 HTML을 생성한다 (crumb·back·logout 속성 반영)
+	 * 헤더 막대 HTML을 생성한다 (crumb-path·logout 속성 반영)
 	 * @returns {string} 헤더 HTML
 	 */
 	render() {
 		return TPL.headerBar({
-			crumb: this.getAttribute("crumb") || "",
-			backUrl: this.getAttribute("back") || "",
+			crumbPath: this.getAttribute("crumb-path") || "",
 			showLogout: this.hasAttribute("logout"),
 		});
 	},
@@ -43,21 +42,6 @@ defineComponent("app-header", {
 				window.location.href = "login.html";
 			});
 		}
-		// 크럼(현재 화면 명칭) 클릭 → back 속성의 前화면으로 이동, 속성이 없으면 히스토리 뒤로
-		// 주의: back 속성은 진입점 JS가 memberId 등 동적 값으로 나중에 설정할 수 있으므로 클릭 시점에 읽는다.
-		const crumb = this.querySelector("[data-header-crumb]");
-		if (crumb) {
-			crumb.addEventListener("click", (e) => {
-				e.preventDefault();
-				const back = this.getAttribute("back");
-				if (back) {
-					window.location.href = back;
-				} else if (window.history.length > 1) {
-					window.history.back();
-				} else {
-					window.location.href = "index.html";
-				}
-			});
-		}
+		// 브레드크럼의 링크 구간(index.html·상위 화면)은 템플릿이 <a href>로 렌더링하므로 별도 이벤트 연결 불필요
 	},
 });

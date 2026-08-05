@@ -78,13 +78,32 @@ app-header {
 }
 
 /* ── 브레드크럼·텍스트 링크 버튼 ── */
-.crumb {
+.crumb-path {
+	display: flex;
+	align-items: center;
+	gap: 6px;
 	font-size: 12.5px;
+	color: var(--text3);
+}
+.crumb-home,
+.crumb-link {
+	display: inline-flex;
+	align-items: center;
 	color: var(--text3);
 	text-decoration: none;
 }
-.crumb:hover {
+.crumb-home:hover,
+.crumb-link:hover {
 	color: var(--text);
+}
+.crumb-sep {
+	color: var(--text3);
+	opacity: 0.6;
+	user-select: none;
+}
+.crumb-cur {
+	color: var(--text2);
+	font-weight: 600;
 }
 .link-btn {
 	background: none;

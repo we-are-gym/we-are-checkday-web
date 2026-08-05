@@ -35,6 +35,11 @@ export const GOAL_TAGS = [
 	"📈 근육량 증가",
 ];
 
+/**
+ * 홈 브레드크럼 아이콘 — 크럼 첫 구간(index.html 링크)용 인라인 SVG
+ */
+const HOME_ICON = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.8V21h14V9.8"/></svg>`;
+
 export const TPL = {
 	/**
 	 * 점수 조절 컨트롤 3종 (감소 − · 현재 점수 · 증가 +) — checkday 평가 카드·베이직 펑션 카드 공용
@@ -365,21 +370,36 @@ export const TPL = {
 
 	/**
 	 * 헤더 막대 (app-header 컴포넌트 내부용) — navHtml은 우측 영역의 <app-gnb> 등 이동 대상
-	 * 크럼은 현재 화면 명칭이며, backUrl(前화면)이 있으면 그 링크, 없으면 클릭 시 히스토리 뒤로가기로 동작한다.
-	 * @param {{ crumb?: string, showLogout?: boolean, navHtml?: string, backUrl?: string }} [p]
-	 *           backUrl: 크럼 클릭 시 이동할 前화면 URL (없으면 app-header가 history.back() 처리)
+	 * 크럼 경로(crumbPath)는 파이프(|)로 구분한 화면 경로다. 각 구간은 "href>라벨"(링크) 또는 라벨만(현재 화면)으로 표기한다.
+	 * 마지막 구간은 현재 화면(링크 아님·aria-current="page"), href가 index.html인 구간은 홈 아이콘으로 렌더링된다.
+	 * @param {{ crumbPath?: string, showLogout?: boolean, navHtml?: string }} [p]
 	 * @returns {string}
 	 */
-	headerBar({
-		crumb = "",
-		showLogout = true,
-		navHtml = "",
-		backUrl = "",
-	} = {}) {
-		const crumbHtml = crumb
-			? backUrl
-				? `<a class="crumb" href="${escapeHtml(backUrl)}" data-header-crumb>${escapeHtml(crumb)}</a>`
-				: `<a class="crumb" role="link" tabindex="0" data-header-crumb>${escapeHtml(crumb)}</a>`
+	headerBar({ crumbPath = "", showLogout = true, navHtml = "" } = {}) {
+		// 파이프 구간을 "href>라벨" | "라벨" 로 해석 (라벨만 있는 마지막 구간 = 현재 화면)
+		const segments = crumbPath
+			.split("|")
+			.filter(Boolean)
+			.map((seg) => {
+				const sep = seg.indexOf(">");
+				return sep === -1
+					? { href: "", label: seg }
+					: { href: seg.slice(0, sep), label: seg.slice(sep + 1) };
+			});
+		const crumbHtml = segments.length
+			? `<div class="crumb-path">${segments
+					.map((seg, i) => {
+						const isLast = i === segments.length - 1;
+						const part = isLast
+							? `<span class="crumb-cur" aria-current="page">${escapeHtml(seg.label)}</span>`
+							: seg.href === "index.html"
+								? `<a class="crumb-home" href="index.html" aria-label="메인으로 이동">${HOME_ICON}</a>`
+								: seg.href
+									? `<a class="crumb-link" href="${escapeHtml(seg.href)}">${escapeHtml(seg.label)}</a>`
+									: `<span class="crumb-cur">${escapeHtml(seg.label)}</span>`;
+						return part + (isLast ? "" : `<span class="crumb-sep" aria-hidden="true">›</span>`);
+					})
+					.join("")}</div>`
 			: "";
 
 		return `
