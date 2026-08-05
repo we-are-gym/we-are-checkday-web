@@ -89,7 +89,7 @@
 	outline: none;
 }
 .mf select:focus-visible {
-	border-color: var(--btn-blue);
+	border-color: var(--accent);
 }
 
 /* ── 총점 바 ── */
@@ -537,7 +537,7 @@ textarea.consult-memo::placeholder {
 
 /* ── 버튼 ──
    주의: checkday_1.html은 layout-shell을 로드하지 않고 이 시트만 사용하므로
-   .btn/.btn-ghost 기본은 여기서 자립해야 한다(삭제 금지). 색상은 --btn-blue 등 토큰으로 공용화한다. */
+   .btn/.btn-ghost 기본은 여기서 자립해야 한다(삭제 금지). 색상은 --accent 등 토큰으로 공용화한다. */
 .actions {
 	display: flex;
 	gap: 8px;
@@ -567,12 +567,12 @@ textarea.consult-memo::placeholder {
 	background: var(--surface2);
 }
 .btn-primary {
-	background: var(--btn-blue);
-	color: var(--btn-blue-text);
-	border-color: var(--btn-blue);
+	background: var(--accent);
+	color: var(--on-accent);
+	border-color: var(--accent);
 }
 .btn-primary:hover {
-	background: var(--btn-blue-hover);
+	background: var(--accent-hover);
 }
 
 /* ── 모달 ── */

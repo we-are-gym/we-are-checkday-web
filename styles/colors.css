@@ -53,13 +53,8 @@
 	/* 로그인 화면 브랜드 포인트 (layout-login.css) */
 	--logo-coral: #ff6f5e;
 
-	/* 체크기록 조회 목표 칩 배경 (layout-check-doc-view.css .goal-chip) */
-	--accent-dim: rgba(124, 164, 99, 0.14);
-
-	/* 체크데이 작성 화면 버튼·포커스 파랑 (layout-checkday.css — checkday_1 전용 시트) */
-	--btn-blue: #3478d4;
-	--btn-blue-hover: #2e68bd;
-	--btn-blue-text: #ffffff;
+	/* 체크데이 작성·편집 화면 버튼·포커스 파랑 (layout-checkday.css — --accent와 동일 계열, checkday_1 전용 시트 자립용) */
+	--on-accent: #ffffff;
 
 	/* 회원 상세 변화 분석 델타 색 (layout-member-detail.css .delta-up/.delta-down) */
 	--delta-up: #5a9bd8;
