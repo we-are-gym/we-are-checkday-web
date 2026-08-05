@@ -62,9 +62,11 @@ function init() {
 /**
  * 항목 목록을 교체해 평가 카드를 재렌더한다 — 현재 점수·체크·메모를 캡처해 복원하고 만점(항목 수 × 3점)을 동적 갱신한다.
  * @param {Array<{ name: string, desc: string, checks?: string[], vo2?: boolean }>} nextItems 새 항목 목록
+ * @param {number} [removedIndex] 삭제된 항목의 캡처 인덱스 — 제공 시 해당 캡처를 제거해 새 카드 수와 정렬을 맞춘다
+ *   (제거하지 않으면 prefillEvalState가 없는 sv-N을 참조해 TypeError로 중단된다)
  * @returns {void}
  */
-function rebuildEvalItems(nextItems) {
+function rebuildEvalItems(nextItems, removedIndex) {
 	// 재렌더로 사라지기 전에 현재 폼 상태를 캡처 (configureEvaluation은 점수를 0으로 초기화한다)
 	const scores = getEvals().map((_, i) => scoreState.get(i));
 	const evalData = getEvals().map((_, i) => {
@@ -74,6 +76,10 @@ function rebuildEvalItems(nextItems) {
 			memo: (sp.querySelector(".eval-memo") || {}).value || "",
 		};
 	});
+	if (removedIndex !== undefined) {
+		scores.splice(removedIndex, 1);
+		evalData.splice(removedIndex, 1);
+	}
 	configureEvaluation({ items: nextItems, max: nextItems.length * SCORE_MAX });
 	byId("eval-cards").innerHTML = "";
 	renderBasicFunctionCards();
@@ -110,7 +116,7 @@ function addEvalItem() {
 /** i번째 평가 항목 삭제 — 최소 1개는 남긴다 */
 function removeEvalItem(i) {
 	if (getEvals().length <= 1) return;
-	rebuildEvalItems(getEvals().filter((_, idx) => idx !== i));
+	rebuildEvalItems(getEvals().filter((_, idx) => idx !== i), i);
 }
 
 // 목표·체크·점수·피드백·인바디/VO₂ 위임은 checkday·편집 화면이 공유하는 check-form-events로 처리
