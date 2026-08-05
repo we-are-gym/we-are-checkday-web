@@ -6,6 +6,8 @@ main { padding: 24px 16px 64px; display: flex; flex-direction: column; gap: 22px
 /* ── 기록 헤더 ── */
 .view-head { background: var(--surface); border: .5px solid var(--border2); border-radius: var(--r); padding: 20px; display: flex; flex-direction: column; gap: 10px; }
 .vh-title { font-size: 21px; font-weight: 700; color: var(--text); margin: 0; }
+.vh-member { color: var(--text); text-decoration: none; }
+.vh-member:hover { color: var(--accent); text-decoration: underline; }
 .vh-meta { display: flex; gap: 18px; flex-wrap: wrap; }
 .meta-item { font-size: 12.5px; color: var(--text3); }
 .meta-item b { color: var(--text2); font-weight: 500; margin-right: 6px; }

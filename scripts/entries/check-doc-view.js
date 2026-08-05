@@ -5,7 +5,7 @@ import { getNumberParam } from "@base/utils-url.js";
 import { recordStore } from "@check-doc/record-store.js";
 import { escapeHtml, TPL } from "@base/templates.js";
 import { IB_KEYS, recordMax, recordTotal } from "@check-doc/record-stats.js";
-import { itemsForRecord } from "@check-doc/assessment-data.js";
+import { resolveRecordItems } from "@check-doc/assessment-data.js";
 import "@base/components/app-header.js";
 
 /** ?docID= 파라미터 (없으면 0 — 미조회 상태) */
@@ -20,21 +20,24 @@ function getRecord() {
 }
 
 /**
- * 기록 헤더 (회차·날짜·회원·트레이너·총점)
+ * 기록 헤더 — 제목은 회원명(상세 화면 링크), 메타는 회차·작성일·트레이너·총점
  * @param {import("@base/store.js").CheckRecord} rec
  * @returns {void}
  */
 function renderHead(rec) {
 	const p = rec.payload;
-	setText("vh-title", p.session || rec.date);
+	setHTML(
+		"vh-title",
+		`<a class="vh-member" href="member-detail.html?memberID=${rec.memberId}">${escapeHtml(p.name || "회원")}</a>`,
+	);
 	const items = [
-		["회원", p.name || "-"],
+		["회차", p.session || "-"],
 		["작성일", rec.date],
 		["담당 트레이너", p.trainer || "-"],
 		["총점", `${recordTotal(p)} / ${recordMax(rec.payload)}`],
 	];
 	setHTML("vh-meta", items.map(([k, v]) => `<span class="meta-item"><b>${k}</b>${escapeHtml(v)}</span>`).join(""));
-	document.title = `${p.session || "체크기록"} — 조회`;
+	document.title = `${p.session || "체크기록"} — ${p.name || ""} 조회`;
 }
 
 /**
@@ -59,7 +62,7 @@ function renderInbody(rec) {
 }
 
 /**
- * 움직임 평가 카드 목록 (5항목 기록은 5장·레거시 8항목은 8장 — itemsForRecord로 기록별 맞춤)
+ * 움직임 평가 카드 목록 (기록별 항목 — payload.items가 있으면 그대로, 없으면 scores 길이로 폴백)
  * @param {import("@base/store.js").CheckRecord} rec
  * @returns {void}
  */
@@ -67,7 +70,7 @@ function renderEvals(rec) {
 	const { scores = [], evalData = [] } = rec.payload;
 	setHTML(
 		"eval-list",
-		itemsForRecord(scores.length).map((item, i) => {
+		resolveRecordItems(rec.payload).map((item, i) => {
 			const score = scores[i] ?? 0;
 			const ed = evalData[i] || { checked: [], memo: "" };
 			const checks = (ed.checked || []).map((c) => `<li>${escapeHtml(c)}</li>`).join("");
@@ -90,7 +93,7 @@ function renderEvals(rec) {
 				</div>`;
 		}).join(""),
 	);
-	setText("evals-total", `총점 ${recordTotal(rec.payload)}`);
+	setText("evals-total", `총점 ${recordTotal(rec.payload)} / ${recordMax(rec.payload)}`);
 }
 
 /**
