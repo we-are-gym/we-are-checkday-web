@@ -775,7 +775,7 @@ textarea.consult-memo::placeholder {
 
 	/* +체크항목추가 -> 얘도 파랑으로 변경 */
 	/* color: var(--blue); */
-	color: #3478d4;
+	color: var(--accent);
 
 	background: none;
 	border: none;

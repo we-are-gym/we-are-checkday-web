@@ -124,7 +124,7 @@ app-header {
 .btn:hover {
 	background: var(--surface2);
 	color: var(--text);
-	border-color: #3a3a3a;
+	border-color: var(--border2);
 }
 .btn:active {
 	transform: scale(0.97);

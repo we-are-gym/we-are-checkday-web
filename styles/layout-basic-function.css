@@ -337,7 +337,7 @@
 }
 .btn-primary {
   background: var(--blue);
-  color: #fff;
+  color: var(--text);
   border-color: var(--blue);
 }
 .btn-primary:hover {
