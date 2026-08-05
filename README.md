@@ -6,8 +6,6 @@
 
 - 적어도 화면 크기가 노트북 화면보다는 크거나 같아야 제대로 사용할 수 있다. 휴대기기처럼 작은 화면으로도 제대로 사용할 수 있으면 더 좋다.
 - 버튼을 눌렀을 때 아무 응답이 없으면 안 됩니다.
-- 기존 주석은 함부로 지우지 마십시오.
-- 구현하는 동안, 지시나 명세에 없어서 스스로 내려야 했던 결정, 감수한 트레이드오프, 쓸만한 관련 정보 따위를 주석으로 작성하여 가장 잘 어울리는 소스코드에 달아 두십시오.
 
 ## 코드 구조
 
@@ -36,7 +34,7 @@
   - 평가 공용 모듈
     - `inbody.js`
     - `vo2.js`
-    - `report.js`
+    - `session-report.js`
     - `assessment-data.js`
     - `feedback.js`
     - `evaluation.js`
@@ -50,14 +48,6 @@
 
 - `styles/colors.css`(공용 단일 다크 팔레트 + 코랄 포인트)와 `styles/font.css`(공용 글꼴)를 모든 페이지가 먼저 로드하고, 화면별 레이아웃(`layout-*.css`)을 뒤에 로드한다.
 - 각 화면은 `:root` 색상·글꼴을 재정의하지 않는다.
-
-### 캐시 버전 관리
-
-- 정적 서빙 환경에서 브라우저가 이전 CSS·진입 스크립트를 캐시해 최신 코드가 반영되지 않는 문제를 막기 위해,
-  각 화면 HTML의 `<link rel="stylesheet">`·`<script type="module">` 태그에 `?v=YYYYMMDD` 캐시 버전 쿼리를 붙인다.
-- 코드를 바꾼 뒤에는 다음 명령으로 모든 화면의 버전을 오늘 날짜로 일괄 갱신한다:
-  `node scripts/bump-version.mjs [YYYYMMDD]` (인자 없으면 오늘 날짜)
-- 레거시 화면(`checkday_1.html`·`basic_function_assessment_2.html`)은 변경 대상에서 제외한다.
 
 ## 코드 스타일
 
