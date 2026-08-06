@@ -6,9 +6,9 @@ import {
 	byId,
 	delegate,
 	queryAll,
+	queryOne,
 	setHTML,
 	setText,
-	queryOne,
 } from "@base/UI.js";
 import { getNumberParam } from "@base/utils-url.js";
 import {
@@ -412,7 +412,9 @@ function init() {
 // 이벤트 1회 등록
 delegate(document, "click", "[data-del-record]", (e, el) => {
 	e.stopPropagation();
-
+	if (!confirm("체크기록을 삭제하시겠습니까?")) {
+		return;
+	}
 	recordStore.setState((prev) => ({
 		...prev,
 		records: prev.records.filter(
