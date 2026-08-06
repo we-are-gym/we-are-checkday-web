@@ -2,7 +2,9 @@
 // 각 컴포넌트는 customElements.define으로 자동 등록됨
 import "./button/button.js";
 import "./link-button/link-button.js";
+import "./card-panel/card-panel.js";
 
 // 타입 내보내기 (JSDoc용)
 /** @typedef {import("./button/button.js")} UIButton */
 /** @typedef {import("./link-button/link-button.js")} UILinkButton */
+/** @typedef {import("./card-panel/card-panel.js")} UICardPanel */
