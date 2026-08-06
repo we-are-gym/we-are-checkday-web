@@ -28,10 +28,12 @@
 	--blue-hover: #2e68bd;
 	--blue-bg: rgba(52, 120, 212, 0.14);
 	--blue-fg: #7eb3f5;
+	--blue-bg-strong: rgba(52, 120, 212, 0.16);
+	--blue-fg-strong: #3478d4;
 
-	/* ── 등급·인바디 4색 — grade-styles.js·inbody.js가 JS 인라인으로 소비 → :root 유지 필수 ── */
-	--green-bg: rgba(52, 120, 212, 0.16);
-	--green-fg: #3478d4;
+	/* ── 등급·인바디 3색 (그린 제거, 블루·오렌지·레드만) — grade-styles.js·inbody.js가 JS 인라인으로 소비 → :root 유지 필수 ── */
+	--success-bg: rgba(52, 120, 212, 0.16);
+	--success-fg: #3478d4;
 	--orange-bg: #3a2800;
 	--orange-fg: #f5a830;
 	--red-bg: rgba(224, 138, 122, 0.12);

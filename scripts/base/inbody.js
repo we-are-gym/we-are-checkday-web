@@ -38,8 +38,8 @@ export function updateInbodyTags() {
 				{
 					max: 23.4,
 					label: "정상",
-					bg: "var(--green-bg)",
-					fg: "var(--green-fg)",
+					bg: "var(--success-bg)",
+					fg: "var(--success-fg)",
 				},
 				{
 					max: 999,
@@ -60,8 +60,8 @@ export function updateInbodyTags() {
 				{
 					max: 27,
 					label: "정상",
-					bg: "var(--green-bg)",
-					fg: "var(--green-fg)",
+					bg: "var(--success-bg)",
+					fg: "var(--success-fg)",
 				},
 				{
 					max: 32,
@@ -88,8 +88,8 @@ export function updateInbodyTags() {
 				{
 					max: 22.9,
 					label: "정상",
-					bg: "var(--green-bg)",
-					fg: "var(--green-fg)",
+					bg: "var(--success-bg)",
+					fg: "var(--success-fg)",
 				},
 				{
 					max: 24.9,
@@ -116,8 +116,8 @@ export function updateInbodyTags() {
 				{
 					max: 20.9,
 					label: "정상",
-					bg: "var(--green-bg)",
-					fg: "var(--green-fg)",
+					bg: "var(--success-bg)",
+					fg: "var(--success-fg)",
 				},
 				{
 					max: 999,
@@ -132,8 +132,8 @@ export function updateInbodyTags() {
 		let vl, vb, vf;
 		if (vis <= 9) {
 			vl = "정상";
-			vb = "var(--green-bg)";
-			vf = "var(--green-fg)";
+			vb = "var(--success-bg)";
+			vf = "var(--success-fg)";
 		} else if (vis <= 14) {
 			vl = "경계";
 			vb = "var(--orange-bg)";

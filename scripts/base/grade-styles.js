@@ -5,8 +5,8 @@
 export const GRADE_STYLES = {
 	"평가 전": { bg: "var(--surface2)", fg: "var(--text3)", hint: "" },
 	우수: {
-		bg: "var(--green-bg)",
-		fg: "var(--green-fg)",
+		bg: "var(--success-bg)",
+		fg: "var(--success-fg)",
 		hint: "전반적으로 안정적인 패턴",
 	},
 	양호: {
@@ -28,7 +28,7 @@ export const GRADE_STYLES = {
 
 /** VO₂ 등급 → 배경/글자색 */
 export const VO2_GRADE_STYLES = {
-	excellent: { bg: "var(--green-bg)", fg: "var(--green-fg)" },
+	excellent: { bg: "var(--success-bg)", fg: "var(--success-fg)" },
 	good: { bg: "var(--blue-bg)", fg: "var(--blue-fg)" },
 	above_avg: { bg: "var(--blue-bg)", fg: "var(--blue-fg)" },
 	average: { bg: "var(--orange-bg)", fg: "var(--orange-fg)" },
@@ -43,7 +43,7 @@ export function getScoreColor(score) {
 		{ bg: "var(--surface2)", fg: "var(--text3)" },
 		{ bg: "var(--orange-bg)", fg: "var(--orange-fg)" },
 		{ bg: "var(--blue-bg)", fg: "var(--blue-fg)" },
-		{ bg: "var(--green-bg)", fg: "var(--green-fg)" },
+		{ bg: "var(--success-bg)", fg: "var(--success-fg)" },
 	];
 	return map[score] || map[0];
 }
