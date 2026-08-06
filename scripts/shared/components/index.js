@@ -7,6 +7,7 @@ import "./checkbox/checkbox.js";
 import "./data-table/data-table.js";
 import "./score-controller/score-controller.js";
 import "./score-dots/score-dots.js";
+import "./sparkline/sparkline.js";
 
 // 타입 내보내기 (JSDoc용)
 /** @typedef {import("./button/button.js")} UIButton */
@@ -16,3 +17,4 @@ import "./score-dots/score-dots.js";
 /** @typedef {import("./data-table/data-table.js")} UIDataTable */
 /** @typedef {import("./score-controller/score-controller.js")} UIScoreController */
 /** @typedef {import("./score-dots/score-dots.js")} UIScoreDots */
+/** @typedef {import("./sparkline/sparkline.js")} UISparkline */
