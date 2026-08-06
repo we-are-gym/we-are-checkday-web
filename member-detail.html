@@ -23,13 +23,23 @@
       </app-header>
 
       <main>
-        <!-- 페이지 머리 (프로토타입 배치) — 회원 이름 + 기록 건수 + 편집 버튼 -->
+        <!-- 페이지 머리 (프로토타입 배치) — 회원 이름 + 기록 건수 + 편집 버튼 + PDF 내보내기 -->
         <div class="page-head">
           <div>
             <div class="page-title" id="md-title">―</div>
             <div class="page-sub" id="md-sub">―</div>
           </div>
-          <a class="btn btn-ghost" id="edit-member-btn" href="#">편집</a>
+          <div style="display: flex; gap: 8px; align-items: center">
+            <a class="btn btn-ghost" id="edit-member-btn" href="#">편집</a>
+            <button
+              type="button"
+              class="btn btn-ghost"
+              id="export-pdf-btn"
+              aria-label="회원 정보 PDF 내보내기"
+            >
+              PDF 내보내기
+            </button>
+          </div>
         </div>
 
         <!-- 좌우 2단 컬럼 (프로토타입 two-col 배치) -->

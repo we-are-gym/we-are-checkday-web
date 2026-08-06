@@ -343,18 +343,27 @@ main {
 	display: flex;
 	flex-direction: column;
 }
+
 .compare-result .compare-table {
 	margin-bottom: 14px;
 }
-.compare-result .compare-table:last-child {
-	margin-bottom: 0;
+
+.compare-result .compare-table-container {
+	margin-top: auto;
+	margin-bottom: auto;
 }
+
+.compare-result .compare-table-container:first-child {
+	margin-top: 0;
+}
+
 .compare-result hr.div {
 	border: none;
 	border-top: 0.5px solid var(--border2);
 	margin-top: auto; /* 움직임 평가 표를 카드 하단에 고정 (비교 카드 하단 정렬) */
 	margin-bottom: 14px;
 }
+
 .compare-result .section-title {
 	font-size: 13px;
 	font-weight: 700;
