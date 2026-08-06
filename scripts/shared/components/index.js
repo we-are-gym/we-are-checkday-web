@@ -3,8 +3,10 @@
 import "./button/button.js";
 import "./link-button/link-button.js";
 import "./card-panel/card-panel.js";
+import "./checkbox/checkbox.js";
 
 // 타입 내보내기 (JSDoc용)
 /** @typedef {import("./button/button.js")} UIButton */
 /** @typedef {import("./link-button/link-button.js")} UILinkButton */
 /** @typedef {import("./card-panel/card-panel.js")} UICardPanel */
+/** @typedef {import("./checkbox/checkbox.js")} UICheckbox */
