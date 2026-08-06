@@ -5,6 +5,7 @@ import "./link-button/link-button.js";
 import "./card-panel/card-panel.js";
 import "./checkbox/checkbox.js";
 import "./data-table/data-table.js";
+import "./score-controller/score-controller.js";
 
 // 타입 내보내기 (JSDoc용)
 /** @typedef {import("./button/button.js")} UIButton */
@@ -12,3 +13,4 @@ import "./data-table/data-table.js";
 /** @typedef {import("./card-panel/card-panel.js")} UICardPanel */
 /** @typedef {import("./checkbox/checkbox.js")} UICheckbox */
 /** @typedef {import("./data-table/data-table.js")} UIDataTable */
+/** @typedef {import("./score-controller/score-controller.js")} UIScoreController */
