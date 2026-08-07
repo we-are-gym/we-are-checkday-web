@@ -1,6 +1,7 @@
 // 파일 용도: 체크기록 편집 화면(check-doc-edit.html)
 // ?docID= 기록을 불러와 상담지 폼(renderBasicFunctionCards 재사용)에 프리필하고, 움직임 평가 항목 추가/삭제(만점 동적 계산) 후
 // 수정 내용을 기록 스토어에 저장한다.
+
 import "@base/components/app-header.js";
 import { SCORE_MAX } from "@base/constants.js";
 import { scoreState } from "@base/states.js";
@@ -24,6 +25,7 @@ import {
 } from "@check-doc/evaluation.js";
 import { recordStore } from "@check-doc/record-store.js";
 import { getRecordById } from "@member/member-utils.js";
+import "@shared/components/index.js";
 
 /** ?docID= 파라미터 */
 const docId = getNumberParam("docID");
@@ -43,6 +45,7 @@ function saveRecord() {
 			r.id === docId ? { ...r, payload: collectPayload() } : r,
 		),
 	}));
+
 	window.location.href = `check-doc-view.html?docID=${docId}`;
 }
 
@@ -56,20 +59,37 @@ function resetForm() {
 /** 초기화: 편집 대상 기록을 불러와 평가 카드를 렌더링하고 폼을 프리필한다 */
 function init() {
 	const rec = getRecord();
+	console.log({ rec });
+
 	if (!rec) {
+		console.log("기록을 찾을 수 없습니다. 목록에서 다시 선택하세요.");
+
 		byId("eval-cards").innerHTML =
 			'<p class="goal-empty">기록을 찾을 수 없습니다. 목록에서 다시 선택하세요.</p>';
+
 		byId("fb-cards").style.display = "none";
 		byId("btn-cancel").href = "members.html";
+
 		queryAll("[data-action]").forEach((el) => (el.style.display = "none"));
+
 		return;
 	}
-	byId("btn-cancel").href = `check-doc-view.html?docID=${docId}`;
+
+	const cancelURL = `check-doc-view.html?docID=${docId}`;
+	console.log({ cancelURL });
+
+	byId("btn-cancel").href = cancelURL;
+
 	// 기록의 항목 구성(payload.items 우선)에 맞춰 평가를 설정 — 5항목 15점·7항목 21점·레거시 8항목 24점 (카드 렌더 전 호출)
 	const items = resolveRecordItems(rec.payload);
+	console.table(items);
+
 	configureEvaluation({ items, max: items.length * SCORE_MAX });
 	renderBasicFunctionCards();
+
 	attachRemoveButtons();
+	console.log("평가 카드별 삭제 버튼을 붙였습니다.");
+
 	prefillForm(rec);
 	byId("eval-sec-sub").textContent = `${items.length}개 항목 · 각 0–3점`;
 }
@@ -84,8 +104,10 @@ function init() {
 function rebuildEvalItems(nextItems, removedIndex) {
 	// 재렌더로 사라지기 전에 현재 폼 상태를 캡처 (configureEvaluation은 점수를 0으로 초기화한다)
 	const scores = getEvals().map((_, i) => scoreState.get(i));
+
 	const evalData = getEvals().map((_, i) => {
 		const sp = byId(`sp-${i}`);
+
 		return {
 			checked: [...sp.querySelectorAll(".ctag.on")].map(
 				(el) => el.textContent,
@@ -93,14 +115,17 @@ function rebuildEvalItems(nextItems, removedIndex) {
 			memo: (sp.querySelector(".eval-memo") || {}).value || "",
 		};
 	});
+
 	if (removedIndex !== undefined) {
 		scores.splice(removedIndex, 1);
 		evalData.splice(removedIndex, 1);
 	}
+
 	configureEvaluation({
 		items: nextItems,
 		max: nextItems.length * SCORE_MAX,
 	});
+
 	byId("eval-cards").innerHTML = "";
 	renderBasicFunctionCards();
 	prefillEvalState(scores, evalData);
@@ -113,10 +138,12 @@ function rebuildEvalItems(nextItems, removedIndex) {
 function attachRemoveButtons() {
 	document.querySelectorAll("#eval-cards .eval-item").forEach((card, i) => {
 		const btn = document.createElement("button");
+
 		btn.type = "button";
 		btn.className = "eval-remove";
 		btn.dataset.evalRemove = String(i);
 		btn.textContent = "✕";
+
 		btn.setAttribute("aria-label", `평가 항목 ${i + 1} 삭제`);
 		card.querySelector(".eval-top").appendChild(btn);
 	});
