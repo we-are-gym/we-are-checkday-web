@@ -42,10 +42,28 @@ function render() {
 
 /**
  * 회원 삭제 (스토어 상태 갱신 → 구독자 재렌더링)
+ * 확인 다이얼로그 표시, 연관 체크기록 있으면 삭제 불가
  * @param {number} id 삭제할 회원 고유 번호
  * @returns {void}
  */
 function removeMember(id) {
+	const member = memberStore.getState().members.find((m) => m.id === id);
+	if (!member) return;
+
+	// 연관 체크기록 확인
+	const hasRecords = recordStore
+		.getState()
+		.records.some((r) => r.memberId === id);
+	if (hasRecords) {
+		alert("체크기록이 존재하는 회원은 삭제할 수 없습니다.");
+		return;
+	}
+
+	// 확인 다이얼로그
+	if (!confirm(`회원 ${member.name} 님을 삭제하시겠습니까?`)) {
+		return;
+	}
+
 	memberStore.setState((prev) => ({
 		...prev,
 		members: prev.members.filter((m) => m.id !== id),
