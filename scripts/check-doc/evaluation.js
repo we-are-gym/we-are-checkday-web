@@ -1,14 +1,19 @@
 // 파일 용도: 평가 논리 — 움직임 평가 목록 구성 · VO₂ 계산 연동 · 평가 카드 빌드 · 점수/등급/총점 갱신 (checkday 공용)
 // DEPENDS: ASSESSMENT_ITEMS, clamp·parseToNum(validation), byId(UI), scoreState(states), calcVo2Assessment(vo2), STYLE 등
-import { ASSESSMENT_ITEMS_FULL } from "./assessment-data.js";
-import { clamp, parseToNum } from "@base/validation.js";
 import { byId } from "@base/UI.js";
+import {
+	DOT_COUNT,
+	MOTION_TOTAL_MAX,
+	SCORE_MAX,
+	SCORE_MIN,
+} from "@base/constants.js";
+import { GRADE_STYLES, VO2_GRADE_STYLES } from "@base/grade-styles.js";
+import { getGradeMeta } from "@base/grade.js";
 import { scoreState } from "@base/states.js";
 import { TPL } from "@base/templates.js";
-import { DOT_COUNT, MOTION_TOTAL_MAX, SCORE_MIN, SCORE_MAX } from "@base/constants.js";
+import { clamp, parseToNum } from "@base/validation.js";
 import { calcVo2Assessment } from "@base/vo2.js";
-import { getGradeMeta } from "@base/grade.js";
-import { GRADE_STYLES, VO2_GRADE_STYLES } from "@base/grade-styles.js";
+import { ASSESSMENT_ITEMS_FULL } from "./assessment-data.js";
 
 // ── 움직임 평가 데이터 (공용 모듈 기본 8개: 7개 + VO₂ 항목) ──
 // 주의: `evals`는 모듈 내부 상태다. 화면이 configureEvaluation()을 호출하면 갱신되고,
@@ -104,11 +109,14 @@ export function renderBasicFunctionCards() {
 		const tags = e.checks
 			.map(
 				(ch) =>
-					`<span class="ctag" role="button" tabindex="0" aria-pressed="false">${ch}</span>`
+					`<span class="ctag" role="button" tabindex="0" aria-pressed="false">${ch}</span>`,
 			)
 			.join("");
 		const extra = e.vo2 ? buildVo2Block() : "";
-		c.insertAdjacentHTML("beforeend", TPL.assessmentCard({ index: i, item: e, dots, tags, extra }));
+		c.insertAdjacentHTML(
+			"beforeend",
+			TPL.assessmentCard({ index: i, item: e, dots, tags, extra }),
+		);
 	});
 }
 

@@ -1,6 +1,5 @@
 // 파일 용도: TextBox 웹 컴포넌트 — 텍스트 입력/텍스트에어리어 (전체 화면 공용)
 import { defineComponent } from "@shared/components/base/component.js";
-import { setAria } from "@shared/components/base/component.js";
 
 defineComponent("ui-text-box", {
 	props: {
@@ -25,14 +24,36 @@ defineComponent("ui-text-box", {
 		autoResize: { type: Boolean, default: false }, // 텍스트에어리어 자동 높이
 	},
 
-	renderTextBox({ value, placeholder, multiline, rows, cols, maxLength, minLength, disabled, readonly, required, spellcheck, autocomplete, ariaLabel, ariaDescribedBy, ariaInvalid, label, hint, error, autoResize }) {
+	renderTextBox({
+		value,
+		placeholder,
+		multiline,
+		rows,
+		cols,
+		maxLength,
+		minLength,
+		disabled,
+		readonly,
+		required,
+		spellcheck,
+		autocomplete,
+		ariaLabel,
+		ariaDescribedBy,
+		ariaInvalid,
+		label,
+		hint,
+		error,
+		autoResize,
+	}) {
 		const inputId = `textbox-${this.id || "auto"}`;
 		const hintId = hint ? `${inputId}-hint` : "";
 		const errorId = error ? `${inputId}-error` : "";
 
 		const ariaAttrs = {};
 		if (ariaLabel) ariaAttrs["label"] = ariaLabel;
-		if (ariaDescribedBy) ariaAttrs["describedby"] = `${hintId} ${errorId} ${ariaDescribedBy}`.trim();
+		if (ariaDescribedBy)
+			ariaAttrs["describedby"] =
+				`${hintId} ${errorId} ${ariaDescribedBy}`.trim();
 		if (ariaInvalid) ariaAttrs["invalid"] = "true";
 		if (required) ariaAttrs["required"] = "true";
 		if (readonly) ariaAttrs["readonly"] = "true";

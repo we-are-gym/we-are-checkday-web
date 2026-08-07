@@ -65,9 +65,7 @@
           <!-- 내장지방 -->
           <div class="ib-vis-row">
             <div class="ib-vis-field">
-              <label class="ib-vis-label"
-                >내장지방 레벨</label
-              >
+              <label class="ib-vis-label">내장지방 레벨</label>
               <input
                 class="ib-num ib-vis-input"
                 id="ib-vis"
@@ -148,12 +146,8 @@
 
       <div class="actions">
         <button class="btn btn-ghost" data-action="reset">초기화</button>
-        <button class="btn btn-ghost" data-action="report">
-          📋 결과 보기
-        </button>
-        <button class="btn btn-primary" data-action="print">
-          인쇄 / PDF
-        </button>
+        <button class="btn btn-ghost" data-action="report">📋 결과 보기</button>
+        <button class="btn btn-primary" data-action="print">인쇄 / PDF</button>
       </div>
     </div>
 
@@ -169,12 +163,7 @@
         <h3 id="overlay-title">체크데이 결과 요약</h3>
         <div id="report-body"></div>
         <div class="modal-footer">
-          <button
-            class="btn btn-ghost"
-            data-action="close-modal"
-          >
-            닫기
-          </button>
+          <button class="btn btn-ghost" data-action="close-modal">닫기</button>
           <button class="btn btn-primary" data-action="copy">
             텍스트 복사
           </button>
@@ -183,14 +172,14 @@
     </div>
 
     <script type="importmap">
-	{
-		"imports": {
-			"@base/": "./scripts/base/",
-			"@member/": "./scripts/member/",
-			"@check-doc/": "./scripts/check-doc/"
-		}
-	}
-</script>
-<script type="module" src="scripts/entries/checkday.js"></script>
+      {
+        "imports": {
+          "@base/": "./scripts/base/",
+          "@member/": "./scripts/member/",
+          "@check-doc/": "./scripts/check-doc/"
+        }
+      }
+    </script>
+    <script type="module" src="scripts/entries/checkday.js"></script>
   </body>
 </html>

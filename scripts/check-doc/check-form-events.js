@@ -4,12 +4,22 @@
 // 기법: delegate(UI.js) 기반 이벤트 위임 — 인라인 onclick·window 오염 없이 정적·동적 요소를 한 루트에서 처리
 // 주의: [data-action] 화면별 액션(reset/save 등)은 화면마다 다르므로 여기서 다루지 않고 각 진입점이 등록한다.
 import { byId, delegate } from "@base/UI.js";
-import { TPL } from "@base/templates.js";
 import { DOT_COUNT } from "@base/constants.js";
-import { scoreState } from "@base/states.js";
-import { toggleBasicFunctionDetail, adjustScore, updateVO2Disp, getEvals, updateTotal } from "./evaluation.js";
 import { updateInbodyTags } from "@base/inbody.js";
-import { appendCheckMovement, appendCheckMovementItemRow, resetFeedbacks } from "./feedback.js";
+import { scoreState } from "@base/states.js";
+import { TPL } from "@base/templates.js";
+import {
+	adjustScore,
+	getEvals,
+	toggleBasicFunctionDetail,
+	updateTotal,
+	updateVO2Disp,
+} from "./evaluation.js";
+import {
+	appendCheckMovement,
+	appendCheckMovementItemRow,
+	resetFeedbacks,
+} from "./feedback.js";
 
 /**
  * 두 화면이 공유하는 상담지 폼 이벤트 위임을 등록한다 (1회 호출).
@@ -53,16 +63,27 @@ export function setupCheckFormEvents() {
 		adjustScore(Number(el.dataset.i), Number(el.dataset.delta)),
 	);
 	// 동작 피드백 카드 CRUD (동적 생성 요소)
-	delegate(document, "click", ".fb-del-btn", (e, el) => el.closest(".fb-item")?.remove());
-	delegate(document, "click", ".add-check-btn", (e, el) => appendCheckMovementItemRow(el));
-	delegate(document, "click", ".fb-check-del", (e, el) => el.closest(".fb-check-row")?.remove());
+	delegate(document, "click", ".fb-del-btn", (e, el) =>
+		el.closest(".fb-item")?.remove(),
+	);
+	delegate(document, "click", ".add-check-btn", (e, el) =>
+		appendCheckMovementItemRow(el),
+	);
+	delegate(document, "click", ".fb-check-del", (e, el) =>
+		el.closest(".fb-check-row")?.remove(),
+	);
 	delegate(document, "click", ".add-fb-btn", () => appendCheckMovement());
 	// input 위임 — 인바디 수치·VO₂ 입력 갱신
 	document.addEventListener("input", (e) => {
 		const id = e.target.id;
 		if (!id) return;
 		if (id.startsWith("ib-")) updateInbodyTags();
-		else if (id === "vo2-age" || id === "vo2-ht" || id === "vo2-wt" || id === "vo2-hr")
+		else if (
+			id === "vo2-age" ||
+			id === "vo2-ht" ||
+			id === "vo2-wt" ||
+			id === "vo2-hr"
+		)
 			updateVO2Disp();
 	});
 }
@@ -85,7 +106,16 @@ export function resetCheckForm() {
 		for (let j = 0; j < DOT_COUNT; j++)
 			byId(`dot-${i}-${j}`).classList.remove("on");
 	});
-	["tag-w", "tag-m", "tag-fat", "tag-bmi", "tag-bfp", "tag-bmr", "tag-vis", "vo2-result"].forEach((id) => {
+	[
+		"tag-w",
+		"tag-m",
+		"tag-fat",
+		"tag-bmi",
+		"tag-bfp",
+		"tag-bmr",
+		"tag-vis",
+		"vo2-result",
+	].forEach((id) => {
 		const el = byId(id);
 		if (el)
 			el.innerHTML =

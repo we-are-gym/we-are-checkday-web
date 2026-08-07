@@ -1,6 +1,5 @@
 // 파일 용도: ScoreController 웹 컴포넌트 — 평가 점수 조작 (전체 화면 공용)
 import { defineComponent } from "@shared/components/base/component.js";
-import { setAria } from "@shared/components/base/component.js";
 
 defineComponent("ui-score-controller", {
 	props: {
@@ -15,7 +14,17 @@ defineComponent("ui-score-controller", {
 		showValue: { type: Boolean, default: true },
 	},
 
-	renderScoreController({ score, max, min, dots, index, interactive, ariaLabel, ariaDescribedBy, showValue }) {
+	renderScoreController({
+		score,
+		max,
+		min,
+		dots,
+		index,
+		interactive,
+		ariaLabel,
+		ariaDescribedBy,
+		showValue,
+	}) {
 		const clampedScore = Math.max(min, Math.min(max, score));
 		const dataKey = `data-i`;
 
@@ -45,9 +54,13 @@ defineComponent("ui-score-controller", {
 					>
 						−
 					</button>
-					${showValue ? `
+					${
+						showValue
+							? `
 						<span class="score-value" aria-live="polite" id="sv-${index}">${clampedScore}</span>
-					` : ""}
+					`
+							: ""
+					}
 					<button
 						type="button"
 						class="score-btn score-increase"
@@ -61,9 +74,12 @@ defineComponent("ui-score-controller", {
 					</button>
 				</div>
 				<div class="score-dots" role="group" aria-label="점수 ${clampedScore}점">
-					${Array.from({ length: dots }, (_, i) => `
+					${Array.from(
+						{ length: dots },
+						(_, i) => `
 						<span class="dot${i < clampedScore ? " on" : ""}" id="dot-${index}-${i}" data-score="${i}" aria-hidden="true"></span>
-					`).join("")}
+					`,
+					).join("")}
 				</div>
 			</div>`;
 	},
@@ -100,7 +116,11 @@ defineComponent("ui-score-controller", {
 		const newScore = Math.max(min, Math.min(max, score + delta));
 		if (newScore !== score) {
 			this.setProp("score", newScore);
-			this.emit("adjust", { score: newScore, delta, index: this._props.index });
+			this.emit("adjust", {
+				score: newScore,
+				delta,
+				index: this._props.index,
+			});
 		}
 	},
 });

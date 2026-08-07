@@ -1,6 +1,5 @@
 // 파일 용도: Sparkline 웹 컴포넌트 — 인라인 SVG 스파크라인 차트 (전체 화면 공용)
 import { defineComponent } from "@shared/components/base/component.js";
-import { setAria } from "@shared/components/base/component.js";
 
 defineComponent("ui-sparkline", {
 	props: {
@@ -19,12 +18,28 @@ defineComponent("ui-sparkline", {
 		ariaDescribedBy: { type: String, default: "" },
 	},
 
-	renderSparkline({ data, width, height, color, background, showArea, showPoints, pointRadius, lineWidth, padding, baseline, ariaLabel, ariaDescribedBy }) {
+	renderSparkline({
+		data,
+		width,
+		height,
+		color,
+		background,
+		showArea,
+		showPoints,
+		pointRadius,
+		lineWidth,
+		padding,
+		baseline,
+		ariaLabel,
+		ariaDescribedBy,
+	}) {
 		if (!data || data.length === 0) {
 			return `<div class="sparkline-empty" style="width: ${width}px; height: ${height}px;" aria-hidden="true">데이터 없음</div>`;
 		}
 
-		const validData = data.filter((v) => typeof v === "number" && !isNaN(v));
+		const validData = data.filter(
+			(v) => typeof v === "number" && !isNaN(v),
+		);
 		if (validData.length === 0) {
 			return `<div class="sparkline-empty" style="width: ${width}px; height: ${height}px;" aria-hidden="true">유효한 데이터 없음</div>`;
 		}
@@ -38,18 +53,27 @@ defineComponent("ui-sparkline", {
 		// 좌표 계산
 		const points = validData.map((value, i) => {
 			const x = padding + i * stepX;
-			const y = height - padding - ((value - min) / range) * (height - padding * 2);
+			const y =
+				height -
+				padding -
+				((value - min) / range) * (height - padding * 2);
 			return { x, y, value };
 		});
 
 		// 기준선
-		const baselineY = baseline !== null && baseline >= min && baseline <= max
-			? height - padding - ((baseline - min) / range) * (height - padding * 2)
-			: null;
+		const baselineY =
+			baseline !== null && baseline >= min && baseline <= max
+				? height -
+					padding -
+					((baseline - min) / range) * (height - padding * 2)
+				: null;
 
 		// SVG 패스 생성
 		const pathData = points
-			.map((p, i) => `${i === 0 ? "M" : "L"} ${p.x.toFixed(2)} ${p.y.toFixed(2)}`)
+			.map(
+				(p, i) =>
+					`${i === 0 ? "M" : "L"} ${p.x.toFixed(2)} ${p.y.toFixed(2)}`,
+			)
 			.join(" ");
 
 		// 영역 패스
@@ -66,8 +90,8 @@ defineComponent("ui-sparkline", {
 		// 포인트
 		const pointElements = showPoints
 			? points
-				.map(
-					(p) => `
+					.map(
+						(p) => `
 				<circle
 					cx="${p.x.toFixed(2)}"
 					cy="${p.y.toFixed(2)}"
@@ -77,15 +101,16 @@ defineComponent("ui-sparkline", {
 					stroke-width="1"
 					aria-hidden="true"
 				/>`,
-				)
-				.join("")
+					)
+					.join("")
 			: "";
 
 		const ariaAttrs = {};
 		if (ariaLabel) ariaAttrs["label"] = ariaLabel;
 		if (ariaDescribedBy) ariaAttrs["describedby"] = ariaDescribedBy;
 		ariaAttrs["role"] = "img";
-		ariaAttrs["aria-label"] = `스파크라인: ${validData.length}개 데이터, 최솟값 ${min.toFixed(1)}, 최댓값 ${max.toFixed(1)}`;
+		ariaAttrs["aria-label"] =
+			`스파크라인: ${validData.length}개 데이터, 최솟값 ${min.toFixed(1)}, 최댓값 ${max.toFixed(1)}`;
 
 		let ariaStr = "";
 		for (const [key, val] of Object.entries(ariaAttrs)) {
@@ -96,13 +121,17 @@ defineComponent("ui-sparkline", {
 			<div class="sparkline-container" style="width: ${width}px; height: ${height}px;"${ariaStr}>
 				<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" aria-hidden="true">
 					${background !== "transparent" ? `<rect width="100%" height="100%" fill="${background}" />` : ""}
-					${baselineY !== null ? `
+					${
+						baselineY !== null
+							? `
 						<line
 							x1="${padding}" y1="${baselineY.toFixed(2)}"
 							x2="${width - padding}" y2="${baselineY.toFixed(2)}"
 							stroke="var(--border2)" stroke-width="1" stroke-dasharray="4,4"
 							aria-hidden="true"
-						/>` : ""}
+						/>`
+							: ""
+					}
 					${showArea ? `<path d="${areaPath}" fill="${color}" fill-opacity="0.15" aria-hidden="true" />` : ""}
 					<path
 						d="${pathData}"

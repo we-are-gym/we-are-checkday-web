@@ -5,11 +5,10 @@
 // 주의: `#goal-custom`(추가 목표 입력)은 본 앱의 어떤 화면에는 있고(check-doc-edit) 어떤 화면에는
 //   없(check-doc-new)므로, 부재 시 빈 값으로 처리한다(null-safe).
 import { byId } from "@base/UI.js";
-import { scoreState } from "@base/states.js";
-import { getEvals } from "./evaluation.js";
 import { DOT_COUNT } from "@base/constants.js";
 import { updateInbodyTags } from "@base/inbody.js";
-import { updateTotal } from "./evaluation.js";
+import { scoreState } from "@base/states.js";
+import { getEvals, updateTotal } from "./evaluation.js";
 import { appendCheckMovement } from "./feedback.js";
 
 /** 인바디 입력 필드 id 목록 (payload.ib 키와 1:1) */
@@ -42,7 +41,9 @@ export function prefillEvalState(scores, evalData) {
 		if (!ed) return;
 		const sp = byId(`sp-${i}`);
 		(ed.checked || []).forEach((text) => {
-			const tag = [...sp.querySelectorAll(".ctag")].find((el) => el.textContent === text);
+			const tag = [...sp.querySelectorAll(".ctag")].find(
+				(el) => el.textContent === text,
+			);
 			if (tag) tag.classList.add("on");
 		});
 		const memo = sp.querySelector(".eval-memo");
@@ -81,7 +82,9 @@ export function prefillForm(rec) {
 			hit.setAttribute("aria-pressed", "true");
 		}
 	});
-	const custom = (p.goals || []).filter((g) => !fixed.some((el) => el.textContent === g));
+	const custom = (p.goals || []).filter(
+		(g) => !fixed.some((el) => el.textContent === g),
+	);
 	const customEl = byId("goal-custom");
 	if (customEl) customEl.value = custom.join(", ");
 	const goalMemoEl = byId("goal-memo");
@@ -90,7 +93,10 @@ export function prefillForm(rec) {
 	// 동작 피드백 (기록에 있는 카드만 재구성)
 	byId("fb-cards").innerHTML = "";
 	(p.feedbacks || []).forEach((fb) => {
-		appendCheckMovement({ name: fb.name, checks: (fb.checkItems || []).map((c) => c.text) });
+		appendCheckMovement({
+			name: fb.name,
+			checks: (fb.checkItems || []).map((c) => c.text),
+		});
 		const card = byId("fb-cards").lastElementChild;
 		const rows = [...card.querySelectorAll(".fb-check-row")];
 		(fb.checkItems || []).forEach((c, idx) => {
@@ -114,7 +120,9 @@ export function collectPayload() {
 	const evalData = getEvals().map((_, i) => {
 		const sp = byId(`sp-${i}`);
 		return {
-			checked: [...sp.querySelectorAll(".ctag.on")].map((el) => el.textContent),
+			checked: [...sp.querySelectorAll(".ctag.on")].map(
+				(el) => el.textContent,
+			),
 			memo: (sp.querySelector(".eval-memo") || {}).value || "",
 		};
 	});
@@ -124,7 +132,9 @@ export function collectPayload() {
 		return el ? el.value : "";
 	})();
 	const goals = [
-		...fixedTags.filter((el) => el.classList.contains("on")).map((el) => el.textContent),
+		...fixedTags
+			.filter((el) => el.classList.contains("on"))
+			.map((el) => el.textContent),
 		...customText
 			.split(",")
 			.map((s) => s.trim())
@@ -133,15 +143,19 @@ export function collectPayload() {
 	const feedbacks = [...document.querySelectorAll("#fb-cards .fb-item")]
 		.map((fb) => ({
 			name: fb.querySelector(".fb-move-input").value,
-			checkItems: [...fb.querySelectorAll(".fb-check-row")].map((row) => ({
-				text: row.querySelector(".fb-check-input").value,
-				checked: row.querySelector("input[type=checkbox]").checked,
-			})),
+			checkItems: [...fb.querySelectorAll(".fb-check-row")].map(
+				(row) => ({
+					text: row.querySelector(".fb-check-input").value,
+					checked: row.querySelector("input[type=checkbox]").checked,
+				}),
+			),
 			memo: (fb.querySelector(".eval-memo") || {}).value || "",
 		}))
-		.filter((fb) => fb.name || fb.checkItems.some((c) => c.text) || fb.memo);
+		.filter(
+			(fb) => fb.name || fb.checkItems.some((c) => c.text) || fb.memo,
+		);
 	return {
-		name: (byId("m-name")?.value || byId("m-member")?.value || ""),
+		name: byId("m-name")?.value || byId("m-member")?.value || "",
 		session: byId("m-session").value,
 		trainer: byId("m-trainer").value,
 		ib: Object.fromEntries(IB_IDS.map((k) => [k, byId(`ib-${k}`).value])),

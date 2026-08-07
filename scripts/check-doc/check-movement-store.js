@@ -13,7 +13,9 @@ export class CheckMovementStore {
 	 */
 	constructor(presets = []) {
 		/** 카드 목록 (첨가 순서 유지) */
-		this.items = presets.map((p, i) => new CheckMovementItem(i + 1, p.name, [...p.checks]));
+		this.items = presets.map(
+			(p, i) => new CheckMovementItem(i + 1, p.name, [...p.checks]),
+		);
 		/** 다음 카드 고유 번호 */
 		this.nextId = this.items.length + 1;
 	}

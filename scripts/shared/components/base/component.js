@@ -37,10 +37,20 @@ import { defineComponent as baseDefineComponent } from "./component-factory.js";
  * @returns {typeof HTMLElement}
  */
 export function defineComponent(options) {
-	const { tag, props = {}, render, connectedCallback, disconnectedCallback, attributeChangedCallback, observedAttributes = [] } = options;
+	const {
+		tag,
+		props = {},
+		render,
+		connectedCallback,
+		disconnectedCallback,
+		attributeChangedCallback,
+		observedAttributes = [],
+	} = options;
 
 	// props를 observedAttributes에 자동 추가
-	const allObserved = [...new Set([...observedAttributes, ...Object.keys(props)])];
+	const allObserved = [
+		...new Set([...observedAttributes, ...Object.keys(props)]),
+	];
 
 	return baseDefineComponent(tag, {
 		// 렌더 함수
@@ -66,7 +76,8 @@ export function defineComponent(options) {
 				this._props[name] = this._deserializeProp(name, newVal);
 				this.refresh();
 			}
-			if (attributeChangedCallback) attributeChangedCallback.call(this, name, oldVal, newVal);
+			if (attributeChangedCallback)
+				attributeChangedCallback.call(this, name, oldVal, newVal);
 		},
 
 		// props 초기화
@@ -74,7 +85,10 @@ export function defineComponent(options) {
 			this._props = {};
 			for (const [key, def] of Object.entries(props)) {
 				const attrVal = this.getAttribute(key);
-				this._props[key] = attrVal !== null ? this._deserializeProp(key, attrVal) : def.default;
+				this._props[key] =
+					attrVal !== null
+						? this._deserializeProp(key, attrVal)
+						: def.default;
 			}
 		},
 
@@ -84,7 +98,8 @@ export function defineComponent(options) {
 			if (!def || def.type === String) return value;
 			if (def.type === Number) return Number(value);
 			if (def.type === Boolean) return value !== "false" && value !== "";
-			if (def.type === Array) return value ? value.split(",").map(v => v.trim()) : [];
+			if (def.type === Array)
+				return value ? value.split(",").map((v) => v.trim()) : [];
 			if (def.type === Object) return value ? JSON.parse(value) : {};
 			return value;
 		},
@@ -115,7 +130,13 @@ export function defineComponent(options) {
 
 		// 이벤트 디스패치 헬퍼
 		emit(eventName, detail = {}) {
-			this.dispatchEvent(new CustomEvent(eventName, { detail, bubbles: true, composed: true }));
+			this.dispatchEvent(
+				new CustomEvent(eventName, {
+					detail,
+					bubbles: true,
+					composed: true,
+				}),
+			);
 		},
 
 		// 렌더 결과로 내부 갱신

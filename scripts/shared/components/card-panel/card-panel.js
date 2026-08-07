@@ -1,6 +1,5 @@
 // 파일 용도: CardPanel 웹 컴포넌트 — 접이식 카드 패널 (전체 화면 공용)
 import { defineComponent } from "@shared/components/base/component.js";
-import { setAria, toggleClass, toggleAttr } from "@shared/components/base/component.js";
 
 defineComponent("ui-card-panel", {
 	props: {
@@ -14,7 +13,16 @@ defineComponent("ui-card-panel", {
 		ariaDescribedBy: { type: String, default: "" },
 	},
 
-	renderCardPanel({ header, subHeader, collapsible, expanded, footer, variant, ariaLabel, ariaDescribedBy }) {
+	renderCardPanel({
+		header,
+		subHeader,
+		collapsible,
+		expanded,
+		footer,
+		variant,
+		ariaLabel,
+		ariaDescribedBy,
+	}) {
 		const panelId = `card-${this.id || "auto"}`;
 		const hasHeader = header || subHeader;
 		const hasFooter = footer || this._hasFooterSlot;
@@ -31,11 +39,15 @@ defineComponent("ui-card-panel", {
 
 		return `
 			<div class="card-panel card-${variant}${collapsible ? " collapsible" : ""}${expanded ? " expanded" : " collapsed"}"${ariaStr}>
-				${hasHeader ? `
+				${
+					hasHeader
+						? `
 					<header class="card-header">
 						${header ? `<h3 class="card-title">${header}</h3>` : ""}
 						${subHeader ? `<div class="card-subheader">${subHeader}</div>` : ""}
-						${collapsible ? `
+						${
+							collapsible
+								? `
 							<button
 								type="button"
 								class="card-toggle"
@@ -45,18 +57,26 @@ defineComponent("ui-card-panel", {
 							>
 								<span class="toggle-icon" aria-hidden="true">${expanded ? "▾" : "▸"}</span>
 							</button>
-						` : ""}
+						`
+								: ""
+						}
 					</header>
-				` : ""}
+				`
+						: ""
+				}
 				<div class="card-content" id="${panelId}-content" role="region" hidden="${!expanded}">
 					<slot></slot>
 				</div>
-				${hasFooter ? `
+				${
+					hasFooter
+						? `
 					<footer class="card-footer">
 						${footer}
 						<slot name="footer"></slot>
 					</footer>
-				` : ""}
+				`
+						: ""
+				}
 			</div>`;
 	},
 

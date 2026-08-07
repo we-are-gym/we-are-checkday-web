@@ -1,17 +1,29 @@
 // 파일 용도: 체크기록 편집 화면(check-doc-edit.html)
 // ?docID= 기록을 불러와 상담지 폼(renderBasicFunctionCards 재사용)에 프리필하고, 움직임 평가 항목 추가/삭제(만점 동적 계산) 후
 // 수정 내용을 기록 스토어에 저장한다.
+import "@base/components/app-header.js";
+import { SCORE_MAX } from "@base/constants.js";
+import { scoreState } from "@base/states.js";
 import { byId, delegate, queryAll } from "@base/UI.js";
 import { getNumberParam } from "@base/utils-url.js";
+import {
+	ASSESSMENT_ITEMS_FULL,
+	resolveRecordItems,
+} from "@check-doc/assessment-data.js";
+import { setupCheckFormEvents } from "@check-doc/check-form-events.js";
+import {
+	collectPayload,
+	prefillEvalState,
+	prefillForm,
+} from "@check-doc/check-form-payload.js";
+import {
+	configureEvaluation,
+	getEvals,
+	renderBasicFunctionCards,
+	updateTotal,
+} from "@check-doc/evaluation.js";
 import { recordStore } from "@check-doc/record-store.js";
 import { getRecordById } from "@member/member-utils.js";
-import { resolveRecordItems, ASSESSMENT_ITEMS_FULL } from "@check-doc/assessment-data.js";
-import { configureEvaluation, getEvals, renderBasicFunctionCards, updateTotal } from "@check-doc/evaluation.js";
-import { collectPayload, prefillEvalState, prefillForm } from "@check-doc/check-form-payload.js";
-import { setupCheckFormEvents } from "@check-doc/check-form-events.js";
-import { scoreState } from "@base/states.js";
-import { SCORE_MAX } from "@base/constants.js";
-import "@base/components/app-header.js";
 
 /** ?docID= 파라미터 */
 const docId = getNumberParam("docID");
@@ -27,7 +39,9 @@ function getRecord() {
 function saveRecord() {
 	recordStore.setState((prev) => ({
 		...prev,
-		records: prev.records.map((r) => (r.id === docId ? { ...r, payload: collectPayload() } : r)),
+		records: prev.records.map((r) =>
+			r.id === docId ? { ...r, payload: collectPayload() } : r,
+		),
 	}));
 	window.location.href = `check-doc-view.html?docID=${docId}`;
 }
@@ -43,7 +57,8 @@ function resetForm() {
 function init() {
 	const rec = getRecord();
 	if (!rec) {
-		byId("eval-cards").innerHTML = '<p class="goal-empty">기록을 찾을 수 없습니다. 목록에서 다시 선택하세요.</p>';
+		byId("eval-cards").innerHTML =
+			'<p class="goal-empty">기록을 찾을 수 없습니다. 목록에서 다시 선택하세요.</p>';
 		byId("fb-cards").style.display = "none";
 		byId("btn-cancel").href = "members.html";
 		queryAll("[data-action]").forEach((el) => (el.style.display = "none"));
@@ -72,7 +87,9 @@ function rebuildEvalItems(nextItems, removedIndex) {
 	const evalData = getEvals().map((_, i) => {
 		const sp = byId(`sp-${i}`);
 		return {
-			checked: [...sp.querySelectorAll(".ctag.on")].map((el) => el.textContent),
+			checked: [...sp.querySelectorAll(".ctag.on")].map(
+				(el) => el.textContent,
+			),
 			memo: (sp.querySelector(".eval-memo") || {}).value || "",
 		};
 	});
@@ -80,7 +97,10 @@ function rebuildEvalItems(nextItems, removedIndex) {
 		scores.splice(removedIndex, 1);
 		evalData.splice(removedIndex, 1);
 	}
-	configureEvaluation({ items: nextItems, max: nextItems.length * SCORE_MAX });
+	configureEvaluation({
+		items: nextItems,
+		max: nextItems.length * SCORE_MAX,
+	});
 	byId("eval-cards").innerHTML = "";
 	renderBasicFunctionCards();
 	prefillEvalState(scores, evalData);
@@ -116,7 +136,10 @@ function addEvalItem() {
 /** i번째 평가 항목 삭제 — 최소 1개는 남긴다 */
 function removeEvalItem(i) {
 	if (getEvals().length <= 1) return;
-	rebuildEvalItems(getEvals().filter((_, idx) => idx !== i), i);
+	rebuildEvalItems(
+		getEvals().filter((_, idx) => idx !== i),
+		i,
+	);
 }
 
 // 목표·체크·점수·피드백·인바디/VO₂ 위임은 checkday·편집 화면이 공유하는 check-form-events로 처리
@@ -127,6 +150,8 @@ delegate(document, "click", "[data-action]", (e, el) => {
 	else if (el.dataset.action === "save-edit") saveRecord();
 });
 byId("add-eval-btn").addEventListener("click", addEvalItem);
-delegate(document, "click", "[data-eval-remove]", (e, el) => removeEvalItem(Number(el.dataset.evalRemove)));
+delegate(document, "click", "[data-eval-remove]", (e, el) =>
+	removeEvalItem(Number(el.dataset.evalRemove)),
+);
 
 init();

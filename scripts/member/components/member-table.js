@@ -45,7 +45,8 @@ defineComponent("member-table", {
 				return;
 			}
 			const row = e.target.closest("[data-member-id]");
-			if (row && this.onSelect) this.onSelect(Number(row.dataset.memberId));
+			if (row && this.onSelect)
+				this.onSelect(Number(row.dataset.memberId));
 		});
 		// 키보드 접근성: 행이 tabindex=0이므로 Enter/Space로도 선택
 		this.addEventListener("keydown", (e) => {

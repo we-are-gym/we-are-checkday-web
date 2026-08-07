@@ -1,6 +1,5 @@
 // 파일 용도: Checkbox 웹 컴포넌트 — 체크박스 (전체 화면 공용)
 import { defineComponent } from "@shared/components/base/component.js";
-import { setAria } from "@shared/components/base/component.js";
 
 defineComponent("ui-checkbox", {
 	props: {
@@ -14,7 +13,16 @@ defineComponent("ui-checkbox", {
 		ariaDescribedBy: { type: String, default: "" },
 	},
 
-	renderCheckbox({ checked, indeterminate, disabled, label, value, name, ariaLabel, ariaDescribedBy }) {
+	renderCheckbox({
+		checked,
+		indeterminate,
+		disabled,
+		label,
+		value,
+		name,
+		ariaLabel,
+		ariaDescribedBy,
+	}) {
 		const ariaAttrs = {};
 		if (ariaLabel) ariaAttrs["label"] = ariaLabel;
 		if (ariaDescribedBy) ariaAttrs["describedby"] = ariaDescribedBy;
@@ -64,12 +72,18 @@ defineComponent("ui-checkbox", {
 		input.addEventListener("change", (e) => {
 			this.setProp("checked", e.target.checked);
 			this.setProp("indeterminate", false);
-			this.emit("change", { checked: this._props.checked, value: this._props.value });
+			this.emit("change", {
+				checked: this._props.checked,
+				value: this._props.value,
+			});
 		});
 
 		// 라벨 클릭 시 포커스
 		this.addEventListener("click", (e) => {
-			if (e.target === this || e.target.classList.contains("checkbox-label")) {
+			if (
+				e.target === this ||
+				e.target.classList.contains("checkbox-label")
+			) {
 				input.focus();
 			}
 		});
@@ -84,7 +98,11 @@ defineComponent("ui-checkbox", {
 	},
 
 	attributeChangedCallback(name, oldVal, newVal) {
-		if (name === "checked" || name === "indeterminate" || name === "disabled") {
+		if (
+			name === "checked" ||
+			name === "indeterminate" ||
+			name === "disabled"
+		) {
 			this.refresh();
 		}
 	},

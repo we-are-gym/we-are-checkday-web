@@ -1,6 +1,5 @@
 // 파일 용도: ScoreDots 웹 컴포넌트 — 평가 점수 도트 표시 (전체 화면 공용)
 import { defineComponent } from "@shared/components/base/component.js";
-import { setAria } from "@shared/components/base/component.js";
 
 defineComponent("ui-score-dots", {
 	props: {
@@ -14,7 +13,16 @@ defineComponent("ui-score-dots", {
 		prefix: { type: String, default: "" }, // ID 접두사
 	},
 
-	renderScoreDots({ score, max, count, size, interactive, ariaLabel, ariaDescribedBy, prefix }) {
+	renderScoreDots({
+		score,
+		max,
+		count,
+		size,
+		interactive,
+		ariaLabel,
+		ariaDescribedBy,
+		prefix,
+	}) {
 		const clampedScore = Math.max(0, Math.min(max, score));
 		const dotsId = `dots-${prefix || this.id || "auto"}`;
 
@@ -33,14 +41,17 @@ defineComponent("ui-score-dots", {
 
 		return `
 			<div class="score-dots ${sizeClass}${interactive ? " interactive" : ""}" id="${dotsId}"${ariaStr}>
-				${Array.from({ length: count }, (_, i) => `
+				${Array.from(
+					{ length: count },
+					(_, i) => `
 					<span
 						class="dot${i < clampedScore ? " on" : ""}"
 						id="dot-${prefix || this.id || "auto"}-${i}"
 						data-score="${i}"
 						${interactive ? `tabindex="0" role="button" aria-label="${i}점" aria-pressed="${i <= clampedScore}"` : "aria-hidden='true'"}
 					></span>
-				`).join("")}
+				`,
+				).join("")}
 			</div>`;
 	},
 

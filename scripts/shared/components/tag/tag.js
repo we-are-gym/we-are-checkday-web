@@ -1,6 +1,5 @@
 // 파일 용도: Tag 웹 컴포넌트 — 선택 가능한 태그/칩 (전체 화면 공용)
 import { defineComponent } from "@shared/components/base/component.js";
-import { setAria, toggleClass, toggleAttr } from "@shared/components/base/component.js";
 
 defineComponent("ui-tag", {
 	props: {
@@ -55,7 +54,10 @@ defineComponent("ui-tag", {
 
 			// 토글
 			this.setProp("pressed", !this._props.pressed);
-			this.emit("toggle", { pressed: this._props.pressed, label: this._props.label });
+			this.emit("toggle", {
+				pressed: this._props.pressed,
+				label: this._props.label,
+			});
 		});
 
 		// 키보드 접근성
@@ -64,7 +66,10 @@ defineComponent("ui-tag", {
 			if (e.key === "Enter" || e.key === " ") {
 				e.preventDefault();
 				this.setProp("pressed", !this._props.pressed);
-				this.emit("toggle", { pressed: this._props.pressed, label: this._props.label });
+				this.emit("toggle", {
+					pressed: this._props.pressed,
+					label: this._props.label,
+				});
 			}
 		});
 	},

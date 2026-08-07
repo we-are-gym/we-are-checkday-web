@@ -5,16 +5,22 @@
 //          renderBasicFunctionCards/updateTotal(evaluation),
 //          setupCheckFormEvents/resetCodeForm(check-form-events), renderCheckMovementCards(feedback),
 //          sessionReport(session-report)
-import { today } from "@base/utils-string.js";
+import "@base/components/app-header.js";
 import { byId, delegate, setText } from "@base/UI.js";
+import { today } from "@base/utils-string.js";
 import { getNumberParam } from "@base/utils-url.js";
+import {
+	resetCheckForm,
+	setupCheckFormEvents,
+} from "@check-doc/check-form-events.js";
+import {
+	renderBasicFunctionCards,
+	updateTotal,
+} from "@check-doc/evaluation.js";
+import { renderCheckMovementCards } from "@check-doc/feedback.js";
+import { sessionReport } from "@check-doc/session-report.js";
 import { memberStore } from "@member/member-store.js";
 import { getMemberById } from "@member/member-utils.js";
-import { renderBasicFunctionCards, updateTotal } from "@check-doc/evaluation.js";
-import { renderCheckMovementCards } from "@check-doc/feedback.js";
-import { setupCheckFormEvents, resetCheckForm } from "@check-doc/check-form-events.js";
-import { sessionReport } from "@check-doc/session-report.js";
-import "@base/components/app-header.js";
 
 // ── 날짜 ──
 setText("date-badge", today());

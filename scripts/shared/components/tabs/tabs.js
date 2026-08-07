@@ -1,6 +1,5 @@
 // 파일 용도: Tabs 웹 컴포넌트 — 탭 리스트·패널 전환 (전체 화면 공용)
 import { defineComponent } from "@shared/components/base/component.js";
-import { setAria, toggleClass, toggleAttr } from "@shared/components/base/component.js";
 
 defineComponent("ui-tabs", {
 	props: {
@@ -65,7 +64,10 @@ defineComponent("ui-tabs", {
 			if (!btn || btn.disabled) return;
 			const index = Number(btn.dataset.tabIndex);
 			this.setProp("activeIndex", index);
-			this.emit("change", { index, previousIndex: this._getProps().activeIndex });
+			this.emit("change", {
+				index,
+				previousIndex: this._getProps().activeIndex,
+			});
 		});
 
 		this.addEventListener("keydown", (e) => {
@@ -76,18 +78,25 @@ defineComponent("ui-tabs", {
 			let newIndex = currentIndex;
 
 			if (this._props.orientation === "vertical") {
-				if (e.key === "ArrowDown") newIndex = (currentIndex + 1) % tabs.length;
-				else if (e.key === "ArrowUp") newIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+				if (e.key === "ArrowDown")
+					newIndex = (currentIndex + 1) % tabs.length;
+				else if (e.key === "ArrowUp")
+					newIndex = (currentIndex - 1 + tabs.length) % tabs.length;
 			} else {
-				if (e.key === "ArrowRight") newIndex = (currentIndex + 1) % tabs.length;
-				else if (e.key === "ArrowLeft") newIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+				if (e.key === "ArrowRight")
+					newIndex = (currentIndex + 1) % tabs.length;
+				else if (e.key === "ArrowLeft")
+					newIndex = (currentIndex - 1 + tabs.length) % tabs.length;
 			}
 
 			if (newIndex !== currentIndex) {
 				e.preventDefault();
 				tabs[newIndex].focus();
 				this.setProp("activeIndex", newIndex);
-				this.emit("change", { index: newIndex, previousIndex: currentIndex });
+				this.emit("change", {
+					index: newIndex,
+					previousIndex: currentIndex,
+				});
 			}
 			if (e.key === "Home") {
 				e.preventDefault();

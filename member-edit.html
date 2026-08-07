@@ -12,7 +12,10 @@
   <body>
     <!-- 파일 용도: 회원 정보 편집 화면 — ?memberID= 회원의 이름·성별·목표·담당 트레이너를 수정한다 -->
     <div class="container">
-      <app-header logout crumb-path="index.html>홈|members.html>회원 관리|회원 정보 편집">
+      <app-header
+        logout
+        crumb-path="index.html>홈|members.html>회원 관리|회원 정보 편집"
+      >
         <!-- 네비게이션 삭제 -->
         <!-- <app-gnb active="members"></app-gnb> -->
         <!-- 내장 도움말 삭제 -->
@@ -34,14 +37,17 @@
     </div>
 
     <script type="importmap">
-	{
-		"imports": {
-			"@base/": "./scripts/base/",
-			"@member/": "./scripts/member/",
-			"@check-doc/": "./scripts/check-doc/"
-		}
-	}
-</script>
-<script type="module" src="scripts/entries/member-edit.js?v=2026080520"></script>
+      {
+        "imports": {
+          "@base/": "./scripts/base/",
+          "@member/": "./scripts/member/",
+          "@check-doc/": "./scripts/check-doc/"
+        }
+      }
+    </script>
+    <script
+      type="module"
+      src="scripts/entries/member-edit.js?v=2026080520"
+    ></script>
   </body>
 </html>

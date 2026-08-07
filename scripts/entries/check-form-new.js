@@ -6,20 +6,31 @@
 // DEPENDS: todayISO(utils-string), byId·delegate(UI), configureEvaluation/renderBasicFunctionCards/updateTotal(evaluation),
 //          setupCheckFormEvents/resetCheckForm(check-form-events), collectPayload(check-form-payload),
 //          renderCheckMovementCards(feedback), sessionReport(session-report)
-import { todayISO } from "@base/utils-string.js";
-import { byId, delegate } from "@base/UI.js";
-import { getNumberParam } from "@base/utils-url.js";
-import { memberStore } from "@member/member-store.js";
-import { recordStore } from "@check-doc/record-store.js";
-import { getMemberById, getMemberByName, getRecordCountsByMember } from "@member/member-utils.js";
-import { ASSESSMENT_ITEMS_BASIC5 } from "@check-doc/assessment-data.js";
-import { collectPayload } from "@check-doc/check-form-payload.js";
-import { setupCheckFormEvents, resetCheckForm } from "@check-doc/check-form-events.js";
-import { configureEvaluation, renderBasicFunctionCards, updateTotal } from "@check-doc/evaluation.js";
-import { renderCheckMovementCards } from "@check-doc/feedback.js";
-import { sessionReport } from "@check-doc/session-report.js";
-import { escapeHtml } from "@base/templates.js";
 import "@base/components/app-header.js";
+import { escapeHtml } from "@base/templates.js";
+import { byId, delegate } from "@base/UI.js";
+import { todayISO } from "@base/utils-string.js";
+import { getNumberParam } from "@base/utils-url.js";
+import { ASSESSMENT_ITEMS_BASIC5 } from "@check-doc/assessment-data.js";
+import {
+	resetCheckForm,
+	setupCheckFormEvents,
+} from "@check-doc/check-form-events.js";
+import { collectPayload } from "@check-doc/check-form-payload.js";
+import {
+	configureEvaluation,
+	renderBasicFunctionCards,
+	updateTotal,
+} from "@check-doc/evaluation.js";
+import { renderCheckMovementCards } from "@check-doc/feedback.js";
+import { recordStore } from "@check-doc/record-store.js";
+import { sessionReport } from "@check-doc/session-report.js";
+import { memberStore } from "@member/member-store.js";
+import {
+	getMemberById,
+	getMemberByName,
+	getRecordCountsByMember,
+} from "@member/member-utils.js";
 
 // ── 날짜 ──
 // 상담일(date picker) 기본값 = 오늘 (기록 date는 YYYY-MM-DD 형식으로 저장)
@@ -51,7 +62,9 @@ byId("member-list").innerHTML = members
  */
 function applyMember(mem) {
 	byId("m-trainer").value = mem.trainer || "";
-	const count = getRecordCountsByMember(recordStore.getState().records).get(mem.id) || 0;
+	const count =
+		getRecordCountsByMember(recordStore.getState().records).get(mem.id) ||
+		0;
 	sessionInput.value = `${count + 1}회차`;
 }
 
@@ -124,7 +137,12 @@ function saveRecord() {
 		...prev,
 		records: [
 			...prev.records,
-			{ id: recId, memberId: matched.id, date: byId("m-date").value || todayISO(), payload },
+			{
+				id: recId,
+				memberId: matched.id,
+				date: byId("m-date").value || todayISO(),
+				payload,
+			},
 		],
 		nextId: prev.nextId + 1,
 	}));

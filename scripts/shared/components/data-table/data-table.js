@@ -1,6 +1,5 @@
 // 파일 용도: DataTable 웹 컴포넌트 — 정렬·선택 가능한 데이터 테이블 (전체 화면 공용)
 import { defineComponent } from "@shared/components/base/component.js";
-import { setAria } from "@shared/components/base/component.js";
 
 defineComponent("ui-data-table", {
 	props: {
@@ -17,7 +16,19 @@ defineComponent("ui-data-table", {
 		ariaDescribedBy: { type: String, default: "" },
 	},
 
-	renderDataTable({ columns, rows, selectable, sortable, selectionKey, selectedRows, striped, hoverable, emptyMessage, ariaLabel, ariaDescribedBy }) {
+	renderDataTable({
+		columns,
+		rows,
+		selectable,
+		sortable,
+		selectionKey,
+		selectedRows,
+		striped,
+		hoverable,
+		emptyMessage,
+		ariaLabel,
+		ariaDescribedBy,
+	}) {
 		const tableId = `table-${this.id || "auto"}`;
 
 		const ariaAttrs = {};
@@ -32,17 +43,22 @@ defineComponent("ui-data-table", {
 		// 헤더
 		const headerRow = columns
 			.map((col) => {
-				const sortAttr = sortable && col.sortable
-					? ` data-sort="${col.key}" aria-sort="none" tabindex="0" role="columnheader"`
-					: ' role="columnheader"';
-				const widthStyle = col.width ? ` style="width: ${col.width};"` : "";
+				const sortAttr =
+					sortable && col.sortable
+						? ` data-sort="${col.key}" aria-sort="none" tabindex="0" role="columnheader"`
+						: ' role="columnheader"';
+				const widthStyle = col.width
+					? ` style="width: ${col.width};"`
+					: "";
 				const alignClass = col.align ? ` align-${col.align}` : "";
 				return `<th${sortAttr}${widthStyle} class="${alignClass}">${col.label}</th>`;
 			})
 			.join("");
 
 		// 선택 컬럼 헤더
-		const selectHeader = selectable ? '<th role="columnheader" style="width: 40px;"><input type="checkbox" class="select-all" aria-label="전체 선택"></th>' : "";
+		const selectHeader = selectable
+			? '<th role="columnheader" style="width: 40px;"><input type="checkbox" class="select-all" aria-label="전체 선택"></th>'
+			: "";
 
 		// 바디
 		let bodyRows;
@@ -62,8 +78,12 @@ defineComponent("ui-data-table", {
 
 					const cells = columns
 						.map((col) => {
-							const cellValue = col.render ? col.render(row[col.key], row, rowIndex) : row[col.key];
-							const alignClass = col.align ? ` align-${col.align}` : "";
+							const cellValue = col.render
+								? col.render(row[col.key], row, rowIndex)
+								: row[col.key];
+							const alignClass = col.align
+								? ` align-${col.align}`
+								: "";
 							return `<td class="${alignClass}" data-key="${col.key}">${cellValue ?? ""}</td>`;
 						})
 						.join("");
@@ -130,7 +150,10 @@ defineComponent("ui-data-table", {
 						? this._props.selectedRows.filter((k) => k !== key)
 						: [...this._props.selectedRows, key];
 					this.setProp("selectedRows", newSelected);
-					this.emit("rowSelect", { key, selected: newSelected.includes(key) });
+					this.emit("rowSelect", {
+						key,
+						selected: newSelected.includes(key),
+					});
 				}
 			});
 
@@ -144,7 +167,10 @@ defineComponent("ui-data-table", {
 						? this._props.selectedRows.filter((k) => k !== key)
 						: [...this._props.selectedRows, key];
 					this.setProp("selectedRows", newSelected);
-					this.emit("rowSelect", { key, selected: newSelected.includes(key) });
+					this.emit("rowSelect", {
+						key,
+						selected: newSelected.includes(key),
+					});
 				}
 			});
 		}

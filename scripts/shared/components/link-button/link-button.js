@@ -1,6 +1,5 @@
 // 파일 용도: LinkButton 웹 컴포넌트 — 링크 스타일 버튼 (전체 화면 공용)
 import { defineComponent } from "@shared/components/base/component.js";
-import { setAria } from "@shared/components/base/component.js";
 
 defineComponent("ui-link-button", {
 	props: {
@@ -50,7 +49,11 @@ defineComponent("ui-link-button", {
 			if (this._props.disabled) return;
 			if (e.key === "Enter" || e.key === " ") {
 				e.preventDefault();
-				if (!this._props.disabled && this._props.href && this._props.href !== "#") {
+				if (
+					!this._props.disabled &&
+					this._props.href &&
+					this._props.href !== "#"
+				) {
 					window.location.href = this._props.href;
 				}
 			}

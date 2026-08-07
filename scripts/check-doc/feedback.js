@@ -64,7 +64,11 @@ export function appendCheckMovementItemRow(btn) {
  */
 function renderFbCard(item) {
 	const wrap = document.createElement("div");
-	wrap.innerHTML = TPL.feedbackCard({ id: item.id, name: item.name, checkItems: item.checks });
+	wrap.innerHTML = TPL.feedbackCard({
+		id: item.id,
+		name: item.name,
+		checkItems: item.checks,
+	});
 	byId("fb-cards").appendChild(wrap.firstElementChild);
 }
 
@@ -100,7 +104,9 @@ export function collectCheckMovementData() {
 			const name =
 				item.querySelector(".fb-move-input").value || "(동작명 없음)";
 			const checked = [...item.querySelectorAll(".fb-check-row")]
-				.filter((row) => row.querySelector("input[type=checkbox]").checked)
+				.filter(
+					(row) => row.querySelector("input[type=checkbox]").checked,
+				)
 				.map((row) => row.querySelector(".fb-check-input").value)
 				.filter(Boolean);
 			const memo = item.querySelector(".eval-memo").value;
