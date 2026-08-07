@@ -42,7 +42,7 @@ function render() {
 
 /**
  * 회원 삭제 (스토어 상태 갱신 → 구독자 재렌더링)
- * 확인 다이얼로그 표시, 연관 체크기록 있으면 삭제 불가
+ * 연관 체크기록이 있으면 함께 일괄 삭제한다 (확인 다이얼로그에 기록 건수 명시)
  * @param {number} id 삭제할 회원 고유 번호
  * @returns {void}
  */
@@ -50,17 +50,19 @@ function removeMember(id) {
 	const member = memberStore.getState().members.find((m) => m.id === id);
 	if (!member) return;
 
-	// 연관 체크기록 확인
-	const hasRecords = recordStore
+	// 연관 체크기록 건수 (일괄 삭제 대상)
+	const linkedRecords = recordStore
 		.getState()
-		.records.some((r) => r.memberId === id);
-	if (hasRecords) {
-		alert("체크기록이 존재하는 회원은 삭제할 수 없습니다.");
-		return;
-	}
+		.records.filter((r) => r.memberId === id);
+	const recordCount = linkedRecords.length;
+
+	const prompt =
+		recordCount > 0
+			? `회원 ${member.name} 님을 삭제하시겠습니까?\n\n연결된 체크기록 ${recordCount}건도 함께 삭제됩니다.`
+			: `회원 ${member.name} 님을 삭제하시겠습니까?`;
 
 	// 확인 다이얼로그
-	if (!confirm(`회원 ${member.name} 님을 삭제하시겠습니까?`)) {
+	if (!confirm(prompt)) {
 		return;
 	}
 
@@ -68,6 +70,14 @@ function removeMember(id) {
 		...prev,
 		members: prev.members.filter((m) => m.id !== id),
 	}));
+
+	// 연관 체크기록 일괄 삭제 (있을 때만 갱신)
+	if (recordCount > 0) {
+		recordStore.setState((prev) => ({
+			...prev,
+			records: prev.records.filter((r) => r.memberId !== id),
+		}));
+	}
 }
 
 /** 검색어 갱신 후 재렌더링
