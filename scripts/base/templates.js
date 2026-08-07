@@ -230,12 +230,12 @@ export const TPL = {
 		return `
 			<div class="fb-item" id="fb-item-${id}">
 				<div class="fb-item-header">
-					<input class="fb-move-input" type="text" value="${escapeHtml(name)}" placeholder="동작명 (예: 스쿼트)">
+					<input class="fb-move-input" type="text" value="${escapeHtml(name)}" placeholder="동작명 (예: 스쿼트)" aria-label="동작명">
 					<button class="fb-del-btn" title="삭제" aria-label="피드백 삭제">✕</button>
 				</div>
 				<div class="fb-checks-wrap">${checksHTML}</div>
-				<button class="add-check-btn">+ 체크 항목 추가</button>
-				<textarea class="eval-memo" placeholder="코칭 포인트 메모..." style="margin-top:6px;" title="코칭 포인트 메모"></textarea>
+				<button class="add-check-btn" aria-label="체크 항목 추가">+ 체크 항목 추가</button>
+				<textarea class="eval-memo" placeholder="코칭 포인트 메모..." style="margin-top:6px;" title="코칭 포인트 메모" aria-label="코칭 포인트 메모"></textarea>
 			</div>`;
 	},
 

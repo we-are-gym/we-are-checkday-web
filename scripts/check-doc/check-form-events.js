@@ -99,7 +99,10 @@ export function resetCheckForm() {
 		.forEach((el) => (el.value = ""));
 	document
 		.querySelectorAll(".ctag,.fbtag,.goal-tag")
-		.forEach((el) => el.classList.remove("on"));
+		.forEach((el) => {
+			el.classList.remove("on");
+			el.setAttribute("aria-pressed", "false");
+		});
 	scoreState.reset();
 	getEvals().forEach((_, i) => {
 		byId(`sv-${i}`).textContent = "0";
