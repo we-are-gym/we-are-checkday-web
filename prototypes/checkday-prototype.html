@@ -208,6 +208,32 @@ hr.div{border:none; border-top:1px solid var(--border); margin:24px 0;}
 
 /* logo mark reused */
 .logo-mark{width:22px; height:22px;}
+
+/* ---------- print (인쇄 / PDF) ---------- */
+.print-only{display:none;}
+@media print{
+  body{background:#fff;}
+  .screen{display:none !important; min-height:0; padding-bottom:0;}
+  #screen-member-detail.active{display:block !important;}
+  .topbar, .no-print, .tab-bar{display:none !important;}
+  .print-only{display:block !important;}
+  .container{max-width:100%; padding:0;}
+  .two-col{display:block;}
+  .stack{gap:14px;}
+  .tab-panel{display:block !important; margin-bottom:18px;}
+  .card, .section-card{
+    background:#fff; border:1px solid #ddd; color:#111;
+    break-inside:avoid; box-shadow:none;
+  }
+  .k, .cell-dim, .text-dim, .page-sub{color:#555 !important;}
+  .v, .cell-name, .section-title, .page-title, .print-only{color:#111 !important;}
+  .compare-table th, .compare-table td{border-color:#ddd; color:#111;}
+  .delta-up{color:#1a8a3a !important;}
+  .delta-down{color:#b23a2c !important;}
+  svg text{fill:#333 !important;}
+  svg polyline{stroke:#333 !important;}
+  svg circle{fill:#333 !important;}
+}
 </style>
 </head>
 <body>
@@ -300,14 +326,19 @@ hr.div{border:none; border-top:1px solid var(--border); margin:24px 0;}
       <button class="link-btn" onclick="nav('screen-login')">로그아웃</button>
     </div>
   </header>
-  <div class="container">
-    <div class="page-head">
+  <div class="container" id="member-detail-printable">
+    <div class="page-head no-print">
       <div>
         <div class="page-title" id="md-name">-</div>
         <div class="page-sub" id="md-sub">-</div>
       </div>
-      <button class="btn btn-ghost" onclick="startEditMember(state.currentMemberId)">편집</button>
+      <div style="display:flex; gap:8px;">
+        <button class="btn btn-ghost btn-sm" onclick="exportAsJPG()">JPG 저장</button>
+        <button class="btn btn-ghost btn-sm" onclick="printMemberDetail()">인쇄 / PDF</button>
+        <button class="btn btn-ghost" onclick="startEditMember(state.currentMemberId)">편집</button>
+      </div>
     </div>
+    <div class="print-only page-title" id="md-name-print" style="margin-bottom:4px;"></div>
 
     <div class="two-col">
       <div class="stack">
@@ -416,6 +447,7 @@ hr.div{border:none; border-top:1px solid var(--border); margin:24px 0;}
   <iframe id="check-frame" src="" style="width:100%; height:calc(100vh - 73px); border:none; display:block; background:var(--bg);"></iframe>
 </section>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 /* ============================================================
    MOCK DATA
@@ -570,6 +602,7 @@ function openMember(id){
   state.currentMemberId = id;
   const m = members.find(x=>x.id===id);
   document.getElementById('md-name').textContent = m.name;
+  document.getElementById('md-name-print').textContent = `${m.name} · 체크데이 리포트 (${new Date().toISOString().slice(0,10)})`;
   document.getElementById('md-sub').textContent = `체크기록 ${m.records.length}건`;
   document.getElementById('md-name2').textContent = m.name;
   document.getElementById('md-gender').textContent = m.gender || "-";
@@ -794,6 +827,37 @@ window.addEventListener('message', (e)=>{
     openMember(member.id);
   }
 });
+
+/* ---------- JPG로 저장 ---------- */
+function exportAsJPG(){
+  if(typeof html2canvas === 'undefined'){
+    alert('이미지 생성 라이브러리를 불러오지 못했어요.\n\n채팅 안의 미리보기(샌드박스)에서는 외부 스크립트 로딩이 막혀 있을 수 있어요. 파일을 다운로드해서 실제 브라우저 탭에서 열어 다시 시도해 주세요.');
+    return;
+  }
+  const target = document.getElementById('member-detail-printable');
+  const btns = target.querySelectorAll('.no-print');
+  btns.forEach(b=>b.style.visibility='hidden'); // 캡처에서만 잠깐 숨김 (레이아웃은 유지)
+  html2canvas(target, {backgroundColor:'#131313', scale:2, useCORS:true}).then(canvas=>{
+    btns.forEach(b=>b.style.visibility='');
+    const m = members.find(x=>x.id===state.currentMemberId);
+    const link = document.createElement('a');
+    link.download = `체크데이_${m ? m.name : '회원'}_${new Date().toISOString().slice(0,10)}.jpg`;
+    link.href = canvas.toDataURL('image/jpeg', 0.92);
+    link.click();
+  }).catch(err=>{
+    btns.forEach(b=>b.style.visibility='');
+    alert('이미지 생성에 실패했어요: ' + err.message);
+  });
+}
+
+/* ---------- 인쇄 / PDF ---------- */
+function printMemberDetail(){
+  try{
+    window.print();
+  }catch(err){
+    alert('인쇄 기능을 열지 못했어요.\n\n채팅 안의 미리보기(샌드박스)에서는 인쇄 대화상자가 막혀 있을 수 있어요. 파일을 다운로드해서 실제 브라우저 탭에서 열어 다시 시도해 주세요.');
+  }
+}
 
 /* init */
 renderMemberList();
