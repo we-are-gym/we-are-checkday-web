@@ -127,33 +127,34 @@ export function deltaHTML(d) {
  */
 /**
  * 두 기록의 비교 마크업 생성 — 프로토타입 배치:
- * ① 인바디 표(헤더: 항목·기준·현재·변화) ② 움직임 평가 표(옵션: 헤더, 총점 라벨 표시)
- * @param {import("@base/store.js").CheckRecord} cur 최신(현재 체크기록)
- * @param {import("@base/store.js").CheckRecord} tgt 기준(비교 대상)
+ * ① 인바디 표(헤더: 항목·좌측·우측·변화) ② 움직임 평가 표(옵션: 헤더, 총점 라벨 표시)
+ * 좌측 셀렉터(#cmp-cur, 현재 체크기록)로 선택한 회차를 좌측 열, 우측 셀렉터(#cmp-tgt, 비교 대상)로 선택한 회차를 우측 열에 표시한다.
+ * @param {import("@base/store.js").CheckRecord} left 좌측 셀렉터가 고른 기록 -> 좌측 열
+ * @param {import("@base/store.js").CheckRecord} right 우측 셀렉터가 고른 기록 -> 우측 열
  * @param {{ showTotalScoreLabel?: boolean, includeMovementHeader?: boolean }} [options={}]
  * @returns {string} 비교 테이블 HTML
  */
-export function buildCompareTable(cur, tgt, options = {}) {
+export function buildCompareTable(left, right, options = {}) {
 	const { showTotalScoreLabel = true, includeMovementHeader = false } =
 		options;
-	const curLabel = cur.payload.session || cur.date;
-	const tgtLabel = tgt.payload.session || tgt.date;
+	const leftLabel = left.payload.session || left.date;
+	const rightLabel = right.payload.session || right.date;
 
 	// ① 인바디 표
 
 	const ibRows = [];
 
 	IB_KEYS.forEach(({ key, label }) => {
-		const c = parseFloat(cur.payload.ib?.[key]);
-		const t = parseFloat(tgt.payload.ib?.[key]);
+		const l = parseFloat(left.payload.ib?.[key]);
+		const r = parseFloat(right.payload.ib?.[key]);
 
-		if (Number.isNaN(c) || Number.isNaN(t)) return;
+		if (Number.isNaN(l) || Number.isNaN(r)) return;
 
 		ibRows.push({
 			label,
-			cur: c.toFixed(1),
-			tgt: t.toFixed(1),
-			delta: deltaHTML(Number((c - t).toFixed(1))),
+			left: l.toFixed(1),
+			right: r.toFixed(1),
+			delta: deltaHTML(Number((l - r).toFixed(1))),
 		});
 	});
 
@@ -170,35 +171,35 @@ export function buildCompareTable(cur, tgt, options = {}) {
 		return map;
 	};
 
-	const curScores = resolveScores(cur.payload);
-	const tgtScores = resolveScores(tgt.payload);
+	const leftScores = resolveScores(left.payload);
+	const rightScores = resolveScores(right.payload);
 
 	// 양쪽 기록의 항목 이름 합집합을 순회하며, 양쪽 점수가 모두 있는 항목만 행으로 남긴다 (교집합)
 	const itemNames = [
 		...new Set(
 			[
-				...resolveRecordItems(cur.payload),
-				...resolveRecordItems(tgt.payload),
+				...resolveRecordItems(left.payload),
+				...resolveRecordItems(right.payload),
 			].map((it) => it.name),
 		),
 	];
 
 	itemNames.forEach((name) => {
-		const c = curScores.get(name);
-		const t = tgtScores.get(name);
+		const l = leftScores.get(name);
+		const r = rightScores.get(name);
 
-		if (c == null || t == null) return;
+		if (l == null || r == null) return;
 
 		mvRows.push({
 			label: name,
-			cur: `${c}/3`,
-			tgt: `${t}/3`,
-			delta: deltaHTML(c - t),
+			left: `${l}/3`,
+			right: `${r}/3`,
+			delta: deltaHTML(l - r),
 		});
 	});
 
-	const ct = recordTotal(cur.payload);
-	const tt = recordTotal(tgt.payload);
+	const leftTotal = recordTotal(left.payload);
+	const rightTotal = recordTotal(right.payload);
 
 	let movementTableHtml = "";
 	if (mvRows.length > 0) {
@@ -213,15 +214,15 @@ export function buildCompareTable(cur, tgt, options = {}) {
 				${TPL.compareTable({
 					extraClassNames: ["compare-table-basicFunctions"],
 					itemLabel: "베이직 펑션",
-					curLabel,
-					tgtLabel,
+					leftLabel,
+					rightLabel,
 					rows: mvRows,
 					footRows: [
 						{
 							label: "총점",
-							cur: `${ct}/${recordMax(cur.payload)}`,
-							tgt: `${tt}/${recordMax(tgt.payload)}`,
-							delta: deltaHTML(ct - tt),
+							left: `${leftTotal}/${recordMax(left.payload)}`,
+							right: `${rightTotal}/${recordMax(right.payload)}`,
+							delta: deltaHTML(leftTotal - rightTotal),
 						},
 					],
 					withHeader: includeMovementHeader,
@@ -232,7 +233,7 @@ export function buildCompareTable(cur, tgt, options = {}) {
 
 	return `
 		<div class="compare-table-container">
-			${TPL.compareTable({ extraClassNames: ["compare-table-inbody"], itemLabel: "인바디 항목", curLabel, tgtLabel, rows: ibRows })}
+			${TPL.compareTable({ extraClassNames: ["compare-table-inbody"], itemLabel: "인바디 항목", leftLabel, rightLabel, rows: ibRows })}
 		</div>
 		${movementTableHtml}`;
 }

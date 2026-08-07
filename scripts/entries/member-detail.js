@@ -145,11 +145,18 @@ function renderRecords(records) {
 	setHTML("record-list", rows.map((r) => TPL.recordRow(r)).join(""));
 }
 
+/**
+ * 비교 2종 셀렉터(#cmp-cur 좌측·#cmp-tgt 우측)에 회차 옵션을 채우고 디폴트를 정한다.
+ * 좌측 셀렉터(#cmp-cur)=최신 직전 회차, 우측 셀렉터(#cmp-tgt)=최신 회차 — renderCompare()가
+ * 좌측 선택 회차를 비교 테이블 좌측 열, 우측 선택 회차를 우측 열로 배치한다.
+ * @param {import("@base/store.js").CheckRecord[]} records 회원의 기록 (날짜 오름차순)
+ * @returns {void}
+ */
 function fillCompareSelects(records) {
-	const cur = byId("cmp-cur");
-	const tgt = byId("cmp-tgt");
+	const leftSel = byId("cmp-cur");
+	const rightSel = byId("cmp-tgt");
 	if (records.length === 0) {
-		cur.innerHTML = tgt.innerHTML = `<option>체크기록 없음</option>`;
+		leftSel.innerHTML = rightSel.innerHTML = `<option>체크기록 없음</option>`;
 		setHTML(
 			"compare-result",
 			'<div class="sparkline-empty">비교할 체크기록이 없어요</div>',
@@ -162,25 +169,25 @@ function fillCompareSelects(records) {
 				`<option value="${r.id}">${r.payload.session || r.date} (${r.date})</option>`,
 		)
 		.join("");
-	cur.innerHTML = opts;
-	tgt.innerHTML = opts;
-	// 좌측(기준): 직전 기록 (records.length >= 2면 length-2, 아니면 0)
-	cur.value = String(records[Math.max(0, records.length - 2)].id);
-	// 우측(비교): 최신 기록
-	tgt.value = String(records[records.length - 1].id);
+	leftSel.innerHTML = opts;
+	rightSel.innerHTML = opts;
+	// 좌측 셀렉터: 직전 회차 (records.length >= 2면 length-2, 아니면 0)
+	leftSel.value = String(records[Math.max(0, records.length - 2)].id);
+	// 우측 셀렉터: 최신 회차
+	rightSel.value = String(records[records.length - 1].id);
 	renderCompare();
 }
 
 function renderCompare() {
-	const curId = Number(byId("cmp-cur").value);
-	const tgtId = Number(byId("cmp-tgt").value);
+	const leftId = Number(byId("cmp-cur").value);
+	const rightId = Number(byId("cmp-tgt").value);
 	const all = getRecords();
-	const cur = getRecordById(all, curId);
-	const tgt = getRecordById(all, tgtId);
-	if (!cur || !tgt) return;
+	const left = getRecordById(all, leftId);
+	const right = getRecordById(all, rightId);
+	if (!left || !right) return;
 	setHTML(
 		"compare-result",
-		buildCompareTable(cur, tgt, {
+		buildCompareTable(left, right, {
 			showTotalScoreLabel: false,
 			includeMovementHeader: true,
 		}),
