@@ -1,20 +1,13 @@
 // 파일 용도: CardPanel 웹 컴포넌트 — 접이식 카드 패널 (전체 화면 공용)
 import { defineComponent } from "@shared/components/base/component.js";
 
-defineComponent({
-	tag: "ui-card-panel",
-	props: {
-		header: { type: String, default: "" },
-		subHeader: { type: String, default: "" },
-		collapsible: { type: Boolean, default: false },
-		expanded: { type: Boolean, default: true },
-		footer: { type: String, default: "" },
-		variant: { type: String, default: "default" }, // default | section | eval | feedback
-		ariaLabel: { type: String, default: "" },
-		ariaDescribedBy: { type: String, default: "" },
-	},
-
-	renderCardPanel({
+/** 카드 패널 마크업 생성 (순수 함수 — 컴포넌트 상태와 분리)
+ * @param {{ header: string, subHeader: string, collapsible: boolean, expanded: boolean, footer: string, variant: string, ariaLabel: string, ariaDescribedBy: string }} props
+ * @param {{ elementId: string, hasFooterSlot: boolean }} ctx 콘텐츠 id·footer 슬롯 유무 (컴포넌트 인스턴스 맥락)
+ * @returns {string}
+ */
+const renderCardPanel = (
+	{
 		header,
 		subHeader,
 		collapsible,
@@ -23,22 +16,24 @@ defineComponent({
 		variant,
 		ariaLabel,
 		ariaDescribedBy,
-	}) {
-		const panelId = `card-${this.id || "auto"}`;
-		const hasHeader = header || subHeader;
-		const hasFooter = footer || this._hasFooterSlot;
+	},
+	{ elementId, hasFooterSlot },
+) => {
+	const panelId = `card-${elementId || "auto"}`;
+	const hasHeader = header || subHeader;
+	const hasFooter = footer || hasFooterSlot;
 
-		const ariaAttrs = {};
-		if (ariaLabel) ariaAttrs["label"] = ariaLabel;
-		if (ariaDescribedBy) ariaAttrs["describedby"] = ariaDescribedBy;
-		if (collapsible) ariaAttrs["expanded"] = String(expanded);
+	const ariaAttrs = {};
+	if (ariaLabel) ariaAttrs["label"] = ariaLabel;
+	if (ariaDescribedBy) ariaAttrs["describedby"] = ariaDescribedBy;
+	if (collapsible) ariaAttrs["expanded"] = String(expanded);
 
-		let ariaStr = "";
-		for (const [key, val] of Object.entries(ariaAttrs)) {
-			ariaStr += ` aria-${key}="${val}"`;
-		}
+	let ariaStr = "";
+	for (const [key, val] of Object.entries(ariaAttrs)) {
+		ariaStr += ` aria-${key}="${val}"`;
+	}
 
-		return `
+	return `
 			<div class="card-panel card-${variant}${collapsible ? " collapsible" : ""}${expanded ? " expanded" : " collapsed"}"${ariaStr}>
 				${
 					hasHeader
@@ -79,12 +74,28 @@ defineComponent({
 						: ""
 				}
 			</div>`;
+};
+
+defineComponent({
+	tag: "ui-card-panel",
+	props: {
+		header: { type: String, default: "" },
+		subHeader: { type: String, default: "" },
+		collapsible: { type: Boolean, default: false },
+		expanded: { type: Boolean, default: true },
+		footer: { type: String, default: "" },
+		variant: { type: String, default: "default" }, // default | section | eval | feedback
+		ariaLabel: { type: String, default: "" },
+		ariaDescribedBy: { type: String, default: "" },
 	},
 
 	render() {
 		// footer 슬롯 존재 여부 확인
 		this._hasFooterSlot = this.querySelector("[slot='footer']") !== null;
-		return this.renderCardPanel(this._getProps());
+		return renderCardPanel(this._getProps(), {
+			elementId: this.id,
+			hasFooterSlot: this._hasFooterSlot,
+		});
 	},
 
 	onConnect() {

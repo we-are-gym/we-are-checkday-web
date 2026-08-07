@@ -1,23 +1,13 @@
 // 파일 용도: DataTable 웹 컴포넌트 — 정렬·선택 가능한 데이터 테이블 (전체 화면 공용)
 import { defineComponent } from "@shared/components/base/component.js";
 
-defineComponent({
-	tag: "ui-data-table",
-	props: {
-		columns: { type: Array, default: [] }, // [{ key, label, sortable, render, width, align }]
-		rows: { type: Array, default: [] }, // 데이터 객체 배열
-		selectable: { type: Boolean, default: false },
-		sortable: { type: Boolean, default: false },
-		selectionKey: { type: String, default: "id" }, // 행 식별 키
-		selectedRows: { type: Array, default: [] }, // 선택된 행 키 배열
-		striped: { type: Boolean, default: true },
-		hoverable: { type: Boolean, default: true },
-		emptyMessage: { type: String, default: "데이터가 없습니다" },
-		ariaLabel: { type: String, default: "" },
-		ariaDescribedBy: { type: String, default: "" },
-	},
-
-	renderDataTable({
+/** 데이터 테이블 마크업 생성 (순수 함수 — 컴포넌트 상태와 분리)
+ * @param {{ columns: Array, rows: Array, selectable: boolean, sortable: boolean, selectionKey: string, selectedRows: Array, striped: boolean, hoverable: boolean, emptyMessage: string, ariaLabel: string, ariaDescribedBy: string }} props
+ * @param {{ elementId: string }} ctx 테이블 id 접두어 (컴포넌트 인스턴스 맥락)
+ * @returns {string}
+ */
+const renderDataTable = (
+	{
 		columns,
 		rows,
 		selectable,
@@ -29,8 +19,10 @@ defineComponent({
 		emptyMessage,
 		ariaLabel,
 		ariaDescribedBy,
-	}) {
-		const tableId = `table-${this.id || "auto"}`;
+	},
+	{ elementId },
+) => {
+	const tableId = `table-${elementId || "auto"}`;
 
 		const ariaAttrs = {};
 		if (ariaLabel) ariaAttrs["label"] = ariaLabel;
@@ -105,10 +97,26 @@ defineComponent({
 					</tbody>
 				</table>
 			</div>`;
+};
+
+defineComponent({
+	tag: "ui-data-table",
+	props: {
+		columns: { type: Array, default: [] }, // [{ key, label, sortable, render, width, align }]
+		rows: { type: Array, default: [] }, // 데이터 객체 배열
+		selectable: { type: Boolean, default: false },
+		sortable: { type: Boolean, default: false },
+		selectionKey: { type: String, default: "id" }, // 행 식별 키
+		selectedRows: { type: Array, default: [] }, // 선택된 행 키 배열
+		striped: { type: Boolean, default: true },
+		hoverable: { type: Boolean, default: true },
+		emptyMessage: { type: String, default: "데이터가 없습니다" },
+		ariaLabel: { type: String, default: "" },
+		ariaDescribedBy: { type: String, default: "" },
 	},
 
 	render() {
-		return this.renderDataTable(this._getProps());
+		return renderDataTable(this._getProps(), { elementId: this.id });
 	},
 
 	onConnect() {

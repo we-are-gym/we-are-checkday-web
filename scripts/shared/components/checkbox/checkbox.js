@@ -1,20 +1,13 @@
 // 파일 용도: Checkbox 웹 컴포넌트 — 체크박스 (전체 화면 공용)
 import { defineComponent } from "@shared/components/base/component.js";
 
-defineComponent({
-	tag: "ui-checkbox",
-	props: {
-		checked: { type: Boolean, default: false },
-		indeterminate: { type: Boolean, default: false },
-		disabled: { type: Boolean, default: false },
-		label: { type: String, default: "" },
-		value: { type: String, default: "on" },
-		name: { type: String, default: "" },
-		ariaLabel: { type: String, default: "" },
-		ariaDescribedBy: { type: String, default: "" },
-	},
-
-	renderCheckbox({
+/** 체크박스 마크업 생성 (순수 함수 — 컴포넌트 상태와 분리)
+ * @param {{ checked: boolean, indeterminate: boolean, disabled: boolean, label: string, value: string, name: string, ariaLabel: string, ariaDescribedBy: string }} props
+ * @param {{ elementId: string }} ctx 입력 id 접두어 (컴포넌트 인스턴스 맥락)
+ * @returns {string}
+ */
+const renderCheckbox = (
+	{
 		checked,
 		indeterminate,
 		disabled,
@@ -23,21 +16,23 @@ defineComponent({
 		name,
 		ariaLabel,
 		ariaDescribedBy,
-	}) {
-		const ariaAttrs = {};
-		if (ariaLabel) ariaAttrs["label"] = ariaLabel;
-		if (ariaDescribedBy) ariaAttrs["describedby"] = ariaDescribedBy;
-		ariaAttrs["checked"] = indeterminate ? "mixed" : String(checked);
-		if (disabled) ariaAttrs["disabled"] = "true";
+	},
+	{ elementId },
+) => {
+	const ariaAttrs = {};
+	if (ariaLabel) ariaAttrs["label"] = ariaLabel;
+	if (ariaDescribedBy) ariaAttrs["describedby"] = ariaDescribedBy;
+	ariaAttrs["checked"] = indeterminate ? "mixed" : String(checked);
+	if (disabled) ariaAttrs["disabled"] = "true";
 
-		let ariaStr = "";
-		for (const [key, val] of Object.entries(ariaAttrs)) {
-			ariaStr += ` aria-${key}="${val}"`;
-		}
+	let ariaStr = "";
+	for (const [key, val] of Object.entries(ariaAttrs)) {
+		ariaStr += ` aria-${key}="${val}"`;
+	}
 
-		const inputId = `checkbox-${this.id || "auto"}`;
+	const inputId = `checkbox-${elementId || "auto"}`;
 
-		return `
+	return `
 			<label class="checkbox-wrapper${disabled ? " disabled" : ""}${indeterminate ? " indeterminate" : ""}">
 				<input
 					type="checkbox"
@@ -60,10 +55,23 @@ defineComponent({
 				</span>
 				${label ? `<span class="checkbox-label">${label}</span>` : ""}
 			</label>`;
+};
+
+defineComponent({
+	tag: "ui-checkbox",
+	props: {
+		checked: { type: Boolean, default: false },
+		indeterminate: { type: Boolean, default: false },
+		disabled: { type: Boolean, default: false },
+		label: { type: String, default: "" },
+		value: { type: String, default: "on" },
+		name: { type: String, default: "" },
+		ariaLabel: { type: String, default: "" },
+		ariaDescribedBy: { type: String, default: "" },
 	},
 
 	render() {
-		return this.renderCheckbox(this._getProps());
+		return renderCheckbox(this._getProps(), { elementId: this.id });
 	},
 
 	onConnect() {

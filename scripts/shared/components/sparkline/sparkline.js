@@ -1,42 +1,28 @@
 // 파일 용도: Sparkline 웹 컴포넌트 — 인라인 SVG 스파크라인 차트 (전체 화면 공용)
 import { defineComponent } from "@shared/components/base/component.js";
 
-defineComponent({
-	tag: "ui-sparkline",
-	props: {
-		data: { type: Array, default: [] }, // 숫자 배열
-		width: { type: Number, default: 260 },
-		height: { type: Number, default: 68 },
-		color: { type: String, default: "var(--accent)" },
-		background: { type: String, default: "transparent" },
-		showArea: { type: Boolean, default: true },
-		showPoints: { type: Boolean, default: true },
-		pointRadius: { type: Number, default: 3 },
-		lineWidth: { type: Number, default: 2 },
-		padding: { type: Number, default: 4 },
-		baseline: { type: Number, default: null }, // 기준선 값
-		ariaLabel: { type: String, default: "" },
-		ariaDescribedBy: { type: String, default: "" },
-	},
-
-	renderSparkline({
-		data,
-		width,
-		height,
-		color,
-		background,
-		showArea,
-		showPoints,
-		pointRadius,
-		lineWidth,
-		padding,
-		baseline,
-		ariaLabel,
-		ariaDescribedBy,
-	}) {
-		if (!data || data.length === 0) {
-			return `<div class="sparkline-empty" style="width: ${width}px; height: ${height}px;" aria-hidden="true">데이터 없음</div>`;
-		}
+/** 스파크라인 마크업 생성 (순수 함수 — 컴포넌트 상태와 분리)
+ * @param {{ data: number[], width: number, height: number, color: string, background: string, showArea: boolean, showPoints: boolean, pointRadius: number, lineWidth: number, padding: number, baseline: (number|null), ariaLabel: string, ariaDescribedBy: string }} props
+ * @returns {string}
+ */
+const renderSparkline = ({
+	data,
+	width,
+	height,
+	color,
+	background,
+	showArea,
+	showPoints,
+	pointRadius,
+	lineWidth,
+	padding,
+	baseline,
+	ariaLabel,
+	ariaDescribedBy,
+}) => {
+	if (!data || data.length === 0) {
+		return `<div class="sparkline-empty" style="width: ${width}px; height: ${height}px;" aria-hidden="true">데이터 없음</div>`;
+	}
 
 		const validData = data.filter(
 			(v) => typeof v === "number" && !isNaN(v),
@@ -146,9 +132,27 @@ defineComponent({
 					${pointElements}
 				</svg>
 			</div>`;
+};
+
+defineComponent({
+	tag: "ui-sparkline",
+	props: {
+		data: { type: Array, default: [] }, // 숫자 배열
+		width: { type: Number, default: 260 },
+		height: { type: Number, default: 68 },
+		color: { type: String, default: "var(--accent)" },
+		background: { type: String, default: "transparent" },
+		showArea: { type: Boolean, default: true },
+		showPoints: { type: Boolean, default: true },
+		pointRadius: { type: Number, default: 3 },
+		lineWidth: { type: Number, default: 2 },
+		padding: { type: Number, default: 4 },
+		baseline: { type: Number, default: null }, // 기준선 값
+		ariaLabel: { type: String, default: "" },
+		ariaDescribedBy: { type: String, default: "" },
 	},
 
 	render() {
-		return this.renderSparkline(this._getProps());
+		return renderSparkline(this._getProps());
 	},
 });

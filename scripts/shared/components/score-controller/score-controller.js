@@ -1,47 +1,37 @@
 // 파일 용도: ScoreController 웹 컴포넌트 — 평가 점수 조작 (전체 화면 공용)
 import { defineComponent } from "@shared/components/base/component.js";
 
-defineComponent({
-	tag: "ui-score-controller",
-	props: {
-		score: { type: Number, default: 0 },
-		max: { type: Number, default: 3 },
-		min: { type: Number, default: 0 },
-		dots: { type: Number, default: 4 }, // max + 1
-		index: { type: Number, default: 0 },
-		interactive: { type: Boolean, default: true },
-		ariaLabel: { type: String, default: "" },
-		ariaDescribedBy: { type: String, default: "" },
-		showValue: { type: Boolean, default: true },
-	},
+/** 점수 컨트롤러 마크업 생성 (순수 함수 — 컴포넌트 상태와 분리)
+ * @param {{ score: number, max: number, min: number, dots: number, index: number, interactive: boolean, ariaLabel: string, ariaDescribedBy: string, showValue: boolean }} props
+ * @returns {string}
+ */
+const renderScoreController = ({
+	score,
+	max,
+	min,
+	dots,
+	index,
+	interactive,
+	ariaLabel,
+	ariaDescribedBy,
+	showValue,
+}) => {
+	const clampedScore = Math.max(min, Math.min(max, score));
+	const dataKey = `data-i`;
 
-	renderScoreController({
-		score,
-		max,
-		min,
-		dots,
-		index,
-		interactive,
-		ariaLabel,
-		ariaDescribedBy,
-		showValue,
-	}) {
-		const clampedScore = Math.max(min, Math.min(max, score));
-		const dataKey = `data-i`;
+	const decreaseDisabled = clampedScore <= min;
+	const increaseDisabled = clampedScore >= max;
 
-		const decreaseDisabled = clampedScore <= min;
-		const increaseDisabled = clampedScore >= max;
+	const ariaAttrs = {};
+	if (ariaLabel) ariaAttrs["label"] = ariaLabel;
+	if (ariaDescribedBy) ariaAttrs["describedby"] = ariaDescribedBy;
 
-		const ariaAttrs = {};
-		if (ariaLabel) ariaAttrs["label"] = ariaLabel;
-		if (ariaDescribedBy) ariaAttrs["describedby"] = ariaDescribedBy;
+	let ariaStr = "";
+	for (const [key, val] of Object.entries(ariaAttrs)) {
+		ariaStr += ` aria-${key}="${val}"`;
+	}
 
-		let ariaStr = "";
-		for (const [key, val] of Object.entries(ariaAttrs)) {
-			ariaStr += ` aria-${key}="${val}"`;
-		}
-
-		return `
+	return `
 			<div class="score-controller${interactive ? "" : " readonly"}" data-index="${index}"${ariaStr}>
 				<div class="score-controls">
 					<button
@@ -83,10 +73,24 @@ defineComponent({
 					).join("")}
 				</div>
 			</div>`;
+};
+
+defineComponent({
+	tag: "ui-score-controller",
+	props: {
+		score: { type: Number, default: 0 },
+		max: { type: Number, default: 3 },
+		min: { type: Number, default: 0 },
+		dots: { type: Number, default: 4 }, // max + 1
+		index: { type: Number, default: 0 },
+		interactive: { type: Boolean, default: true },
+		ariaLabel: { type: String, default: "" },
+		ariaDescribedBy: { type: String, default: "" },
+		showValue: { type: Boolean, default: true },
 	},
 
 	render() {
-		return this.renderScoreController(this._getProps());
+		return renderScoreController(this._getProps());
 	},
 
 	onConnect() {
