@@ -111,7 +111,7 @@ export const TPL = {
 						<div class="score-dots">${dots}</div>
 					</div>
 				</div>
-				<button class="expand-btn" id="expand-${id}" data-id="${id}" aria-expanded="false">
+				<button class="expand-btn" id="expand-${id}" data-id="${id}" aria-expanded="false" aria-controls="detail-${id}">
 					체크 항목 / 메모
 					<span class="expand-arrow">▾</span>
 				</button>
