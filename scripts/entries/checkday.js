@@ -6,7 +6,7 @@
 //          setupCheckFormEvents/resetCodeForm(check-form-events), renderCheckMovementCards(feedback),
 //          sessionReport(session-report)
 import "@base/components/app-header.js";
-import { byId, delegate, setText } from "@base/UI.js";
+import { byId, delegate, dismissOnOverlayClick, setText } from "@base/UI.js";
 import { today } from "@base/utils-string.js";
 import { getNumberParam } from "@base/utils-url.js";
 import {
@@ -70,10 +70,8 @@ delegate(document, "click", "[data-action]", (e, el) => {
 
 // 목표·체크·점수·피드백·인바디/VO₂ 위임은 checkday·편집·작성 화면이 공유하는 check-form-events로 처리
 setupCheckFormEvents();
-// 결과 모달 배경(overlay 자신) 클릭 시 닫기
-delegate(document, "click", "#overlay", (e) => {
-	if (e.target.id === "overlay") e.target.classList.remove("open");
-});
+// 결과 모달 배경(overlay 자신) 클릭 시 닫기 — 공용 헬퍼
+dismissOnOverlayClick();
 
 // ── 시작 ──
 renderBasicFunctionCards();

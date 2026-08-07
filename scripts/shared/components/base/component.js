@@ -60,11 +60,10 @@ export function defineComponent(options) {
 
 		// 연결 시: props 초기화 + 사용자 콜백
 		connectedCallback() {
-			console.log(
-				"웹컴포넌트의 props를 초기화하고 사용자 콜백을 호출합니다…",
-			);
-
-			console.log({ spec, this: this });
+			// console.log(
+			// 	"웹컴포넌트의 props를 초기화하고 사용자 콜백을 호출합니다…",
+			// );
+			// console.log({ spec, this: this });
 
 			spec._initProps.call(this);
 			if (connectedCallback) connectedCallback.call(this);
@@ -90,8 +89,8 @@ export function defineComponent(options) {
 
 		// props 초기화
 		_initProps() {
-			console.log("웹컴포넌트의 props를 초기화합니다…");
-			console.log({ this: this });
+			// console.log("웹컴포넌트의 props를 초기화합니다…");
+			// console.log({ this: this });
 
 			this._props = {};
 

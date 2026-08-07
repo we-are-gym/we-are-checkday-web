@@ -432,7 +432,7 @@ export const TPL = {
 				<div class="header-right">
 					${navHtml}
 					${crumbHtml}
-					${showLogout ? `<button type="button" class="link-btn" data-header-logout>로그아웃</button>` : ""}
+					${showLogout ? `<button type="button" class="link-btn" data-header-logout aria-label="로그아웃">로그아웃</button>` : ""}
 				</div>
 			</header>`;
 	},

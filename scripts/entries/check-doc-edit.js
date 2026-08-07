@@ -59,10 +59,10 @@ function resetForm() {
 /** 초기화: 편집 대상 기록을 불러와 평가 카드를 렌더링하고 폼을 프리필한다 */
 function init() {
 	const rec = getRecord();
-	console.log({ rec });
+	// console.log({ rec });
 
 	if (!rec) {
-		console.log("기록을 찾을 수 없습니다. 목록에서 다시 선택하세요.");
+		// console.log("기록을 찾을 수 없습니다. 목록에서 다시 선택하세요.");
 
 		byId("eval-cards").innerHTML =
 			'<p class="goal-empty">기록을 찾을 수 없습니다. 목록에서 다시 선택하세요.</p>';
@@ -76,19 +76,19 @@ function init() {
 	}
 
 	const cancelURL = `check-doc-view.html?docID=${docId}`;
-	console.log({ cancelURL });
+	// console.log({ cancelURL });
 
 	byId("btn-cancel").href = cancelURL;
 
 	// 기록의 항목 구성(payload.items 우선)에 맞춰 평가를 설정 — 5항목 15점·7항목 21점·레거시 8항목 24점 (카드 렌더 전 호출)
 	const items = resolveRecordItems(rec.payload);
-	console.table(items);
+	// console.table(items);
 
 	configureEvaluation({ items, max: items.length * SCORE_MAX });
 	renderBasicFunctionCards();
 
 	attachRemoveButtons();
-	console.log("평가 카드별 삭제 버튼을 붙였습니다.");
+	// console.log("평가 카드별 삭제 버튼을 붙였습니다.");
 
 	prefillForm(rec);
 	byId("eval-sec-sub").textContent = `${items.length}개 항목 · 각 0–3점`;

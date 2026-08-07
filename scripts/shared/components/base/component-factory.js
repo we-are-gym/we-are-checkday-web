@@ -22,15 +22,14 @@
  * @returns {typeof HTMLElement}
  */
 export function defineComponent(tag, spec) {
-	console.log({ tag, spec });
+	// console.log({ tag, spec });
 
 	class Component extends HTMLElement {
 		connectedCallback() {
-			console.log(
-				`\`Component\` 오브젝트(<${tag} />)의 \`connectedCallback()\` 메서드가 호출되었습니다.`,
-			);
-
-			console.log({ spec, this: this });
+			// console.log(
+			// 	`\`Component\` 오브젝트(<${tag} />)의 \`connectedCallback()\` 메서드가 호출되었습니다.`,
+			// );
+			// console.log({ spec, this: this });
 
 			if (spec.connectedCallback) spec.connectedCallback.call(this);
 			this.refresh();
@@ -42,11 +41,10 @@ export function defineComponent(tag, spec) {
 		 * @returns {void}
 		 */
 		refresh() {
-			console.log(
-				`\`Component\` 오브젝트(<${tag} />)의 \`refresh()\` 메서드가 호출되었습니다.`,
-			);
-
-			console.log({ spec, this: this });
+			// console.log(
+			// 	`\`Component\` 오브젝트(<${tag} />)의 \`refresh()\` 메서드가 호출되었습니다.`,
+			// );
+			// console.log({ spec, this: this });
 
 			this.innerHTML = spec.render.call(this);
 			if (spec.refreshAfter) spec.refreshAfter.call(this);

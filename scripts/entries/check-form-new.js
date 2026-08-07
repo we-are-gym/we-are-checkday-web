@@ -8,7 +8,7 @@
 //          renderCheckMovementCards(feedback), sessionReport(session-report)
 import "@base/components/app-header.js";
 import { escapeHtml } from "@base/templates.js";
-import { byId, delegate } from "@base/UI.js";
+import { byId, delegate, dismissOnOverlayClick } from "@base/UI.js";
 import { todayISO } from "@base/utils-string.js";
 import { getNumberParam } from "@base/utils-url.js";
 import { ASSESSMENT_ITEMS_BASIC5 } from "@check-doc/assessment-data.js";
@@ -151,10 +151,8 @@ function saveRecord() {
 
 // 목표·체크·점수·피드백·인바디/VO₂ 위임은 checkday·편집 화면이 공유하는 check-form-events로 처리
 setupCheckFormEvents();
-// 결과 모달 배경(overlay 자신) 클릭 시 닫기
-delegate(document, "click", "#overlay", (e) => {
-	if (e.target.id === "overlay") e.target.classList.remove("open");
-});
+// 결과 모달 배경(overlay 자신) 클릭 시 닫기 — 공용 헬퍼
+dismissOnOverlayClick();
 
 // ── 시작 ──
 renderBasicFunctionCards();

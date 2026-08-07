@@ -277,6 +277,14 @@ main {
 	margin-bottom: 12px;
 }
 
+.compare-hint {
+	flex-basis: 100%;
+	width: 100%;
+	font-size: 12px;
+	color: var(--text3);
+	margin: 0 0 4px;
+}
+
 .compare-field {
 	display: flex;
 	flex-direction: column;
