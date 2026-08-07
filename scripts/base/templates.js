@@ -287,29 +287,31 @@ export const TPL = {
 
 	/**
 	 * 비교 테이블 행 1개 (본문·합계 공용) — label만 이스케이프하고 값은 호출부에서 이미 안전하게 가공한다
-	 * @param {{ label: string, tgt: string, cur: string, delta: string }} r 비교 행 데이터
+	 * 열 순서: [항목 | left(좌측 셀렉터 회차) | right(우측 셀렉터 회차) | 변화]
+	 * @param {{ label: string, left: string, right: string, delta: string }} r 비교 행 데이터
 	 * @returns {string}
 	 */
-	compareTableRow({ label, tgt, cur, delta }) {
+	compareTableRow({ label, left, right, delta }) {
 		return `
 			<tr>
 				<td>${escapeHtml(label)}</td>
-				<td>${tgt}</td>
-				<td>${cur}</td>
+				<td>${left}</td>
+				<td>${right}</td>
 				<td>${delta}</td>
 			</tr>`;
 	},
 
 	/**
 	 * 체크기록 비교 테이블 1개 — withHeader=false면 본문만(움직임 평가 총점 표용)
+	 * 헤더 열 순서: [항목 | leftLabel(좌측 셀렉터 회차) | rightLabel(우측 셀렉터 회차) | 변화]
 	 *
 	 * @param {{
 	 * 	extraClassNames?: Array<string>;
 	 * 	itemLabel: string;
-	 * 	curLabel?: string;
-	 * 	tgtLabel?: string;
-	 * 	rows: Array<{ label: string, cur: string, tgt: string, delta: string }>;
-	 * 	footRows?: Array<{ label: string, cur: string, tgt: string, delta: string }>;
+	 * 	leftLabel?: string;
+	 * 	rightLabel?: string;
+	 * 	rows: Array<{ label: string, left: string, right: string, delta: string }>;
+	 * 	footRows?: Array<{ label: string, left: string, right: string, delta: string }>;
 	 *	withHeader?: boolean;
 	 * }} p
 	 *
@@ -318,8 +320,8 @@ export const TPL = {
 	compareTable({
 		extraClassNames = [],
 		itemLabel,
-		curLabel = "",
-		tgtLabel = "",
+		leftLabel = "",
+		rightLabel = "",
 		rows,
 		footRows,
 		withHeader = true,
@@ -329,7 +331,7 @@ export const TPL = {
 			? ` aria-label="${escapeHtml(ariaLabel)}"`
 			: "";
 		const head = withHeader
-			? `<thead><tr><th>${itemLabel}</th><th>${escapeHtml(tgtLabel)}</th><th>${escapeHtml(curLabel)}</th><th>변화</th></tr></thead>`
+			? `<thead><tr><th>${itemLabel}</th><th>${escapeHtml(leftLabel)}</th><th>${escapeHtml(rightLabel)}</th><th>변화</th></tr></thead>`
 			: "";
 
 		const foot = (() => {
