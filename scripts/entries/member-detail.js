@@ -231,152 +231,54 @@ function refreshRecords() {
 	fillCompareSelects(records);
 }
 
-function exportMemberDetailPDF() {
-	const member = getMemberById(memberStore.getState().members, memberId);
-	const records = getRecords();
-
-	if (!member || records.length === 0) {
-		alert("내보낼 데이터가 없습니다.");
+/**
+ * 회원 상세 화면을 html2canvas로 캡처해 PNG로 다운로드한다.
+ * - 캡처 대상: <main> (회원 정보·통계·기록 또는 비교 패널 전체)
+ * - 캡처 직전 상호작용 컨트롤(버튼·탭)을 잠시 숨겨 이미지에 노출되지 않게 하고, 완료 후 복원한다.
+ * @returns {void}
+ */
+function exportMemberDetailPNG() {
+	const target = queryOne("main");
+	if (!target) {
+		alert("내보낼 화면을 찾을 수 없습니다.");
 		return;
 	}
 
-	// 인쇄용 창 열기
-	const printWindow = window.open("", "_blank");
-	if (!printWindow) {
-		alert("팝업이 차단되었습니다. 팝업 허용 후 다시 시도하세요.");
+	if (typeof html2canvas === "undefined") {
+		alert("이미지 생성 라이브러리(html2canvas)를 불러오지 못했습니다. 네트워크 확인 후 다시 시도하세요.");
 		return;
 	}
 
-	// 스파크라인 SVG들을 이미지 데이터로 변환
-	const sparklineSVGs =
-		/*printWindow.*/ document.querySelectorAll("#stat-charts svg");
-	// console.log({ sparklineSVGs });
+	// 캡처에서만 잠깐 숨길 상호작용 컨트롤 (버튼·탭·링크 버튼)
+	const controls = target.querySelectorAll("button:not(#export-png-btn), a.btn, .tab-btn");
+	const restoreControls = () =>
+		controls.forEach((el) => {
+			el.style.visibility = el.dataset.pngPrevVisibility || "";
+			delete el.dataset.pngPrevVisibility;
+		});
+	controls.forEach((el) => {
+		el.dataset.pngPrevVisibility = el.style.visibility;
+		el.style.visibility = "hidden";
+	});
 
-	const renderedChartSVGs = Array.from(sparklineSVGs).map((SVG) =>
-		new XMLSerializer().serializeToString(SVG),
-	);
-	// console.log({ renderedChartSVGs });
+	html2canvas(target, {
+		backgroundColor: "#131313",
+		scale: 2,
+		useCORS: true,
+	})
+		.then((canvas) => {
+			restoreControls();
 
-	const sparklineImages = renderedChartSVGs.map(
-		(renderedSVG) =>
-			`data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(renderedSVG)))}`,
-	);
-	// console.log({ sparklineImages });
-
-	// 비교 테이블 HTML 가져오기
-
-	const inbodyCompareTableHTML =
-		queryOne(".compare-table-inbody")?.outerHTML || "";
-
-	const basicFunctionsCompareTableHTML =
-		queryOne(".compare-table-basicFunctions")?.outerHTML || "";
-
-	// 인쇄용 HTML 구성
-	const printHtml = `
-		<!doctype html>
-		<html lang="ko">
-		<head>
-			<meta charset="UTF-8">
-			<title>${escapeHtml(member.name)} 님 체크기록 - PDF 내보내기</title>
-			<style>
-				:root {
-					--spark: black;
-				}
-				@media print {
-					@page { margin: 15mm; size: A4; }
-					body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; line-height: 1.5; color: #1a1a1a; }
-					.print-header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #3478d4; padding-bottom: 10px; }
-					.print-header h1 { font-size: 20px; margin: 0; color: #1a1a1a; }
-					.print-header .meta { font-size: 12px; color: #666; margin-top: 4px; }
-					.section { margin-bottom: 24px; page-break-inside: avoid; }
-					.section h2 { font-size: 14px; border-bottom: 1px solid #3478d4; padding-bottom: 4px; margin-bottom: 12px; color: #3478d4; }
-					.grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 16px; }
-					.grid-item { display: flex; flex-direction: column; }
-					.grid-label { font-size: 10px; color: #666; text-transform: uppercase; }
-					.grid-value { font-size: 13px; font-weight: 500; }
-					.sparkline-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 16px; }
-					.sparkline-item img { width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px; }
-					table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 8px; }
-					th, td { border: 1px solid #ddd; padding: 6px 8px; text-align: center; }
-					th { background: #f5f5f5; font-weight: 600; }
-					.delta-up { color: #3478d4; }
-					.delta-down { color: #d86b6b; }
-					.delta-eq { color: #999; }
-					.no-print { display: none; }
-				}
-				@media screen {
-					body { padding: 20px; max-width: 800px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-					.print-btn { position: fixed; top: 20px; right: 20px; padding: 10px 20px; background: #3478d4; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
-					.print-btn:hover { background: #2e68bd; }
-				}
-			</style>
-		</head>
-		<body>
-			<button class="print-btn no-print" onclick="window.print()">인쇄 / PDF 저장</button>
-			<div class="print-header">
-				<h1>${escapeHtml(member.name)} 님 체크기록 요약</h1>
-				<div class="meta">총 ${records.length}회차 · 담당: ${escapeHtml(member.trainer || "-")} · 성별: ${escapeHtml(member.gender || "-")}</div>
-			</div>
-
-			<div class="section">
-				<h2>체성분 변화 차트 (스파크라인)</h2>
-				<div class="sparkline-row">
-					<!--
-					${sparklineImages
-						.map(
-							(src, i) => `
-								<div class="sparkline-item">
-									<div class="grid-label">${["체지방률", "체중", "골격근량", "체지방량", "내장지방"][i] || `차트 ${i + 1}`}</div>
-									<img src="${src}" alt="스파크라인">
-								</div>
-								`,
-						)
-						.join("")}
-					-->
-					${renderedChartSVGs
-						.map(
-							(renderedChartSVG, index) => `
-								<div class="sparkline-item">
-									<div class="grid-label">${["체지방률", "체중", "골격근량", "체지방량", "내장지방"][index] || `차트 ${index + 1}`}</div>
-									${renderedChartSVG}
-								</div>
-								`,
-						)
-						.join("")}
-				</div>
-				${
-					sparklineImages.length < 5
-						? ""
-						: `
-				<!--div class="sparkline-row">
-					<div class="sparkline-item">
-						<div class="grid-label">내장지방</div>
-						<img src="${sparklineImages[4]}" alt="내장지방 스파크라인">
-					</div>
-				</div-->
-				`
-				}
-			</div>
-
-			<div class="section">
-				<h2>인바디 비교 테이블</h2>
-				<!--div class="detail-card compare-result" id="compare-result" aria-live="polite" aria-atomic="true"-->
-					${inbodyCompareTableHTML}
-				<!--div-->
-			</div>
-
-			<div class="section">
-				<h2>움직임 평가 비교</h2>
-				<!--div class="detail-card compare-result" id="compare-result" aria-live="polite" aria-atomic="true"-->
-					${basicFunctionsCompareTableHTML}
-				<!--div-->
-			</div>
-		</body>
-		</html>`;
-	// console.log(printHtml);
-
-	printWindow.document.write(printHtml);
-	printWindow.document.close();
+			const member = getMemberById(memberStore.getState().members, memberId);
+			const link = document.createElement("a");
+			link.download = `체크데이_${member ? member.name : "회원"}_${new Date().toISOString().slice(0, 10)}.png`;
+			link.href = canvas.toDataURL("image/png");
+			link.click();
+		})
+		.catch((err) => {
+			restoreControls();
+			alert(`이미지 생성에 실패했어요: ${err.message}`);
+		});
 }
 
 /** 초기 렌더링 — 회원을 조회해 정보 카드·통계·기록·비교 select를 채운다 (회원이 없으면 안내만 표시)
@@ -405,14 +307,11 @@ function init() {
 
 	refreshRecords();
 
-	// PDF 내보내기 버튼 이벤트
-	const PDFExportButtonElem = byId("export-pdf-btn");
+	// PNG 내보내기 버튼 이벤트 (html2canvas CDN — member-detail.html에 defer 로드)
+	const PNGExportButtonElem = byId("export-png-btn");
 
-	if (PDFExportButtonElem) {
-		// console.log("PDF 내보내기 버튼 존재");
-		PDFExportButtonElem.addEventListener("click", exportMemberDetailPDF);
-	} else {
-		// console.warn("PDF 내보내기 버튼 비존재");
+	if (PNGExportButtonElem) {
+		PNGExportButtonElem.addEventListener("click", exportMemberDetailPNG);
 	}
 }
 
