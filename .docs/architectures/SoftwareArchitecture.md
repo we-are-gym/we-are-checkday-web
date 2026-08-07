@@ -5,7 +5,6 @@
 ## 디비
 
 - GCP 파이어스토어
-- Atlas
 
 ### Mason API
 
