@@ -4,13 +4,15 @@
 import { createServer } from "node:http";
 import { readFileSync, existsSync, statSync } from "node:fs";
 import { extname, join, resolve } from "node:path";
-import { spawn } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { tmpdir } from "node:os";
+import { randomInt } from "node:crypto";
 
 const ROOT = resolve(import.meta.dirname, "..");
 const EDGE = "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe";
-const PORT = 8123;
-const DEBUG_PORT = 9222;
+// 포스점유·좌측 고아가 남지 않도록 매 실행마다 임의 포트를 쓴다
+const PORT = 8100 + randomInt(200);
+const DEBUG_PORT = 9200 + randomInt(799);
 
 /** 화면별 핵심 DOM 마커 — 모듈 임포트·렌더 성공을 나타낸다 */
 const PAGES = [
@@ -73,6 +75,36 @@ function startEdge(profileDir) {
 		{ shell: false, windowsHide: true },
 	);
 	return child;
+}
+
+/** Edge는 런처→브라우저 프로세스 분리가 있어 child.pid만으로 트리 전부를 못 죽일 수 있다. 프로필 경로로 남은 잔여를 후속 정리한다. */
+function killEdgeTree(child, profileDir) {
+	const pid = child?.pid;
+	try {
+		if (pid) child.kill();
+	} catch {}
+	try {
+		if (pid)
+			spawnSync("taskkill", ["/pid", String(pid), "/t", "/f"], {
+				shell: false,
+				windowsHide: true,
+				stdio: "ignore",
+			});
+	} catch {}
+	// taskkill이 놓친 프로세스(재스폰·데몬형)는 프로필 디렉토리 커맨드라인으로 추려 죽인다
+	try {
+		// 싱글쿼트 문자열에서는 백슬래시가 그대로이므로 따옴표(아포스트로피)만 이스케이프한다
+		const esc = profileDir.replace(/'/g, "''");
+		spawnSync(
+			"powershell",
+			[
+				"-NoProfile",
+				"-Command",
+				`Get-CimInstance Win32_Process -Filter "Name='msedge.exe'" | Where-Object { $_.CommandLine -like '*${esc}*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }`,
+			],
+			{ shell: false, windowsHide: true, stdio: "ignore" },
+		);
+	} catch {}
 }
 
 async function jsonList() {
@@ -192,7 +224,7 @@ async function main() {
 		console.log(`\n결과: ${PAGES.length - failures}/${PAGES.length} 화면 통과`);
 		process.exit(failures ? 1 : 0);
 	} finally {
-		edge.kill();
+		killEdgeTree(edge, profileDir);
 		server.close();
 	}
 }

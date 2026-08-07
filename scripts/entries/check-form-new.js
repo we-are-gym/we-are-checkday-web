@@ -4,7 +4,7 @@
 // 상담일(#m-date)은 기본적으로 오늘(todayISO)이고, 저장 시 기록의 date로 사용한다.
 // 저장 시 payload.session은 #m-session 값을 그대로 기록한다.
 // DEPENDS: todayISO(utils-string), byId·delegate(UI), configureEvaluation/renderBasicFunctionCards/updateTotal(evaluation),
-//          setupCheckFormEvents/resetCheckForm(check-form-events), collectPayload(check-form-payload),
+//          setupCheckFormEvents/resetEntireForm(check-form-events), collectPayload(check-form-payload),
 //          renderCheckMovementCards(feedback), sessionReport(session-report)
 import "@base/components/app-header.js";
 import { escapeHtml } from "@base/templates.js";
@@ -13,7 +13,7 @@ import { todayISO } from "@base/utils-string.js";
 import { getNumberParam } from "@base/utils-url.js";
 import { ASSESSMENT_ITEMS_BASIC5 } from "@check-doc/assessment-data.js";
 import {
-	resetCheckForm,
+	resetEntireForm,
 	setupCheckFormEvents,
 } from "@check-doc/check-form-events.js";
 import { collectPayload } from "@check-doc/check-form-payload.js";
@@ -84,14 +84,7 @@ if (memberId) {
 	}
 }
 
-// ── 초기화 ──
-/** 폼 전체를 초기 상태로 되돌린다 (확인 후 resetCheckForm 호출)
- * @returns {void}
- */
-function resetEntireForm() {
-	if (!confirm("이 회원의 상담 내용을 모두 초기화할까요?")) return;
-	resetCheckForm();
-}
+// ── 초기화 ──  (resetEntireForm은 check-form-events 공용 헬퍼 사용)
 
 // ── 이벤트 위임 — 인라인 onclick·window 오염 없이 정적·동적 요소를 한 루트에서 처리 ──
 // 정적 액션 버튼 (data-action)
