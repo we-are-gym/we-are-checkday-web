@@ -24,7 +24,7 @@ import {
 	updateTotal,
 } from "@check-doc/evaluation.js";
 import { recordStore } from "@check-doc/record-store.js";
-import { getRecordById } from "@member/member-utils.js";
+import { getRecordById } from "@check-doc/record-utils.js";
 import "@shared/components/index.js";
 
 /** ?docID= 파라미터 */

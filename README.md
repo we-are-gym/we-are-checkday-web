@@ -26,6 +26,7 @@
     - `utils-array.js`
     - `utils-string.js`
     - `member-utils.js`
+    - `record-utils.js`
     - `utils-url.js`
   - 상태 스토어
     - `member-store.js`

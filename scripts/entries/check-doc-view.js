@@ -7,7 +7,7 @@ import { getNumberParam } from "@base/utils-url.js";
 import { resolveRecordItems } from "@check-doc/assessment-data.js";
 import { IB_KEYS, recordMax, recordTotal } from "@check-doc/record-stats.js";
 import { recordStore } from "@check-doc/record-store.js";
-import { getRecordById } from "@member/member-utils.js";
+import { getRecordById } from "@check-doc/record-utils.js";
 
 /** ?docID= 파라미터 (없으면 0 — 미조회 상태) */
 const docId = getNumberParam("docID");

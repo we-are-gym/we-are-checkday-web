@@ -26,6 +26,7 @@ JS는 **ES Modules**(`<script type="module">`)로 로드된다. 각 페이지는
 | ----------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------ | --------------------- |
 | `member-store.js` | `memberStore`, `addMember`, `updateMember`                                      | 회원 목록 7명 시드 (김씨 3인 포함)·등록/정보 갱신 헬퍼                   | `checkday.members.v2` |
 | `record-store.js` | `recordStore`                                                                   | 체크기록 시드 26건(김하늘 8건 포함, 기록 0건 회원 박지훈·기록별 5·8항목) | `checkday.records.v3` |
+| `record-utils.js` | `getRecordById`, `getRecordsByMember`, `getRecordCountsByMember`                                        | 기록 조회·정렬·건수 순수 헬퍼 (단일 소스 — member-utils에 있던 기록 헬퍼 통합) | —                     |
 | `record-stats.js` | `sparkline`, `recordTotal`, `recordMax`, `buildCompareTable`, `sessionLabel` 등 | 기록 통계·스파크라인·총점·비교 테이블(순수 함수)                         | —                     |
 
 ### 평가 공용 모듈 (레거시 체크데이 상담지·베이직 펑션)

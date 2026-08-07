@@ -5,7 +5,7 @@ import { byId } from "@base/UI.js";
 import { recordStore } from "@check-doc/record-store.js";
 import "@member/components/member-table.js";
 import { memberStore } from "@member/member-store.js";
-import { getRecordCountsByMember } from "@member/member-utils.js";
+import { getRecordCountsByMember } from "@check-doc/record-utils.js";
 
 /** 회원 목록 테이블 컴포넌트 엘리먼트 */
 const tableEl = byId("member-table");

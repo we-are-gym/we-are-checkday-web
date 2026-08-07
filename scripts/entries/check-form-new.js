@@ -24,12 +24,12 @@ import {
 } from "@check-doc/evaluation.js";
 import { renderCheckMovementCards } from "@check-doc/feedback.js";
 import { recordStore } from "@check-doc/record-store.js";
+import { getRecordCountsByMember } from "@check-doc/record-utils.js";
 import { sessionReport } from "@check-doc/session-report.js";
 import { memberStore } from "@member/member-store.js";
 import {
 	getMemberById,
 	getMemberByName,
-	getRecordCountsByMember,
 } from "@member/member-utils.js";
 
 // ── 날짜 ──
