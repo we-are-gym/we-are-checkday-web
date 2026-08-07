@@ -169,6 +169,28 @@
       </div>
     </div>
 
+    <!-- 평가 항목 추가 피커 — 삭제된 베이직 평가 항목을 사용자가 직접 골라 다시 추가한다 -->
+    <div
+      class="overlay"
+      id="eval-picker-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="eval-picker-title"
+    >
+      <div class="modal">
+        <h3 id="eval-picker-title">평가 항목 추가</h3>
+        <p class="picker-hint">
+          아래 후보 중 추가할 항목을 선택하세요. (사용 중인 항목은 제외)
+        </p>
+        <div class="picker-list" id="eval-picker-list"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" data-action="close-picker">
+            닫기
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script type="importmap">
       {
         "imports": {

@@ -4,8 +4,9 @@
 
 import "@base/components/app-header.js";
 import { SCORE_MAX } from "@base/constants.js";
+import { escapeHtml } from "@base/templates.js";
 import { scoreState } from "@base/states.js";
-import { byId, delegate, queryAll } from "@base/UI.js";
+import { byId, delegate, dismissOnOverlayClick, queryAll } from "@base/UI.js";
 import { getNumberParam } from "@base/utils-url.js";
 import {
 	ASSESSMENT_ITEMS_FULL,
@@ -149,15 +150,32 @@ function attachRemoveButtons() {
 	});
 }
 
-/** 움직임 평가 항목 1개 추가 — 아직 사용하지 않은 항목을 목록 끝에 붙인다 (전부 사용 시 안내) */
-function addEvalItem() {
+/**
+ * 현재 목록에 사용되지 않은 평가 항목 후보 — ASSESSMENT_ITEMS_FULL(공용 7 + VO₂) 중 아직 안 쓴 것만 반환한다.
+ * @returns {Array<import("@check-doc/assessment-data.js").BasicFunctionItem>} 추가 후보 항목
+ */
+function availableEvalItems() {
 	const used = new Set(getEvals().map((it) => it.name));
-	const next = ASSESSMENT_ITEMS_FULL.find((it) => !used.has(it.name));
-	if (!next) {
-		alert("추가할 평가 항목이 없습니다. (전체 8개 항목 사용 중)");
+	return ASSESSMENT_ITEMS_FULL.filter((it) => !used.has(it.name));
+}
+
+/** 평가 항목 추가 — 자동 추가 대신 후보를 피커에 띄워 사용자가 골라 직접 선택하도록 한다 (전부 사용 시 안내) */
+function addEvalItem() {
+	const avail = availableEvalItems();
+	if (avail.length === 0) {
+		alert("추가할 평가 항목이 없습니다. (전체 항목 사용 중)");
 		return;
 	}
-	rebuildEvalItems([...getEvals(), next]);
+	byId("eval-picker-list").innerHTML = avail
+		.map(
+			(it, i) => `
+			<button type="button" class="picker-item" data-picker-item="${i}">
+				<span class="pi-name">${escapeHtml(it.name)}</span>
+				${it.desc ? `<span class="pi-desc">${escapeHtml(it.desc)}</span>` : ""}
+			</button>`,
+		)
+		.join("");
+	byId("eval-picker-overlay").classList.add("open");
 }
 
 /** i번째 평가 항목 삭제 — 최소 1개는 남긴다 */
@@ -171,14 +189,25 @@ function removeEvalItem(i) {
 
 // 목표·체크·점수·피드백·인바디/VO₂ 위임은 checkday·편집 화면이 공유하는 check-form-events로 처리
 setupCheckFormEvents();
-// [data-action] 화면별 액션(초기화·저장)과 평가 항목 추가/삭제는 편집 화면 고유 — 여기서 등록
+// [data-action] 화면별 액션(초기화·저장·피커 닫기)과 평가 항목 추가/삭제는 편집 화면 고유 — 여기서 등록
 delegate(document, "click", "[data-action]", (e, el) => {
 	if (el.dataset.action === "reset") resetForm();
 	else if (el.dataset.action === "save-edit") saveRecord();
+	else if (el.dataset.action === "close-picker")
+		byId("eval-picker-overlay").classList.remove("open");
 });
 byId("add-eval-btn").addEventListener("click", addEvalItem);
 delegate(document, "click", "[data-eval-remove]", (e, el) =>
 	removeEvalItem(Number(el.dataset.evalRemove)),
 );
+// 피커에서 항목 선택 — 후보 목록을 다시 계산해 인덱스가 항상 최신 후보를 가리키게 한다
+delegate(document, "click", "[data-picker-item]", (e, el) => {
+	const item = availableEvalItems()[Number(el.dataset.pickerItem)];
+	if (!item) return;
+	byId("eval-picker-overlay").classList.remove("open");
+	rebuildEvalItems([...getEvals(), item]);
+});
+// 피커 배경(오버레이 자신) 클릭 시 닫기 — 공용 헬퍼
+dismissOnOverlayClick("eval-picker-overlay");
 
 init();

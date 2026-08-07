@@ -639,6 +639,44 @@ textarea.consult-memo::placeholder {
 	justify-content: flex-end;
 }
 
+/* ── 평가 항목 추가 피커 (편집 화면) ── */
+.picker-hint {
+	font-size: 12px;
+	color: var(--text2);
+	margin: -0.5rem 0 0.75rem;
+}
+.picker-list {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+.picker-item {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 2px;
+	width: 100%;
+	text-align: left;
+	padding: 10px 12px;
+	border: 0.5px solid var(--border2);
+	border-radius: var(--r);
+	background: var(--surface);
+	color: var(--text);
+	cursor: pointer;
+}
+.picker-item:hover {
+	border-color: var(--accent);
+	background: var(--surface2);
+}
+.pi-name {
+	font-size: 13px;
+	font-weight: 600;
+}
+.pi-desc {
+	font-size: 11px;
+	color: var(--text3);
+}
+
 /* ── 구분선 ── */
 .divider {
 	display: flex;
