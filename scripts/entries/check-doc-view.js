@@ -3,6 +3,7 @@
 import "@base/components/app-header.js";
 import { escapeHtml, TPL } from "@base/templates.js";
 import { byId, queryAll, setHTML, setText } from "@base/UI.js";
+import { inbodyTagFor } from "@base/inbody.js";
 import { getNumberParam } from "@base/utils-url.js";
 import { resolveRecordItems } from "@check-doc/assessment-data.js";
 import { IB_KEYS, recordMax, recordTotal } from "@check-doc/record-stats.js";
@@ -58,13 +59,18 @@ function renderInbody(rec) {
 	const ib = rec.payload.ib || {};
 	setHTML(
 		"ib-grid",
-		IB_KEYS.map(
-			({ key, label }) => `
+		IB_KEYS.map(({ key, label }) => {
+			const has = ib[key] != null && ib[key] !== "";
+			const val = has ? ib[key] : "―";
+			// 인디수치에 상태 태그 병기 (분류 기준 없는 키/빈값은 태그 없음)
+			const tag = has ? inbodyTagFor(key, ib[key]) : "";
+			return `
 				<div class="ib-cell">
 					<div class="ib-label">${label}</div>
-					<div class="ib-value">${escapeHtml(ib[key] != null && ib[key] !== "" ? ib[key] : "―")}</div>
-				</div>`,
-		).join(""),
+					<div class="ib-value">${escapeHtml(val)}</div>
+					${tag}
+				</div>`;
+		}).join(""),
 	);
 	setText("ib-comment", rec.payload.ibComment || "");
 	byId("ib-comment").style.display = rec.payload.ibComment ? "" : "none";

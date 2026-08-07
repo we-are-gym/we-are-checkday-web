@@ -21,7 +21,7 @@ const PAGES = [
 	{ file: "member-edit.html", query: "memberID=1", markers: ["member-form"] },
 	{ file: "member-detail.html", markers: ["cmp-cur", "record-list"] },
 	{ file: "check-doc-new.html", markers: ["eval-cards", "total-num"] },
-	{ file: "check-doc-view.html", markers: ["vh-title"] },
+	{ file: "check-doc-view.html", query: "docID=1", markers: ["vh-title", "ib-tag"] },
 	{ file: "check-doc-edit.html", markers: ["eval-cards", "add-eval-btn"] },
 	{ file: "check-sessions.html", markers: ["app-header"] },
 	{ file: "checkday_1.html", markers: ["date-badge", "eval-cards"] },
