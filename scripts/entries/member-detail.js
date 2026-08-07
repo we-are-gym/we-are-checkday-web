@@ -399,7 +399,14 @@ function init() {
 	refreshRecords();
 
 	// PDF 내보내기 버튼 이벤트
-	byId("export-pdf-btn").addEventListener("click", exportMemberDetailPDF);
+	const PDFExportButtonElem = byId("export-pdf-btn");
+
+	if (PDFExportButtonElem) {
+		console.log("PDF 내보내기 버튼 존재");
+		PDFExportButtonElem.addEventListener("click", exportMemberDetailPDF);
+	} else {
+		console.warn("PDF 내보내기 버튼 비존재");
+	}
 }
 
 // 이벤트 1회 등록
