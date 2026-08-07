@@ -1,7 +1,8 @@
 // 파일 용도: ScoreController 웹 컴포넌트 — 평가 점수 조작 (전체 화면 공용)
 import { defineComponent } from "@shared/components/base/component.js";
 
-defineComponent("ui-score-controller", {
+defineComponent({
+	tag: "ui-score-controller",
 	props: {
 		score: { type: Number, default: 0 },
 		max: { type: Number, default: 3 },

@@ -1,7 +1,8 @@
 // 파일 용도: DataTable 웹 컴포넌트 — 정렬·선택 가능한 데이터 테이블 (전체 화면 공용)
 import { defineComponent } from "@shared/components/base/component.js";
 
-defineComponent("ui-data-table", {
+defineComponent({
+	tag: "ui-data-table",
 	props: {
 		columns: { type: Array, default: [] }, // [{ key, label, sortable, render, width, align }]
 		rows: { type: Array, default: [] }, // 데이터 객체 배열

@@ -52,15 +52,21 @@ export function defineComponent(options) {
 		...new Set([...observedAttributes, ...Object.keys(props)]),
 	];
 
-	return baseDefineComponent(tag, {
+	const spec = {
 		// 렌더 함수
 		render() {
-			return render.call(this, this._getProps());
+			return render.call(this, spec._getProps.call(this));
 		},
 
 		// 연결 시: props 초기화 + 사용자 콜백
 		connectedCallback() {
-			this._initProps();
+			console.log(
+				"웹컴포넌트의 props를 초기화하고 사용자 콜백을 호출합니다…",
+			);
+
+			console.log({ spec, this: this });
+
+			spec._initProps.call(this);
 			if (connectedCallback) connectedCallback.call(this);
 		},
 
@@ -72,22 +78,29 @@ export function defineComponent(options) {
 		// 속성 변경 시: props 갱신 + 리렌더
 		attributeChangedCallback(name, oldVal, newVal) {
 			if (oldVal === newVal) return;
+
 			if (props[name] !== undefined) {
-				this._props[name] = this._deserializeProp(name, newVal);
-				this.refresh();
+				this._props[name] = spec._deserializeProp(name, newVal);
+				spec.refresh.call(this);
 			}
+
 			if (attributeChangedCallback)
 				attributeChangedCallback.call(this, name, oldVal, newVal);
 		},
 
 		// props 초기화
 		_initProps() {
+			console.log("웹컴포넌트의 props를 초기화합니다…");
+			console.log({ this: this });
+
 			this._props = {};
+
 			for (const [key, def] of Object.entries(props)) {
 				const attrVal = this.getAttribute(key);
+
 				this._props[key] =
 					attrVal !== null
-						? this._deserializeProp(key, attrVal)
+						? spec._deserializeProp(key, attrVal)
 						: def.default;
 			}
 		},
@@ -95,12 +108,16 @@ export function defineComponent(options) {
 		// props 역직렬화
 		_deserializeProp(key, value) {
 			const def = props[key];
+
 			if (!def || def.type === String) return value;
 			if (def.type === Number) return Number(value);
 			if (def.type === Boolean) return value !== "false" && value !== "";
+
 			if (def.type === Array)
 				return value ? value.split(",").map((v) => v.trim()) : [];
+
 			if (def.type === Object) return value ? JSON.parse(value) : {};
+
 			return value;
 		},
 
@@ -112,19 +129,22 @@ export function defineComponent(options) {
 		// prop 설정 (리렌더 트리거)
 		setProp(key, value) {
 			if (this._props[key] === value) return;
+
 			this._props[key] = value;
-			this.setAttribute(key, this._serializeProp(key, value));
-			this.refresh();
+			this.setAttribute(key, spec._serializeProp(key, value));
+			spec.refresh.call(this);
 		},
 
 		// prop 직렬화
 		_serializeProp(key, value) {
 			const def = props[key];
+
 			if (!def || def.type === String) return value;
 			if (def.type === Number) return String(value);
 			if (def.type === Boolean) return value ? "true" : "false";
 			if (def.type === Array) return value.join(",");
 			if (def.type === Object) return JSON.stringify(value);
+
 			return String(value);
 		},
 
@@ -143,7 +163,9 @@ export function defineComponent(options) {
 		refresh() {
 			this.innerHTML = render.call(this, this._getProps());
 		},
-	});
+	};
+
+	return baseDefineComponent(tag, spec);
 }
 
 /**

@@ -1,7 +1,8 @@
 // 파일 용도: Tabs 웹 컴포넌트 — 탭 리스트·패널 전환 (전체 화면 공용)
 import { defineComponent } from "@shared/components/base/component.js";
 
-defineComponent("ui-tabs", {
+defineComponent({
+	tag: "ui-tabs",
 	props: {
 		tabs: { type: Array, default: [] }, // [{ label, panel, id }]
 		activeIndex: { type: Number, default: 0 },

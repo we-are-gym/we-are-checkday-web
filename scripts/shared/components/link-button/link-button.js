@@ -1,7 +1,8 @@
 // 파일 용도: LinkButton 웹 컴포넌트 — 링크 스타일 버튼 (전체 화면 공용)
 import { defineComponent } from "@shared/components/base/component.js";
 
-defineComponent("ui-link-button", {
+defineComponent({
+	tag: "ui-link-button",
 	props: {
 		href: { type: String, default: "#" },
 		variant: { type: String, default: "primary" }, // primary | ghost

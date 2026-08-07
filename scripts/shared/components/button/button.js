@@ -1,7 +1,8 @@
 // 파일 용도: Button 웹 컴포넌트 — primary/ghost/danger 변형 지원 (전체 화면 공용)
 import { defineComponent } from "@shared/components/base/component.js";
 
-defineComponent("ui-button", {
+defineComponent({
+	tag: "ui-button",
 	props: {
 		variant: { type: String, default: "primary" }, // primary | ghost | danger
 		disabled: { type: Boolean, default: false },

@@ -1,7 +1,8 @@
 // 파일 용도: Checkbox 웹 컴포넌트 — 체크박스 (전체 화면 공용)
 import { defineComponent } from "@shared/components/base/component.js";
 
-defineComponent("ui-checkbox", {
+defineComponent({
+	tag: "ui-checkbox",
 	props: {
 		checked: { type: Boolean, default: false },
 		indeterminate: { type: Boolean, default: false },

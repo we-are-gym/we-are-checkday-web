@@ -1,7 +1,8 @@
 // 파일 용도: ScoreDots 웹 컴포넌트 — 평가 점수 도트 표시 (전체 화면 공용)
 import { defineComponent } from "@shared/components/base/component.js";
 
-defineComponent("ui-score-dots", {
+defineComponent({
+	tag: "ui-score-dots",
 	props: {
 		score: { type: Number, default: 0 },
 		max: { type: Number, default: 3 },

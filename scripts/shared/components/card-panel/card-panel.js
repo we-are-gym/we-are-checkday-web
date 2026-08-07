@@ -1,7 +1,8 @@
 // 파일 용도: CardPanel 웹 컴포넌트 — 접이식 카드 패널 (전체 화면 공용)
 import { defineComponent } from "@shared/components/base/component.js";
 
-defineComponent("ui-card-panel", {
+defineComponent({
+	tag: "ui-card-panel",
 	props: {
 		header: { type: String, default: "" },
 		subHeader: { type: String, default: "" },

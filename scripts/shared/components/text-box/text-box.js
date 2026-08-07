@@ -1,7 +1,8 @@
 // 파일 용도: TextBox 웹 컴포넌트 — 텍스트 입력/텍스트에어리어 (전체 화면 공용)
 import { defineComponent } from "@shared/components/base/component.js";
 
-defineComponent("ui-text-box", {
+defineComponent({
+	tag: "ui-text-box",
 	props: {
 		value: { type: String, default: "" },
 		placeholder: { type: String, default: "" },

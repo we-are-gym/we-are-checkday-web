@@ -1,7 +1,8 @@
 // 파일 용도: Sparkline 웹 컴포넌트 — 인라인 SVG 스파크라인 차트 (전체 화면 공용)
 import { defineComponent } from "@shared/components/base/component.js";
 
-defineComponent("ui-sparkline", {
+defineComponent({
+	tag: "ui-sparkline",
 	props: {
 		data: { type: Array, default: [] }, // 숫자 배열
 		width: { type: Number, default: 260 },
