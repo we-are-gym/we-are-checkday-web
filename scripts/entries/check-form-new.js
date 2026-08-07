@@ -26,7 +26,7 @@ import { renderCheckMovementCards } from "@check-doc/feedback.js";
 import { recordStore } from "@check-doc/record-store.js";
 import { getRecordCountsByMember } from "@check-doc/record-utils.js";
 import { sessionReport } from "@check-doc/session-report.js";
-import { memberStore } from "@member/member-store.js";
+import { addMember, memberStore } from "@member/member-store.js";
 import {
 	getMemberById,
 	getMemberByName,
@@ -121,17 +121,21 @@ delegate(document, "click", "[data-action]", (e, el) => {
 /**
  * 체크기록 신규 저장 후 조회 화면으로 이동
  * 폼을 payload로 직렬화하고, 선택한 회원(memberId)과 오늘 날짜를 묶어 recordStore에 추가한다.
+ * 이름이 등록 회원과 일치하지 않으면 회원을 자동 등록(성별·목표·트레이너는 기본값)한 뒤 기록을 생성한다.
  * @returns {void}
  */
 function saveRecord() {
 	const payload = collectPayload();
-	// 회원 이름(자동완성 입력)을 회원 id로 해석 — 등록 회원 이름과 일치해야 저장한다
+	// 회원 이름(자동완성 입력)을 회원 id로 해석 — 미등록 이름이면 자동 등록한다
 	const name = (memberInput.value || "").trim();
-	const matched = getMemberByName(members, name);
-	if (!matched) {
-		alert("등록된 회원 이름을 입력하거나 선택해 주세요.");
+	if (!name) {
+		alert("회원 이름을 입력해 주세요.");
 		return;
 	}
+	const matched = getMemberByName(members, name);
+	const memberId = matched
+		? matched.id
+		: addMember({ name, gender: "", goal: "일반", trainer: "" });
 	const recId = recordStore.getState().nextId;
 	recordStore.setState((prev) => ({
 		...prev,
@@ -139,7 +143,7 @@ function saveRecord() {
 			...prev.records,
 			{
 				id: recId,
-				memberId: matched.id,
+				memberId,
 				date: byId("m-date").value || todayISO(),
 				payload,
 			},
