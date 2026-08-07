@@ -1,13 +1,19 @@
 // 파일 용도: 회원 상세 조회 및 체크기록 비교 화면(member-detail.html)
 // ?memberID= 로 회원을 조회하고, 회원 정보 카드·스파크라인 4종·체크 기록 탭·변화 분석 탭을 렌더링한다.
+import "@base/components/app-header.js";
+import { TPL, escapeHtml } from "@base/templates.js";
 import { byId, delegate, queryAll, setHTML, setText } from "@base/UI.js";
 import { getNumberParam } from "@base/utils-url.js";
-import { memberStore } from "@member/member-store.js";
+import {
+	buildCompareTable,
+	recordMax,
+	recordTotal,
+	sessionLabel,
+	sparkline,
+} from "@check-doc/record-stats.js";
 import { recordStore } from "@check-doc/record-store.js";
+import { memberStore } from "@member/member-store.js";
 import { getMemberById, getRecordById } from "@member/member-utils.js";
-import { TPL, escapeHtml } from "@base/templates.js";
-import { buildCompareTable, recordMax, recordTotal, sessionLabel, sparkline } from "@check-doc/record-stats.js";
-import "@base/components/app-header.js";
 
 /** ?memberID= 파라미터 (없으면 0 — 미조회 상태) */
 const memberId = getNumberParam("memberID");
@@ -34,17 +40,55 @@ function renderInfoCard(member) {
  *  (체지방률·체중·골격근량·체지방량 변화, 최신값+누적 델타+스파크라인+회차 범위) */
 function renderStatCards(records) {
 	if (!records.length) {
-		setHTML("stat-charts", '<div class="sparkline-empty">아직 체크기록이 없어요</div>');
+		setHTML(
+			"stat-charts",
+			'<div class="sparkline-empty">아직 체크기록이 없어요</div>',
+		);
 		return;
 	}
 	// 프로토타입 STAT_METRICS 순서: 체지방률 → 체중 → 골격근량 → 체지방량, + 내장지방(to-be 추가)
 	// deltaUnit: 변화량의 단위 — 체지방률은 퍼센트가 아닌 퍼센트포인트(%p)를 쓴다 (member-detail.html Caution 주석)
 	const metrics = [
-		{ label: "체지방률 변화", key: "bfp", unit: "%", deltaUnit: "%p", deltaDigits: 1, fmt: (v) => v.toFixed(1) },
-		{ label: "체중 변화", key: "w", unit: "kg", deltaUnit: "kg", deltaDigits: 1, fmt: (v) => v.toFixed(1) },
-		{ label: "골격근량 변화", key: "m", unit: "kg", deltaUnit: "kg", deltaDigits: 1, fmt: (v) => v.toFixed(1) },
-		{ label: "체지방량 변화", key: "fat", unit: "kg", deltaUnit: "kg", deltaDigits: 1, fmt: (v) => v.toFixed(1) },
-		{ label: "내장지방 변화", key: "vis", unit: "레벨", deltaUnit: "레벨", deltaDigits: 0, fmt: (v) => v.toFixed(0) },
+		{
+			label: "체지방률 변화",
+			key: "bfp",
+			unit: "%",
+			deltaUnit: "%p",
+			deltaDigits: 1,
+			fmt: (v) => v.toFixed(1),
+		},
+		{
+			label: "체중 변화",
+			key: "w",
+			unit: "kg",
+			deltaUnit: "kg",
+			deltaDigits: 1,
+			fmt: (v) => v.toFixed(1),
+		},
+		{
+			label: "골격근량 변화",
+			key: "m",
+			unit: "kg",
+			deltaUnit: "kg",
+			deltaDigits: 1,
+			fmt: (v) => v.toFixed(1),
+		},
+		{
+			label: "체지방량 변화",
+			key: "fat",
+			unit: "kg",
+			deltaUnit: "kg",
+			deltaDigits: 1,
+			fmt: (v) => v.toFixed(1),
+		},
+		{
+			label: "내장지방 변화",
+			key: "vis",
+			unit: "레벨",
+			deltaUnit: "레벨",
+			deltaDigits: 0,
+			fmt: (v) => v.toFixed(0),
+		},
 	];
 	const firstSession = records[0]?.payload.session ?? "";
 	const lastSession = records[records.length - 1]?.payload.session ?? "";
@@ -78,7 +122,10 @@ function renderStatCards(records) {
 /** 체크 기록 목록 렌더링 */
 function renderRecords(records) {
 	if (!records.length) {
-		setHTML("record-list", '<p class="record-empty">아직 체크기록이 없습니다. ＋ 체크기록 작성으로 시작하세요.</p>');
+		setHTML(
+			"record-list",
+			'<p class="record-empty">아직 체크기록이 없습니다. ＋ 체크기록 작성으로 시작하세요.</p>',
+		);
 		return;
 	}
 	// to-be: 회차·날짜·총점 — 회차는 sessionLabel로 레거시 "2026-04 (1회차)"에서도 "1회차"만 추출
@@ -98,11 +145,17 @@ function fillCompareSelects(records) {
 	const tgt = byId("cmp-tgt");
 	if (records.length === 0) {
 		cur.innerHTML = tgt.innerHTML = `<option>체크기록 없음</option>`;
-		setHTML("compare-result", '<div class="sparkline-empty">비교할 체크기록이 없어요</div>');
+		setHTML(
+			"compare-result",
+			'<div class="sparkline-empty">비교할 체크기록이 없어요</div>',
+		);
 		return;
 	}
 	const opts = records
-		.map((r) => `<option value="${r.id}">${r.payload.session || r.date} (${r.date})</option>`)
+		.map(
+			(r) =>
+				`<option value="${r.id}">${r.payload.session || r.date} (${r.date})</option>`,
+		)
 		.join("");
 	cur.innerHTML = opts;
 	tgt.innerHTML = opts;
@@ -139,7 +192,8 @@ function onTabKeydown(e, tabs) {
 	if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
 	e.preventDefault();
 	const idx = tabs.findIndex((t) => t.dataset.tab === e.target.dataset.tab);
-	const next = (idx + (e.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length;
+	const next =
+		(idx + (e.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length;
 	switchTab(tabs[next].dataset.tab);
 	tabs[next].focus();
 }
@@ -160,7 +214,10 @@ function init() {
 	const member = getMemberById(memberStore.getState().members, memberId);
 	if (!member) {
 		setHTML("stat-charts", "");
-		setHTML("record-list", '<p class="record-empty">회원을 찾을 수 없습니다. 회원 목록에서 다시 선택하세요.</p>');
+		setHTML(
+			"record-list",
+			'<p class="record-empty">회원을 찾을 수 없습니다. 회원 목록에서 다시 선택하세요.</p>',
+		);
 		byId("new-record-btn").style.display = "none";
 		return;
 	}
@@ -175,7 +232,9 @@ delegate(document, "click", "[data-del-record]", (e, el) => {
 	e.stopPropagation();
 	recordStore.setState((prev) => ({
 		...prev,
-		records: prev.records.filter((r) => r.id !== Number(el.dataset.delRecord)),
+		records: prev.records.filter(
+			(r) => r.id !== Number(el.dataset.delRecord),
+		),
 	}));
 	refreshRecords();
 });
@@ -184,13 +243,17 @@ delegate(document, "click", "[data-del-record]", (e, el) => {
  * @param {HTMLElement} el 클릭된 기록 행 (data-record-id 보유)
  * @returns {void}
  */
-const goView = (el) => (window.location.href = `check-doc-view.html?docID=${el.dataset.recordId}`);
+const goView = (el) =>
+	(window.location.href = `check-doc-view.html?docID=${el.dataset.recordId}`);
 delegate(document, "click", ".record-row", (e, el) => {
 	if (e.target.closest("[data-del-record]")) return;
 	goView(el);
 });
 delegate(document, "keydown", ".record-row", (e, el) => {
-	if ((e.key === "Enter" || e.key === " ") && !e.target.closest("[data-del-record]")) {
+	if (
+		(e.key === "Enter" || e.key === " ") &&
+		!e.target.closest("[data-del-record]")
+	) {
 		e.preventDefault();
 		goView(el);
 	}

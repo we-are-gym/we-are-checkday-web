@@ -1,11 +1,11 @@
 // 파일 용도: 회원 관리 화면(members.html) — 스토어 기반 회원 목록·검색·제거·상세 이동
 // 상태: memberStore(공용 스토어, 관찰자 패턴) 구독, subscribe 콜백에서 member-table 컴포넌트를 재렌더링한다.
-import { byId } from "@base/UI.js";
-import { memberStore } from "@member/member-store.js";
-import { recordStore } from "@check-doc/record-store.js";
-import { getRecordCountsByMember } from "@member/member-utils.js";
 import "@base/components/app-header.js";
+import { byId } from "@base/UI.js";
+import { recordStore } from "@check-doc/record-store.js";
 import "@member/components/member-table.js";
+import { memberStore } from "@member/member-store.js";
+import { getRecordCountsByMember } from "@member/member-utils.js";
 
 /** 회원 목록 테이블 컴포넌트 엘리먼트 */
 const tableEl = byId("member-table");
@@ -18,8 +18,13 @@ let keyword = "";
  * @returns {Array<{id:number,name:string,gender:string,goal:string,trainer:string,recordCount:number}>}
  */
 function buildRows(list) {
-	const countByMember = getRecordCountsByMember(recordStore.getState().records);
-	return list.map((m) => ({ ...m, recordCount: countByMember.get(m.id) || 0 }));
+	const countByMember = getRecordCountsByMember(
+		recordStore.getState().records,
+	);
+	return list.map((m) => ({
+		...m,
+		recordCount: countByMember.get(m.id) || 0,
+	}));
 }
 
 /** 스토어 상태로 테이블·건수를 재렌더링 (빈 목록 안내는 member-table이 목록 안에 렌더링)

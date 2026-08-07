@@ -278,7 +278,10 @@ export const TPL = {
 	 */
 	scoreDots({ prefix, count }) {
 		return createZeroArray(count)
-			.map((_, j) => `<div class="dot" id="dot-${prefix}-${j}" aria-hidden="true"></div>`)
+			.map(
+				(_, j) =>
+					`<div class="dot" id="dot-${prefix}-${j}" aria-hidden="true"></div>`,
+			)
 			.join("");
 	},
 
@@ -318,7 +321,9 @@ export const TPL = {
 		withHeader = true,
 		ariaLabel = "",
 	}) {
-		const ariaAttr = ariaLabel ? ` aria-label="${escapeHtml(ariaLabel)}"` : "";
+		const ariaAttr = ariaLabel
+			? ` aria-label="${escapeHtml(ariaLabel)}"`
+			: "";
 		const head = withHeader
 			? `<thead><tr><th>인바디 항목</th><th>${escapeHtml(tgtLabel)}</th><th>${escapeHtml(curLabel)}</th><th>변화</th></tr></thead>`
 			: "";
@@ -351,7 +356,10 @@ export const TPL = {
 	 * @returns {string}
 	 */
 	viewScoreDots({ score, max = DOT_COUNT }) {
-		return Array.from({ length: max }, (_, i) => `<span class="sdot${i < score ? " on" : ""}"></span>`).join("");
+		return Array.from(
+			{ length: max },
+			(_, i) => `<span class="sdot${i < score ? " on" : ""}"></span>`,
+		).join("");
 	},
 
 	/**
@@ -399,7 +407,12 @@ export const TPL = {
 								: seg.href
 									? `<a class="crumb-link" href="${escapeHtml(seg.href)}">${escapeHtml(seg.label)}</a>`
 									: `<span class="crumb-cur">${escapeHtml(seg.label)}</span>`;
-						return part + (isLast ? "" : `<span class="crumb-sep" aria-hidden="true">›</span>`);
+						return (
+							part +
+							(isLast
+								? ""
+								: `<span class="crumb-sep" aria-hidden="true">›</span>`)
+						);
 					})
 					.join("")}</div>`
 			: "";

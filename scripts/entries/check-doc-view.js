@@ -1,13 +1,13 @@
 // 파일 용도: 체크기록 조회 화면(check-doc-view.html)
 // ?docID= 로 기록 1건을 읽기 전용으로 렌더링한다. 수정은 check-doc-edit.html?docID= 로 이동(커밋 13에서 실링크).
+import "@base/components/app-header.js";
+import { escapeHtml, TPL } from "@base/templates.js";
 import { byId, queryAll, setHTML, setText } from "@base/UI.js";
 import { getNumberParam } from "@base/utils-url.js";
+import { resolveRecordItems } from "@check-doc/assessment-data.js";
+import { IB_KEYS, recordMax, recordTotal } from "@check-doc/record-stats.js";
 import { recordStore } from "@check-doc/record-store.js";
 import { getRecordById } from "@member/member-utils.js";
-import { escapeHtml, TPL } from "@base/templates.js";
-import { IB_KEYS, recordMax, recordTotal } from "@check-doc/record-stats.js";
-import { resolveRecordItems } from "@check-doc/assessment-data.js";
-import "@base/components/app-header.js";
 
 /** ?docID= 파라미터 (없으면 0 — 미조회 상태) */
 const docId = getNumberParam("docID");
@@ -37,7 +37,15 @@ function renderHead(rec) {
 		["담당 트레이너", p.trainer || "-"],
 		["총점", `${recordTotal(p)} / ${recordMax(rec.payload)}`],
 	];
-	setHTML("vh-meta", items.map(([k, v]) => `<span class="meta-item"><b>${k}</b>${escapeHtml(v)}</span>`).join(""));
+	setHTML(
+		"vh-meta",
+		items
+			.map(
+				([k, v]) =>
+					`<span class="meta-item"><b>${k}</b>${escapeHtml(v)}</span>`,
+			)
+			.join(""),
+	);
 	document.title = `${p.session || "체크기록"} — ${p.name || ""} 조회`;
 }
 
@@ -71,11 +79,14 @@ function renderEvals(rec) {
 	const { scores = [], evalData = [] } = rec.payload;
 	setHTML(
 		"eval-list",
-		resolveRecordItems(rec.payload).map((item, i) => {
-			const score = scores[i] ?? 0;
-			const ed = evalData[i] || { checked: [], memo: "" };
-			const checks = (ed.checked || []).map((c) => `<li>${escapeHtml(c)}</li>`).join("");
-			return `
+		resolveRecordItems(rec.payload)
+			.map((item, i) => {
+				const score = scores[i] ?? 0;
+				const ed = evalData[i] || { checked: [], memo: "" };
+				const checks = (ed.checked || [])
+					.map((c) => `<li>${escapeHtml(c)}</li>`)
+					.join("");
+				return `
 				<div class="eval-view">
 					<div class="ev-head">
 						<div class="ev-num">${i + 1}</div>
@@ -92,9 +103,13 @@ function renderEvals(rec) {
 					${ed.memo ? `<p class="ev-memo">${escapeHtml(ed.memo)}</p>` : ""}
 					${item.vo2 && rec.payload.vo2Comment ? `<p class="ev-vo2">${escapeHtml(rec.payload.vo2Comment)}</p>` : ""}
 				</div>`;
-		}).join(""),
+			})
+			.join(""),
 	);
-	setText("evals-total", `총점 ${recordTotal(rec.payload)} / ${recordMax(rec.payload)}`);
+	setText(
+		"evals-total",
+		`총점 ${recordTotal(rec.payload)} / ${recordMax(rec.payload)}`,
+	);
 }
 
 /**
@@ -104,7 +119,17 @@ function renderEvals(rec) {
  */
 function renderGoals(rec) {
 	const { goals = [], goalMemo = "" } = rec.payload;
-	setHTML("goal-chips", goals.length ? goals.map((g) => `<span class="goal-chip">${escapeHtml(g)}</span>`).join("") : '<span class="goal-empty">설정한 목표가 없습니다</span>');
+	setHTML(
+		"goal-chips",
+		goals.length
+			? goals
+					.map(
+						(g) =>
+							`<span class="goal-chip">${escapeHtml(g)}</span>`,
+					)
+					.join("")
+			: '<span class="goal-empty">설정한 목표가 없습니다</span>',
+	);
 	setText("goal-memo", goalMemo || "");
 	byId("goal-memo").style.display = goalMemo ? "" : "none";
 }
@@ -167,6 +192,10 @@ function init() {
 	byId("btn-edit").href = `check-doc-edit.html?docID=${docId}`;
 }
 
-byId("btn-back").addEventListener("click", () => window.history.length > 1 ? window.history.back() : (window.location.href = "members.html"));
+byId("btn-back").addEventListener("click", () =>
+	window.history.length > 1
+		? window.history.back()
+		: (window.location.href = "members.html"),
+);
 
 init();

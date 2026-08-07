@@ -1,7 +1,7 @@
 // 파일 용도: 체크기록 통계 — 스파크라인·기록 지표·비교 테이블 생성 (회원 상세 공용, 순수 함수)
-import { resolveRecordItems } from "./assessment-data.js";
 import { SCORE_MAX } from "@base/constants.js";
 import { TPL } from "@base/templates.js";
+import { resolveRecordItems } from "./assessment-data.js";
 
 /** 인바디 표시 키 순서 (라벨 포함) */
 export const IB_KEYS = [
@@ -164,7 +164,14 @@ export function buildCompareTable(cur, tgt) {
 	const tgtScores = resolveScores(tgt.payload);
 
 	// 양쪽 기록의 항목 이름 합집합을 순회하며, 양쪽 점수가 모두 있는 항목만 행으로 남긴다 (교집합)
-	const itemNames = [...new Set([...resolveRecordItems(cur.payload), ...resolveRecordItems(tgt.payload)].map((it) => it.name))];
+	const itemNames = [
+		...new Set(
+			[
+				...resolveRecordItems(cur.payload),
+				...resolveRecordItems(tgt.payload),
+			].map((it) => it.name),
+		),
+	];
 
 	itemNames.forEach((name) => {
 		const c = curScores.get(name);
