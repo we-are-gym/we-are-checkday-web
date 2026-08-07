@@ -30,55 +30,75 @@ function renderTag(inputId, tagId, ranges) {
 }
 
 /**
+ * 인바디 수치 키별 상태 임계값 (max 오름차순) — 조회·작성/편집 화면이 같은 분류 기준을 공유한다.
+ * 모든 키를 분류하는 것은 아니며, 임계가 있는 키만 담는다.
+ * @type {Record<string, Array<{ max: number, label: string, bg: string, fg: string }>>}
+ */
+export const INBODY_RANGES = {
+	m: [
+		{ max: 18.4, label: "낮음", bg: "var(--red-bg)", fg: "var(--red-fg)" },
+		{ max: 23.4, label: "정상", bg: "var(--success-bg)", fg: "var(--success-fg)" },
+		{ max: 999, label: "높음", bg: "var(--blue-bg)", fg: "var(--blue-fg)" },
+	],
+	bfp: [
+		{ max: 17, label: "낮음", bg: "var(--blue-bg)", fg: "var(--blue-fg)" },
+		{ max: 27, label: "정상", bg: "var(--success-bg)", fg: "var(--success-fg)" },
+		{ max: 32, label: "경계", bg: "var(--orange-bg)", fg: "var(--orange-fg)" },
+		{ max: 999, label: "비만", bg: "var(--red-bg)", fg: "var(--red-fg)" },
+	],
+	bmi: [
+		{ max: 18.4, label: "저체중", bg: "var(--blue-bg)", fg: "var(--blue-fg)" },
+		{ max: 22.9, label: "정상", bg: "var(--success-bg)", fg: "var(--success-fg)" },
+		{ max: 24.9, label: "과체중", bg: "var(--orange-bg)", fg: "var(--orange-fg)" },
+		{ max: 999, label: "비만", bg: "var(--red-bg)", fg: "var(--red-fg)" },
+	],
+	fat: [
+		{ max: 12.9, label: "낮음", bg: "var(--blue-bg)", fg: "var(--blue-fg)" },
+		{ max: 20.9, label: "정상", bg: "var(--success-bg)", fg: "var(--success-fg)" },
+		{ max: 999, label: "높음", bg: "var(--red-bg)", fg: "var(--red-fg)" },
+	],
+	vis: [
+		{ max: 9, label: "정상", bg: "var(--success-bg)", fg: "var(--success-fg)" },
+		{ max: 14, label: "경계", bg: "var(--orange-bg)", fg: "var(--orange-fg)" },
+		{ max: 999, label: "위험", bg: "var(--red-bg)", fg: "var(--red-fg)" },
+	],
+};
+
+/**
+ * 인디수치 1건(key)의 상태 태그 HTML — 분류 기준이 없거나 빈값·비수치면 빈 문자열을 돌려준다.
+ * @param {string} kind 인디 키 (예: "m", "bfp", "bmi", "fat", "vis")
+ * @param {string|number} value 수치
+ * @returns {string} 상태 태그 HTML (분류 불가 시 "")
+ */
+export function inbodyTagFor(kind, value) {
+	const ranges = INBODY_RANGES[kind];
+	if (!ranges) return "";
+	const n = parseFloat(value);
+	if (isNaN(n)) return "";
+	return generateInbodyTags(n, ranges);
+}
+
+/**
  * 인바디 입력값 읽어 태그 갱신, 총점 재계산 트리거
  * 체중(tag-w)·기초대사량(tag-bmr)은 분류가 없어 항상 빈 태그로 둔다.
  * @returns {void}
  */
 export function updateInbodyTags() {
-	renderTag("ib-m", "tag-m", [
-		{ max: 18.4, label: "낮음", bg: "var(--red-bg)", fg: "var(--red-fg)" },
-		{ max: 23.4, label: "정상", bg: "var(--success-bg)", fg: "var(--success-fg)" },
-		{ max: 999, label: "높음", bg: "var(--blue-bg)", fg: "var(--blue-fg)" },
-	]);
-	renderTag("ib-bfp", "tag-bfp", [
-		{ max: 17, label: "낮음", bg: "var(--blue-bg)", fg: "var(--blue-fg)" },
-		{ max: 27, label: "정상", bg: "var(--success-bg)", fg: "var(--success-fg)" },
-		{ max: 32, label: "경계", bg: "var(--orange-bg)", fg: "var(--orange-fg)" },
-		{ max: 999, label: "비만", bg: "var(--red-bg)", fg: "var(--red-fg)" },
-	]);
-	renderTag("ib-bmi", "tag-bmi", [
-		{ max: 18.4, label: "저체중", bg: "var(--blue-bg)", fg: "var(--blue-fg)" },
-		{ max: 22.9, label: "정상", bg: "var(--success-bg)", fg: "var(--success-fg)" },
-		{ max: 24.9, label: "과체중", bg: "var(--orange-bg)", fg: "var(--orange-fg)" },
-		{ max: 999, label: "비만", bg: "var(--red-bg)", fg: "var(--red-fg)" },
-	]);
-	renderTag("ib-fat", "tag-fat", [
-		{ max: 12.9, label: "낮음", bg: "var(--blue-bg)", fg: "var(--blue-fg)" },
-		{ max: 20.9, label: "정상", bg: "var(--success-bg)", fg: "var(--success-fg)" },
-		{ max: 999, label: "높음", bg: "var(--red-bg)", fg: "var(--red-fg)" },
-	]);
+	renderTag("ib-m", "tag-m", INBODY_RANGES.m);
+	renderTag("ib-bfp", "tag-bfp", INBODY_RANGES.bfp);
+	renderTag("ib-bmi", "tag-bmi", INBODY_RANGES.bmi);
+	renderTag("ib-fat", "tag-fat", INBODY_RANGES.fat);
 	byId("tag-w").innerHTML = "";
 	byId("tag-bmr").innerHTML = "";
 
-	// 내장지방은 고정 임계(9/14) 3등급 — 낮음(정상)·경계·위험 표기 (수치 포함)
-	const vis = parseFloat(byId("ib-vis").value);
-	if (!isNaN(vis)) {
-		let vl, vb, vf;
-		if (vis <= 9) {
-			vl = "정상";
-			vb = "var(--success-bg)";
-			vf = "var(--success-fg)";
-		} else if (vis <= 14) {
-			vl = "경계";
-			vb = "var(--orange-bg)";
-			vf = "var(--orange-fg)";
-		} else {
-			vl = "위험";
-			vb = "var(--red-bg)";
-			vf = "var(--red-fg)";
-		}
+	// 내장지방은 INBODY_RANGES.vis 를 쓰되 화면마다 라벨 접두어(수치 포함 뜻)를 붙인다
+	const n = parseFloat(byId("ib-vis").value);
+	if (!isNaN(n)) {
+		const r =
+			INBODY_RANGES.vis.find((x) => n <= x.max) ||
+			INBODY_RANGES.vis[INBODY_RANGES.vis.length - 1];
 		byId("tag-vis").innerHTML =
-			`<span class="ib-tag" style="background:${vb};color:${vf}">내장지방 ${vl}</span>`;
+			`<span class="ib-tag" style="background:${r.bg};color:${r.fg}">내장지방 ${r.label}</span>`;
 	} else {
 		byId("tag-vis").innerHTML = "";
 	}

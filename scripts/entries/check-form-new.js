@@ -4,16 +4,16 @@
 // 상담일(#m-date)은 기본적으로 오늘(todayISO)이고, 저장 시 기록의 date로 사용한다.
 // 저장 시 payload.session은 #m-session 값을 그대로 기록한다.
 // DEPENDS: todayISO(utils-string), byId·delegate(UI), configureEvaluation/renderBasicFunctionCards/updateTotal(evaluation),
-//          setupCheckFormEvents/resetCheckForm(check-form-events), collectPayload(check-form-payload),
+//          setupCheckFormEvents/resetEntireForm(check-form-events), collectPayload(check-form-payload),
 //          renderCheckMovementCards(feedback), sessionReport(session-report)
 import "@base/components/app-header.js";
 import { escapeHtml } from "@base/templates.js";
-import { byId, delegate } from "@base/UI.js";
+import { byId, delegate, dismissOnOverlayClick } from "@base/UI.js";
 import { todayISO } from "@base/utils-string.js";
 import { getNumberParam } from "@base/utils-url.js";
 import { ASSESSMENT_ITEMS_BASIC5 } from "@check-doc/assessment-data.js";
 import {
-	resetCheckForm,
+	resetEntireForm,
 	setupCheckFormEvents,
 } from "@check-doc/check-form-events.js";
 import { collectPayload } from "@check-doc/check-form-payload.js";
@@ -26,7 +26,7 @@ import { renderCheckMovementCards } from "@check-doc/feedback.js";
 import { recordStore } from "@check-doc/record-store.js";
 import { getRecordCountsByMember } from "@check-doc/record-utils.js";
 import { sessionReport } from "@check-doc/session-report.js";
-import { memberStore } from "@member/member-store.js";
+import { addMember, memberStore } from "@member/member-store.js";
 import {
 	getMemberById,
 	getMemberByName,
@@ -84,14 +84,7 @@ if (memberId) {
 	}
 }
 
-// ── 초기화 ──
-/** 폼 전체를 초기 상태로 되돌린다 (확인 후 resetCheckForm 호출)
- * @returns {void}
- */
-function resetEntireForm() {
-	if (!confirm("이 회원의 상담 내용을 모두 초기화할까요?")) return;
-	resetCheckForm();
-}
+// ── 초기화 ──  (resetEntireForm은 check-form-events 공용 헬퍼 사용)
 
 // ── 이벤트 위임 — 인라인 onclick·window 오염 없이 정적·동적 요소를 한 루트에서 처리 ──
 // 정적 액션 버튼 (data-action)
@@ -121,17 +114,21 @@ delegate(document, "click", "[data-action]", (e, el) => {
 /**
  * 체크기록 신규 저장 후 조회 화면으로 이동
  * 폼을 payload로 직렬화하고, 선택한 회원(memberId)과 오늘 날짜를 묶어 recordStore에 추가한다.
+ * 이름이 등록 회원과 일치하지 않으면 회원을 자동 등록(성별·목표·트레이너는 기본값)한 뒤 기록을 생성한다.
  * @returns {void}
  */
 function saveRecord() {
 	const payload = collectPayload();
-	// 회원 이름(자동완성 입력)을 회원 id로 해석 — 등록 회원 이름과 일치해야 저장한다
+	// 회원 이름(자동완성 입력)을 회원 id로 해석 — 미등록 이름이면 자동 등록한다
 	const name = (memberInput.value || "").trim();
-	const matched = getMemberByName(members, name);
-	if (!matched) {
-		alert("등록된 회원 이름을 입력하거나 선택해 주세요.");
+	if (!name) {
+		alert("회원 이름을 입력해 주세요.");
 		return;
 	}
+	const matched = getMemberByName(members, name);
+	const memberId = matched
+		? matched.id
+		: addMember({ name, gender: "", goal: "일반", trainer: "" });
 	const recId = recordStore.getState().nextId;
 	recordStore.setState((prev) => ({
 		...prev,
@@ -139,7 +136,7 @@ function saveRecord() {
 			...prev.records,
 			{
 				id: recId,
-				memberId: matched.id,
+				memberId,
 				date: byId("m-date").value || todayISO(),
 				payload,
 			},
@@ -151,10 +148,8 @@ function saveRecord() {
 
 // 목표·체크·점수·피드백·인바디/VO₂ 위임은 checkday·편집 화면이 공유하는 check-form-events로 처리
 setupCheckFormEvents();
-// 결과 모달 배경(overlay 자신) 클릭 시 닫기
-delegate(document, "click", "#overlay", (e) => {
-	if (e.target.id === "overlay") e.target.classList.remove("open");
-});
+// 결과 모달 배경(overlay 자신) 클릭 시 닫기 — 공용 헬퍼
+dismissOnOverlayClick();
 
 // ── 시작 ──
 renderBasicFunctionCards();

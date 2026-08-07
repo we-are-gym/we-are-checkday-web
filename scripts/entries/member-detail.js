@@ -250,18 +250,18 @@ function exportMemberDetailPDF() {
 	// 스파크라인 SVG들을 이미지 데이터로 변환
 	const sparklineSVGs =
 		/*printWindow.*/ document.querySelectorAll("#stat-charts svg");
-	console.log({ sparklineSVGs });
+	// console.log({ sparklineSVGs });
 
 	const renderedChartSVGs = Array.from(sparklineSVGs).map((SVG) =>
 		new XMLSerializer().serializeToString(SVG),
 	);
-	console.log({ renderedChartSVGs });
+	// console.log({ renderedChartSVGs });
 
 	const sparklineImages = renderedChartSVGs.map(
 		(renderedSVG) =>
 			`data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(renderedSVG)))}`,
 	);
-	console.log({ sparklineImages });
+	// console.log({ sparklineImages });
 
 	// 비교 테이블 HTML 가져오기
 
@@ -373,7 +373,7 @@ function exportMemberDetailPDF() {
 			</div>
 		</body>
 		</html>`;
-	console.log(printHtml);
+	// console.log(printHtml);
 
 	printWindow.document.write(printHtml);
 	printWindow.document.close();
@@ -409,10 +409,10 @@ function init() {
 	const PDFExportButtonElem = byId("export-pdf-btn");
 
 	if (PDFExportButtonElem) {
-		console.log("PDF 내보내기 버튼 존재");
+		// console.log("PDF 내보내기 버튼 존재");
 		PDFExportButtonElem.addEventListener("click", exportMemberDetailPDF);
 	} else {
-		console.warn("PDF 내보내기 버튼 비존재");
+		// console.warn("PDF 내보내기 버튼 비존재");
 	}
 }
 

@@ -126,3 +126,12 @@ export function resetCheckForm() {
 	resetFeedbacks();
 	updateTotal();
 }
+
+/**
+ * 폼 전체를 초기 상태로 되돌린다 — 확인 후 resetCheckForm 호출 (checkday·check-doc-new 공용).
+ * @returns {void}
+ */
+export function resetEntireForm() {
+	if (!confirm("이 회원의 상담 내용을 모두 초기화할까요?")) return;
+	resetCheckForm();
+}

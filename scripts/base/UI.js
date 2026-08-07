@@ -84,3 +84,15 @@ export function delegate(root, type, selector, handler) {
 		if (el) handler(e, el);
 	});
 }
+
+/**
+ * 모달 오버레이 배경(자신) 클릭 시 닫는 공용 헬퍼 — 각 화면이 반복하던
+ * `delegate(document, "click", "#overlay", …)` 패턴을 단일 소스로 통합한다.
+ * @param {string} [overlayId="overlay"] 닫을 오버레이 요소 id (예: "overlay", "modal-overlay")
+ * @returns {void}
+ */
+export function dismissOnOverlayClick(overlayId = "overlay") {
+	delegate(document, "click", `#${overlayId}`, (e) => {
+		if (e.target.id === overlayId) e.target.classList.remove("open");
+	});
+}

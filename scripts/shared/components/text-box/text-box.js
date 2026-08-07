@@ -1,31 +1,13 @@
 // 파일 용도: TextBox 웹 컴포넌트 — 텍스트 입력/텍스트에어리어 (전체 화면 공용)
 import { defineComponent } from "@shared/components/base/component.js";
 
-defineComponent({
-	tag: "ui-text-box",
-	props: {
-		value: { type: String, default: "" },
-		placeholder: { type: String, default: "" },
-		multiline: { type: Boolean, default: false },
-		rows: { type: Number, default: 4 },
-		cols: { type: Number, default: 50 },
-		maxLength: { type: Number, default: 0 }, // 0 = 제한 없음
-		minLength: { type: Number, default: 0 },
-		disabled: { type: Boolean, default: false },
-		readonly: { type: Boolean, default: false },
-		required: { type: Boolean, default: false },
-		spellcheck: { type: Boolean, default: false },
-		autocomplete: { type: String, default: "off" },
-		ariaLabel: { type: String, default: "" },
-		ariaDescribedBy: { type: String, default: "" },
-		ariaInvalid: { type: Boolean, default: false },
-		label: { type: String, default: "" },
-		hint: { type: String, default: "" },
-		error: { type: String, default: "" },
-		autoResize: { type: Boolean, default: false }, // 텍스트에어리어 자동 높이
-	},
-
-	renderTextBox({
+/** 텍스트박스 마크업 생성 (순수 함수 — 컴포넌트 상태와 분리)
+ * @param {{ value: string, placeholder: string, multiline: boolean, rows: number, cols: number, maxLength: number, minLength: number, disabled: boolean, readonly: boolean, required: boolean, spellcheck: boolean, autocomplete: string, ariaLabel: string, ariaDescribedBy: string, ariaInvalid: boolean, label: string, hint: string, error: string, autoResize: boolean }} props
+ * @param {{ elementId: string }} ctx 입력 id 접두어 (컴포넌트 인스턴스 맥락)
+ * @returns {string}
+ */
+const renderTextBox = (
+	{
 		value,
 		placeholder,
 		multiline,
@@ -45,10 +27,12 @@ defineComponent({
 		hint,
 		error,
 		autoResize,
-	}) {
-		const inputId = `textbox-${this.id || "auto"}`;
-		const hintId = hint ? `${inputId}-hint` : "";
-		const errorId = error ? `${inputId}-error` : "";
+	},
+	{ elementId },
+) => {
+	const inputId = `textbox-${elementId || "auto"}`;
+	const hintId = hint ? `${inputId}-hint` : "";
+	const errorId = error ? `${inputId}-error` : "";
 
 		const ariaAttrs = {};
 		if (ariaLabel) ariaAttrs["label"] = ariaLabel;
@@ -118,10 +102,34 @@ defineComponent({
 					${maxLength > 0 ? `<div class="text-box-counter" aria-hidden="true"><span class="current">${value.length}</span> / ${maxLength}</div>` : ""}
 				</div>`;
 		}
+};
+
+defineComponent({
+	tag: "ui-text-box",
+	props: {
+		value: { type: String, default: "" },
+		placeholder: { type: String, default: "" },
+		multiline: { type: Boolean, default: false },
+		rows: { type: Number, default: 4 },
+		cols: { type: Number, default: 50 },
+		maxLength: { type: Number, default: 0 }, // 0 = 제한 없음
+		minLength: { type: Number, default: 0 },
+		disabled: { type: Boolean, default: false },
+		readonly: { type: Boolean, default: false },
+		required: { type: Boolean, default: false },
+		spellcheck: { type: Boolean, default: false },
+		autocomplete: { type: String, default: "off" },
+		ariaLabel: { type: String, default: "" },
+		ariaDescribedBy: { type: String, default: "" },
+		ariaInvalid: { type: Boolean, default: false },
+		label: { type: String, default: "" },
+		hint: { type: String, default: "" },
+		error: { type: String, default: "" },
+		autoResize: { type: Boolean, default: false }, // 텍스트에어리어 자동 높이
 	},
 
 	render() {
-		return this.renderTextBox(this._getProps());
+		return renderTextBox(this._getProps(), { elementId: this.id });
 	},
 
 	onConnect() {

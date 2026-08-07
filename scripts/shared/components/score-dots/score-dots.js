@@ -1,6 +1,56 @@
 // 파일 용도: ScoreDots 웹 컴포넌트 — 평가 점수 도트 표시 (전체 화면 공용)
 import { defineComponent } from "@shared/components/base/component.js";
 
+/** 점수 도트 마크업 생성 (순수 함수 — 컴포넌트 상태와 분리)
+ * @param {{ score: number, max: number, count: number, size: string, interactive: boolean, ariaLabel: string, ariaDescribedBy: string, prefix: string }} props
+ * @param {{ elementId: string }} ctx 도트 id 접두어 (컴포넌트 인스턴스 맥락)
+ * @returns {string}
+ */
+const renderScoreDots = (
+	{
+		score,
+		max,
+		count,
+		size,
+		interactive,
+		ariaLabel,
+		ariaDescribedBy,
+		prefix,
+	},
+	{ elementId },
+) => {
+	const clampedScore = Math.max(0, Math.min(max, score));
+	const dotsId = `dots-${prefix || elementId || "auto"}`;
+
+	const ariaAttrs = {};
+	if (ariaLabel) ariaAttrs["label"] = ariaLabel;
+	if (ariaDescribedBy) ariaAttrs["describedby"] = ariaDescribedBy;
+	ariaAttrs["role"] = "group";
+	ariaAttrs["aria-label"] = `점수 ${clampedScore}점 / ${max}점`;
+
+	let ariaStr = "";
+	for (const [key, val] of Object.entries(ariaAttrs)) {
+		ariaStr += ` aria-${key}="${val}"`;
+	}
+
+	const sizeClass = `dots-${size}`;
+
+	return `
+			<div class="score-dots ${sizeClass}${interactive ? " interactive" : ""}" id="${dotsId}"${ariaStr}>
+				${Array.from(
+					{ length: count },
+					(_, i) => `
+					<span
+						class="dot${i < clampedScore ? " on" : ""}"
+						id="dot-${prefix || elementId || "auto"}-${i}"
+						data-score="${i}"
+						${interactive ? `tabindex="0" role="button" aria-label="${i}점" aria-pressed="${i <= clampedScore}"` : "aria-hidden='true'"}
+					></span>
+				`,
+				).join("")}
+			</div>`;
+};
+
 defineComponent({
 	tag: "ui-score-dots",
 	props: {
@@ -14,50 +64,8 @@ defineComponent({
 		prefix: { type: String, default: "" }, // ID 접두사
 	},
 
-	renderScoreDots({
-		score,
-		max,
-		count,
-		size,
-		interactive,
-		ariaLabel,
-		ariaDescribedBy,
-		prefix,
-	}) {
-		const clampedScore = Math.max(0, Math.min(max, score));
-		const dotsId = `dots-${prefix || this.id || "auto"}`;
-
-		const ariaAttrs = {};
-		if (ariaLabel) ariaAttrs["label"] = ariaLabel;
-		if (ariaDescribedBy) ariaAttrs["describedby"] = ariaDescribedBy;
-		ariaAttrs["role"] = "group";
-		ariaAttrs["aria-label"] = `점수 ${clampedScore}점 / ${max}점`;
-
-		let ariaStr = "";
-		for (const [key, val] of Object.entries(ariaAttrs)) {
-			ariaStr += ` aria-${key}="${val}"`;
-		}
-
-		const sizeClass = `dots-${size}`;
-
-		return `
-			<div class="score-dots ${sizeClass}${interactive ? " interactive" : ""}" id="${dotsId}"${ariaStr}>
-				${Array.from(
-					{ length: count },
-					(_, i) => `
-					<span
-						class="dot${i < clampedScore ? " on" : ""}"
-						id="dot-${prefix || this.id || "auto"}-${i}"
-						data-score="${i}"
-						${interactive ? `tabindex="0" role="button" aria-label="${i}점" aria-pressed="${i <= clampedScore}"` : "aria-hidden='true'"}
-					></span>
-				`,
-				).join("")}
-			</div>`;
-	},
-
 	render() {
-		return this.renderScoreDots(this._getProps());
+		return renderScoreDots(this._getProps(), { elementId: this.id });
 	},
 
 	onConnect() {

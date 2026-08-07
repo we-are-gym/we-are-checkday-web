@@ -1,19 +1,16 @@
 // 파일 용도: Tabs 웹 컴포넌트 — 탭 리스트·패널 전환 (전체 화면 공용)
 import { defineComponent } from "@shared/components/base/component.js";
 
-defineComponent({
-	tag: "ui-tabs",
-	props: {
-		tabs: { type: Array, default: [] }, // [{ label, panel, id }]
-		activeIndex: { type: Number, default: 0 },
-		orientation: { type: String, default: "horizontal" }, // horizontal | vertical
-	},
-
-	renderTabs({ tabs, activeIndex, orientation }) {
-		const tablistId = `tabs-${this.id || "auto"}`;
-		const tabBtns = tabs
-			.map(
-				(tab, i) => `
+/** 탭 리스트·패널 마크업 생성 (순수 함수 — 컴포넌트 상태와 분리)
+ * @param {{ tabs: Array, activeIndex: number, orientation: string }} props
+ * @param {{ elementId: string }} ctx 탭 id 접두어 (컴포넌트 인스턴스 맥락)
+ * @returns {string}
+ */
+const renderTabs = ({ tabs, activeIndex, orientation }, { elementId }) => {
+	const tablistId = `tabs-${elementId || "auto"}`;
+	const tabBtns = tabs
+		.map(
+			(tab, i) => `
 			<button
 				role="tab"
 				id="${tablistId}-tab-${i}"
@@ -26,12 +23,12 @@ defineComponent({
 			>
 				${tab.label}
 			</button>`,
-			)
-			.join("");
+		)
+		.join("");
 
-		const panels = tabs
-			.map(
-				(tab, i) => `
+	const panels = tabs
+		.map(
+			(tab, i) => `
 			<div
 				role="tabpanel"
 				id="${tablistId}-panel-${i}"
@@ -41,10 +38,10 @@ defineComponent({
 			>
 				${tab.panel || ""}
 			</div>`,
-			)
-			.join("");
+		)
+		.join("");
 
-		return `
+	return `
 			<div class="tabs-container" data-orientation="${orientation}">
 				<div role="tablist" id="${tablistId}" aria-orientation="${orientation}" class="tab-list">
 					${tabBtns}
@@ -53,10 +50,18 @@ defineComponent({
 					${panels}
 				</div>
 			</div>`;
+};
+
+defineComponent({
+	tag: "ui-tabs",
+	props: {
+		tabs: { type: Array, default: [] }, // [{ label, panel, id }]
+		activeIndex: { type: Number, default: 0 },
+		orientation: { type: String, default: "horizontal" }, // horizontal | vertical
 	},
 
 	render() {
-		return this.renderTabs(this._getProps());
+		return renderTabs(this._getProps(), { elementId: this.id });
 	},
 
 	onConnect() {

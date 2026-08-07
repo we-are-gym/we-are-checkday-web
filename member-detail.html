@@ -4,9 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>회원 상세 — 위아짐 체크데이</title>
-    <link rel="stylesheet" href="styles/colors.css?v=2026080716" />
-    <link rel="stylesheet" href="styles/font.css?v=2026080716" />
-    <link rel="stylesheet" href="styles/layout-shell.css?v=2026080716" />
+    <link rel="stylesheet" href="styles/colors.css?v=2026080717" />
+    <link rel="stylesheet" href="styles/font.css?v=2026080717" />
+    <link rel="stylesheet" href="styles/layout-shell.css?v=2026080717" />
     <link
       rel="stylesheet"
       href="styles/layout-member-detail.css?v=2026080716"
@@ -138,16 +138,24 @@
             >
               <!-- 비교 선택 (프로토타입: 카드 + 2열 그리드) -->
               <div class="detail-card compare-controls">
+                <p class="compare-hint" id="compare-hint">
+                  좌측(비교 대상)·우측(현재 체크기록) 회차를 선택하면 인바디·움직임 평가가 대비됩니다.
+                </p>
                 <label class="compare-field">
                   <span>비교 대상</span>
                   <select
                     id="cmp-cur"
                     aria-label="비교 대상 체크기록 선택"
+                    aria-describedby="compare-hint"
                   ></select>
                 </label>
                 <label class="compare-field">
                   <span>현재 체크기록</span>
-                  <select id="cmp-tgt" aria-label="현재 체크기록 선택"></select>
+                  <select
+                    id="cmp-tgt"
+                    aria-label="현재 체크기록 선택"
+                    aria-describedby="compare-hint"
+                  ></select>
                 </label>
               </div>
               <!-- 비교 결과 (프로토타입: 카드 안 인바디 표 + 움직임 평가 총점 표) -->
@@ -174,7 +182,7 @@
     </script>
     <script
       type="module"
-      src="scripts/entries/member-detail.js?v=2026080716"
+      src="scripts/entries/member-detail.js?v=2026080717"
     ></script>
   </body>
 </html>
