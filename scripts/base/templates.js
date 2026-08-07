@@ -304,6 +304,8 @@ export const TPL = {
 	 * 체크기록 비교 테이블 1개 — withHeader=false면 본문만(움직임 평가 총점 표용)
 	 *
 	 * @param {{
+	 * 	extraClassNames?: Array<string>;
+	 * 	itemLabel: string;
 	 * 	curLabel?: string;
 	 * 	tgtLabel?: string;
 	 * 	rows: Array<{ label: string, cur: string, tgt: string, delta: string }>;
@@ -314,6 +316,8 @@ export const TPL = {
 	 * @returns {string}
 	 */
 	compareTable({
+		extraClassNames = [],
+		itemLabel,
 		curLabel = "",
 		tgtLabel = "",
 		rows,
@@ -325,7 +329,7 @@ export const TPL = {
 			? ` aria-label="${escapeHtml(ariaLabel)}"`
 			: "";
 		const head = withHeader
-			? `<thead><tr><th>인바디 항목</th><th>${escapeHtml(tgtLabel)}</th><th>${escapeHtml(curLabel)}</th><th>변화</th></tr></thead>`
+			? `<thead><tr><th>${itemLabel}</th><th>${escapeHtml(tgtLabel)}</th><th>${escapeHtml(curLabel)}</th><th>변화</th></tr></thead>`
 			: "";
 
 		const foot = (() => {
@@ -341,7 +345,7 @@ export const TPL = {
 		})();
 
 		return `
-			<table class="compare-table"${ariaAttr}>
+			<table class="compare-table ${extraClassNames.join(" ")}"${ariaAttr}>
 				${head}
 				${foot}
 				<tbody>

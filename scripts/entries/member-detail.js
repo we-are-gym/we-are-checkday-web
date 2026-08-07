@@ -2,7 +2,14 @@
 // ?memberID= 로 회원을 조회하고, 회원 정보 카드·스파크라인 4종·체크 기록 탭·변화 분석 탭을 렌더링한다.
 import "@base/components/app-header.js";
 import { TPL, escapeHtml } from "@base/templates.js";
-import { byId, delegate, queryAll, setHTML, setText } from "@base/UI.js";
+import {
+	byId,
+	delegate,
+	queryAll,
+	setHTML,
+	setText,
+	queryOne,
+} from "@base/UI.js";
 import { getNumberParam } from "@base/utils-url.js";
 import {
 	buildCompareTable,
@@ -12,18 +19,17 @@ import {
 	sparkline,
 } from "@check-doc/record-stats.js";
 import { recordStore } from "@check-doc/record-store.js";
+import { getRecordById, getRecordsByMember } from "@check-doc/record-utils.js";
 import { memberStore } from "@member/member-store.js";
-import { getMemberById, getRecordById } from "@member/member-utils.js";
+import { getMemberById } from "@member/member-utils.js";
 
 /** ?memberID= 파라미터 (없으면 0 — 미조회 상태) */
 const memberId = getNumberParam("memberID");
 
 /** 회원의 기록을 날짜 오름차순으로 */
 function getRecords() {
-	return recordStore
-		.getState()
-		.records.filter((r) => r.memberId === memberId)
-		.sort((a, b) => a.date.localeCompare(b.date));
+	const records = recordStore.getState().records;
+	return getRecordsByMember(records, memberId);
 }
 
 /** 회원 정보 카드 렌더링 (to-be: 프로토타입처럼 이름·성별·담당 트레이너 3행만) */
@@ -139,7 +145,6 @@ function renderRecords(records) {
 	setHTML("record-list", rows.map((r) => TPL.recordRow(r)).join(""));
 }
 
-/** 비교 select 채우기 — 프로토타입과 동일하게 비교 대상(기준) 기본값은 첫 체크기록 */
 function fillCompareSelects(records) {
 	const cur = byId("cmp-cur");
 	const tgt = byId("cmp-tgt");
@@ -159,12 +164,13 @@ function fillCompareSelects(records) {
 		.join("");
 	cur.innerHTML = opts;
 	tgt.innerHTML = opts;
-	cur.value = String(records[records.length - 1].id);
-	tgt.value = String(records[0].id);
+	// 좌측(기준): 직전 기록 (records.length >= 2면 length-2, 아니면 0)
+	cur.value = String(records[Math.max(0, records.length - 2)].id);
+	// 우측(비교): 최신 기록
+	tgt.value = String(records[records.length - 1].id);
 	renderCompare();
 }
 
-/** 비교 테이블 렌더링 */
 function renderCompare() {
 	const curId = Number(byId("cmp-cur").value);
 	const tgtId = Number(byId("cmp-tgt").value);
@@ -172,17 +178,25 @@ function renderCompare() {
 	const cur = getRecordById(all, curId);
 	const tgt = getRecordById(all, tgtId);
 	if (!cur || !tgt) return;
-	setHTML("compare-result", buildCompareTable(cur, tgt));
+	setHTML(
+		"compare-result",
+		buildCompareTable(cur, tgt, {
+			showTotalScoreLabel: false,
+			includeMovementHeader: true,
+		}),
+	);
 }
 
 /** 탭 전환 (role=tablist 규약: aria-selected·tabindex 관리) */
 function switchTab(tabName) {
 	const tabs = queryAll(".tab-btn");
+
 	tabs.forEach((btn) => {
 		const active = btn.dataset.tab === tabName;
 		btn.setAttribute("aria-selected", String(active));
 		btn.tabIndex = active ? 0 : -1;
 	});
+
 	byId("panel-records").hidden = tabName !== "records";
 	byId("panel-compare").hidden = tabName !== "compare";
 }
@@ -191,9 +205,12 @@ function switchTab(tabName) {
 function onTabKeydown(e, tabs) {
 	if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
 	e.preventDefault();
+
 	const idx = tabs.findIndex((t) => t.dataset.tab === e.target.dataset.tab);
+
 	const next =
 		(idx + (e.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length;
+
 	switchTab(tabs[next].dataset.tab);
 	tabs[next].focus();
 }
@@ -201,43 +218,204 @@ function onTabKeydown(e, tabs) {
 /** 기록 변경(삭제) 후 화면 갱신 */
 function refreshRecords() {
 	const records = getRecords();
+
 	renderStatCards(records);
 	renderRecords(records);
 	fillCompareSelects(records);
 }
 
-// ── 시작 ──
+function exportMemberDetailPDF() {
+	const member = getMemberById(memberStore.getState().members, memberId);
+	const records = getRecords();
+
+	if (!member || records.length === 0) {
+		alert("내보낼 데이터가 없습니다.");
+		return;
+	}
+
+	// 인쇄용 창 열기
+	const printWindow = window.open("", "_blank");
+	if (!printWindow) {
+		alert("팝업이 차단되었습니다. 팝업 허용 후 다시 시도하세요.");
+		return;
+	}
+
+	// 스파크라인 SVG들을 이미지 데이터로 변환
+	const sparklineSVGs =
+		/*printWindow.*/ document.querySelectorAll("#stat-charts svg");
+	console.log({ sparklineSVGs });
+
+	const renderedChartSVGs = Array.from(sparklineSVGs).map((SVG) =>
+		new XMLSerializer().serializeToString(SVG),
+	);
+	console.log({ renderedChartSVGs });
+
+	const sparklineImages = renderedChartSVGs.map(
+		(renderedSVG) =>
+			`data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(renderedSVG)))}`,
+	);
+	console.log({ sparklineImages });
+
+	// 비교 테이블 HTML 가져오기
+
+	const inbodyCompareTableHTML =
+		queryOne(".compare-table-inbody")?.outerHTML || "";
+
+	const basicFunctionsCompareTableHTML =
+		queryOne(".compare-table-basicFunctions")?.outerHTML || "";
+
+	// 인쇄용 HTML 구성
+	const printHtml = `
+		<!doctype html>
+		<html lang="ko">
+		<head>
+			<meta charset="UTF-8">
+			<title>${escapeHtml(member.name)} 님 체크기록 - PDF 내보내기</title>
+			<style>
+				:root {
+					--spark: black;
+				}
+				@media print {
+					@page { margin: 15mm; size: A4; }
+					body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; line-height: 1.5; color: #1a1a1a; }
+					.print-header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #3478d4; padding-bottom: 10px; }
+					.print-header h1 { font-size: 20px; margin: 0; color: #1a1a1a; }
+					.print-header .meta { font-size: 12px; color: #666; margin-top: 4px; }
+					.section { margin-bottom: 24px; page-break-inside: avoid; }
+					.section h2 { font-size: 14px; border-bottom: 1px solid #3478d4; padding-bottom: 4px; margin-bottom: 12px; color: #3478d4; }
+					.grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 16px; }
+					.grid-item { display: flex; flex-direction: column; }
+					.grid-label { font-size: 10px; color: #666; text-transform: uppercase; }
+					.grid-value { font-size: 13px; font-weight: 500; }
+					.sparkline-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 16px; }
+					.sparkline-item img { width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px; }
+					table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 8px; }
+					th, td { border: 1px solid #ddd; padding: 6px 8px; text-align: center; }
+					th { background: #f5f5f5; font-weight: 600; }
+					.delta-up { color: #3478d4; }
+					.delta-down { color: #d86b6b; }
+					.delta-eq { color: #999; }
+					.no-print { display: none; }
+				}
+				@media screen {
+					body { padding: 20px; max-width: 800px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+					.print-btn { position: fixed; top: 20px; right: 20px; padding: 10px 20px; background: #3478d4; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
+					.print-btn:hover { background: #2e68bd; }
+				}
+			</style>
+		</head>
+		<body>
+			<button class="print-btn no-print" onclick="window.print()">인쇄 / PDF 저장</button>
+			<div class="print-header">
+				<h1>${escapeHtml(member.name)} 님 체크기록 요약</h1>
+				<div class="meta">총 ${records.length}회차 · 담당: ${escapeHtml(member.trainer || "-")} · 성별: ${escapeHtml(member.gender || "-")}</div>
+			</div>
+
+			<div class="section">
+				<h2>체성분 변화 차트 (스파크라인)</h2>
+				<div class="sparkline-row">
+					<!--
+					${sparklineImages
+						.map(
+							(src, i) => `
+								<div class="sparkline-item">
+									<div class="grid-label">${["체지방률", "체중", "골격근량", "체지방량", "내장지방"][i] || `차트 ${i + 1}`}</div>
+									<img src="${src}" alt="스파크라인">
+								</div>
+								`,
+						)
+						.join("")}
+					-->
+					${renderedChartSVGs
+						.map(
+							(renderedChartSVG, index) => `
+								<div class="sparkline-item">
+									<div class="grid-label">${["체지방률", "체중", "골격근량", "체지방량", "내장지방"][index] || `차트 ${index + 1}`}</div>
+									${renderedChartSVG}
+								</div>
+								`,
+						)
+						.join("")}
+				</div>
+				${
+					sparklineImages.length < 5
+						? ""
+						: `
+				<!--div class="sparkline-row">
+					<div class="sparkline-item">
+						<div class="grid-label">내장지방</div>
+						<img src="${sparklineImages[4]}" alt="내장지방 스파크라인">
+					</div>
+				</div-->
+				`
+				}
+			</div>
+
+			<div class="section">
+				<h2>인바디 비교 테이블</h2>
+				<!--div class="detail-card compare-result" id="compare-result" aria-live="polite" aria-atomic="true"-->
+					${inbodyCompareTableHTML}
+				<!--div-->
+			</div>
+
+			<div class="section">
+				<h2>움직임 평가 비교</h2>
+				<!--div class="detail-card compare-result" id="compare-result" aria-live="polite" aria-atomic="true"-->
+					${basicFunctionsCompareTableHTML}
+				<!--div-->
+			</div>
+		</body>
+		</html>`;
+	console.log(printHtml);
+
+	printWindow.document.write(printHtml);
+	printWindow.document.close();
+}
+
 /** 초기 렌더링 — 회원을 조회해 정보 카드·통계·기록·비교 select를 채운다 (회원이 없으면 안내만 표시)
  * @returns {void}
  */
 function init() {
 	const member = getMemberById(memberStore.getState().members, memberId);
+
 	if (!member) {
 		setHTML("stat-charts", "");
+
 		setHTML(
 			"record-list",
 			'<p class="record-empty">회원을 찾을 수 없습니다. 회원 목록에서 다시 선택하세요.</p>',
 		);
+
 		byId("new-record-btn").style.display = "none";
+
 		return;
 	}
+
 	renderInfoCard(member);
+
 	byId("new-record-btn").href = `check-doc-new.html?memberID=${memberId}`;
 	byId("edit-member-btn").href = `member-edit.html?memberID=${memberId}`;
+
 	refreshRecords();
+
+	// PDF 내보내기 버튼 이벤트
+	byId("export-pdf-btn").addEventListener("click", exportMemberDetailPDF);
 }
 
 // 이벤트 1회 등록
 delegate(document, "click", "[data-del-record]", (e, el) => {
 	e.stopPropagation();
+
 	recordStore.setState((prev) => ({
 		...prev,
 		records: prev.records.filter(
 			(r) => r.id !== Number(el.dataset.delRecord),
 		),
 	}));
+
 	refreshRecords();
 });
+
 // 기록 행 클릭/키보드 → 조회 화면 (삭제 버튼은 제외)
 /** 기록 행을 클릭/키보드로 선택하면 해당 기록 조회 화면으로 이동
  * @param {HTMLElement} el 클릭된 기록 행 (data-record-id 보유)
@@ -245,6 +423,7 @@ delegate(document, "click", "[data-del-record]", (e, el) => {
  */
 const goView = (el) =>
 	(window.location.href = `check-doc-view.html?docID=${el.dataset.recordId}`);
+
 delegate(document, "click", ".record-row", (e, el) => {
 	if (e.target.closest("[data-del-record]")) return;
 	goView(el);

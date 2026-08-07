@@ -125,7 +125,17 @@ export function deltaHTML(d) {
  * @param {import("@base/store.js").CheckRecord} tgt 기준(비교 대상)
  * @returns {string} 비교 테이블 HTML
  */
-export function buildCompareTable(cur, tgt) {
+/**
+ * 두 기록의 비교 마크업 생성 — 프로토타입 배치:
+ * ① 인바디 표(헤더: 항목·기준·현재·변화) ② 움직임 평가 표(옵션: 헤더, 총점 라벨 표시)
+ * @param {import("@base/store.js").CheckRecord} cur 최신(현재 체크기록)
+ * @param {import("@base/store.js").CheckRecord} tgt 기준(비교 대상)
+ * @param {{ showTotalScoreLabel?: boolean, includeMovementHeader?: boolean }} [options={}]
+ * @returns {string} 비교 테이블 HTML
+ */
+export function buildCompareTable(cur, tgt, options = {}) {
+	const { showTotalScoreLabel = true, includeMovementHeader = false } =
+		options;
 	const curLabel = cur.payload.session || cur.date;
 	const tgtLabel = tgt.payload.session || tgt.date;
 
@@ -190,29 +200,39 @@ export function buildCompareTable(cur, tgt) {
 	const ct = recordTotal(cur.payload);
 	const tt = recordTotal(tgt.payload);
 
-	// mvRows.push({
-	// 	label: "총점",
-	// 	cur: `${ct}/${recordMax(cur.payload)}`,
-	// 	tgt: `${tt}/${recordMax(tgt.payload)}`,
-	// 	delta: deltaHTML(ct - tt),
-	// });
+	let movementTableHtml = "";
+	if (mvRows.length > 0) {
+		const totalScoreLabelHtml = showTotalScoreLabel
+			? `<div class="section-title">움직임 평가 총점</div>`
+			: "";
+		movementTableHtml = `
+			<!--hr class="div" /-->
+			${totalScoreLabelHtml}
+
+			<div class="compare-table-container">
+				${TPL.compareTable({
+					extraClassNames: ["compare-table-basicFunctions"],
+					itemLabel: "베이직 펑션",
+					curLabel,
+					tgtLabel,
+					rows: mvRows,
+					footRows: [
+						{
+							label: "총점",
+							cur: `${ct}/${recordMax(cur.payload)}`,
+							tgt: `${tt}/${recordMax(tgt.payload)}`,
+							delta: deltaHTML(ct - tt),
+						},
+					],
+					withHeader: includeMovementHeader,
+					ariaLabel: "움직임 평가 항목별 점수 비교",
+				})}
+			</div>`;
+	}
 
 	return `
-		${TPL.compareTable({ curLabel, tgtLabel, rows: ibRows })}
-		<hr class="div" />
-		<div class="section-title">움직임 평가 총점</div>
-
-		${TPL.compareTable({
-			rows: mvRows,
-			footRows: [
-				{
-					label: "총점",
-					cur: `${ct}/${recordMax(cur.payload)}`,
-					tgt: `${tt}/${recordMax(tgt.payload)}`,
-					delta: deltaHTML(ct - tt),
-				},
-			],
-			withHeader: false,
-			ariaLabel: "움직임 평가 항목별 점수 비교",
-		})}`;
+		<div class="compare-table-container">
+			${TPL.compareTable({ extraClassNames: ["compare-table-inbody"], itemLabel: "인바디 항목", curLabel, tgtLabel, rows: ibRows })}
+		</div>
+		${movementTableHtml}`;
 }
