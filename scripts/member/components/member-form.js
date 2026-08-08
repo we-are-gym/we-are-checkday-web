@@ -11,7 +11,7 @@ defineComponent("member-form", {
 	 */
 	render() {
 		return `
-			<form class="member-form" id="member-form" novalidate>
+			<form class="member-form" id="member-form" novalidate aria-label="회원 정보 입력 폼">
 				<label class="member-field">
 					<span>이름</span>
 					<input id="mf-name" type="text" required placeholder="이름" aria-required="true" />

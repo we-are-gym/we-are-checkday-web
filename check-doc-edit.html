@@ -33,15 +33,15 @@
       <div class="member-bar">
         <div class="mf">
           <label>회원 이름</label
-          ><input id="m-name" type="text" placeholder="홍길동" />
+          ><input id="m-name" type="text" placeholder="홍길동" aria-label="회원 이름" />
         </div>
         <div class="mf">
           <label>회차</label
-          ><input id="m-session" type="text" placeholder="2025-06 (2회차)" />
+          ><input id="m-session" type="text" placeholder="2025-06 (2회차)" aria-label="회차" />
         </div>
         <div class="mf">
           <label>트레이너</label
-          ><input id="m-trainer" type="text" placeholder="김지훈" />
+          ><input id="m-trainer" type="text" placeholder="김지훈" aria-label="담당 트레이너" />
         </div>
       </div>
 
@@ -196,7 +196,6 @@
         "imports": {
           "@base/": "./scripts/base/",
           "@member/": "./scripts/member/",
-          "@templates/": "./scripts/templates/",
           "@shared/": "./scripts/shared/",
           "@check-doc/": "./scripts/check-doc/"
         }

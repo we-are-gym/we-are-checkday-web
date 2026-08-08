@@ -375,8 +375,8 @@ export const TPL = {
 	loginForm() {
 		return `
 			<form class="login-form" id="login-form" novalidate>
-				<div class="field"><label for="login-id">아이디</label><input type="text" id="login-id" placeholder="아이디 입력" autocomplete="username"></div>
-				<div class="field"><label for="login-pw">비밀번호</label><input type="password" id="login-pw" placeholder="비밀번호 입력" autocomplete="current-password"></div>
+<div class="field"><label for="login-id">아이디</label><input type="text" id="login-id" placeholder="아이디 입력" autocomplete="username" aria-label="아이디" aria-required="true"></div>
+			<div class="field"><label for="login-pw">비밀번호</label><input type="password" id="login-pw" placeholder="비밀번호 입력" autocomplete="current-password" aria-label="비밀번호" aria-required="true"></div>
 				<button class="btn btn-primary" type="submit">로그인</button>
 				<div style="text-align:center; font-size:10.0px; color:var(--text3); margin-top:4px;">
 					로그인 후에는 자동으로 로그인 상태가 유지돼요

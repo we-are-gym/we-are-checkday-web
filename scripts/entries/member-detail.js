@@ -26,13 +26,18 @@ import { getMemberById } from "@member/member-utils.js";
 /** ?memberID= 파라미터 (없으면 0 — 미조회 상태) */
 const memberId = getNumberParam("memberID");
 
-/** 회원의 기록을 날짜 오름차순으로 */
+/** 회원의 기록을 날짜 오름차순으로 반환
+ * @returns {import("@base/store.js").CheckRecord[]} 현재 회원의 체크기록 목록
+ */
 function getRecords() {
 	const records = recordStore.getState().records;
 	return getRecordsByMember(records, memberId);
 }
 
-/** 회원 정보 카드 렌더링 (to-be: 프로토타입처럼 이름·성별·담당 트레이너 3행만) */
+/** 회원 정보 카드 렌더링 (to-be: 프로토타입처럼 이름·성별·담당 트레이너 3행만)
+ * @param {import("@base/store.js").Member} member 대상 회원
+ * @returns {void}
+ */
 function renderInfoCard(member) {
 	setText("md-title", member.name);
 	setText("md-sub", `체크기록 ${getRecords().length}건`);
@@ -43,7 +48,10 @@ function renderInfoCard(member) {
 }
 
 /** 통계 카드 — 프로토타입 배치: 단일 카드(통계 · 전체 회차 누적) 안에 chart-stat 4종 세로 누적
- *  (체지방률·체중·골격근량·체지방량 변화, 최신값+누적 델타+스파크라인+회차 범위) */
+ *  (체지방률·체중·골격근량·체지방량 변화, 최신값+누적 델타+스파크라인+회차 범위)
+ * @param {import("@base/store.js").CheckRecord[]} records 회원의 체크기록 (날짜 오름차순)
+ * @returns {void}
+ */
 function renderStatCards(records) {
 	if (!records.length) {
 		setHTML(
@@ -125,7 +133,10 @@ function renderStatCards(records) {
 	);
 }
 
-/** 체크 기록 목록 렌더링 */
+/** 체크 기록 목록 렌더링
+ * @param {import("@base/store.js").CheckRecord[]} records 회원의 체크기록 (날짜 오름차순)
+ * @returns {void}
+ */
 function renderRecords(records) {
 	if (!records.length) {
 		setHTML(
@@ -178,6 +189,9 @@ function fillCompareSelects(records) {
 	renderCompare();
 }
 
+/** 좌·우측 셀렉터가 가리키는 두 기록을 비교 테이블로 렌더링한다
+ * @returns {void}
+ */
 function renderCompare() {
 	const leftId = Number(byId("cmp-cur").value);
 	const rightId = Number(byId("cmp-tgt").value);
@@ -194,7 +208,10 @@ function renderCompare() {
 	);
 }
 
-/** 탭 전환 (role=tablist 규약: aria-selected·tabindex 관리) */
+/** 탭 전환 (role=tablist 규약: aria-selected·tabindex 관리)
+ * @param {string} tabName 활성화할 탭 키 ("records" | "compare")
+ * @returns {void}
+ */
 function switchTab(tabName) {
 	const tabs = queryAll(".tab-btn");
 
@@ -208,7 +225,11 @@ function switchTab(tabName) {
 	byId("panel-compare").hidden = tabName !== "compare";
 }
 
-/** 탭 키보드 방향키 이동 (role=tablist 규약) */
+/** 탭 키보드 방향키 이동 (role=tablist 규약)
+ * @param {KeyboardEvent} e 키보드 이벤트
+ * @param {HTMLElement[]} tabs 전체 탭 버튼 목록
+ * @returns {void}
+ */
 function onTabKeydown(e, tabs) {
 	if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
 	e.preventDefault();
