@@ -5,3 +5,5 @@
 .omo/plans/
 
 # EOF
+# 로컬 PNG 검증 산출물 (tools/verify-png.mjs 생성)
+.tmp-png-check/

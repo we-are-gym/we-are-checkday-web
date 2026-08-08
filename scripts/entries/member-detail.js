@@ -255,7 +255,10 @@ function refreshRecords() {
 /**
  * 회원 상세 화면을 html2canvas로 캡처해 PNG로 다운로드한다.
  * - 캡처 대상: <main> (회원 정보·통계·기록 또는 비교 패널 전체)
- * - 캡처 직전 상호작용 컨트롤(버튼·탭)을 잠시 숨겨 이미지에 노출되지 않게 하고, 완료 후 복원한다.
+ * - 캡처 직전 상호작용 버튼(편집·이미지 저장·기록 행 삭제 등)을 잠시 숨겨 이미지에 노출되지 않게 하고,
+ *   탭(.tab-btn)은 이미지에 그대로 노출되도록 둔다. 완료 후 숨김을 복원한다.
+ * - 네이티브 <select>는 html2canvas가 텍스트를 아래로 치우쳐 그려 글자가 잘리므로,
+ *   캡처 동안 선택된 옵션 텍스트를 담은 <div class="export-select">로 잠시 교체해 렌더한다.
  * @returns {void}
  */
 function exportMemberDetailPNG() {
@@ -270,8 +273,8 @@ function exportMemberDetailPNG() {
 		return;
 	}
 
-	// 캡처에서만 잠깐 숨길 상호작용 컨트롤 (버튼·탭·링크 버튼)
-	const controls = target.querySelectorAll("button:not(#export-png-btn), a.btn, .tab-btn");
+	// 캡처에서만 잠깐 숨길 상호작용 컨트롤 — 탭(.tab-btn)은 이미지에 노출하므로 제외한다
+	const controls = target.querySelectorAll("a.btn, button:not(.tab-btn)");
 	const restoreControls = () =>
 		controls.forEach((el) => {
 			el.style.visibility = el.dataset.pngPrevVisibility || "";
@@ -282,12 +285,28 @@ function exportMemberDetailPNG() {
 		el.style.visibility = "hidden";
 	});
 
+	// 비교 셀렉터를 텍스트 박스(<div class="export-select">)로 잠시 교체 — html2canvas의 select 텍스트 잘림 방지
+	const selects = [...target.querySelectorAll(".compare-field select")];
+	const restoredSelects = selects.map((sel) => {
+		const opt = sel.options[sel.selectedIndex];
+		const div = document.createElement("div");
+		div.className = "export-select";
+		div.textContent = opt ? opt.text : "";
+		div.style.width = `${sel.offsetWidth}px`;
+		div.style.height = `${sel.offsetHeight}px`;
+		sel.replaceWith(div);
+		return { sel, div };
+	});
+	const restoreSelects = () =>
+		restoredSelects.forEach(({ sel, div }) => div.replaceWith(sel));
+
 	html2canvas(target, {
 		backgroundColor: "#131313",
 		scale: 2,
 		useCORS: true,
 	})
 		.then((canvas) => {
+			restoreSelects();
 			restoreControls();
 
 			const member = getMemberById(memberStore.getState().members, memberId);
@@ -297,6 +316,7 @@ function exportMemberDetailPNG() {
 			link.click();
 		})
 		.catch((err) => {
+			restoreSelects();
 			restoreControls();
 			alert(`이미지 생성에 실패했어요: ${err.message}`);
 		});
