@@ -76,20 +76,20 @@ JS는 **ES Modules**(`<script type="module">`)로 로드된다. 각 페이지는
 
 정적 HTML 파일로 이루어진 MPA(상대 경로 링크 이동)이며 진입점은 `index.html`이다.
 
-| 화면               | 파일                               | 컨테이너 최대 폭 | 비고                                                                        |
-| ------------------ | ---------------------------------- | ---------------- | --------------------------------------------------------------------------- |
-| 베이직 펑션 평가지 | `basic_function_assessment_2.html` | 640px            | 레거시 유지                                                                 |
-| 체크데이 상담지    | `checkday_1.html`                  | 640px            | 레거시 유지                                                                 |
-| 메인               | `index.html`                       | 640px            | 라우팅 허브 역할                                                            |
-| 로그인             | `login.html`                       | 650px            | 데모 로그인 (`checkday`/`1234`)                                             |
-| 회원 관리          | `members.html`                     | 640px            | 목록, 검색, 제거, 등록                                                      |
-| 회원 정보          | `member-detail.html`               | 960px            | 정보 카드, 변화 차트, 체크 기록, 변화 분석 (`?memberID=`)                   |
-| 회원 등록          | `member-create.html`               | 640px            | 회원 등록 폼                                                                |
-| 회원 정보 편집     | `member-edit.html`                 | 640px            | 회원 정보 수정·저장 폼                                                      |
-| 체크기록 조회      | `check-doc-view.html`              | 720px            | 체크기록 읽기 전용 (`?docID=`)                                              |
-| 체크기록 작성      | `check-doc-new.html`               | 640px            | 베이직 펑션 5항목·15점, 회원 이름 통합, 회차 자동계산 (`?memberID=` 프리필) |
-| 체크기록 편집      | `check-doc-edit.html`              | 640px            | 체크기록 수정·저장 폼 (`?docID=`)                                           |
-| 체크회차 관리      | `check-sessions.html`              | 640px            | placeholder(『준비중』)                                                     |
+| 화면               | 파일                               | 컨테이너 최대 폭 | 비고                                                                         |
+| ------------------ | ---------------------------------- | ---------------- | ---------------------------------------------------------------------------- |
+| 베이직 펑션 평가지 | `basic_function_assessment_2.html` | 640px            | 레거시 유지                                                                  |
+| 체크데이 상담지    | `checkday_1.html`                  | 640px            | 레거시 유지                                                                  |
+| 메인               | `index.html`                       | 640px            | 라우팅 허브 역할                                                             |
+| 로그인             | `login.html`                       | 650px            | 데모 로그인 (`checkday`/`1234`)                                              |
+| 회원 관리          | `members.html`                     | 640px            | 목록, 검색, 제거, 등록                                                       |
+| 회원 정보          | `member-detail.html`               | 960px            | 정보 카드, 변화 차트, 체크 기록, 변화 분석 비교, PNG 내보내기 (`?memberID=`) |
+| 회원 등록          | `member-create.html`               | 640px            | 회원 등록 폼                                                                 |
+| 회원 정보 편집     | `member-edit.html`                 | 640px            | 회원 정보 수정·저장 폼                                                       |
+| 체크기록 조회      | `check-doc-view.html`              | 720px            | 체크기록 읽기 전용 (`?docID=`)                                               |
+| 체크기록 작성      | `check-doc-new.html`               | 640px            | 베이직 펑션 5항목·15점, 회원 이름 통합, 회차 자동계산 (`?memberID=` 프리필)  |
+| 체크기록 편집      | `check-doc-edit.html`              | 640px            | 체크기록 수정·저장 폼 (`?docID=`) — 상담일 편집 가능·회원명 읽기 전용        |
+| 체크회차 관리      | `check-sessions.html`              | 640px            | placeholder(『준비중』)                                                      |
 
 화면마다 컨테이너 최대 폭이 다를 수 있다.
 
@@ -99,8 +99,23 @@ JS는 **ES Modules**(`<script type="module">`)로 로드된다. 각 페이지는
 - 회원·체크기록은 **관찰자 패턴 스토어**(`Store`)로 관리한다. 화면은 `subscribe`로 구독해 상태가 바뀌면 재렌더링된다.
   - `memberStore` — `{ members, nextId }`
   - `recordStore` — `{ records, nextId }`
-  - `record.payload` — `{ name, session(회차, 예: "3회차"), trainer, ib, ibComment, scores[N], items[N], evalData[N], goals, goalMemo, feedbacks, consultMemo }` — N은 항목 수(체크기록 작성 5·8항목 기록 8)
+  - `record.payload` — `{ session(회차, 예: "3회차"), trainer, ib, ibComment, scores[BasicFunctionsCount], items[BasicFunctionsCount], evalData[BasicFunctionsCount], goals(고정 태그만 — 추가 목표 커스터마이징 미지원), goalMemo, feedbacks, consultMemo }`
+  - 회원 이름은 `record.memberId → memberStore.members` 참조로 해석한다. 회원 정보 편집 화면에서 회원명을 바꾸면 체크데이 조회 화면과 체크데이 편집 화면에도 즉시 반영된다.
 
-## 영속성
+## 체크기록 편집 화면 규칙 (check-doc-edit)
 
-API 미배포 상태라 **세션 mock**을 사용한다. 상태 변경 시 `sessionStorage`(키 `checkday.members.v2`·`checkday.records.v3`·`checkday.auth.v1`)에 직렬화해 브라우저 세션 동안 유지한다. 탭을 닫거나 시드가 손상되면 시드로 되돌아간다. (추후 `localStorage`/백엔드 연동 시 확장 예정)
+- 회원 이름(`#m-name`)은 **읽기 전용** — 회원 정보 화면(member-edit)에서만 변경 가능하며, 체크기록 조회·편집 화면은 memberId 참조로 변경된 이름이 즉시 반영된다.
+- 상담일(`#m-date`)은 **편집 가능** — 저장 시 기록 레벨 `date`에 반영된다 (`check-doc-edit.js saveRecord`).
+
+## 접근성·타입·컴포넌트 지침
+
+- `aria-*`를 적극적으로 사용하십시오.
+  - `aria-label` 및 `aria-required` - 입력 필드
+  - `role="alert"` -오류 메시지
+  - `role="tab"`, `aria-selected`, `aria-controls` - 탭
+  - `aria-live`
+  - `aria-pressed`
+  - …
+- 공용 타입 정보는 JSDoc으로 문서화하십시오.
+  - 코드 편집기의 타입 추론을 위하여 `@param {import("@base/store.js").CheckRecord}`처럼 참조형 타입을 사용하십시오.
+- 舊 컴포넌트 라이브러리보다 新 컴포넌트 라이브러리(`@shared/components`)의 소스코드를 우선적으로 선택하여 사용하십시오.

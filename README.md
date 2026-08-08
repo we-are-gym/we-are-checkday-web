@@ -87,4 +87,10 @@
   - `CORS`
 - 예외·오류는 `try`/`catch` 문법을 써서 처리하십시오.
 
+## 영속성
+
+- API 미배포 상태라 **세션 mock**을 사용한다. (추후 백엔드 API와 연동 예정)
+- 상태 변경 시 `sessionStorage`(키 `checkday.members.v2`·`checkday.records.v3`·`checkday.auth.v1`)에 직렬화해 브라우저 세션 동안 유지한다.
+- 탭을 닫거나 시드가 손상되면 시드로 되돌아간다.
+
 <!-- EOF -->
