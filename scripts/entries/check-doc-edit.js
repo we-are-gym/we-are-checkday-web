@@ -38,12 +38,19 @@ function getRecord() {
 
 // 헤더 브레드크럼은 HTML의 crumb-path 속성(홈 > 회원 관리 > 체크기록 편집)으로 고정 표시
 
-/** 저장: 기록 payload 교체 후 조회 화면 이동 */
+/** 저장: 기록 payload·상담일(date) 교체 후 조회 화면 이동 — 상담일은 #m-date에서 읽어 기록 레벨 date에 반영한다 */
 function saveRecord() {
+	const dateInput = byId("m-date");
 	recordStore.setState((prev) => ({
 		...prev,
 		records: prev.records.map((r) =>
-			r.id === docId ? { ...r, payload: collectPayload() } : r,
+			r.id === docId
+				? {
+						...r,
+						date: dateInput ? dateInput.value || r.date : r.date,
+						payload: collectPayload(),
+					}
+				: r,
 		),
 	}));
 

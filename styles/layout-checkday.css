@@ -82,6 +82,11 @@
 	color: var(--text3);
 	font-weight: 400;
 }
+.mf input[readonly] {
+	background: var(--surface2);
+	color: var(--text2);
+	cursor: default;
+}
 .mf select {
 	width: 100%;
 	font-size: 14px;

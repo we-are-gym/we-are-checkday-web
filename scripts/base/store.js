@@ -25,9 +25,8 @@
  */
 
 /**
- * 체크기록 1건의 폼 내용 전체
+ * 체크기록 1건의 폼 내용 전체 — 회원 이름은 담지 않는다(CheckRecord.memberId → memberStore 참조로 동적 해석)
  * @typedef {Object} CheckRecordPayload
- * @property {string} name 회원 이름
  * @property {string} session 회차 표기 (예: "2025-06 (2회차)")
  * @property {string} trainer 담당 트레이너
  * @property {InbodyData} ib 인바디 수치

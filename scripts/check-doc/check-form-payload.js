@@ -8,6 +8,8 @@ import { updateInbodyTags } from "@base/inbody.js";
 import { scoreState } from "@base/states.js";
 import { getEvals, updateTotal } from "./evaluation.js";
 import { appendCheckMovement } from "./feedback.js";
+import { getMemberById } from "@member/member-utils.js";
+import { memberStore } from "@member/member-store.js";
 
 /** 인바디 입력 필드 id 목록 (payload.ib 키와 1:1) */
 export const IB_IDS = ["w", "m", "fat", "bmi", "bfp", "bmr", "vis"];
@@ -55,9 +57,13 @@ export function prefillEvalState(scores, evalData) {
  */
 export function prefillForm(rec) {
 	const p = rec.payload;
-	byId("m-name").value = p.name || "";
+	// 회원 이름은 payload가 아닌 회원 스토어에서 현재 이름을 동적 해석한다 (회원명 변경 즉시 전파)
+	const member = getMemberById(memberStore.getState().members, rec.memberId);
+	byId("m-name").value = member ? member.name : "";
 	byId("m-session").value = p.session || "";
 	byId("m-trainer").value = p.trainer || "";
+	const dateEl = byId("m-date");
+	if (dateEl) dateEl.value = rec.date || "";
 
 	// 인바디 + 코멘트
 	IB_IDS.forEach((k) => (byId(`ib-${k}`).value = p.ib?.[k] || ""));
@@ -138,7 +144,6 @@ export function collectPayload() {
 			(fb) => fb.name || fb.checkItems.some((c) => c.text) || fb.memo,
 		);
 	return {
-		name: byId("m-name")?.value || byId("m-member")?.value || "",
 		session: byId("m-session").value,
 		trainer: byId("m-trainer").value,
 		ib: Object.fromEntries(IB_IDS.map((k) => [k, byId(`ib-${k}`).value])),

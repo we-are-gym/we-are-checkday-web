@@ -9,6 +9,8 @@ import { resolveRecordItems } from "@check-doc/assessment-data.js";
 import { IB_KEYS, recordMax, recordTotal } from "@check-doc/record-stats.js";
 import { recordStore } from "@check-doc/record-store.js";
 import { getRecordById } from "@check-doc/record-utils.js";
+import { getMemberById } from "@member/member-utils.js";
+import { memberStore } from "@member/member-store.js";
 
 /** ?docID= 파라미터 (없으면 0 — 미조회 상태) */
 const docId = getNumberParam("docID");
@@ -28,9 +30,12 @@ function getRecord() {
  */
 function renderHead(rec) {
 	const p = rec.payload;
+	// 회원 이름은 payload 대신 회원 스토어에서 memberId로 동적 해석한다 (회원명 변경 즉시 전파)
+	const member = getMemberById(memberStore.getState().members, rec.memberId);
+	const name = member ? member.name : "회원";
 	setHTML(
 		"vh-title",
-		`<a class="vh-member" href="member-detail.html?memberID=${rec.memberId}">${escapeHtml(p.name || "회원")}</a>`,
+		`<a class="vh-member" href="member-detail.html?memberID=${rec.memberId}">${escapeHtml(name)}</a>`,
 	);
 	const items = [
 		["회차", p.session || "-"],
@@ -47,7 +52,7 @@ function renderHead(rec) {
 			)
 			.join(""),
 	);
-	document.title = `${p.session || "체크기록"} — ${p.name || ""} 조회`;
+	document.title = `${p.session || "체크기록"} — ${name} 조회`;
 }
 
 /**
