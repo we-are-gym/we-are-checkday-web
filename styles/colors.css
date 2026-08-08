@@ -60,7 +60,11 @@
 	--on-accent: #ffffff;
 
 	/* 회원 상세 변화 분석 델타 색 (layout-member-detail.css .delta-up/.delta-down) */
+
+	/* 상승 = 레드 계 */
 	--delta-up: #d86b6b;
+
+	/* 하강 = 블루 계 */
 	--delta-down: #3478d4;
 
 	/* 회원 목록 삭제 버튼 글자색 (layout-members.css .member-remove) */

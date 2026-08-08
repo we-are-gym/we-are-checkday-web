@@ -123,7 +123,8 @@ export function deltaHTML(d) {
  * 두 기록의 비교 마크업 생성 — 프로토타입 배치:
  * ① 인바디 표(헤더: 항목·좌측·우측·변화) ② 움직임 평가 표(옵션: 헤더, 총점 라벨 표시)
  * 좌측 셀렉터(#cmp-cur, 비교 대상)로 선택한 회차를 좌측 열, 우측 셀렉터(#cmp-tgt, 현재 체크기록)로 선택한 회차를 우측 열에 표시한다.
- * 변화량(Δ)은 항상 우측(현재) − 좌측(비교 대상)으로 계산한다: 우측이 더 크면 상승(▲), 작으면 하강(▼).
+ * 변화량은 『우측(현재) − 좌측(비교 대상)』으로 계산한다: 우측이 더 크면 상승(▲), 작으면 하강(▼), 같으면 유지(―).
+ *
  * @param {import("@base/store.js").CheckRecord} left 좌측 셀렉터가 고른 기록 -> 좌측 열
  * @param {import("@base/store.js").CheckRecord} right 우측 셀렉터가 고른 기록 -> 우측 열
  * @param {{ showTotalScoreLabel?: boolean, includeMovementHeader?: boolean }} [options={}]
