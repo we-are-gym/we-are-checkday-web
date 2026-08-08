@@ -60,8 +60,8 @@
 	--on-accent: #ffffff;
 
 	/* 회원 상세 변화 분석 델타 색 (layout-member-detail.css .delta-up/.delta-down) */
-	--delta-up: #3478d4;
-	--delta-down: #d86b6b;
+	--delta-up: #d86b6b;
+	--delta-down: #3478d4;
 
 	/* 회원 목록 삭제 버튼 글자색 (layout-members.css .member-remove) */
 	--btn-danger-fg: #c97a72;
