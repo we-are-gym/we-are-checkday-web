@@ -251,7 +251,7 @@ export const TPL = {
 				<td class="member-gender">${escapeHtml(gender || "-")}</td>
 				<td class="member-trainer">${escapeHtml(trainer || "-")}</td>
 				<td class="member-count">${recordCount}회</td>
-				<td class="member-action"><button type="button" class="member-remove" data-remove-id="${id}" aria-label="${escapeHtml(name)} 삭제">제거</button></td>
+				<td class="member-action"><button type="button" class="member-remove" data-remove-id="${id}" aria-label="${escapeHtml(name)} 삭제">삭제</button></td>
 			</tr>`;
 	},
 
