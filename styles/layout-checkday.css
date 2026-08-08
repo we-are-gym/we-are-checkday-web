@@ -500,22 +500,6 @@ textarea.eval-memo::placeholder {
 .goal-memo-wrap {
 	padding: 9px 13px;
 }
-input.goal-custom {
-	width: 100%;
-	font-size: 13px;
-	font-family: inherit;
-	color: var(--text2);
-	background: var(--surface2);
-	border: 0.5px solid var(--border2);
-	border-radius: 8px;
-	padding: 9px 12px;
-	margin-bottom: 8px;
-	box-sizing: border-box;
-}
-input.goal-custom:focus {
-	outline: none;
-	border-color: var(--accent);
-}
 textarea.goal-memo {
 	width: 100%;
 	font-size: 13px;

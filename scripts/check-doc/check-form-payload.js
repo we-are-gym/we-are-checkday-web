@@ -2,8 +2,6 @@
 // 기법: 폼 DOM→기록 payload, 기록 payload→폼 DOM 변환을 함수로 추출하여
 //       편집·작성 화면에서 중복 직렬화 코드가 생기지 않게 한다.
 //       (DOM 헬퍼 byId·document 쿼리에 의존하는 화면 로직 계층이다 — 순수 연산은 별도 모듈에서 담당한다.)
-// 주의: `#goal-custom`(추가 목표 입력)은 본 앱의 어떤 화면에는 있고(check-doc-edit) 어떤 화면에는
-//   없(check-doc-new)므로, 부재 시 빈 값으로 처리한다(null-safe).
 import { byId } from "@base/UI.js";
 import { DOT_COUNT } from "@base/constants.js";
 import { updateInbodyTags } from "@base/inbody.js";
@@ -69,7 +67,7 @@ export function prefillForm(rec) {
 	// 점수·체크 항목·메모
 	prefillEvalState(p.scores, p.evalData);
 
-	// 목표 (고정 태그 + 추가 목표 입력) — aria-pressed도 상태와 함께 동기화
+	// 목표 (고정 태그 on/off) — aria-pressed도 상태와 함께 동기화
 	const fixed = [...document.querySelectorAll(".goal-tag")];
 	fixed.forEach((el) => {
 		el.classList.remove("on");
@@ -82,11 +80,6 @@ export function prefillForm(rec) {
 			hit.setAttribute("aria-pressed", "true");
 		}
 	});
-	const custom = (p.goals || []).filter(
-		(g) => !fixed.some((el) => el.textContent === g),
-	);
-	const customEl = byId("goal-custom");
-	if (customEl) customEl.value = custom.join(", ");
 	const goalMemoEl = byId("goal-memo");
 	if (goalMemoEl) goalMemoEl.value = p.goalMemo || "";
 
@@ -127,19 +120,9 @@ export function collectPayload() {
 		};
 	});
 	const fixedTags = [...document.querySelectorAll(".goal-tag")];
-	const customText = (() => {
-		const el = byId("goal-custom");
-		return el ? el.value : "";
-	})();
-	const goals = [
-		...fixedTags
-			.filter((el) => el.classList.contains("on"))
-			.map((el) => el.textContent),
-		...customText
-			.split(",")
-			.map((s) => s.trim())
-			.filter(Boolean),
-	];
+	const goals = fixedTags
+		.filter((el) => el.classList.contains("on"))
+		.map((el) => el.textContent);
 	const feedbacks = [...document.querySelectorAll("#fb-cards .fb-item")]
 		.map((fb) => ({
 			name: fb.querySelector(".fb-move-input").value,
