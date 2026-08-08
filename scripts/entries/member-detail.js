@@ -167,7 +167,8 @@ function fillCompareSelects(records) {
 	const leftSel = byId("cmp-cur");
 	const rightSel = byId("cmp-tgt");
 	if (records.length === 0) {
-		leftSel.innerHTML = rightSel.innerHTML = `<option>체크기록 없음</option>`;
+		leftSel.innerHTML =
+			rightSel.innerHTML = `<option>체크기록 없음</option>`;
 		setHTML(
 			"compare-result",
 			'<div class="sparkline-empty">비교할 체크기록이 없어요</div>',
@@ -226,8 +227,10 @@ function switchTab(tabName) {
 }
 
 /** 탭 키보드 방향키 이동 (role=tablist 규약)
+ *
  * @param {KeyboardEvent} e 키보드 이벤트
  * @param {HTMLElement[]} tabs 전체 탭 버튼 목록
+ *
  * @returns {void}
  */
 function onTabKeydown(e, tabs) {
@@ -259,27 +262,33 @@ function refreshRecords() {
  *   탭(.tab-btn)은 이미지에 그대로 노출되도록 둔다. 완료 후 숨김을 복원한다.
  * - 네이티브 <select>는 html2canvas가 텍스트를 아래로 치우쳐 그려 글자가 잘리므로,
  *   캡처 동안 선택된 옵션 텍스트를 담은 <div class="export-select">로 잠시 교체해 렌더한다.
+ *
  * @returns {void}
  */
 function exportMemberDetailPNG() {
 	const target = queryOne("main");
+
 	if (!target) {
 		alert("내보낼 화면을 찾을 수 없습니다.");
 		return;
 	}
 
 	if (typeof html2canvas === "undefined") {
-		alert("이미지 생성 라이브러리(html2canvas)를 불러오지 못했습니다. 네트워크 확인 후 다시 시도하세요.");
+		alert(
+			"이미지 생성 라이브러리(html2canvas)를 불러오지 못했습니다. 네트워크 확인 후 다시 시도하세요.",
+		);
 		return;
 	}
 
 	// 캡처에서만 잠깐 숨길 상호작용 컨트롤 — 탭(.tab-btn)은 이미지에 노출하므로 제외한다
 	const controls = target.querySelectorAll("a.btn, button:not(.tab-btn)");
+
 	const restoreControls = () =>
 		controls.forEach((el) => {
 			el.style.visibility = el.dataset.pngPrevVisibility || "";
 			delete el.dataset.pngPrevVisibility;
 		});
+
 	controls.forEach((el) => {
 		el.dataset.pngPrevVisibility = el.style.visibility;
 		el.style.visibility = "hidden";
@@ -287,16 +296,20 @@ function exportMemberDetailPNG() {
 
 	// 비교 셀렉터를 텍스트 박스(<div class="export-select">)로 잠시 교체 — html2canvas의 select 텍스트 잘림 방지
 	const selects = [...target.querySelectorAll(".compare-field select")];
+
 	const restoredSelects = selects.map((sel) => {
 		const opt = sel.options[sel.selectedIndex];
 		const div = document.createElement("div");
+
 		div.className = "export-select";
 		div.textContent = opt ? opt.text : "";
 		div.style.width = `${sel.offsetWidth}px`;
 		div.style.height = `${sel.offsetHeight}px`;
+
 		sel.replaceWith(div);
 		return { sel, div };
 	});
+
 	const restoreSelects = () =>
 		restoredSelects.forEach(({ sel, div }) => div.replaceWith(sel));
 
@@ -309,7 +322,10 @@ function exportMemberDetailPNG() {
 			restoreSelects();
 			restoreControls();
 
-			const member = getMemberById(memberStore.getState().members, memberId);
+			const member = getMemberById(
+				memberStore.getState().members,
+				memberId,
+			);
 			const link = document.createElement("a");
 			link.download = `체크데이_${member ? member.name : "회원"}_${new Date().toISOString().slice(0, 10)}.png`;
 			link.href = canvas.toDataURL("image/png");

@@ -115,6 +115,7 @@ export function sessionLabel(session) {
 export function deltaHTML(d) {
 	if (d > 0) return `<span class="delta-up">▲ ${d}</span>`;
 	if (d < 0) return `<span class="delta-down">▼ ${Math.abs(d)}</span>`;
+
 	return `<span class="delta-flat">―</span>`;
 }
 
@@ -126,11 +127,13 @@ export function deltaHTML(d) {
  * @param {import("@base/store.js").CheckRecord} left 좌측 셀렉터가 고른 기록 -> 좌측 열
  * @param {import("@base/store.js").CheckRecord} right 우측 셀렉터가 고른 기록 -> 우측 열
  * @param {{ showTotalScoreLabel?: boolean, includeMovementHeader?: boolean }} [options={}]
+ *
  * @returns {string} 비교 테이블 HTML
  */
 export function buildCompareTable(left, right, options = {}) {
 	const { showTotalScoreLabel = true, includeMovementHeader = false } =
 		options;
+
 	const leftLabel = left.payload.session || left.date;
 	const rightLabel = right.payload.session || right.date;
 
