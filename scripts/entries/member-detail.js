@@ -11,10 +11,10 @@ import {
 	setText,
 } from "@base/UI.js";
 import { getNumberParam } from "@base/utils-url.js";
+import { sum } from "@base/utils-array.js";
 import {
 	buildCompareTable,
 	recordMax,
-	recordTotal,
 	sessionLabel,
 	sparkline,
 } from "@check-doc/record-stats.js";
@@ -150,7 +150,7 @@ function renderRecords(records) {
 		id: r.id,
 		session: sessionLabel(r.payload.session || r.date),
 		date: r.date,
-		total: recordTotal(r.payload),
+		total: sum(r.payload.scores || []),
 		max: recordMax(r.payload),
 	}));
 	setHTML("record-list", rows.map((r) => TPL.recordRow(r)).join(""));

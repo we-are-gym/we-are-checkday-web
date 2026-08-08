@@ -6,7 +6,8 @@ import { byId, queryAll, setHTML, setText } from "@base/UI.js";
 import { inbodyTagFor } from "@base/inbody.js";
 import { getNumberParam } from "@base/utils-url.js";
 import { resolveRecordItems } from "@check-doc/assessment-data.js";
-import { IB_KEYS, recordMax, recordTotal } from "@check-doc/record-stats.js";
+import { IB_KEYS, recordMax } from "@check-doc/record-stats.js";
+import { sum } from "@base/utils-array.js";
 import { recordStore } from "@check-doc/record-store.js";
 import { getRecordById } from "@check-doc/record-utils.js";
 import { getMemberById } from "@member/member-utils.js";
@@ -41,7 +42,7 @@ function renderHead(rec) {
 		["회차", p.session || "-"],
 		["작성일", rec.date],
 		["담당 트레이너", p.trainer || "-"],
-		["총점", `${recordTotal(p)} / ${recordMax(rec.payload)}`],
+		["총점", `${sum(p.scores || [])} / ${recordMax(rec.payload)}`],
 	];
 	setHTML(
 		"vh-meta",
@@ -119,7 +120,7 @@ function renderEvals(rec) {
 	);
 	setText(
 		"evals-total",
-		`총점 ${recordTotal(rec.payload)} / ${recordMax(rec.payload)}`,
+		`총점 ${sum(rec.payload.scores || [])} / ${recordMax(rec.payload)}`,
 	);
 }
 

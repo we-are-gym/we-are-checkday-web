@@ -1,5 +1,8 @@
 // 파일 용도: VO₂ Max 계산 공식·정상치·등급 산정 — basic_function_assessment_2.html·checkday 공용
-// VO2 Max norms for women (Topendsports)
+/**
+ * 여성 VO₂ 맥스 정상치 표 (Topendsports) — 연령 구간별 나쁨~우수 임계값
+ * @type {Array<{ ageMin: number, ageMax: number, poor: number, fair: number, good: number, excellent: number }>}
+ */
 export const VO2_NORMS = [
 	{
 		ageMin: 18,

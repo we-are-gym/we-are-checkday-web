@@ -1,4 +1,5 @@
 // 파일 용도: 체크기록 통계 — 스파크라인·기록 지표·비교 테이블 생성 (회원 상세 공용, 순수 함수)
+import { sum } from "@base/utils-array.js";
 import { SCORE_MAX } from "@base/constants.js";
 import { TPL } from "@base/templates.js";
 import { resolveRecordItems } from "./assessment-data.js";
@@ -13,15 +14,6 @@ export const IB_KEYS = [
 	{ key: "bmr", label: "기초대사량 (kcal)" },
 	{ key: "vis", label: "내장지방" },
 ];
-
-/**
- * 기록 1건의 총점 (scores 합계)
- * @param {import("@base/store.js").CheckRecordPayload} payload
- * @returns {number}
- */
-export function recordTotal(payload) {
-	return (payload.scores || []).reduce((a, b) => a + b, 0);
-}
 
 /**
  * 기록 1건의 총점 최댓값 — 항목 수 × 항목당 만점(3점)으로 파생한다.
@@ -196,8 +188,8 @@ export function buildCompareTable(left, right, options = {}) {
 		});
 	});
 
-	const leftTotal = recordTotal(left.payload);
-	const rightTotal = recordTotal(right.payload);
+	const leftTotal = sum(left.payload.scores || []);
+	const rightTotal = sum(right.payload.scores || []);
 
 	let movementTableHtml = "";
 	if (mvRows.length > 0) {

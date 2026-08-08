@@ -9,8 +9,11 @@ export const SCORE_MAX = 3;
 export const DOT_COUNT = 4;
 
 // ── 등급 퍼센트 임계점 (총점 대비 백분율) ──
+/** 우수 등급 임계 백분율 (≥ 83%) */
 export const GRADE_EXCELLENT_PCT = 83;
+/** 양호 등급 임계 백분율 (≥ 58%) */
 export const GRADE_GOOD_PCT = 58;
+/** 보통 등급 임계 백분율 (≥ 33%) */
 export const GRADE_AVERAGE_PCT = 33;
 
 /** 움직임 평가(8항목·레거시) 총점 최댓값 — 24. 체크기록 작성(5항목)은 15점으로 configureEvaluation()이 교체한다. */
