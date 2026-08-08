@@ -45,7 +45,12 @@
         </div>
         <div class="mf">
           <label>트레이너</label
-          ><input id="m-trainer" type="text" placeholder="김지훈" aria-label="담당 트레이너" />
+          ><input
+            id="m-trainer"
+            type="text"
+            placeholder="김지훈"
+            aria-label="담당 트레이너"
+          />
         </div>
       </div>
 
@@ -53,7 +58,9 @@
       <div class="total-bar">
         <div class="tl">
           <div class="tl-label">움직임 총점</div>
-          <div class="tl-num" id="total-num" aria-live="polite">0 <span>/ 15</span></div>
+          <div class="tl-num" id="total-num" aria-live="polite">
+            0 <span>/ 15</span>
+          </div>
         </div>
         <div class="tr">
           <div class="prog-track">
@@ -139,7 +146,9 @@
           <div class="sec-sub">동작 추가/삭제 가능</div>
         </div>
         <div class="card" id="fb-cards"></div>
-        <button class="add-fb-btn" aria-label="동작 피드백 추가">+ 동작 추가</button>
+        <button class="add-fb-btn" aria-label="동작 피드백 추가">
+          + 동작 추가
+        </button>
       </div>
 
       <!-- ⑤ 종합 상담 메모 -->
@@ -190,15 +199,15 @@
     <script type="importmap">
       {
         "imports": {
-          "@base/": "./scripts/base/",
-          "@member/": "./scripts/member/",
-          "@check-doc/": "./scripts/check-doc/"
+          "@base/": "./ESM/base/",
+          "@member/": "./ESM/member/",
+          "@check-doc/": "./ESM/check-doc/"
         }
       }
     </script>
     <script
       type="module"
-      src="scripts/entries/check-form-new.js?v=20260813"
+      src="ESM/entries/check-form-new.js?v=20260813"
     ></script>
   </body>
 </html>

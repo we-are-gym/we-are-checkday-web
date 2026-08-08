@@ -19,7 +19,7 @@ for (const f of readdirSync(ROOT).filter((name) => name.endsWith(".html"))) {
       /(rel="stylesheet" href="styles\/[^"?]+)(?:\?v=\d+)?(")/g,
       `$1?v=${stamp}$2`,
     )
-    .replace(/(src="scripts\/[^"?]+)(?:\?v=\d+)?(")/g, `$1?v=${stamp}$2`);
+    .replace(/(src="ESM\/[^"?]+)(?:\?v=\d+)?(")/g, `$1?v=${stamp}$2`);
   if (next !== src) {
     writeFileSync(path, next);
     changed++;

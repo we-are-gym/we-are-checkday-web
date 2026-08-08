@@ -41,11 +41,21 @@
         </div>
         <div class="mf">
           <label>회차</label
-          ><input id="m-session" type="text" placeholder="2025-06 (2회차)" aria-label="회차" />
+          ><input
+            id="m-session"
+            type="text"
+            placeholder="2025-06 (2회차)"
+            aria-label="회차"
+          />
         </div>
         <div class="mf">
           <label>트레이너</label
-          ><input id="m-trainer" type="text" placeholder="김지훈" aria-label="담당 트레이너" />
+          ><input
+            id="m-trainer"
+            type="text"
+            placeholder="김지훈"
+            aria-label="담당 트레이너"
+          />
         </div>
       </div>
 
@@ -53,7 +63,9 @@
       <div class="total-bar">
         <div class="tl">
           <div class="tl-label">움직임 총점</div>
-          <div class="tl-num" id="total-num" aria-live="polite">0 <span>/ 24</span></div>
+          <div class="tl-num" id="total-num" aria-live="polite">
+            0 <span>/ 24</span>
+          </div>
         </div>
         <div class="tr">
           <div class="prog-track">
@@ -109,7 +121,12 @@
           <div class="sec-sub" id="eval-sec-sub">8개 항목 · 각 0–3점</div>
         </div>
         <div class="card" id="eval-cards"></div>
-        <button type="button" class="add-eval-btn" id="add-eval-btn" aria-label="평가 항목 추가">
+        <button
+          type="button"
+          class="add-eval-btn"
+          id="add-eval-btn"
+          aria-label="평가 항목 추가"
+        >
           + 평가 항목 추가
         </button>
       </div>
@@ -141,7 +158,9 @@
           <div class="sec-sub">동작 추가/삭제 가능</div>
         </div>
         <div class="card" id="fb-cards"></div>
-        <button class="add-fb-btn" aria-label="동작 피드백 추가">+ 동작 추가</button>
+        <button class="add-fb-btn" aria-label="동작 피드백 추가">
+          + 동작 추가
+        </button>
       </div>
 
       <!-- ⑤ 종합 상담 메모 -->
@@ -182,7 +201,11 @@
         </p>
         <div class="picker-list" id="eval-picker-list"></div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-ghost" data-action="close-picker">
+          <button
+            type="button"
+            class="btn btn-ghost"
+            data-action="close-picker"
+          >
             닫기
           </button>
         </div>
@@ -192,16 +215,16 @@
     <script type="importmap">
       {
         "imports": {
-          "@base/": "./scripts/base/",
-          "@member/": "./scripts/member/",
-          "@shared/": "./scripts/shared/",
-          "@check-doc/": "./scripts/check-doc/"
+          "@base/": "./ESM/base/",
+          "@member/": "./ESM/member/",
+          "@shared/": "./ESM/shared/",
+          "@check-doc/": "./ESM/check-doc/"
         }
       }
     </script>
     <script
       type="module"
-      src="scripts/entries/check-doc-edit.js?v=20260813"
+      src="ESM/entries/check-doc-edit.js?v=20260813"
     ></script>
   </body>
 </html>

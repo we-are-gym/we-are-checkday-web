@@ -43,7 +43,7 @@ JS는 **ES Modules**(`<script type="module">`)로 로드된다. 각 페이지는
 | `check-form-events.js` | `setupCheckFormEvents`, `resetCheckForm`                                                                                               | 상담지 폼 공용 이벤트 위임·인바디/목표 주입·전체 초기화                       | `UI`, `templates`, `constants`, `states`, `evaluation`, `inbody`, `feedback`                              |
 | `session-report.js`    | `sessionReport`, `SessionReport`                                                                                                       | 결과 요약 HTML 조립·세션 리포트 모달·클립보드 복사                            | `UI`, `states`, `evaluation`, `feedback`                                                                  |
 
-### 웹 컴포넌트 (light DOM — `scripts/base/components/`·`scripts/member/components/`)
+### 웹 컴포넌트 (light DOM — `ESM/base/components/`·`ESM/member/components/`)
 
 | 컴포넌트       | 기능                                                     |
 | -------------- | -------------------------------------------------------- |

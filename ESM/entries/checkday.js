@@ -1,5 +1,5 @@
 // 파일 용도: 체크데이 상담지 시작점 — 날짜 표기 · 초기화 오케스트레이션 (checkday_1 전용, 레거시 8항목/24점 유지)
-// 새 체크기록 작성(check-doc-new) 화면은 전용 진입점 scripts/check-form-new.js를 사용한다 (5항목/15점).
+// 새 체크기록 작성(check-doc-new) 화면은 전용 진입점 ESM/check-form-new.js를 사용한다 (5항목/15점).
 // ?memberID= 로 열리면 회원 이름·트레이너를 프리필한다 (checkday_1은 헤더·자동완성 없음).
 // DEPENDS: today(utils-string), byId·delegate·setText(UI), getMemberById(member-utils),
 //          renderBasicFunctionCards/updateTotal(evaluation),
