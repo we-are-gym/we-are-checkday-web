@@ -304,6 +304,21 @@ main {
 	font-size: 13px;
 }
 
+/* PNG 내보내기용 셀렉터 대체 박스 — select와 동일 외형에 텍스트가 수직 중앙 정렬되어 캡처 시 글자 잘림을 막는다 */
+.export-select {
+	display: flex;
+	align-items: center;
+	box-sizing: border-box;
+	background: var(--surface);
+	color: var(--text);
+	border: 0.5px solid var(--border2);
+	border-radius: var(--r);
+	padding: 9px 12px;
+	font-size: 13px;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
 .compare-table {
 	width: 100%;
 	border-collapse: collapse;
