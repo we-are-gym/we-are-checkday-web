@@ -15,16 +15,11 @@ import { clamp, parseToNum } from "@base/validation.js";
 import { calcVo2Assessment } from "@base/vo2.js";
 import { ASSESSMENT_ITEMS_FULL } from "./assessment-data.js";
 
-// ── 움직임 평가 데이터 (공용 모듈 기본 8개: 7개 + VO₂ 항목) ──
-// 주의: `evals`는 모듈 내부 상태다. 화면이 configureEvaluation()을 호출하면 갱신되고,
-//       외부는 getEvals()로만 읽는다 (check-form-payload·check-doc-edit·세션 리포트 공용).
-let evals = ASSESSMENT_ITEMS_FULL;
-
-/** 현재 평가 총점 최댓값 (기본 24 — configureEvaluation()으로 교체 가능) */
-let currentMax = MOTION_TOTAL_MAX;
-
-/** 평가 점수 단일 소스 초기화 (기본: 8항목/24점 — 레거시 checkday_1·basic_function_assessment_2는 재구성 없이 이대로 동작) */
-scoreState.init(evals.length, currentMax);
+// ── 움직임 평가 구성 초기화 (기본 8개: 7개 + VO₂ 항목) ──
+// 주의: 평가 구성(항목·만점)은 scoreState(Store)가 단일 소스로 보유한다. 외부는 getEvals()로만 읽는다.
+//       (check-form-payload·check-doc-edit·세션 리포트 공용) — 기본 8항목/24점으로 초기화하며,
+//       레거시 checkday_1·basic_function_assessment_2는 재구성 없이 이대로 동작한다.
+scoreState.init(ASSESSMENT_ITEMS_FULL, MOTION_TOTAL_MAX);
 
 /**
  * 화면별 평가 구성을 설정하고 점수 상태를 초기화한다.
@@ -35,9 +30,7 @@ scoreState.init(evals.length, currentMax);
  * @returns {void}
  */
 export function configureEvaluation({ items, max }) {
-	evals = items;
-	currentMax = max;
-	scoreState.init(items.length, max);
+	scoreState.init(items, max);
 }
 
 // ── 평가 상태 읽기 (세션 리포트 등 공용 읽기 API — scoreState 직접 접근 대신 사용) ──
@@ -45,7 +38,7 @@ export function configureEvaluation({ items, max }) {
  * @returns {Array<{ name: string, desc: string, checks?: string[], vo2?: boolean }>} 평가 항목 목록
  */
 export function getEvals() {
-	return evals;
+	return scoreState.getItems();
 }
 
 /** i번째 평가 점수 반환 (범위 밖이면 0)
@@ -104,7 +97,7 @@ export function updateVO2Disp() {
  */
 export function renderBasicFunctionCards() {
 	const c = byId("eval-cards");
-	evals.forEach((e, i) => {
+	getEvals().forEach((e, i) => {
 		const dots = TPL.scoreDots({ prefix: i, count: DOT_COUNT });
 		const tags = e.checks
 			.map(
