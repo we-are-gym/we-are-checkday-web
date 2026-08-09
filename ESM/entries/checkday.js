@@ -6,7 +6,7 @@
 //          setupCheckFormEvents/resetEntireForm(check-form-events), renderCheckMovementCards(feedback),
 //          sessionReport(session-report)
 import "@base/components/app-header.js";
-import { byId, delegate, dismissOnOverlayClick, setText } from "@base/UI.js";
+import { byId, delegate, dismissOnOverlayClick, setText } from "@base/utils-dom.js";
 import { today } from "@base/utils-string.js";
 import { getNumberParam } from "@base/utils-url.js";
 import {

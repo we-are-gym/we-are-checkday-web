@@ -2,7 +2,7 @@
 // 기법: 카드·체크 행 마크업은 공용 템플릿(TPL.feedbackCard·TPL.fbCheckRow)을 단일 소스로 사용,
 //       카드 목록·ID 카운터는 CheckMovementStore에 보관한다.
 // DEPENDS: byId(UI), TPL, CheckMovementStore
-import { byId } from "@base/UI.js";
+import { byId } from "@base/utils-dom.js";
 import { TPL } from "@base/templates.js";
 import { CheckMovementStore } from "./check-movement-store.js";
 

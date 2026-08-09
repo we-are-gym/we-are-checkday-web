@@ -2,7 +2,7 @@
 // ?docID= 로 기록 1건을 읽기 전용으로 렌더링한다. 수정은 check-doc-edit.html?docID= 로 이동(커밋 13에서 실링크).
 import "@base/components/app-header.js";
 import { escapeHtml, TPL } from "@base/templates.js";
-import { byId, queryAll, setHTML, setText } from "@base/UI.js";
+import { byId, queryAll, setHTML, setText } from "@base/utils-dom.js";
 import { inbodyTagFor } from "@base/inbody.js";
 import { getNumberParam } from "@base/utils-url.js";
 import { resolveRecordItems } from "@check-doc/assessment-data.js";

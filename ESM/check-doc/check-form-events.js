@@ -3,10 +3,10 @@
 //        한 곳으로 모아 checkday(작성)·check-doc-edit(편집) 화면이 똑같이 재사용한다.
 // 기법: delegate(UI.js) 기반 이벤트 위임 — 인라인 onclick·window 오염 없이 정적·동적 요소를 한 루트에서 처리
 // 주의: [data-action] 화면별 액션(reset/save 등)은 화면마다 다르므로 여기서 다루지 않고 각 진입점이 등록한다.
-import { byId, delegate } from "@base/UI.js";
+import { byId, delegate } from "@base/utils-dom.js";
 import { DOT_COUNT } from "@base/constants.js";
 import { updateInbodyTags } from "@base/inbody.js";
-import { scoreState } from "@base/states.js";
+import { scoreState } from "@base/basicFunction-store.js";
 import { TPL } from "@base/templates.js";
 import {
 	adjustScore,

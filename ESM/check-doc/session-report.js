@@ -2,7 +2,7 @@
 // 기법: 리포트 생성 로직을 SessionReport 클래스로 모은다. 평가 상태는 evaluation.js의 getEvals/getScore/getTotal/getMax를 통해 읽는다.
 // 사용: check-form-new·checkday 진입점이 sessionReport.openModal()/copyToClipboard()를 호출한다.
 
-import { byId } from "@base/UI.js";
+import { byId } from "@base/utils-dom.js";
 import { getEvals, getScore, getTotal, getMax } from "./evaluation.js";
 import { collectCheckMovementData } from "./feedback.js";
 import { InbodyData } from "@base/inbody-data.js";

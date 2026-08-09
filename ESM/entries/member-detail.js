@@ -9,7 +9,7 @@ import {
 	queryOne,
 	setHTML,
 	setText,
-} from "@base/UI.js";
+} from "@base/utils-dom.js";
 import { getNumberParam } from "@base/utils-url.js";
 import { sum } from "@base/utils-array.js";
 import {

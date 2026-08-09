@@ -8,7 +8,7 @@
 //          renderCheckMovementCards(feedback), sessionReport(session-report)
 import "@base/components/app-header.js";
 import { escapeHtml } from "@base/templates.js";
-import { byId, delegate, dismissOnOverlayClick } from "@base/UI.js";
+import { byId, delegate, dismissOnOverlayClick } from "@base/utils-dom.js";
 import { todayISO } from "@base/utils-string.js";
 import { getNumberParam } from "@base/utils-url.js";
 import { ASSESSMENT_ITEMS_BASIC5 } from "@check-doc/assessment-data.js";

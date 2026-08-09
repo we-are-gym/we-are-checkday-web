@@ -1,5 +1,5 @@
 // 파일 용도: 회원 등록 화면(member-create.html) — member-form 제출 시 스토어에 추가 후 목록으로 이동
-import { byId } from "@base/UI.js";
+import { byId } from "@base/utils-dom.js";
 import { addMember } from "@member/member-store.js";
 import "@base/components/app-header.js";
 import "@member/components/member-form.js";

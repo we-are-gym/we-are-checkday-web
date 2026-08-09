@@ -5,7 +5,7 @@
 //          evaluation.js(checkday 공용)와 같은 논리가 일부 보이나 요소 id·상태 구조가 달라 화면 특화로 유지한다.
 import { ASSESSMENT_ITEMS } from "@check-doc/assessment-data.js";
 import { clamp, parseToNum } from "@base/validation.js";
-import { byId, delegate, queryAll, queryOne } from "@base/UI.js";
+import { byId, delegate, queryAll, queryOne } from "@base/utils-dom.js";
 import { TPL } from "@base/templates.js";
 import { calcVo2Assessment } from "@base/vo2.js";
 import { getGradeMeta } from "@base/grade.js";

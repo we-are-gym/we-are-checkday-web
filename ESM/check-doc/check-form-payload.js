@@ -2,10 +2,10 @@
 // 기법: 폼 DOM→기록 payload, 기록 payload→폼 DOM 변환을 함수로 추출하여
 //       편집·작성 화면에서 중복 직렬화 코드가 생기지 않게 한다.
 //       (DOM 헬퍼 byId·document 쿼리에 의존하는 화면 로직 계층이다 — 순수 연산은 별도 모듈에서 담당한다.)
-import { byId } from "@base/UI.js";
+import { byId } from "@base/utils-dom.js";
 import { DOT_COUNT } from "@base/constants.js";
 import { updateInbodyTags } from "@base/inbody.js";
-import { scoreState } from "@base/states.js";
+import { scoreState } from "@base/basicFunction-store.js";
 import { getEvals, updateTotal } from "./evaluation.js";
 import { appendCheckMovement } from "./feedback.js";
 import { getMemberById } from "@member/member-utils.js";

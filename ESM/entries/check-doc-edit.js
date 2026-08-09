@@ -5,8 +5,8 @@
 import "@base/components/app-header.js";
 import { SCORE_MAX } from "@base/constants.js";
 import { escapeHtml } from "@base/templates.js";
-import { scoreState } from "@base/states.js";
-import { byId, delegate, dismissOnOverlayClick, queryAll } from "@base/UI.js";
+import { scoreState } from "@base/basicFunction-store.js";
+import { byId, delegate, dismissOnOverlayClick, queryAll } from "@base/utils-dom.js";
 import { getNumberParam } from "@base/utils-url.js";
 import {
 	ASSESSMENT_ITEMS_FULL,

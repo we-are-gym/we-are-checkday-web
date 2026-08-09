@@ -1,6 +1,6 @@
 // 파일 용도: 평가 논리 — 움직임 평가 목록 구성 · VO₂ 계산 연동 · 평가 카드 빌드 · 점수/등급/총점 갱신 (checkday 공용)
 // DEPENDS: ASSESSMENT_ITEMS, clamp·parseToNum(validation), byId(UI), scoreState(states), calcVo2Assessment(vo2), STYLE 등
-import { byId } from "@base/UI.js";
+import { byId } from "@base/utils-dom.js";
 import {
 	DOT_COUNT,
 	MOTION_TOTAL_MAX,
@@ -9,7 +9,7 @@ import {
 } from "@base/constants.js";
 import { GRADE_STYLES, VO2_GRADE_STYLES } from "@base/grade-styles.js";
 import { getGradeMeta } from "@base/grade.js";
-import { scoreState } from "@base/states.js";
+import { scoreState } from "@base/basicFunction-store.js";
 import { TPL } from "@base/templates.js";
 import { clamp, parseToNum } from "@base/validation.js";
 import { calcVo2Assessment } from "@base/vo2.js";
