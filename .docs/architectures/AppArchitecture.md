@@ -69,7 +69,6 @@
 | `login.js`          | `login.html`                       | 데모 로그인 — 세션 기록·리로드 이동                                                             |
 | `checkday.js`       | `checkday_1.html`                  | 레거시 상담지 (무조치 유지)                                                                     |
 | `basic.js`          | `basic_function_assessment_2.html` | 레거시 베이직 펑션 평가지                                                                       |
-| `check-sessions.js` | `check-sessions.html`              | placeholder('준비중')                                                                           |
 
 > 이벤트는 `addEventListener` 위임 패턴(`delegate`(UI.js))으로 바인딩되며, 인라인 `onclick`·`oninput`과 `window` 오염은 사용하지 않는다.
 
@@ -90,7 +89,6 @@
 | 체크기록 조회      | `check-doc-view.html`              | 720px            | 체크기록 읽기 전용 (`?docID=`)                                               |
 | 체크기록 작성      | `check-doc-new.html`               | 640px            | 베이직 펑션 5항목·15점, 회원 이름 통합, 회차 자동계산 (`?memberID=` 프리필)  |
 | 체크기록 편집      | `check-doc-edit.html`              | 640px            | 체크기록 수정·저장 폼 (`?docID=`) — 상담일 편집 가능·회원명 읽기 전용        |
-| 체크회차 관리      | `check-sessions.html`              | 640px            | placeholder(『준비중』)                                                      |
 
 화면마다 컨테이너 최대 폭이 다를 수 있다.
 

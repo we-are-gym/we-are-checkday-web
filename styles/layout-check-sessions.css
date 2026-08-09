@@ -1,8 +1,0 @@
-/* 파일 용도: 체크회차 관리 화면(check-sessions.html) 레이아웃 — 회차 목록 영역
-   헤더 셸은 layout-shell.css 참조, 색상·글꼴은 colors.css/font.css 참조. 현재 화면 준비중 placeholder */
-.container { max-width:640px; margin:0 auto; }
-
-/* ── 준비중 (임시) ── */
-.placeholder-card { background:var(--surface); border:.5px solid var(--border); border-radius:var(--rlg); padding:2.5rem 1.5rem; text-align:center; margin-top:1rem; }
-.placeholder-card h1 { font-size:20px; font-weight:600; margin-bottom:10px; }
-.ready-msg { font-size:14px; color:var(--text2); margin-bottom:1.25rem; }
