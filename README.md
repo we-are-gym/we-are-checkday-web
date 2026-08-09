@@ -37,7 +37,7 @@
 - `ESM` 폴더 아래 ES Modules(`<script type="module">`) 로딩.
 - 각 페이지는 진입점 모듈 하나만 로드하고 나머지는 `import`/`export` 모듈 그래프가 자동 구성.
 - 모든 HTML은 `<script type="importmap">`(모듈 별칭)과 `<script type="module">`(진입점)만 사용한다. 레거시 화면(`checkday_1.html`·`basic_function_assessment_2.html`)도 동일 체계다.
-- 정적 호스팅 캐시를 위해 각 화면의 스타일·진입 스크립트에 `?v=YYYYMMDD` 쿼리를 붙이며, `node tools/bump-version.mjs [YYYYMMDD]`로 일괄 갱신한다.
+- 정적 호스팅 캐시를 위해 각 화면의 스타일·진입 스크립트에 `?v=YYYYMMDDHH` 쿼리를 붙이며, `uv run python tools/bump_version.py [YYYYMMDDHH]`로 일괄 갱신한다.
 - `ESM` 모듈은 책임에 따라 폴더로 나뉜다 (`importmap` 별칭: `@infra/`·`@tools/`·`@calc/`·`@gym/`·`@member/`·`@check-doc/`·`@shared/`):
   - `ESM/infra/` — 화면 무관 앱 인프라: `store.js`·`auth.js`·`constants.js`·`validation.js`·`templates.js`·`component-factory.js`·`components/`(app-header·app-gnb·app-help)
   - `ESM/tools/` — 재사용 순수 유틸: `utils-dom.js`·`utils-array.js`·`utils-string.js`·`utils-url.js`
