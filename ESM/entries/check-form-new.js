@@ -3,7 +3,7 @@
 // 회차는 선택 회원의 기존 체크기록 수 + 1로 자동 계산하여 "N회차" 형식으로 #m-session(읽기전용)에 채운다.
 // 상담일(#m-date)은 기본적으로 오늘(todayISO)이고, 저장 시 기록의 date로 사용한다.
 // 저장 시 payload.session은 #m-session 값을 그대로 기록한다.
-// DEPENDS: todayISO(utils-string), byId·delegate(UI), configureEvaluation/renderBasicFunctionCards/updateTotal(evaluation),
+// DEPENDS: todayISO(utils-string), byId·delegate(utils-dom), configureEvaluation/renderBasicFunctionCards/updateTotal(evaluation),
 //          setupCheckFormEvents/resetEntireForm(check-form-events), collectPayload(check-form-payload),
 //          renderCheckMovementCards(feedback), sessionReport(session-report)
 import "@base/components/app-header.js";

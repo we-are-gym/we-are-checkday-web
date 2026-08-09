@@ -1,5 +1,5 @@
 // 파일 용도: 인바디 관련 로직 — 수치→상태 태그 분류·태그 갱신 (checkday 공용)
-// 기법: DOM 조회는 UI.byId 공용 헬퍼로 위임 (공용 헬퍼 사용 — 직접 getElementById 미사용)
+// 기법: DOM 조회는 utils-dom.byId 공용 헬퍼로 위임 (공용 헬퍼 사용 — 직접 getElementById 미사용)
 import { byId } from "@base/utils-dom.js";
 
 /**

@@ -1,5 +1,5 @@
 // 파일 용도: 베이직 펑션 평가 전용 스크립트 — 항목 카드·체크·VO₂ Max Test·점수/등급·리포트 (basic_function_assessment_2 전용)
-// DEPENDS: ASSESSMENT_ITEMS, clamp·parseToNum(validation), byId·delegate·queryAll·queryOne(UI), calcVo2Assessment(vo2), getGradeMeta + 상수 모듈
+// DEPENDS: ASSESSMENT_ITEMS, clamp·parseToNum(validation), byId·delegate·queryAll·queryOne(utils-dom), calcVo2Assessment(vo2), getGradeMeta + 상수 모듈
 // 공용 경계: 순수 논리(VO₂ 계산·등급 vo2.js·점수 색 grade-styles.js·상수 constants·카드 셸 TPL.basicItemCard·도트 TPL.scoreDots)는
 //          공용 모듈을 그대로 쓰고, 화면 전용 DOM 배선(로컬 state·v-*/score-*/detail-* 요소 id)만 여기 남긴다.
 //          evaluation.js(checkday 공용)와 같은 논리가 일부 보이나 요소 id·상태 구조가 달라 화면 특화로 유지한다.

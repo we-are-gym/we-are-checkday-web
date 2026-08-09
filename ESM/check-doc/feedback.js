@@ -1,7 +1,7 @@
 // 파일 용도: 피드백 CRUD — 동작 피드백 카드 생성·체크 행 추가/삭제·데이터 수집 (checkday 공용)
 // 기법: 카드·체크 행 마크업은 공용 템플릿(TPL.feedbackCard·TPL.fbCheckRow)을 단일 소스로 사용,
 //       카드 목록·ID 카운터는 CheckMovementStore에 보관한다.
-// DEPENDS: byId(UI), TPL, CheckMovementStore
+// DEPENDS: byId(utils-dom), TPL, CheckMovementStore
 import { byId } from "@base/utils-dom.js";
 import { TPL } from "@base/templates.js";
 import { CheckMovementStore } from "./check-movement-store.js";

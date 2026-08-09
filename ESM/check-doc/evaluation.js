@@ -1,5 +1,5 @@
 // 파일 용도: 평가 논리 — 움직임 평가 목록 구성 · VO₂ 계산 연동 · 평가 카드 빌드 · 점수/등급/총점 갱신 (checkday 공용)
-// DEPENDS: ASSESSMENT_ITEMS, clamp·parseToNum(validation), byId(UI), scoreState(states), calcVo2Assessment(vo2), STYLE 등
+// DEPENDS: ASSESSMENT_ITEMS, clamp·parseToNum(validation), byId(utils-dom), scoreState(basicFunction-store), calcVo2Assessment(vo2), STYLE 등
 import { byId } from "@base/utils-dom.js";
 import {
 	DOT_COUNT,

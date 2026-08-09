@@ -7,19 +7,19 @@
 
 ### 공용 인프라 모듈 (임포트 그래프의 잎·화면 공용)
 
-| 모듈                   | 내보내기                                                                   | 책임                                                                               | 의존                                     |
-| ---------------------- | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------- |
-| `store.js`             | `Store`                                                                    | 관찰자 패턴 GUI 상태 스토어 — `getState`/`setState`/`subscribe`                    | 없음                                     |
-| `component-factory.js` | `defineComponent`                                                          | 순수 함수형 컴포넌트 + 네이티브 웹 컴포넌트(light DOM) 팩토리                      | 없음                                     |
-| `templates.js`         | `TPL`, `escapeHtml`                                                        | 바닐라JS 템플릿 함수 — 화면 공용 HTML 조각 (카드·행·도트·비교테이블·헤더·GNB·모달) | `utils-array`                            |
-| `auth.js`              | `isAuthed`, `login`, `logout`                                              | 세션 기반 데모 로그인 상태                                                         | 없음                                     |
-| `utils-array.js`       | `sum`, `createZeroArray`                                                   | 배열 합계·0 배열                                                                   | 없음                                     |
-| `utils-string.js`      | `pad2`, `today`                                                            | 날짜 포맷·숫자 2자리                                                               | 없음                                     |
-| `utils-url.js`         | `getUrlParam`, `getNumberParam`                                            | URL 쿼리 파라미터 읽기 헬퍼 (문자열·숫자, 기본값 폴백)                             | 없음                                     |
-| `validation.js`        | `parseToNum`, `anyNaN`, `clamp`                                            | 수치 파싱·NaN 판별·범위 clamp                                                      | 없음                                     |
-| `constants.js`         | 상수                                                                       | 마법 숫자 중앙화 (점수·임계점·총점)                                                | 없음                                     |
-| `UI.js`                | `byId`, `queryOne`, `queryAll`, `setHTML`, `setText`, `toggle`, `delegate` | DOM 조회·내용 설정·클래스 토글·이벤트 위임                                         | 없음                                     |
-| `states.js`            | `createScoreState`, `scoreState`                                           | 평가 점수 배열·총점·초기화 단일 소스 (팩토리 + 전역 인스턴스)                      | `utils-array`, `validation`, `constants` |
+| 모듈                     | 내보내기                                                                   | 책임                                                                               | 의존                                     |
+| ------------------------ | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------- |
+| `store.js`               | `Store`                                                                    | 관찰자 패턴 GUI 상태 스토어 — `getState`/`setState`/`subscribe`                    | 없음                                     |
+| `component-factory.js`   | `defineComponent`                                                          | 순수 함수형 컴포넌트 + 네이티브 웹 컴포넌트(light DOM) 팩토리                      | 없음                                     |
+| `templates.js`           | `TPL`, `escapeHtml`                                                        | 바닐라JS 템플릿 함수 — 화면 공용 HTML 조각 (카드·행·도트·비교테이블·헤더·GNB·모달) | `utils-array`                            |
+| `auth.js`                | `isAuthed`, `login`, `logout`                                              | 세션 기반 데모 로그인 상태                                                         | 없음                                     |
+| `utils-array.js`         | `sum`, `createZeroArray`                                                   | 배열 합계·0 배열                                                                   | 없음                                     |
+| `utils-string.js`        | `pad2`, `today`                                                            | 날짜 포맷·숫자 2자리                                                               | 없음                                     |
+| `utils-url.js`           | `getUrlParam`, `getNumberParam`                                            | URL 쿼리 파라미터 읽기 헬퍼 (문자열·숫자, 기본값 폴백)                             | 없음                                     |
+| `validation.js`          | `parseToNum`, `anyNaN`, `clamp`                                            | 수치 파싱·NaN 판별·범위 clamp                                                      | 없음                                     |
+| `constants.js`           | 상수                                                                       | 마법 숫자 중앙화 (점수·임계점·총점)                                                | 없음                                     |
+| `utils-dom.js`           | `byId`, `queryOne`, `queryAll`, `setHTML`, `setText`, `toggle`, `delegate` | DOM 조회·내용 설정·클래스 토글·이벤트 위임                                         | 없음                                     |
+| `basicFunction-store.js` | `createScoreState`, `scoreState`                                           | 평가 점수 배열·총점·초기화 단일 소스 (팩토리 + 전역 인스턴스)                      | `utils-array`, `validation`, `constants` |
 
 ### 앱 상태·정적 스토어 (관찰자 패턴, sessionStorage mock 영속화)
 
@@ -56,21 +56,21 @@
 
 ### 화면 진입점 (엔트리 모듈)
 
-| 모듈                | 대상 화면                          | 역할                                                                                            |
-| ------------------- | ---------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `index.js`          | `index.html`                       | 메인 — 배치·빠른 연결                                                                           |
-| `members.js`        | `members.html`                     | 회원 관리 — 목록·검색·제거·상세 이동 (member-store·record-store 구독)                           |
-| `member-create.js`  | `member-create.html`               | 회원 등록                                                                                       |
-| `member-edit.js`    | `member-edit.html`                 | 회원 정보 수정·저장                                                                             |
-| `member-detail.js`  | `member-detail.html`               | 회원 상세 — 정보 카드·스파크 라인·기록 목록·변화 분석 비교                                      |
-| `check-form-new.js` | `check-doc-new.html`               | 체크기록 작성 — 베이직 펑션 5항목·15점, 회원 이름 통합·회차 자동계산(N+1) + `?memberID=` 프리필 |
-| `check-doc-view.js` | `check-doc-view.html`              | 체크기록 조회 — 읽기 전용 전체 보기 (5·8항목 기록별 맞춤)                                       |
-| `check-doc-edit.js` | `check-doc-edit.html`              | 체크기록 편집 — 기록 항목 구성(5·8)에 맞춰 프리필·수정·저장                                     |
-| `login.js`          | `login.html`                       | 데모 로그인 — 세션 기록·리로드 이동                                                             |
-| `checkday.js`       | `checkday_1.html`                  | 레거시 상담지 (무조치 유지)                                                                     |
-| `basic.js`          | `basic_function_assessment_2.html` | 레거시 베이직 펑션 평가지                                                                       |
+| 모듈                          | 대상 화면                          | 역할                                                                                            |
+| ----------------------------- | ---------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `index.js`                    | `index.html`                       | 메인 — 배치·빠른 연결                                                                           |
+| `members.js`                  | `members.html`                     | 회원 관리 — 목록·검색·제거·상세 이동 (member-store·record-store 구독)                           |
+| `member-create.js`            | `member-create.html`               | 회원 등록                                                                                       |
+| `member-edit.js`              | `member-edit.html`                 | 회원 정보 수정·저장                                                                             |
+| `member-detail.js`            | `member-detail.html`               | 회원 상세 — 정보 카드·스파크 라인·기록 목록·변화 분석 비교                                      |
+| `check-form-new.js`           | `check-doc-new.html`               | 체크기록 작성 — 베이직 펑션 5항목·15점, 회원 이름 통합·회차 자동계산(N+1) + `?memberID=` 프리필 |
+| `check-doc-view.js`           | `check-doc-view.html`              | 체크기록 조회 — 읽기 전용 전체 보기 (5·8항목 기록별 맞춤)                                       |
+| `check-doc-edit.js`           | `check-doc-edit.html`              | 체크기록 편집 — 기록 항목 구성(5·8)에 맞춰 프리필·수정·저장                                     |
+| `login.js`                    | `login.html`                       | 데모 로그인 — 세션 기록·리로드 이동                                                             |
+| `checkday.js`                 | `checkday_1.html`                  | 레거시 상담지 (무조치 유지)                                                                     |
+| `basicFunction-assessment.js` | `basic_function_assessment_2.html` | 레거시 베이직 펑션 평가지                                                                       |
 
-> 이벤트는 `addEventListener` 위임 패턴(`delegate`(UI.js))으로 바인딩되며, 인라인 `onclick`·`oninput`과 `window` 오염은 사용하지 않는다.
+> 이벤트는 `addEventListener` 위임 패턴(`delegate`(utils-dom.js))으로 바인딩되며, 인라인 `onclick`·`oninput`과 `window` 오염은 사용하지 않는다.
 
 ## 화면 구성
 

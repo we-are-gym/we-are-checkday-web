@@ -13,7 +13,7 @@
 :root {
 	color-scheme: dark;
 
-	/* ── 공용 표면·텍스트 — 전 화면 CSS와 JS 인라인(templates.js·evaluation.js·basic.js·record-stats.js)이 함께 소비 → :root 유지 필수 ── */
+	/* ── 공용 표면·텍스트 — 전 화면 CSS와 JS 인라인(templates.js·evaluation.js·basicFunction-assessment.js·record-stats.js)이 함께 소비 → :root 유지 필수 ── */
 	--bg: #131313;
 	--surface: #1a1a1a;
 	--surface2: #212121;

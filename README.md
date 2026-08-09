@@ -40,10 +40,10 @@
 - 정적 호스팅 캐시를 위해 각 화면의 스타일·진입 스크립트에 `?v=YYYYMMDD` 쿼리를 붙이며, `node tools/bump-version.mjs [YYYYMMDD]`로 일괄 갱신한다.
 - 다음 모듈은 공용이다:
   - 공용 인프라
-    - `UI.js`
+    - `utils-dom.js`
     - `auth.js`
     - `store.js`
-    - `states.js`
+    - `basicFunction-store.js`
     - `component-factory.js`
     - `constants.js`
     - `templates.js`
