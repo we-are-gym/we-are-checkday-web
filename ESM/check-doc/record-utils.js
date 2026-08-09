@@ -4,9 +4,9 @@
 
 /**
  * ID로 체크기록 1건 조회
- * @param {import("@base/store.js").CheckRecord[]} records 체크기록 배열
+ * @param {import("@infra/store.js").CheckRecord[]} records 체크기록 배열
  * @param {number} id 기록 고유 번호
- * @returns {import("@base/store.js").CheckRecord | undefined}
+ * @returns {import("@infra/store.js").CheckRecord | undefined}
  */
 export function getRecordById(records, id) {
 	return records.find((r) => r.id === id);
@@ -14,9 +14,9 @@ export function getRecordById(records, id) {
 
 /**
  * 회원별 체크기록 배열 반환 (날짜 오름차순)
- * @param {import("@base/store.js").CheckRecord[]} records 체크기록 배열
+ * @param {import("@infra/store.js").CheckRecord[]} records 체크기록 배열
  * @param {number} memberId 회원 ID
- * @returns {import("@base/store.js").CheckRecord[]}
+ * @returns {import("@infra/store.js").CheckRecord[]}
  */
 export function getRecordsByMember(records, memberId) {
 	return records

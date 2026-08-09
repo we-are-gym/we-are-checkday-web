@@ -5,10 +5,10 @@
 //          renderBasicFunctionCards/updateTotal(evaluation),
 //          setupCheckFormEvents/resetEntireForm(check-form-events), renderCheckMovementCards(feedback),
 //          sessionReport(session-report)
-import "@base/components/app-header.js";
-import { byId, delegate, dismissOnOverlayClick, setText } from "@base/utils-dom.js";
-import { today } from "@base/utils-string.js";
-import { getNumberParam } from "@base/utils-url.js";
+import "@infra/components/app-header.js";
+import { byId, delegate, dismissOnOverlayClick, setText } from "@tools/utils-dom.js";
+import { today } from "@tools/utils-string.js";
+import { getNumberParam } from "@tools/utils-url.js";
 import {
 	resetEntireForm,
 	setupCheckFormEvents,

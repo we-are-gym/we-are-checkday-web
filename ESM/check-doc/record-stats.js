@@ -1,7 +1,7 @@
 // 파일 용도: 체크기록 통계 — 스파크라인·기록 지표·비교 테이블 생성 (회원 상세 공용, 순수 함수)
-import { sum } from "@base/utils-array.js";
-import { SCORE_MAX } from "@base/constants.js";
-import { TPL } from "@base/templates.js";
+import { sum } from "@tools/utils-array.js";
+import { SCORE_MAX } from "@infra/constants.js";
+import { TPL } from "@infra/templates.js";
 import { resolveRecordItems } from "./assessment-data.js";
 
 /** 인바디 표시 키 순서 (라벨 포함) */
@@ -18,7 +18,7 @@ export const IB_KEYS = [
 /**
  * 기록 1건의 총점 최댓값 — 항목 수 × 항목당 만점(3점)으로 파생한다.
  * 레거시 8항목 기록은 24, 체크기록 작성 5항목 기록은 15. (고정 상수 대신 scores 길이로 판단)
- * @param {import("@base/store.js").CheckRecordPayload} payload
+ * @param {import("@infra/store.js").CheckRecordPayload} payload
  * @returns {number} 총점 최댓값 (scores 없으면 0)
  */
 export function recordMax(payload) {
@@ -117,8 +117,8 @@ export function deltaHTML(d) {
  * 좌측 셀렉터(#cmp-cur, 비교 대상)로 선택한 회차를 좌측 열, 우측 셀렉터(#cmp-tgt, 현재 체크기록)로 선택한 회차를 우측 열에 표시한다.
  * 변화량은 『우측(현재) − 좌측(비교 대상)』으로 계산한다: 우측이 더 크면 상승(▲), 작으면 하강(▼), 같으면 유지(―).
  *
- * @param {import("@base/store.js").CheckRecord} left 좌측 셀렉터가 고른 기록 -> 좌측 열
- * @param {import("@base/store.js").CheckRecord} right 우측 셀렉터가 고른 기록 -> 우측 열
+ * @param {import("@infra/store.js").CheckRecord} left 좌측 셀렉터가 고른 기록 -> 좌측 열
+ * @param {import("@infra/store.js").CheckRecord} right 우측 셀렉터가 고른 기록 -> 우측 열
  * @param {{ showTotalScoreLabel?: boolean, includeMovementHeader?: boolean }} [options={}]
  *
  * @returns {string} 비교 테이블 HTML

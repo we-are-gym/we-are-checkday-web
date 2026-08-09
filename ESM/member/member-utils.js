@@ -5,9 +5,9 @@
 
 /**
  * ID로 회원 1명 조회 (없으면 undefined)
- * @param {import("@base/store.js").Member[]} members 회원 배열
+ * @param {import("@infra/store.js").Member[]} members 회원 배열
  * @param {number} id 회원 고유 번호
- * @returns {import("@base/store.js").Member | undefined}
+ * @returns {import("@infra/store.js").Member | undefined}
  */
 export function getMemberById(members, id) {
 	return members.find((m) => m.id === id);
@@ -15,9 +15,9 @@ export function getMemberById(members, id) {
 
 /**
  * 이름으로 회원 1명 조회 (없으면 undefined)
- * @param {import("@base/store.js").Member[]} members 회원 배열
+ * @param {import("@infra/store.js").Member[]} members 회원 배열
  * @param {string} name 회원 이름
- * @returns {import("@base/store.js").Member | undefined}
+ * @returns {import("@infra/store.js").Member | undefined}
  */
 export function getMemberByName(members, name) {
 	return members.find((m) => m.name === name);

@@ -2,10 +2,10 @@
 // 기법: 폼 DOM→기록 payload, 기록 payload→폼 DOM 변환을 함수로 추출하여
 //       편집·작성 화면에서 중복 직렬화 코드가 생기지 않게 한다.
 //       (DOM 헬퍼 byId·document 쿼리에 의존하는 화면 로직 계층이다 — 순수 연산은 check-form-payload-core가 담당한다.)
-import { byId } from "@base/utils-dom.js";
-import { DOT_COUNT } from "@base/constants.js";
-import { updateInbodyTags } from "@base/inbody.js";
-import { scoreState } from "@base/basicFunction-store.js";
+import { byId } from "@tools/utils-dom.js";
+import { DOT_COUNT } from "@infra/constants.js";
+import { updateInbodyTags } from "@gym/inbody.js";
+import { scoreState } from "@gym/basicFunction-store.js";
 import { getEvals, updateTotal } from "./evaluation.js";
 import { appendCheckMovement } from "./feedback.js";
 import { getMemberById } from "@member/member-utils.js";
@@ -55,7 +55,7 @@ export function prefillEvalState(scores, evalData) {
 /**
  * 기록 payload를 현재 상담지 폼에 되돌려 채운다 (편집·조회 공용)
  * 값 도출은 순수 함수(resolvePrefillValues)가 담당하고, 여기서는 DOM에 쓴다.
- * @param {import("@base/store.js").CheckRecord} rec 프리필할 기록
+ * @param {import("@infra/store.js").CheckRecord} rec 프리필할 기록
  */
 export function prefillForm(rec) {
 	// 회원 이름은 payload가 아닌 회원 스토어에서 현재 이름을 동적 해석한다 (회원명 변경 즉시 전파)
@@ -117,7 +117,7 @@ export function prefillForm(rec) {
 /**
  * 현재 상담지 폼을 기록 payload로 직렬화 (저장·편집 공용)
  * DOM에서 원시 값을 읽은 뒤 순수 함수(buildPayload)로 payload를 조립한다.
- * @returns {import("@base/store.js").CheckRecordPayload}
+ * @returns {import("@infra/store.js").CheckRecordPayload}
  */
 export function collectPayload() {
 	const evalData = getEvals().map((_, i) => {

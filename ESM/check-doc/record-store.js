@@ -1,7 +1,7 @@
 // 파일 용도: 체크기록 스토어 — 세션(sessionStorage) 영속화된 mock 저장소 (회원 상세·조회·작성·편집 공용)
 // 주의: API 미배포 상태이므로 브라우저 세션 동안만 유지되는 mock이다. 탭을 닫으면 시드로 복원된다.
-import { InbodyData } from "@base/inbody-data.js";
-import { Store } from "@base/store.js";
+import { InbodyData } from "@gym/inbody-data.js";
+import { Store } from "@infra/store.js";
 import {
 	ASSESSMENT_ITEMS_BASIC5,
 	ASSESSMENT_ITEMS_FULL,
@@ -31,10 +31,10 @@ function ib(w, m, fat, bmi, bfp, bmr, vis) {
  * @param {number} memberId
  * @param {string} date YYYY-MM-DD
  * @param {string} session
- * @param {import("@base/store.js").InbodyData} ibData
+ * @param {import("@infra/store.js").InbodyData} ibData
  * @param {number[]} scores 점수 배열 (항목별 0~3)
- * @param {Partial<import("@base/store.js").CheckRecordPayload>} [opts]
- * @returns {import("@base/store.js").CheckRecord}
+ * @param {Partial<import("@infra/store.js").CheckRecordPayload>} [opts]
+ * @returns {import("@infra/store.js").CheckRecord}
  */
 function mkRec(id, memberId, date, session, ibData, scores, opts = {}) {
 	return {
@@ -71,10 +71,10 @@ function mkRec(id, memberId, date, session, ibData, scores, opts = {}) {
  * @param {number} memberId
  * @param {string} date YYYY-MM-DD
  * @param {string} session
- * @param {import("@base/store.js").InbodyData} ibData
+ * @param {import("@infra/store.js").InbodyData} ibData
  * @param {number[]} scores 5개 항목 점수 (각 0~3)
- * @param {Partial<import("@base/store.js").CheckRecordPayload>} [opts]
- * @returns {import("@base/store.js").CheckRecord}
+ * @param {Partial<import("@infra/store.js").CheckRecordPayload>} [opts]
+ * @returns {import("@infra/store.js").CheckRecord}
  */
 function mk5(id, memberId, date, session, ibData, scores, opts = {}) {
 	return mkRec(id, memberId, date, session, ibData, scores, {

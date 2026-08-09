@@ -2,10 +2,10 @@
 // 기법: 리포트 생성 로직을 SessionReport 클래스로 모은다. 평가 상태는 evaluation.js의 getEvals/getScore/getTotal/getMax를 통해 읽는다.
 // 사용: check-form-new·checkday 진입점이 sessionReport.openModal()/copyToClipboard()를 호출한다.
 
-import { byId } from "@base/utils-dom.js";
+import { byId } from "@tools/utils-dom.js";
 import { getEvals, getScore, getTotal, getMax } from "./evaluation.js";
 import { collectCheckMovementData } from "./feedback.js";
-import { InbodyData } from "@base/inbody-data.js";
+import { InbodyData } from "@gym/inbody-data.js";
 
 // ── 공용 포맷터 — 평가 줄·피드백 줄을 한 곳에서만 생성 ──
 /** 평가 줄: "이름: N점 [체크] / 메모" (선택 요소만 포함, prefix는 줄 앞 들여쓰기) */

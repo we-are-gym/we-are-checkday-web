@@ -3,7 +3,7 @@
 // 기법: 바닐라JS 템플릿 함수 (DOM·전역 비의존, 단위 테스트 용이)
 // 주의: 사용자 입력을 넣을 때는 반드시 escapeHtml()을 거쳐 XSS를 막는다.
 
-import { createZeroArray } from "./utils-array.js";
+import { createZeroArray } from "../tools/utils-array.js";
 import { DOT_COUNT } from "./constants.js";
 
 /**

@@ -3,7 +3,7 @@ import {
 	GRADE_EXCELLENT_PCT,
 	GRADE_GOOD_PCT,
 	GRADE_AVERAGE_PCT,
-} from "./constants.js";
+} from "../infra/constants.js";
 
 /**
  * 퍼센트 기반 등급 라벨 반환

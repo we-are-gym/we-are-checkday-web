@@ -6,11 +6,11 @@
 // DEPENDS: todayISO(utils-string), byId·delegate(utils-dom), configureEvaluation/renderBasicFunctionCards/updateTotal(evaluation),
 //          setupCheckFormEvents/resetEntireForm(check-form-events), collectPayload(check-form-payload),
 //          renderCheckMovementCards(feedback), sessionReport(session-report)
-import "@base/components/app-header.js";
-import { escapeHtml } from "@base/templates.js";
-import { byId, delegate, dismissOnOverlayClick } from "@base/utils-dom.js";
-import { todayISO } from "@base/utils-string.js";
-import { getNumberParam } from "@base/utils-url.js";
+import "@infra/components/app-header.js";
+import { escapeHtml } from "@infra/templates.js";
+import { byId, delegate, dismissOnOverlayClick } from "@tools/utils-dom.js";
+import { todayISO } from "@tools/utils-string.js";
+import { getNumberParam } from "@tools/utils-url.js";
 import { ASSESSMENT_ITEMS_BASIC5 } from "@check-doc/assessment-data.js";
 import {
 	resetEntireForm,
@@ -57,7 +57,7 @@ byId("member-list").innerHTML = members
 
 /**
  * 선택한 회원에 맞춰 트레이너·회차를 자동 기입한다 — 회차는 기존 체크기록 수 + 1 (예: 3건이면 "4회차")
- * @param {import("@base/store.js").Member} mem 확정된 회원
+ * @param {import("@infra/store.js").Member} mem 확정된 회원
  * @returns {void}
  */
 function applyMember(mem) {

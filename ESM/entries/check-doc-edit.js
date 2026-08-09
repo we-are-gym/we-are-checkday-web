@@ -2,12 +2,12 @@
 // ?docID= 기록을 불러와 상담지 폼(renderBasicFunctionCards 재사용)에 프리필하고, 움직임 평가 항목 추가/삭제(만점 동적 계산) 후
 // 수정 내용을 기록 스토어에 저장한다.
 
-import "@base/components/app-header.js";
-import { SCORE_MAX } from "@base/constants.js";
-import { escapeHtml } from "@base/templates.js";
-import { scoreState } from "@base/basicFunction-store.js";
-import { byId, delegate, dismissOnOverlayClick, queryAll } from "@base/utils-dom.js";
-import { getNumberParam } from "@base/utils-url.js";
+import "@infra/components/app-header.js";
+import { SCORE_MAX } from "@infra/constants.js";
+import { escapeHtml } from "@infra/templates.js";
+import { scoreState } from "@gym/basicFunction-store.js";
+import { byId, delegate, dismissOnOverlayClick, queryAll } from "@tools/utils-dom.js";
+import { getNumberParam } from "@tools/utils-url.js";
 import {
 	ASSESSMENT_ITEMS_FULL,
 	resolveRecordItems,

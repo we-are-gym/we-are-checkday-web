@@ -7,7 +7,7 @@
 
 /**
  * 웹 인바디 묶음(문자열 7셀) → REST InbodyResultCreate 필드 (숫자 파싱, null 보존)
- * @param {import("@base/inbody-data.js").InbodyData} ib 웹 인바디 입력값 (문자열)
+ * @param {import("@gym/inbody-data.js").InbodyData} ib 웹 인바디 입력값 (문자열)
  * @param {string} comment 인바디 코멘트
  * @returns {{ weight: (number|null), muscle: (number|null), fat: (number|null),
  *            BMI: (number|null), BFP: (number|null), BMR: (number|null),
@@ -49,7 +49,7 @@ export function restToIb(inbody) {
 
 /**
  * 웹 CheckRecord.payload → BodyCheck (POST/PUT 본문) DTO 필드
- * @param {import("@base/store.js").CheckRecordPayload} p 웹 payload
+ * @param {import("@infra/store.js").CheckRecordPayload} p 웹 payload
  * @param {{ memberId: number, date: string }} meta 기록 맥락
  * @returns {object} REST 본문 필드: session_label·session_date·trainer·inbody·evaluations·goals·feedbacks·consult_memo
  */
@@ -82,7 +82,7 @@ export function payloadToRest(p, meta) {
 /**
  * REST BodyCheck → 웹 CheckRecord.payload (조회·편집 프리필용)
  * @param {any} body REST 응답 (flat 인바디/평가/목표/피드백 포함)
- * @returns {import("@base/store.js").CheckRecordPayload}
+ * @returns {import("@infra/store.js").CheckRecordPayload}
  */
 export function restToPayload(body) {
 	const evals = body.evaluations || [];

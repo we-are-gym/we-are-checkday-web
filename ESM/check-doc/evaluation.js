@@ -1,18 +1,18 @@
 // 파일 용도: 평가 논리 — 움직임 평가 목록 구성 · VO₂ 계산 연동 · 평가 카드 빌드 · 점수/등급/총점 갱신 (checkday 공용)
 // DEPENDS: ASSESSMENT_ITEMS, clamp·parseToNum(validation), byId(utils-dom), scoreState(basicFunction-store), calcVo2Assessment(vo2), STYLE 등
-import { byId } from "@base/utils-dom.js";
+import { byId } from "@tools/utils-dom.js";
 import {
 	DOT_COUNT,
 	MOTION_TOTAL_MAX,
 	SCORE_MAX,
 	SCORE_MIN,
-} from "@base/constants.js";
-import { GRADE_STYLES, VO2_GRADE_STYLES } from "@base/grade-styles.js";
-import { getGradeMeta } from "@base/grade.js";
-import { scoreState } from "@base/basicFunction-store.js";
-import { TPL } from "@base/templates.js";
-import { clamp, parseToNum } from "@base/validation.js";
-import { calcVo2Assessment } from "@base/vo2.js";
+} from "@infra/constants.js";
+import { GRADE_STYLES, VO2_GRADE_STYLES } from "@calc/grade-styles.js";
+import { getGradeMeta } from "@calc/grade.js";
+import { scoreState } from "@gym/basicFunction-store.js";
+import { TPL } from "@infra/templates.js";
+import { clamp, parseToNum } from "@infra/validation.js";
+import { calcVo2Assessment } from "@calc/vo2.js";
 import { ASSESSMENT_ITEMS_FULL } from "./assessment-data.js";
 
 // ── 움직임 평가 구성 초기화 (기본 8개: 7개 + VO₂ 항목) ──

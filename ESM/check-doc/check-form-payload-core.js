@@ -13,7 +13,7 @@
  *   feedbacks: Array<{ name: string, checkItems: Array<{text: string, checked: boolean}>, memo: string }>,
  *   consultMemo: string,
  * }} fields DOM에서 추출한 원시 필드 값
- * @returns {import("@base/store.js").CheckRecordPayload}
+ * @returns {import("@infra/store.js").CheckRecordPayload}
  */
 export function buildPayload({
 	session,
@@ -45,7 +45,7 @@ export function buildPayload({
 
 /**
  * 기록 payload + 회원으로부터 폼에 채울 값을 도출한다. (순수 — 실제 DOM 쓰기는 호출부가 담당)
- * @param {import("@base/store.js").CheckRecord} rec 프리필할 기록
+ * @param {import("@infra/store.js").CheckRecord} rec 프리필할 기록
  * @param {{ name: string } | undefined} member 현재 회원 (없으면 이름은 빈 문자열)
  * @returns {{
  *   name: string, session: string, trainer: string, date: string,

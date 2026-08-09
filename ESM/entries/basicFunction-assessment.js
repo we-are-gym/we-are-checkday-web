@@ -4,14 +4,14 @@
 //          공용 모듈을 그대로 쓰고, 화면 전용 DOM 배선(로컬 state·v-*/score-*/detail-* 요소 id)만 여기 남긴다.
 //          evaluation.js(checkday 공용)와 같은 논리가 일부 보이나 요소 id·상태 구조가 달라 화면 특화로 유지한다.
 import { ASSESSMENT_ITEMS } from "@check-doc/assessment-data.js";
-import { clamp, parseToNum } from "@base/validation.js";
-import { byId, delegate, queryAll, queryOne } from "@base/utils-dom.js";
-import { TPL } from "@base/templates.js";
-import { calcVo2Assessment } from "@base/vo2.js";
-import { getGradeMeta } from "@base/grade.js";
-import { GRADE_STYLES, VO2_GRADE_STYLES, getScoreColor } from "@base/grade-styles.js";
-import { SCORE_MIN, SCORE_MAX, DOT_COUNT, MOTION_TOTAL_MAX } from "@base/constants.js";
-import "@base/components/app-header.js";
+import { clamp, parseToNum } from "@infra/validation.js";
+import { byId, delegate, queryAll, queryOne } from "@tools/utils-dom.js";
+import { TPL } from "@infra/templates.js";
+import { calcVo2Assessment } from "@calc/vo2.js";
+import { getGradeMeta } from "@calc/grade.js";
+import { GRADE_STYLES, VO2_GRADE_STYLES, getScoreColor } from "@calc/grade-styles.js";
+import { SCORE_MIN, SCORE_MAX, DOT_COUNT, MOTION_TOTAL_MAX } from "@infra/constants.js";
+import "@infra/components/app-header.js";
 
 const assessments = ASSESSMENT_ITEMS.map((item, idx) => ({
 	id: idx + 1,

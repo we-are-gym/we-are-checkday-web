@@ -1,10 +1,10 @@
 // 파일 용도: 회원 정보 편집 화면(member-edit.html)
 // ?memberID= 회원을 조회해 member-form에 프리필하고, 저장 시 memberStore의 해당 회원 정보를 갱신한다.
-import { byId } from "@base/utils-dom.js";
-import { getNumberParam } from "@base/utils-url.js";
+import { byId } from "@tools/utils-dom.js";
+import { getNumberParam } from "@tools/utils-url.js";
 import { memberStore, updateMember } from "@member/member-store.js";
 import { getMemberById } from "@member/member-utils.js";
-import "@base/components/app-header.js";
+import "@infra/components/app-header.js";
 import "@member/components/member-form.js";
 
 /** ?memberID= 파라미터 (없으면 0 — 미조회 상태) */
@@ -31,7 +31,7 @@ if (!member) {
 	};
 	formEl.prefill(member);
 	/** 저장 시 해당 회원 정보를 스토어에 반영하고 상세 화면으로 복귀
-	 * @param {Omit<import("@base/store.js").Member, "id">} data 폼 입력값
+	 * @param {Omit<import("@infra/store.js").Member, "id">} data 폼 입력값
 	 * @returns {void}
 	 */
 	formEl.onSubmit = (data) => {

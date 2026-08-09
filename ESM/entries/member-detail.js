@@ -1,7 +1,7 @@
 // 파일 용도: 회원 상세 조회 및 체크기록 비교 화면(member-detail.html)
 // ?memberID= 로 회원을 조회하고, 회원 정보 카드·스파크라인 4종·체크 기록 탭·변화 분석 탭을 렌더링한다.
-import "@base/components/app-header.js";
-import { TPL, escapeHtml } from "@base/templates.js";
+import "@infra/components/app-header.js";
+import { TPL, escapeHtml } from "@infra/templates.js";
 import {
 	byId,
 	delegate,
@@ -9,9 +9,9 @@ import {
 	queryOne,
 	setHTML,
 	setText,
-} from "@base/utils-dom.js";
-import { getNumberParam } from "@base/utils-url.js";
-import { sum } from "@base/utils-array.js";
+} from "@tools/utils-dom.js";
+import { getNumberParam } from "@tools/utils-url.js";
+import { sum } from "@tools/utils-array.js";
 import {
 	buildCompareTable,
 	recordMax,
@@ -27,7 +27,7 @@ import { getMemberById } from "@member/member-utils.js";
 const memberId = getNumberParam("memberID");
 
 /** 회원의 기록을 날짜 오름차순으로 반환
- * @returns {import("@base/store.js").CheckRecord[]} 현재 회원의 체크기록 목록
+ * @returns {import("@infra/store.js").CheckRecord[]} 현재 회원의 체크기록 목록
  */
 function getRecords() {
 	const records = recordStore.getState().records;
@@ -35,7 +35,7 @@ function getRecords() {
 }
 
 /** 회원 정보 카드 렌더링 (to-be: 프로토타입처럼 이름·성별·담당 트레이너 3행만)
- * @param {import("@base/store.js").Member} member 대상 회원
+ * @param {import("@infra/store.js").Member} member 대상 회원
  * @returns {void}
  */
 function renderInfoCard(member) {
@@ -49,7 +49,7 @@ function renderInfoCard(member) {
 
 /** 통계 카드 — 프로토타입 배치: 단일 카드(통계 · 전체 회차 누적) 안에 chart-stat 4종 세로 누적
  *  (체지방률·체중·골격근량·체지방량 변화, 최신값+누적 델타+스파크라인+회차 범위)
- * @param {import("@base/store.js").CheckRecord[]} records 회원의 체크기록 (날짜 오름차순)
+ * @param {import("@infra/store.js").CheckRecord[]} records 회원의 체크기록 (날짜 오름차순)
  * @returns {void}
  */
 function renderStatCards(records) {
@@ -134,7 +134,7 @@ function renderStatCards(records) {
 }
 
 /** 체크 기록 목록 렌더링
- * @param {import("@base/store.js").CheckRecord[]} records 회원의 체크기록 (날짜 오름차순)
+ * @param {import("@infra/store.js").CheckRecord[]} records 회원의 체크기록 (날짜 오름차순)
  * @returns {void}
  */
 function renderRecords(records) {
@@ -160,7 +160,7 @@ function renderRecords(records) {
  * 비교 2종 셀렉터(#cmp-cur 좌측·#cmp-tgt 우측)에 회차 옵션을 채우고 디폴트를 정한다.
  * 좌측 셀렉터(#cmp-cur)=최신 직전 회차, 우측 셀렉터(#cmp-tgt)=최신 회차 — renderCompare()가
  * 좌측 선택 회차를 비교 테이블 좌측 열, 우측 선택 회차를 우측 열로 배치한다.
- * @param {import("@base/store.js").CheckRecord[]} records 회원의 기록 (날짜 오름차순)
+ * @param {import("@infra/store.js").CheckRecord[]} records 회원의 기록 (날짜 오름차순)
  * @returns {void}
  */
 function fillCompareSelects(records) {

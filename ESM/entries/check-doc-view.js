@@ -1,13 +1,13 @@
 // 파일 용도: 체크기록 조회 화면(check-doc-view.html)
 // ?docID= 로 기록 1건을 읽기 전용으로 렌더링한다. 수정은 check-doc-edit.html?docID= 로 이동(커밋 13에서 실링크).
-import "@base/components/app-header.js";
-import { escapeHtml, TPL } from "@base/templates.js";
-import { byId, queryAll, setHTML, setText } from "@base/utils-dom.js";
-import { inbodyTagFor } from "@base/inbody.js";
-import { getNumberParam } from "@base/utils-url.js";
+import "@infra/components/app-header.js";
+import { escapeHtml, TPL } from "@infra/templates.js";
+import { byId, queryAll, setHTML, setText } from "@tools/utils-dom.js";
+import { inbodyTagFor } from "@gym/inbody.js";
+import { getNumberParam } from "@tools/utils-url.js";
 import { resolveRecordItems } from "@check-doc/assessment-data.js";
 import { IB_KEYS, recordMax } from "@check-doc/record-stats.js";
-import { sum } from "@base/utils-array.js";
+import { sum } from "@tools/utils-array.js";
 import { recordStore } from "@check-doc/record-store.js";
 import { getRecordById } from "@check-doc/record-utils.js";
 import { getMemberById } from "@member/member-utils.js";
@@ -18,7 +18,7 @@ const docId = getNumberParam("docID");
 
 /**
  * 조회 대상 기록
- * @returns {import("@base/store.js").CheckRecord | undefined} docID에 해당하는 기록 (없으면 undefined)
+ * @returns {import("@infra/store.js").CheckRecord | undefined} docID에 해당하는 기록 (없으면 undefined)
  */
 function getRecord() {
 	return getRecordById(recordStore.getState().records, docId);
@@ -26,7 +26,7 @@ function getRecord() {
 
 /**
  * 기록 헤더 — 제목은 회원명(상세 화면 링크), 메타는 회차·작성일·트레이너·총점
- * @param {import("@base/store.js").CheckRecord} rec
+ * @param {import("@infra/store.js").CheckRecord} rec
  * @returns {void}
  */
 function renderHead(rec) {
@@ -58,7 +58,7 @@ function renderHead(rec) {
 
 /**
  * 인바디 7셀 + 코멘트
- * @param {import("@base/store.js").CheckRecord} rec
+ * @param {import("@infra/store.js").CheckRecord} rec
  * @returns {void}
  */
 function renderInbody(rec) {
@@ -84,7 +84,7 @@ function renderInbody(rec) {
 
 /**
  * 움직임 평가 카드 목록 (기록별 항목 — payload.items가 있으면 그대로, 없으면 scores 길이로 폴백)
- * @param {import("@base/store.js").CheckRecord} rec
+ * @param {import("@infra/store.js").CheckRecord} rec
  * @returns {void}
  */
 function renderEvals(rec) {
@@ -126,7 +126,7 @@ function renderEvals(rec) {
 
 /**
  * 목표 태그 + 메모
- * @param {import("@base/store.js").CheckRecord} rec
+ * @param {import("@infra/store.js").CheckRecord} rec
  * @returns {void}
  */
 function renderGoals(rec) {
@@ -148,7 +148,7 @@ function renderGoals(rec) {
 
 /**
  * 동작 피드백 목록 (읽기 전용)
- * @param {import("@base/store.js").CheckRecord} rec
+ * @param {import("@infra/store.js").CheckRecord} rec
  * @returns {void}
  */
 function renderFeedbacks(rec) {
@@ -172,7 +172,7 @@ function renderFeedbacks(rec) {
 
 /**
  * 종합 상담 메모
- * @param {import("@base/store.js").CheckRecord} rec
+ * @param {import("@infra/store.js").CheckRecord} rec
  * @returns {void}
  */
 function renderConsult(rec) {

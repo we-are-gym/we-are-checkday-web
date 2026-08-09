@@ -1,6 +1,6 @@
 // 파일 용도: 회원 스토어 단일 인스턴스 — 세션(sessionStorage) 영속화된 mock 저장소 (회원 관리·등록·상세 공용)
 // 주의: API 미배포 상태이므로 브라우저 세션 동안만 유지되는 mock이다. 탭을 닫으면 시드로 복원된다.
-import { Store } from "@base/store.js";
+import { Store } from "@infra/store.js";
 
 /** 세션 저장 키 */
 const STORAGE_KEY = "checkday.members.v2";
@@ -29,7 +29,7 @@ export const memberStore = new Store(
 
 /**
  * 회원 1명을 추가하고 새 id를 부여한다 (등록 화면 공용)
- * @param {Omit<import("@base/store.js").Member, "id">} data 신규 회원 데이터 (이름·성별·목표·트레이너)
+ * @param {Omit<import("@infra/store.js").Member, "id">} data 신규 회원 데이터 (이름·성별·목표·트레이너)
  * @returns {number} 부여된 회원 id
  */
 export function addMember(data) {
@@ -45,7 +45,7 @@ export function addMember(data) {
 /**
  * 회원 1명의 정보를 갱신한다 (편집 화면 공용)
  * @param {number} id 대상 회원 id
- * @param {Partial<import("@base/store.js").Member>} patch 갱신할 필드 (이름·성별·목표·트레이너 등)
+ * @param {Partial<import("@infra/store.js").Member>} patch 갱신할 필드 (이름·성별·목표·트레이너 등)
  * @returns {void}
  */
 export function updateMember(id, patch) {
