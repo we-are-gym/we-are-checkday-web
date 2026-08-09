@@ -38,35 +38,14 @@
 - 각 페이지는 진입점 모듈 하나만 로드하고 나머지는 `import`/`export` 모듈 그래프가 자동 구성.
 - 모든 HTML은 `<script type="importmap">`(모듈 별칭)과 `<script type="module">`(진입점)만 사용한다. 레거시 화면(`checkday_1.html`·`basic_function_assessment_2.html`)도 동일 체계다.
 - 정적 호스팅 캐시를 위해 각 화면의 스타일·진입 스크립트에 `?v=YYYYMMDD` 쿼리를 붙이며, `node tools/bump-version.mjs [YYYYMMDD]`로 일괄 갱신한다.
-- 다음 모듈은 공용이다:
-  - 공용 인프라
-    - `utils-dom.js`
-    - `auth.js`
-    - `store.js`
-    - `basicFunction-store.js`
-    - `component-factory.js`
-    - `constants.js`
-    - `templates.js`
-    - `validation.js`
-    - `utils-array.js`
-    - `utils-string.js`
-    - `member-utils.js`
-    - `record-utils.js`
-    - `utils-url.js`
-  - 상태 스토어
-    - `member-store.js`
-    - `record-stats.js`
-    - `record-store.js`
-  - 평가 공용 모듈
-    - `inbody.js`
-    - `vo2.js`
-    - `session-report.js`
-    - `assessment-data.js`
-    - `feedback.js`
-    - `evaluation.js`
-    - `check-form-events.js`
-    - `grade.js`
-    - `grade-styles.js`
+- `ESM` 모듈은 책임에 따라 폴더로 나뉜다 (`importmap` 별칭: `@infra/`·`@tools/`·`@calc/`·`@gym/`·`@member/`·`@check-doc/`·`@shared/`):
+  - `ESM/infra/` — 화면 무관 앱 인프라: `store.js`·`auth.js`·`constants.js`·`validation.js`·`templates.js`·`component-factory.js`·`components/`(app-header·app-gnb·app-help)
+  - `ESM/tools/` — 재사용 순수 유틸: `utils-dom.js`·`utils-array.js`·`utils-string.js`·`utils-url.js`
+  - `ESM/calc/` — 순수 계산·표현: `vo2.js`·`grade.js`·`grade-styles.js`
+  - `ESM/gym/` — 체크데이 도메인(모형·상태): `inbody.js`·`inbody-data.js`·`basicFunction-store.js`
+  - `ESM/member/` — 회원 도메인: `member-store.js`·`member-utils.js`·`components/`(member-table·member-form)
+  - `ESM/check-doc/` — 체크기록 도메인: `record-store.js`·`record-utils.js`·`record-stats.js`·`record-rest.js`·`evaluation.js`·`feedback.js`·`check-form-events.js`·`check-form-payload.js`·`check-form-payload-core.js`·`session-report.js`·`assessment-data.js`·`basic-function-item.js`·`check-movement-store.js`·`check-movement-item.js`
+  - `ESM/shared/components/` — 재사용 UI 컴포넌트 라이브러리
 
 더 상세한 내용은 [애플리케이션 아키텍처](.docs/architectures/AppArchitecture.md) 문서를 참고하십시오.
 

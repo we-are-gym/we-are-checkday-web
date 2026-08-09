@@ -1,7 +1,7 @@
 // 파일 용도: 기록 모형 ↔ REST DTO 직렬화 계약 검증 (Node 런타임 직접 실행)
 // 실행: node tools/verify-record-rest.mjs
 import assert from "node:assert/strict";
-import { InbodyData } from "../ESM/base/inbody-data.js";
+import { InbodyData } from "../ESM/gym/inbody-data.js";
 import {
 	ibToRest,
 	restToIb,

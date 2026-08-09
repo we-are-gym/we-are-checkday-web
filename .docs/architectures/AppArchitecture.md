@@ -4,6 +4,7 @@
 
 - JS는 **ES Modules**(`<script type="module">`)로 로드된다. 각 페이지는 진입점 모듈 하나만 `<script>` 태그로 로드하고, 나머지 의존성은 `import`/`export`로 모듈 그래프가 자동 구성된다. 페이지마다 공용 모듈을 수동 로드할 필요가 없다.
 - 계층 구조나 클린 아키텍처 따위에 집착하지 마십시오.
+- `ESM` 모듈은 책임에 따라 폴더로 나뉜다: `infra`(앱 인프라)·`tools`(재사용 유틸)·`calc`(순수 계산)·`gym`(체크데이 도메인)·`member`·`check-doc`·`shared/components` (importmap 별칭 `@infra/`·`@tools/`·`@calc/`·`@gym/`·`@member/`·`@check-doc/`·`@shared/`).
 
 ### 공용 인프라 모듈 (임포트 그래프의 잎·화면 공용)
 
@@ -19,7 +20,7 @@
 | `validation.js`          | `parseToNum`, `anyNaN`, `clamp`                                            | 수치 파싱·NaN 판별·범위 clamp                                                      | 없음                                     |
 | `constants.js`           | 상수                                                                       | 마법 숫자 중앙화 (점수·임계점·총점)                                                | 없음                                     |
 | `utils-dom.js`           | `byId`, `queryOne`, `queryAll`, `setHTML`, `setText`, `toggle`, `delegate` | DOM 조회·내용 설정·클래스 토글·이벤트 위임                                         | 없음                                     |
-| `basicFunction-store.js` | `createScoreState`, `scoreState`                                           | 평가 점수 배열·총점·초기화 단일 소스 (팩토리 + 전역 인스턴스)                      | `utils-array`, `validation`, `constants` |
+| `basicFunction-store.js` | `createScoreState`, `scoreState`                                           | 평가 점수 배열·총점·평가 항목 단일 소스 (팩토리 + 전역 인스턴스)                  | `utils-array`, `validation`, `constants` |
 
 ### 앱 상태·정적 스토어 (관찰자 패턴, sessionStorage mock 영속화)
 
@@ -39,7 +40,7 @@
 | `grade.js`             | `getGradeMeta`                                                                                                                         | 총점 → 등급 라벨 산정                                                         | `constants`                                                                                               |
 | `grade-styles.js`      | `GRADE_STYLES`, `VO2_GRADE_STYLES`, `getScoreColor`                                                                                    | 등급·VO₂ 라벨 스타일 공용                                                     | 없음                                                                                                      |
 | `inbody.js`            | `generateInbodyTags`, `updateInbodyTags`                                                                                               | 인바디 수치 → 상태 태그 분류·갱신                                             | `UI`                                                                                                      |
-| `evaluation.js`        | `evals`, `configureEvaluation`, `renderBasicFunctionCards`, `adjustScore`, `toggleBasicFunctionDetail`, `updateVO2Disp`, `updateTotal` | 평가 항목 구성(화면별 5·8) 설정 + 카드 빌드·점수/등급/총점 갱신               | `assessment-data`, `validation`, `UI`, `states`, `templates`, `constants`, `vo2`, `grade`, `grade-styles` |
+| `evaluation.js`        | `configureEvaluation`, `getEvals`, `getScore`, `getTotal`, `getMax`, `renderBasicFunctionCards`, `adjustScore`, `toggleBasicFunctionDetail`, `updateVO2Disp`, `updateTotal` | 평가 항목 구성(화면별 5·8) 설정 + 카드 빌드·점수/등급/총점 갱신 (항목·만점은 scoreState Store가 단일 소스) | `assessment-data`, `validation`, `UI`, `states`, `templates`, `constants`, `vo2`, `grade`, `grade-styles` |
 | `feedback.js`          | `appendCheckMovement`, `appendCheckMovementItemRow`, `renderCheckMovementCards`, `collectCheckMovementData` 등                         | 체크동작 CRUD 등                                                              | `UI`, `templates`                                                                                         |
 | `check-form-events.js` | `setupCheckFormEvents`, `resetCheckForm`                                                                                               | 상담지 폼 공용 이벤트 위임·인바디/목표 주입·전체 초기화                       | `UI`, `templates`, `constants`, `states`, `evaluation`, `inbody`, `feedback`                              |
 | `session-report.js`    | `sessionReport`, `SessionReport`                                                                                                       | 결과 요약 HTML 조립·세션 리포트 모달·클립보드 복사                            | `UI`, `states`, `evaluation`, `feedback`                                                                  |
