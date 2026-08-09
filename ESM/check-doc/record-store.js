@@ -98,7 +98,7 @@ const SEED_RECORDS = [
 		{
 			trainer: "김지훈",
 			ibComment: "체지방량이 기준치보다 높아 유산소 비중 확대 필요",
-			goals: ["체지방률 25% 이하"],
+			goals: ["🔥 체지방 감소", "⚖️ 체중 유지"],
 			goalMemo: "주 3회 유산소 30분 추가",
 			feedbacks: [
 				{
@@ -122,7 +122,7 @@ const SEED_RECORDS = [
 		{
 			trainer: "김지훈",
 			ibComment: "체지방량 감소, 골격근량 소폭 증가 — 방향 양호",
-			goals: ["체지방률 25% 이하"],
+			goals: ["🔥 체지방 감소", "⚖️ 체중 유지"],
 			goalMemo: "유산소 유지 + 상체 저중량 고반복 추가",
 			consultMemo: "간식 대신 견과류로 대체 제안",
 		},
@@ -137,7 +137,7 @@ const SEED_RECORDS = [
 		{
 			trainer: "김지훈",
 			ibComment: "체지방률 2월 대비 재상승 — 명절 외식 구간으로 추정",
-			goals: ["체지방률 25% 이하", "골격근량 33kg"],
+			goals: ["🔥 체지방 감소", "⚖️ 체중 유지"],
 			goalMemo: "근력 강도 상향 단계 진입",
 			feedbacks: [
 				{
@@ -159,7 +159,7 @@ const SEED_RECORDS = [
 		{
 			trainer: "김지훈",
 			ibComment: "체지방률 24.7% — 목표 달성, 다음 목표 23%",
-			goals: ["체지방률 23% 이하", "골격근량 33kg"],
+			goals: ["🔥 체지방 감소", "⚖️ 체중 유지"],
 			goalMemo: "유산소 40분 + 근력 3분할",
 			consultMemo: "목표 재설정 — 23%까지 감량 협의",
 		},
@@ -174,7 +174,7 @@ const SEED_RECORDS = [
 		{
 			trainer: "김지훈",
 			ibComment: "체지방량 17.4kg, 골격근량 33.2kg — 감량·증량 동시 진행",
-			goals: ["체지방률 23% 이하", "골격근량 34kg"],
+			goals: ["🔥 체지방 감소", "⚖️ 체중 유지"],
 			goalMemo: "다음 목표: 골격근량 34kg, 체지방률 유지",
 			feedbacks: [
 				{
@@ -198,7 +198,7 @@ const SEED_RECORDS = [
 			trainer: "박소연",
 			ibComment:
 				"첫 측정 — 골격근량 대비 체지방률 높은 편, 근력 운동 우선",
-			goals: ["체지방률 32% 이하"],
+			goals: ["💪 근력 향상", "🧘 자세 교정"],
 			goalMemo: "하체 중심 2분할 루틴",
 			consultMemo: "런지 시 무릎 통증 호소 — 무릎 정렬 체크 반복",
 		},
@@ -214,7 +214,7 @@ const SEED_RECORDS = [
 			trainer: "박소연",
 			ibComment:
 				"체지방률 하락, 골격근량은 소폭 감소 — 운동 강도 유지 필요",
-			goals: ["체지방률 32% 이하", "골격근량 24kg"],
+			goals: ["💪 근력 향상", "🧘 자세 교정"],
 			goalMemo: "상체 저중량 고반복 추가",
 			feedbacks: [
 				{
@@ -237,7 +237,7 @@ const SEED_RECORDS = [
 			trainer: "박소연",
 			ibComment:
 				"골격근량 회복(+0.7kg), 체지방률은 1회차 수준으로 재상승",
-			goals: ["체지방률 32% 이하"],
+			goals: ["💪 근력 향상", "🧘 자세 교정"],
 			goalMemo: "유산소 30분 + 근력 2분할 유지",
 			consultMemo: "주말 외식 빈도 조절 상담",
 		},
@@ -253,7 +253,7 @@ const SEED_RECORDS = [
 		{
 			trainer: "김지훈",
 			ibComment: "첫 측정 — 기준값 확보",
-			goals: ["체형 교정", "체지방률 34% 이하"],
+			goals: ["🧘 자세 교정", "🤸 유연성 개선"],
 			goalMemo: "자세 교정 운동 병행",
 			feedbacks: [
 				{
@@ -277,7 +277,7 @@ const SEED_RECORDS = [
 			trainer: "김지훈",
 			ibComment:
 				"체지방 감소·근량 유지 — 순조로운 진행 (8항목 전체 측정)",
-			goals: ["체형 교정"],
+			goals: ["🧘 자세 교정", "🤸 유연성 개선"],
 			goalMemo: "스트레칭 10분 일상화",
 			consultMemo: "데드리프트 자세 안정화됨",
 		},
@@ -292,7 +292,7 @@ const SEED_RECORDS = [
 		{
 			trainer: "김지훈",
 			ibComment: "체지방률 재상승 — 더위로 인한 운동 빈도 감소 추정",
-			goals: ["체형 교정", "체지방률 30% 이하"],
+			goals: ["🧘 자세 교정", "🤸 유연성 개선"],
 			goalMemo: "강도 상향 단계",
 			feedbacks: [
 				{
@@ -316,7 +316,7 @@ const SEED_RECORDS = [
 		{
 			trainer: "김지훈",
 			ibComment: "체지방률 30.0% — 목표 도달, 근량 +0.4kg 동반 증가",
-			goals: ["체형 교정", "체지방률 28% 이하"],
+			goals: ["🧘 자세 교정", "🤸 유연성 개선"],
 			goalMemo: "코어 강화 + 식단 유지",
 			consultMemo: "6개월 단위 목표 재설정",
 		},
@@ -332,7 +332,7 @@ const SEED_RECORDS = [
 		{
 			trainer: "박소연",
 			ibComment: "첫 측정 — 기준값 확보, 골격근량 증량 목표",
-			goals: ["골격근량 28kg"],
+			goals: ["💪 근력 향상", "🦵 하체 강화"],
 			goalMemo: "단백질 1.6g/kg 섭취 + 하체 중심 3분할",
 			consultMemo: "움직임 테스트 전반 — 하체 가동성 우선 지도",
 		},
@@ -348,7 +348,7 @@ const SEED_RECORDS = [
 			trainer: "박소연",
 			ibComment:
 				"체지방률·내장지방 상승 — 야식 패턴 확인, 식단 점검 필요",
-			goals: ["골격근량 28kg", "체지방률 유지"],
+			goals: ["💪 근력 향상", "🦵 하체 강화"],
 			goalMemo: "저녁 탄수화물 분량 조절",
 			feedbacks: [
 				{
@@ -370,7 +370,7 @@ const SEED_RECORDS = [
 		{
 			trainer: "박소연",
 			ibComment: "골격근량 28kg 목표 달성, 체지방률 1회차 이하로 회복",
-			goals: ["골격근량 29kg"],
+			goals: ["💪 근력 향상", "🦵 하체 강화"],
 			goalMemo: "4분할 루틴 + 주 4회 운동",
 			consultMemo: "다음 회차 목표 설정 논의",
 		},
@@ -387,7 +387,7 @@ const SEED_RECORDS = [
 		{
 			trainer: "김지훈",
 			ibComment: "첫 측정 — 기준값 확보",
-			goals: ["체지방률 28% 이하"],
+			goals: ["🔥 체지방 감소", "🏃 체력 향상"],
 			goalMemo: "주 3회 유산소 20분부터",
 			consultMemo: "출퇴근 계단 이용 습관 제안",
 		},
@@ -402,7 +402,7 @@ const SEED_RECORDS = [
 		{
 			trainer: "김지훈",
 			ibComment: "체중 소폭 증가, 체지방률은 하락 — 근량 증가 효과",
-			goals: ["체지방률 28% 이하", "골격근량 27kg"],
+			goals: ["🔥 체지방 감소", "🏃 체력 향상"],
 			goalMemo: "하체 저중량 고반복 추가",
 			feedbacks: [
 				{
@@ -423,7 +423,7 @@ const SEED_RECORDS = [
 		{
 			trainer: "김지훈",
 			ibComment: "체지방률 다시 상승 — 식단 이탈 구간으로 추정",
-			goals: ["체지방률 28% 이하"],
+			goals: ["🔥 체지방 감소", "🏃 체력 향상"],
 			goalMemo: "간식 기록 일지 시작",
 			consultMemo: "주말 외식 빈도 조절 상담",
 		},
@@ -438,7 +438,7 @@ const SEED_RECORDS = [
 		{
 			trainer: "김지훈",
 			ibComment: "체중 증가에도 체지방률 최저치 — 근육량 증가 폭이 큼",
-			goals: ["골격근량 27kg"],
+			goals: ["🔥 체지방 감소", "🏃 체력 향상"],
 			goalMemo: "강도 상향 단계",
 			feedbacks: [
 				{
@@ -460,7 +460,7 @@ const SEED_RECORDS = [
 			trainer: "김지훈",
 			ibComment:
 				"체지방률 상승·근량 감소 — 휴식 부족 의심 (8항목 전체 측정)",
-			goals: ["체지방률 28% 이하"],
+			goals: ["🔥 체지방 감소", "🏃 체력 향상"],
 			goalMemo: "수면 7시간 목표",
 			consultMemo: "취침 시간대 변경 제안",
 		},
@@ -475,7 +475,7 @@ const SEED_RECORDS = [
 		{
 			trainer: "김지훈",
 			ibComment: "체지방률·체지방량 동반 하락 — 회복 추세",
-			goals: ["체지방률 28% 이하", "골격근량 27kg"],
+			goals: ["🔥 체지방 감소", "🏃 체력 향상"],
 			goalMemo: "유산소 30분 유지 + 코어 추가",
 			feedbacks: [
 				{
@@ -497,7 +497,7 @@ const SEED_RECORDS = [
 			trainer: "김지훈",
 			ibComment:
 				"체지방률 최고치 — 더운 날씨 식욕 저하로 간식 대체 가능성",
-			goals: ["체지방률 28% 이하"],
+			goals: ["🔥 체지방 감소", "🏃 체력 향상"],
 			goalMemo: "단백질 섭취량 보충",
 			consultMemo: "운동 후 식사 타이밍 상담",
 		},
@@ -512,7 +512,7 @@ const SEED_RECORDS = [
 		{
 			trainer: "김지훈",
 			ibComment: "체지방률 30.5% — 1회차 대비 1.0pp 하락, 근량은 +0.5kg",
-			goals: ["체지방률 28% 이하", "골격근량 27kg"],
+			goals: ["🔥 체지방 감소", "🏃 체력 향상"],
 			goalMemo: "다음 회차부터 스미스머신 스쿼트 도입",
 			feedbacks: [
 				{
@@ -535,7 +535,7 @@ const SEED_RECORDS = [
 		{
 			trainer: "김지훈",
 			ibComment: "첫 측정 — 기준값 확보, 골격근량 증량 목표",
-			goals: ["골격근량 33kg"],
+			goals: ["📈 근육량 증가", "🦵 하체 강화"],
 			goalMemo: "단백질 1.6g/kg 섭취 + 하체 중심 3분할",
 			consultMemo: "움직임 테스트 전반 — 하체 가동성 우선 지도",
 		},
@@ -551,7 +551,7 @@ const SEED_RECORDS = [
 			trainer: "김지훈",
 			ibComment:
 				"골격근량 +1.3kg, 체지방률 유지 — 증량 방향 양호 (8항목 전체 측정)",
-			goals: ["골격근량 33kg"],
+			goals: ["📈 근육량 증가", "🦵 하체 강화"],
 			goalMemo: "상체 저중량 고반복 + 하체 중강도",
 			feedbacks: [
 				{
@@ -573,7 +573,7 @@ const SEED_RECORDS = [
 		{
 			trainer: "김지훈",
 			ibComment: "골격근량 유지, 체중 소폭 조정 — 증량 속도 조절 구간",
-			goals: ["골격근량 33kg", "체지방률 유지"],
+			goals: ["📈 근육량 증가", "🦵 하체 강화"],
 			goalMemo: "4분할 루틴 + 주 4회 운동",
 			consultMemo: "다음 회차 목표 설정 논의",
 		},
