@@ -1,7 +1,7 @@
 // 파일 용도: 체크기록 폼(상담지) 직렬화·프리필 공용 모듈 — check-doc-edit와 check-doc-new(저장)가 공유
 // 기법: 폼 DOM→기록 payload, 기록 payload→폼 DOM 변환을 함수로 추출하여
 //       편집·작성 화면에서 중복 직렬화 코드가 생기지 않게 한다.
-//       (DOM 헬퍼 byId·document 쿼리에 의존하는 화면 로직 계층이다 — 순수 연산은 별도 모듈에서 담당한다.)
+//       (DOM 헬퍼 byId·document 쿼리에 의존하는 화면 로직 계층이다 — 순수 연산은 check-form-payload-core가 담당한다.)
 import { byId } from "@base/utils-dom.js";
 import { DOT_COUNT } from "@base/constants.js";
 import { updateInbodyTags } from "@base/inbody.js";
@@ -10,6 +10,7 @@ import { getEvals, updateTotal } from "./evaluation.js";
 import { appendCheckMovement } from "./feedback.js";
 import { getMemberById } from "@member/member-utils.js";
 import { memberStore } from "@member/member-store.js";
+import { buildPayload, resolvePrefillValues } from "./check-form-payload-core.js";
 
 /** 인바디 입력 필드 id 목록 (payload.ib 키와 1:1) */
 export const IB_IDS = ["w", "m", "fat", "bmi", "bfp", "bmr", "vis"];
@@ -53,25 +54,27 @@ export function prefillEvalState(scores, evalData) {
 
 /**
  * 기록 payload를 현재 상담지 폼에 되돌려 채운다 (편집·조회 공용)
+ * 값 도출은 순수 함수(resolvePrefillValues)가 담당하고, 여기서는 DOM에 쓴다.
  * @param {import("@base/store.js").CheckRecord} rec 프리필할 기록
  */
 export function prefillForm(rec) {
-	const p = rec.payload;
 	// 회원 이름은 payload가 아닌 회원 스토어에서 현재 이름을 동적 해석한다 (회원명 변경 즉시 전파)
 	const member = getMemberById(memberStore.getState().members, rec.memberId);
-	byId("m-name").value = member ? member.name : "";
-	byId("m-session").value = p.session || "";
-	byId("m-trainer").value = p.trainer || "";
+	const v = resolvePrefillValues(rec, member);
+
+	byId("m-name").value = v.name;
+	byId("m-session").value = v.session;
+	byId("m-trainer").value = v.trainer;
 	const dateEl = byId("m-date");
-	if (dateEl) dateEl.value = rec.date || "";
+	if (dateEl) dateEl.value = v.date;
 
 	// 인바디 + 코멘트
-	IB_IDS.forEach((k) => (byId(`ib-${k}`).value = p.ib?.[k] || ""));
-	byId("ib-comment").value = p.ibComment || "";
+	IB_IDS.forEach((k) => (byId(`ib-${k}`).value = v.ib?.[k] || ""));
+	byId("ib-comment").value = v.ibComment;
 	updateInbodyTags();
 
 	// 점수·체크 항목·메모
-	prefillEvalState(p.scores, p.evalData);
+	prefillEvalState(v.scores, v.evalData);
 
 	// 목표 (고정 태그 on/off) — aria-pressed도 상태와 함께 동기화
 	const fixed = [...document.querySelectorAll(".goal-tag")];
@@ -79,7 +82,7 @@ export function prefillForm(rec) {
 		el.classList.remove("on");
 		el.setAttribute("aria-pressed", "false");
 	});
-	(p.goals || []).forEach((g) => {
+	v.goals.forEach((g) => {
 		const hit = fixed.find((el) => el.textContent === g);
 		if (hit) {
 			hit.classList.add("on");
@@ -87,11 +90,11 @@ export function prefillForm(rec) {
 		}
 	});
 	const goalMemoEl = byId("goal-memo");
-	if (goalMemoEl) goalMemoEl.value = p.goalMemo || "";
+	if (goalMemoEl) goalMemoEl.value = v.goalMemo;
 
 	// 동작 피드백 (기록에 있는 카드만 재구성)
 	byId("fb-cards").innerHTML = "";
-	(p.feedbacks || []).forEach((fb) => {
+	v.feedbacks.forEach((fb) => {
 		appendCheckMovement({
 			name: fb.name,
 			checks: (fb.checkItems || []).map((c) => c.text),
@@ -107,12 +110,13 @@ export function prefillForm(rec) {
 		if (memo) memo.value = fb.memo || "";
 	});
 
-	byId("consult-memo").value = p.consultMemo || "";
+	byId("consult-memo").value = v.consultMemo;
 	updateTotal();
 }
 
 /**
  * 현재 상담지 폼을 기록 payload로 직렬화 (저장·편집 공용)
+ * DOM에서 원시 값을 읽은 뒤 순수 함수(buildPayload)로 payload를 조립한다.
  * @returns {import("@base/store.js").CheckRecordPayload}
  */
 export function collectPayload() {
@@ -143,7 +147,8 @@ export function collectPayload() {
 		.filter(
 			(fb) => fb.name || fb.checkItems.some((c) => c.text) || fb.memo,
 		);
-	return {
+
+	return buildPayload({
 		session: byId("m-session").value,
 		trainer: byId("m-trainer").value,
 		ib: Object.fromEntries(IB_IDS.map((k) => [k, byId(`ib-${k}`).value])),
@@ -156,5 +161,5 @@ export function collectPayload() {
 		goalMemo: byId("goal-memo").value,
 		feedbacks,
 		consultMemo: byId("consult-memo").value,
-	};
+	});
 }
