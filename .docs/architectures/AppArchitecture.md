@@ -44,7 +44,7 @@
 | `check-form-events.js` | `setupCheckFormEvents`, `resetCheckForm`                                                                                               | 상담지 폼 공용 이벤트 위임·인바디/목표 주입·전체 초기화                       | `UI`, `templates`, `constants`, `states`, `evaluation`, `inbody`, `feedback`                              |
 | `session-report.js`    | `sessionReport`, `SessionReport`                                                                                                       | 결과 요약 HTML 조립·세션 리포트 모달·클립보드 복사                            | `UI`, `states`, `evaluation`, `feedback`                                                                  |
 
-### 웹 컴포넌트 (light DOM — `ESM/base/components/`·`ESM/member/components/`)
+### 웹 컴포넌트 (light DOM — `ESM/infra/components/`·`ESM/member/components/`)
 
 | 컴포넌트       | 기능                                                     |
 | -------------- | -------------------------------------------------------- |
@@ -116,5 +116,5 @@
   - `aria-pressed`
   - …
 - 공용 타입 정보는 JSDoc으로 문서화하십시오.
-  - 코드 편집기의 타입 추론을 위하여 `@param {import("@base/store.js").CheckRecord}`처럼 참조형 타입을 사용하십시오.
+  - 코드 편집기의 타입 추론을 위하여 `@param {import("@infra/store.js").CheckRecord}`처럼 참조형 타입을 사용하십시오.
 - 舊 컴포넌트 라이브러리보다 新 컴포넌트 라이브러리(`@shared/components`)의 소스코드를 우선적으로 선택하여 사용하십시오.
