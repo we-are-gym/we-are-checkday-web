@@ -86,6 +86,7 @@
   - `JS`
   - `CSS`
   - `URL`
+  - `CPAN`
   - `DTO`
   - `CORS`
   - `ESM`
