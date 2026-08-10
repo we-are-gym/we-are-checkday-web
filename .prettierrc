@@ -4,6 +4,6 @@
 	"printWidth": 140,
 	"endOfLine": "crlf",
 	"singleQuote": false,
-	"trailingComma": "all",
-	"arrowParens": "always"
+	"trailingComma": "es5",
+	"arrowParens": "avoid"
 }
