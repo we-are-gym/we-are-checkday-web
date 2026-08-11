@@ -1,27 +1,15 @@
 // 파일 용도: 회원 상세 조회 및 체크기록 비교 화면(member-detail.html)
 // ?memberID= 로 회원을 조회하고, 회원 정보 카드·스파크라인 4종·체크 기록 탭·변화 분석 탭을 렌더링한다.
-import "@infra/components/app-header.js";
-import { TPL, escapeHtml } from "@infra/templates.js";
-import {
-	byId,
-	delegate,
-	queryAll,
-	queryOne,
-	setHTML,
-	setText,
-} from "@tools/utils-dom.js";
-import { getNumberParam } from "@tools/utils-url.js";
-import { sum } from "@tools/utils-array.js";
-import {
-	buildCompareTable,
-	recordMax,
-	sessionLabel,
-	sparkline,
-} from "@check-doc/record-stats.js";
+import { buildCompareTable, recordMax, sessionLabel, sparkline } from "@check-doc/record-stats.js";
 import { recordStore } from "@check-doc/record-store.js";
 import { getRecordById, getRecordsByMember } from "@check-doc/record-utils.js";
+import "@infra/components/app-header.js";
+import { TPL, escapeHtml } from "@infra/templates.js";
 import { memberStore } from "@member/member-store.js";
 import { getMemberById } from "@member/member-utils.js";
+import { sum } from "@tools/utils-array.js";
+import { byId, delegate, queryAll, queryOne, setHTML, setText } from "@tools/utils-dom.js";
+import { getNumberParam } from "@tools/utils-url.js";
 
 /** ?memberID= 파라미터 (없으면 0 — 미조회 상태) */
 const memberId = getNumberParam("memberID");
@@ -54,10 +42,7 @@ function renderInfoCard(member) {
  */
 function renderStatCards(records) {
 	if (!records.length) {
-		setHTML(
-			"stat-charts",
-			'<div class="sparkline-empty">아직 체크기록이 없어요</div>',
-		);
+		setHTML("stat-charts", '<div class="sparkline-empty">아직 체크기록이 없어요</div>');
 		return;
 	}
 	// 프로토타입 STAT_METRICS 순서: 체지방률 → 체중 → 골격근량 → 체지방량, + 내장지방(to-be 추가)
@@ -69,7 +54,7 @@ function renderStatCards(records) {
 			unit: "%",
 			deltaUnit: "%p",
 			deltaDigits: 1,
-			fmt: (v) => v.toFixed(1),
+			fmt: v => v.toFixed(1),
 		},
 		{
 			label: "체중 변화",
@@ -77,7 +62,7 @@ function renderStatCards(records) {
 			unit: "kg",
 			deltaUnit: "kg",
 			deltaDigits: 1,
-			fmt: (v) => v.toFixed(1),
+			fmt: v => v.toFixed(1),
 		},
 		{
 			label: "골격근량 변화",
@@ -85,7 +70,7 @@ function renderStatCards(records) {
 			unit: "kg",
 			deltaUnit: "kg",
 			deltaDigits: 1,
-			fmt: (v) => v.toFixed(1),
+			fmt: v => v.toFixed(1),
 		},
 		{
 			label: "체지방량 변화",
@@ -93,7 +78,7 @@ function renderStatCards(records) {
 			unit: "kg",
 			deltaUnit: "kg",
 			deltaDigits: 1,
-			fmt: (v) => v.toFixed(1),
+			fmt: v => v.toFixed(1),
 		},
 		{
 			label: "내장지방 변화",
@@ -101,7 +86,7 @@ function renderStatCards(records) {
 			unit: "레벨",
 			deltaUnit: "레벨",
 			deltaDigits: 0,
-			fmt: (v) => v.toFixed(0),
+			fmt: v => v.toFixed(0),
 		},
 	];
 	const firstSession = records[0]?.payload.session ?? "";
@@ -109,10 +94,8 @@ function renderStatCards(records) {
 	setHTML(
 		"stat-charts",
 		metrics
-			.map((metric) => {
-				const nums = records
-					.map((r) => parseFloat(r.payload.ib?.[metric.key]))
-					.filter((v) => !Number.isNaN(v));
+			.map(metric => {
+				const nums = records.map(r => parseFloat(r.payload.ib?.[metric.key])).filter(v => !Number.isNaN(v));
 				const latest = nums[nums.length - 1];
 				const first = nums[0];
 				const delta =
@@ -129,7 +112,7 @@ function renderStatCards(records) {
 						<div class="chart-stat-foot"><span>${escapeHtml(firstSession)}</span><span>${escapeHtml(lastSession)}</span></div>
 					</div>`;
 			})
-			.join(""),
+			.join("")
 	);
 }
 
@@ -139,21 +122,18 @@ function renderStatCards(records) {
  */
 function renderRecords(records) {
 	if (!records.length) {
-		setHTML(
-			"record-list",
-			'<p class="record-empty">아직 체크기록이 없습니다. ＋ 체크기록 작성으로 시작하세요.</p>',
-		);
+		setHTML("record-list", '<p class="record-empty">아직 체크기록이 없습니다. ＋ 체크기록 작성으로 시작하세요.</p>');
 		return;
 	}
 	// to-be: 회차·날짜·총점 — 회차는 sessionLabel로 레거시 "2026-04 (1회차)"에서도 "1회차"만 추출
-	const rows = records.map((r) => ({
+	const rows = records.map(r => ({
 		id: r.id,
 		session: sessionLabel(r.payload.session || r.date),
 		date: r.date,
 		total: sum(r.payload.scores || []),
 		max: recordMax(r.payload),
 	}));
-	setHTML("record-list", rows.map((r) => TPL.recordRow(r)).join(""));
+	setHTML("record-list", rows.map(r => TPL.recordRow(r)).join(""));
 }
 
 /**
@@ -167,20 +147,11 @@ function fillCompareSelects(records) {
 	const leftSel = byId("cmp-cur");
 	const rightSel = byId("cmp-tgt");
 	if (records.length === 0) {
-		leftSel.innerHTML =
-			rightSel.innerHTML = `<option>체크기록 없음</option>`;
-		setHTML(
-			"compare-result",
-			'<div class="sparkline-empty">비교할 체크기록이 없어요</div>',
-		);
+		leftSel.innerHTML = rightSel.innerHTML = `<option>체크기록 없음</option>`;
+		setHTML("compare-result", '<div class="sparkline-empty">비교할 체크기록이 없어요</div>');
 		return;
 	}
-	const opts = records
-		.map(
-			(r) =>
-				`<option value="${r.id}">${r.payload.session || r.date} (${r.date})</option>`,
-		)
-		.join("");
+	const opts = records.map(r => `<option value="${r.id}">${r.payload.session || r.date} (${r.date})</option>`).join("");
 	leftSel.innerHTML = opts;
 	rightSel.innerHTML = opts;
 	// 좌측 셀렉터: 직전 회차 (records.length >= 2면 length-2, 아니면 0)
@@ -205,7 +176,7 @@ function renderCompare() {
 		buildCompareTable(left, right, {
 			showTotalScoreLabel: false,
 			includeMovementHeader: true,
-		}),
+		})
 	);
 }
 
@@ -216,7 +187,7 @@ function renderCompare() {
 function switchTab(tabName) {
 	const tabs = queryAll(".tab-btn");
 
-	tabs.forEach((btn) => {
+	tabs.forEach(btn => {
 		const active = btn.dataset.tab === tabName;
 		btn.setAttribute("aria-selected", String(active));
 		btn.tabIndex = active ? 0 : -1;
@@ -237,10 +208,9 @@ function onTabKeydown(e, tabs) {
 	if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
 	e.preventDefault();
 
-	const idx = tabs.findIndex((t) => t.dataset.tab === e.target.dataset.tab);
+	const idx = tabs.findIndex(t => t.dataset.tab === e.target.dataset.tab);
 
-	const next =
-		(idx + (e.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length;
+	const next = (idx + (e.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length;
 
 	switchTab(tabs[next].dataset.tab);
 	tabs[next].focus();
@@ -274,9 +244,7 @@ function exportMemberDetailPNG() {
 	}
 
 	if (typeof html2canvas === "undefined") {
-		alert(
-			"이미지 생성 라이브러리(html2canvas)를 불러오지 못했습니다. 네트워크 확인 후 다시 시도하세요.",
-		);
+		alert("이미지 생성 라이브러리(html2canvas)를 불러오지 못했습니다. 네트워크 확인 후 다시 시도하세요.");
 		return;
 	}
 
@@ -284,12 +252,12 @@ function exportMemberDetailPNG() {
 	const controls = target.querySelectorAll("a.btn, button:not(.tab-btn)");
 
 	const restoreControls = () =>
-		controls.forEach((el) => {
+		controls.forEach(el => {
 			el.style.visibility = el.dataset.pngPrevVisibility || "";
 			delete el.dataset.pngPrevVisibility;
 		});
 
-	controls.forEach((el) => {
+	controls.forEach(el => {
 		el.dataset.pngPrevVisibility = el.style.visibility;
 		el.style.visibility = "hidden";
 	});
@@ -297,7 +265,7 @@ function exportMemberDetailPNG() {
 	// 비교 셀렉터를 텍스트 박스(<div class="export-select">)로 잠시 교체 — html2canvas의 select 텍스트 잘림 방지
 	const selects = [...target.querySelectorAll(".compare-field select")];
 
-	const restoredSelects = selects.map((sel) => {
+	const restoredSelects = selects.map(sel => {
 		const opt = sel.options[sel.selectedIndex];
 		const div = document.createElement("div");
 
@@ -310,28 +278,24 @@ function exportMemberDetailPNG() {
 		return { sel, div };
 	});
 
-	const restoreSelects = () =>
-		restoredSelects.forEach(({ sel, div }) => div.replaceWith(sel));
+	const restoreSelects = () => restoredSelects.forEach(({ sel, div }) => div.replaceWith(sel));
 
 	html2canvas(target, {
 		backgroundColor: "#131313",
 		scale: 2,
 		useCORS: true,
 	})
-		.then((canvas) => {
+		.then(canvas => {
 			restoreSelects();
 			restoreControls();
 
-			const member = getMemberById(
-				memberStore.getState().members,
-				memberId,
-			);
+			const member = getMemberById(memberStore.getState().members, memberId);
 			const link = document.createElement("a");
 			link.download = `체크데이_${member ? member.name : "회원"}_${new Date().toISOString().slice(0, 10)}.png`;
 			link.href = canvas.toDataURL("image/png");
 			link.click();
 		})
-		.catch((err) => {
+		.catch(err => {
 			restoreSelects();
 			restoreControls();
 			alert(`이미지 생성에 실패했어요: ${err.message}`);
@@ -347,10 +311,7 @@ function init() {
 	if (!member) {
 		setHTML("stat-charts", "");
 
-		setHTML(
-			"record-list",
-			'<p class="record-empty">회원을 찾을 수 없습니다. 회원 목록에서 다시 선택하세요.</p>',
-		);
+		setHTML("record-list", '<p class="record-empty">회원을 찾을 수 없습니다. 회원 목록에서 다시 선택하세요.</p>');
 
 		byId("new-record-btn").style.display = "none";
 
@@ -378,11 +339,9 @@ delegate(document, "click", "[data-del-record]", (e, el) => {
 	if (!confirm("체크기록을 삭제하시겠습니까?")) {
 		return;
 	}
-	recordStore.setState((prev) => ({
+	recordStore.setState(prev => ({
 		...prev,
-		records: prev.records.filter(
-			(r) => r.id !== Number(el.dataset.delRecord),
-		),
+		records: prev.records.filter(r => r.id !== Number(el.dataset.delRecord)),
 	}));
 
 	refreshRecords();
@@ -393,26 +352,22 @@ delegate(document, "click", "[data-del-record]", (e, el) => {
  * @param {HTMLElement} el 클릭된 기록 행 (data-record-id 보유)
  * @returns {void}
  */
-const goView = (el) =>
-	(window.location.href = `check-doc-view.html?docID=${el.dataset.recordId}`);
+const goView = el => (window.location.href = `check-doc-view.html?docID=${el.dataset.recordId}`);
 
 delegate(document, "click", ".record-row", (e, el) => {
 	if (e.target.closest("[data-del-record]")) return;
 	goView(el);
 });
 delegate(document, "keydown", ".record-row", (e, el) => {
-	if (
-		(e.key === "Enter" || e.key === " ") &&
-		!e.target.closest("[data-del-record]")
-	) {
+	if ((e.key === "Enter" || e.key === " ") && !e.target.closest("[data-del-record]")) {
 		e.preventDefault();
 		goView(el);
 	}
 });
 const tabs = queryAll(".tab-btn");
-tabs.forEach((btn) => {
+tabs.forEach(btn => {
 	btn.addEventListener("click", () => switchTab(btn.dataset.tab));
-	btn.addEventListener("keydown", (e) => onTabKeydown(e, tabs));
+	btn.addEventListener("keydown", e => onTabKeydown(e, tabs));
 });
 byId("cmp-cur").addEventListener("change", renderCompare);
 byId("cmp-tgt").addEventListener("change", renderCompare);

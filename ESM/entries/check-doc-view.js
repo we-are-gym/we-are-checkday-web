@@ -1,17 +1,17 @@
 // 파일 용도: 체크기록 조회 화면(check-doc-view.html)
 // ?docID= 로 기록 1건을 읽기 전용으로 렌더링한다. 수정은 check-doc-edit.html?docID= 로 이동(커밋 13에서 실링크).
-import "@infra/components/app-header.js";
-import { escapeHtml, TPL } from "@infra/templates.js";
-import { byId, queryAll, setHTML, setText } from "@tools/utils-dom.js";
-import { inbodyTagFor } from "@gym/inbody.js";
-import { getNumberParam } from "@tools/utils-url.js";
 import { resolveRecordItems } from "@check-doc/assessment-data.js";
 import { IB_KEYS, recordMax } from "@check-doc/record-stats.js";
-import { sum } from "@tools/utils-array.js";
 import { recordStore } from "@check-doc/record-store.js";
 import { getRecordById } from "@check-doc/record-utils.js";
-import { getMemberById } from "@member/member-utils.js";
+import { inbodyTagFor } from "@gym/inbody.js";
+import "@infra/components/app-header.js";
+import { escapeHtml, TPL } from "@infra/templates.js";
 import { memberStore } from "@member/member-store.js";
+import { getMemberById } from "@member/member-utils.js";
+import { sum } from "@tools/utils-array.js";
+import { byId, queryAll, setHTML, setText } from "@tools/utils-dom.js";
+import { getNumberParam } from "@tools/utils-url.js";
 
 /** ?docID= 파라미터 (없으면 0 — 미조회 상태) */
 const docId = getNumberParam("docID");
@@ -34,25 +34,14 @@ function renderHead(rec) {
 	// 회원 이름은 payload 대신 회원 스토어에서 memberId로 동적 해석한다 (회원명 변경 즉시 전파)
 	const member = getMemberById(memberStore.getState().members, rec.memberId);
 	const name = member ? member.name : "회원";
-	setHTML(
-		"vh-title",
-		`<a class="vh-member" href="member-detail.html?memberID=${rec.memberId}">${escapeHtml(name)}</a>`,
-	);
+	setHTML("vh-title", `<a class="vh-member" href="member-detail.html?memberID=${rec.memberId}">${escapeHtml(name)}</a>`);
 	const items = [
 		["회차", p.session || "-"],
 		["작성일", rec.date],
 		["담당 트레이너", p.trainer || "-"],
 		["총점", `${sum(p.scores || [])} / ${recordMax(rec.payload)}`],
 	];
-	setHTML(
-		"vh-meta",
-		items
-			.map(
-				([k, v]) =>
-					`<span class="meta-item"><b>${k}</b>${escapeHtml(v)}</span>`,
-			)
-			.join(""),
-	);
+	setHTML("vh-meta", items.map(([k, v]) => `<span class="meta-item"><b>${k}</b>${escapeHtml(v)}</span>`).join(""));
 	document.title = `${p.session || "체크기록"} — ${name} 조회`;
 }
 
@@ -76,7 +65,7 @@ function renderInbody(rec) {
 					<div class="ib-value">${escapeHtml(val)}</div>
 					${tag}
 				</div>`;
-		}).join(""),
+		}).join("")
 	);
 	setText("ib-comment", rec.payload.ibComment || "");
 	byId("ib-comment").style.display = rec.payload.ibComment ? "" : "none";
@@ -95,9 +84,7 @@ function renderEvals(rec) {
 			.map((item, i) => {
 				const score = scores[i] ?? 0;
 				const ed = evalData[i] || { checked: [], memo: "" };
-				const checks = (ed.checked || [])
-					.map((c) => `<li>${escapeHtml(c)}</li>`)
-					.join("");
+				const checks = (ed.checked || []).map(c => `<li>${escapeHtml(c)}</li>`).join("");
 				return `
 				<div class="eval-view">
 					<div class="ev-head">
@@ -116,12 +103,9 @@ function renderEvals(rec) {
 					${item.vo2 && rec.payload.vo2Comment ? `<p class="ev-vo2">${escapeHtml(rec.payload.vo2Comment)}</p>` : ""}
 				</div>`;
 			})
-			.join(""),
+			.join("")
 	);
-	setText(
-		"evals-total",
-		`총점 ${sum(rec.payload.scores || [])} / ${recordMax(rec.payload)}`,
-	);
+	setText("evals-total", `총점 ${sum(rec.payload.scores || [])} / ${recordMax(rec.payload)}`);
 }
 
 /**
@@ -134,13 +118,8 @@ function renderGoals(rec) {
 	setHTML(
 		"goal-chips",
 		goals.length
-			? goals
-					.map(
-						(g) =>
-							`<span class="goal-chip">${escapeHtml(g)}</span>`,
-					)
-					.join("")
-			: '<span class="goal-empty">설정한 목표가 없습니다</span>',
+			? goals.map(g => `<span class="goal-chip">${escapeHtml(g)}</span>`).join("")
+			: '<span class="goal-empty">설정한 목표가 없습니다</span>'
 	);
 	setText("goal-memo", goalMemo || "");
 	byId("goal-memo").style.display = goalMemo ? "" : "none";
@@ -158,15 +137,15 @@ function renderFeedbacks(rec) {
 		fbs.length
 			? fbs
 					.map(
-						(fb) => `
+						fb => `
 						<div class="fb-view">
 							<div class="fb-name">${escapeHtml(fb.name)}</div>
-							${(fb.checkItems || []).map((c) => `<div class="fb-check${c.checked ? " on" : ""}"><span class="fb-mark">${c.checked ? "✓" : "○"}</span>${escapeHtml(c.text)}</div>`).join("")}
+							${(fb.checkItems || []).map(c => `<div class="fb-check${c.checked ? " on" : ""}"><span class="fb-mark">${c.checked ? "✓" : "○"}</span>${escapeHtml(c.text)}</div>`).join("")}
 							${fb.memo ? `<p class="fb-memo">${escapeHtml(fb.memo)}</p>` : ""}
-						</div>`,
+						</div>`
 					)
 					.join("")
-			: '<p class="goal-empty">기록된 피드백이 없습니다</p>',
+			: '<p class="goal-empty">기록된 피드백이 없습니다</p>'
 	);
 }
 
@@ -190,7 +169,7 @@ function init() {
 	if (!rec) {
 		byId("vh-title").textContent = "기록을 찾을 수 없습니다";
 		byId("vh-meta").textContent = "목록에서 다시 선택하세요.";
-		queryAll(".view-section").forEach((s) => (s.style.display = "none"));
+		queryAll(".view-section").forEach(s => (s.style.display = "none"));
 		byId("btn-edit").style.display = "none";
 		return;
 	}
@@ -205,9 +184,7 @@ function init() {
 }
 
 byId("btn-back").addEventListener("click", () =>
-	window.history.length > 1
-		? window.history.back()
-		: (window.location.href = "members.html"),
+	window.history.length > 1 ? window.history.back() : (window.location.href = "members.html")
 );
 
 init();

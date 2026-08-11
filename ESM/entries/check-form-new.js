@@ -6,31 +6,21 @@
 // DEPENDS: todayISO(utils-string), byId·delegate(utils-dom), configureEvaluation/renderBasicFunctionCards/updateTotal(evaluation),
 //          setupCheckFormEvents/resetEntireForm(check-form-events), collectPayload(check-form-payload),
 //          renderCheckMovementCards(feedback), sessionReport(session-report)
-import "@infra/components/app-header.js";
-import { escapeHtml } from "@infra/templates.js";
-import { byId, delegate, dismissOnOverlayClick } from "@tools/utils-dom.js";
-import { todayISO } from "@tools/utils-string.js";
-import { getNumberParam } from "@tools/utils-url.js";
 import { ASSESSMENT_ITEMS_BASIC5 } from "@check-doc/assessment-data.js";
-import {
-	resetEntireForm,
-	setupCheckFormEvents,
-} from "@check-doc/check-form-events.js";
+import { resetEntireForm, setupCheckFormEvents } from "@check-doc/check-form-events.js";
 import { collectPayload } from "@check-doc/check-form-payload.js";
-import {
-	configureEvaluation,
-	renderBasicFunctionCards,
-	updateTotal,
-} from "@check-doc/evaluation.js";
+import { configureEvaluation, renderBasicFunctionCards, updateTotal } from "@check-doc/evaluation.js";
 import { renderCheckMovementCards } from "@check-doc/feedback.js";
 import { recordStore } from "@check-doc/record-store.js";
 import { getRecordCountsByMember } from "@check-doc/record-utils.js";
 import { sessionReport } from "@check-doc/session-report.js";
+import "@infra/components/app-header.js";
+import { escapeHtml } from "@infra/templates.js";
 import { addMember, memberStore } from "@member/member-store.js";
-import {
-	getMemberById,
-	getMemberByName,
-} from "@member/member-utils.js";
+import { getMemberById, getMemberByName } from "@member/member-utils.js";
+import { byId, delegate, dismissOnOverlayClick } from "@tools/utils-dom.js";
+import { todayISO } from "@tools/utils-string.js";
+import { getNumberParam } from "@tools/utils-url.js";
 
 // ── 날짜 ──
 // 상담일(date picker) 기본값 = 오늘 (기록 date는 YYYY-MM-DD 형식으로 저장)
@@ -51,9 +41,7 @@ const memberInput = byId("m-member");
 const sessionInput = byId("m-session");
 
 // datalist에 등록 회원 이름 채우기 (자동완성 후보)
-byId("member-list").innerHTML = members
-	.map((m) => `<option value="${escapeHtml(m.name)}">`)
-	.join("");
+byId("member-list").innerHTML = members.map(m => `<option value="${escapeHtml(m.name)}">`).join("");
 
 /**
  * 선택한 회원에 맞춰 트레이너·회차를 자동 기입한다 — 회차는 기존 체크기록 수 + 1 (예: 3건이면 "4회차")
@@ -62,9 +50,7 @@ byId("member-list").innerHTML = members
  */
 function applyMember(mem) {
 	byId("m-trainer").value = mem.trainer || "";
-	const count =
-		getRecordCountsByMember(recordStore.getState().records).get(mem.id) ||
-		0;
+	const count = getRecordCountsByMember(recordStore.getState().records).get(mem.id) || 0;
 	sessionInput.value = `${count + 1}회차`;
 }
 
@@ -126,11 +112,9 @@ function saveRecord() {
 		return;
 	}
 	const matched = getMemberByName(members, name);
-	const memberId = matched
-		? matched.id
-		: addMember({ name, gender: "", goal: "일반", trainer: "" });
+	const memberId = matched ? matched.id : addMember({ name, gender: "", goal: "일반", trainer: "" });
 	const recId = recordStore.getState().nextId;
-	recordStore.setState((prev) => ({
+	recordStore.setState(prev => ({
 		...prev,
 		records: [
 			...prev.records,

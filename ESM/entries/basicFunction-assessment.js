@@ -3,15 +3,15 @@
 // 공용 경계: 순수 논리(VO₂ 계산·등급 vo2.js·점수 색 grade-styles.js·상수 constants·카드 셸 TPL.basicItemCard·도트 TPL.scoreDots)는
 //          공용 모듈을 그대로 쓰고, 화면 전용 DOM 배선(로컬 state·v-*/score-*/detail-* 요소 id)만 여기 남긴다.
 //          evaluation.js(checkday 공용)와 같은 논리가 일부 보이나 요소 id·상태 구조가 달라 화면 특화로 유지한다.
+import { GRADE_STYLES, VO2_GRADE_STYLES, getScoreColor } from "@calc/grade-styles.js";
+import { getGradeMeta } from "@calc/grade.js";
+import { calcVo2Assessment } from "@calc/vo2.js";
 import { ASSESSMENT_ITEMS } from "@check-doc/assessment-data.js";
+import "@infra/components/app-header.js";
+import { DOT_COUNT, MOTION_TOTAL_MAX, SCORE_MAX, SCORE_MIN } from "@infra/constants.js";
+import { TPL } from "@infra/templates.js";
 import { clamp, parseToNum } from "@infra/validation.js";
 import { byId, delegate, queryAll, queryOne } from "@tools/utils-dom.js";
-import { TPL } from "@infra/templates.js";
-import { calcVo2Assessment } from "@calc/vo2.js";
-import { getGradeMeta } from "@calc/grade.js";
-import { GRADE_STYLES, VO2_GRADE_STYLES, getScoreColor } from "@calc/grade-styles.js";
-import { SCORE_MIN, SCORE_MAX, DOT_COUNT, MOTION_TOTAL_MAX } from "@infra/constants.js";
-import "@infra/components/app-header.js";
 
 const assessments = ASSESSMENT_ITEMS.map((item, idx) => ({
 	id: idx + 1,
@@ -20,7 +20,7 @@ const assessments = ASSESSMENT_ITEMS.map((item, idx) => ({
 
 // ── 상태 초기화 (화면 전용) ──
 const state = {};
-assessments.forEach((a) => {
+assessments.forEach(a => {
 	state[a.id] = { score: 0, checks: {}, notes: "" };
 });
 const vo2State = { score: 0, vo2: null, grade: null };
@@ -76,7 +76,7 @@ function updateVO2Disp() {
  */
 function highlightNormTable(grade, col) {
 	const rows = queryAll("#vo2-table tbody tr");
-	rows.forEach((row) => {
+	rows.forEach(row => {
 		row.classList.remove("highlight-row");
 		// Reset all cell backgrounds
 		Array.from(row.cells).forEach((td, i) => {
@@ -123,7 +123,7 @@ function setVo2Score(delta, suggested) {
  */
 function buildItems() {
 	const container = byId("items-container");
-	assessments.forEach((a) => {
+	assessments.forEach(a => {
 		const dotsHTML = TPL.scoreDots({ prefix: a.id, count: DOT_COUNT });
 		const checksHTML = a.checks
 			.map(
@@ -132,13 +132,10 @@ function buildItems() {
 				<div class="check-box" id="chk-${a.id}-${i}"></div>
 				<span class="check-label" id="chklbl-${a.id}-${i}">${c}</span>
 			</div>
-		`,
+		`
 			)
 			.join("");
-		container.insertAdjacentHTML(
-			"beforeend",
-			TPL.basicItemCard({ id: a.id, item: a, dots: dotsHTML, checks: checksHTML }),
-		);
+		container.insertAdjacentHTML("beforeend", TPL.basicItemCard({ id: a.id, item: a, dots: dotsHTML, checks: checksHTML }));
 	});
 }
 
@@ -199,10 +196,7 @@ function saveNotes(id, val) {
  * @returns {number} 총점
  */
 function getTotal() {
-	return (
-		assessments.reduce((sum, a) => sum + state[a.id].score, 0) +
-		vo2State.score
-	);
+	return assessments.reduce((sum, a) => sum + state[a.id].score, 0) + vo2State.score;
 }
 
 /** 총점·진행률·등급 배지·힌트를 현재 상태 기준으로 갱신한다
@@ -232,7 +226,7 @@ function updateTotal() {
  * @returns {Array<{ id: number, name: string, score: number, flagged: string[], notes: string }>}
  */
 function getAssessmentReportItems() {
-	return assessments.map((a) => {
+	return assessments.map(a => {
 		const s = state[a.id];
 		const flagged = a.checks.filter((_, i) => s.checks[`${a.id}-${i}`]);
 		return { id: a.id, name: a.name, score: s.score, flagged, notes: s.notes };
@@ -244,7 +238,7 @@ function getAssessmentReportItems() {
  */
 function resetEntireForm() {
 	if (!confirm("모든 점수와 체크를 초기화할까요?")) return;
-	assessments.forEach((a) => {
+	assessments.forEach(a => {
 		state[a.id] = { score: 0, checks: {}, notes: "" };
 		const el = byId(`score-${a.id}`);
 		el.textContent = "0";
@@ -266,7 +260,7 @@ function resetEntireForm() {
 	vo2State.score = 0;
 	vo2State.vo2 = null;
 	vo2State.grade = null;
-	["v-age", "v-height", "v-weight", "v-hr"].forEach((id) => {
+	["v-age", "v-height", "v-weight", "v-hr"].forEach(id => {
 		const el = byId(id);
 		if (el) el.value = "";
 	});
@@ -281,9 +275,7 @@ function resetEntireForm() {
 		const d = byId("vd" + i);
 		if (d) d.classList.remove("filled");
 	}
-	queryAll("#vo2-table tbody tr").forEach((r) =>
-		r.classList.remove("highlight-row"),
-	);
+	queryAll("#vo2-table tbody tr").forEach(r => r.classList.remove("highlight-row"));
 	updateTotal();
 }
 
@@ -313,10 +305,7 @@ function openReportModal() {
 	const vGrade = vo2State.grade;
 	const vBg = vGrade ? vGrade.bg : "var(--surface2)";
 	const vFg = vGrade ? vGrade.fg : "var(--text3)";
-	const vInfo =
-		vo2State.vo2 !== null
-			? `VO₂ Max: ${vo2State.vo2.toFixed(1)} ml/kg/min · ${vGrade ? vGrade.label : ""}`
-			: "미입력";
+	const vInfo = vo2State.vo2 !== null ? `VO₂ Max: ${vo2State.vo2.toFixed(1)} ml/kg/min · ${vGrade ? vGrade.label : ""}` : "미입력";
 	html += `<div class="report-line">
 		<div>
 			<div style="display:flex;align-items:center;gap:8px;">
@@ -392,23 +381,13 @@ delegate(document, "click", "[data-action]", (e, el) => {
 // VO₂ 카드 펌칭
 delegate(document, "click", ".vo2-header", () => toggleVo2());
 // VO₂ 점수 증감
-delegate(document, "click", "[data-vo2-delta]", (e, el) =>
-	setVo2Score(Number(el.dataset.vo2Delta)),
-);
+delegate(document, "click", "[data-vo2-delta]", (e, el) => setVo2Score(Number(el.dataset.vo2Delta)));
 // 항목별 체크·점수·펼침 (동적 생성 요소)
-delegate(document, "click", ".check-row", (e, el) =>
-	toggleCheck(Number(el.dataset.id), Number(el.dataset.idx)),
-);
-delegate(document, "click", ".item-card .score-btn", (e, el) =>
-	adjustScore(Number(el.dataset.aid), Number(el.dataset.delta)),
-);
-delegate(document, "click", ".expand-btn", (e, el) =>
-	toggleBasicFunctionDetail(Number(el.dataset.id)),
-);
+delegate(document, "click", ".check-row", (e, el) => toggleCheck(Number(el.dataset.id), Number(el.dataset.idx)));
+delegate(document, "click", ".item-card .score-btn", (e, el) => adjustScore(Number(el.dataset.aid), Number(el.dataset.delta)));
+delegate(document, "click", ".expand-btn", (e, el) => toggleBasicFunctionDetail(Number(el.dataset.id)));
 // 메모 저장 (동적 생성 요소)
-delegate(document, "input", ".notes-area", (e, el) =>
-	saveNotes(Number(el.dataset.id), el.value),
-);
+delegate(document, "input", ".notes-area", (e, el) => saveNotes(Number(el.dataset.id), el.value));
 // VO₂ 입력 계산
 delegate(document, "input", ".vo2-input", () => updateVO2Disp());
 // 결과 모달 배경(overlay 자신) 클릭 시 닫기

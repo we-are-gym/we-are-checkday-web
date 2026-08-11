@@ -1,11 +1,11 @@
 // 파일 용도: 회원 관리 화면(members.html) — 스토어 기반 회원 목록·검색·제거·상세 이동
 // 상태: memberStore(공용 스토어, 관찰자 패턴) 구독, subscribe 콜백에서 member-table 컴포넌트를 재렌더링한다.
-import "@infra/components/app-header.js";
-import { byId } from "@tools/utils-dom.js";
 import { recordStore } from "@check-doc/record-store.js";
+import { getRecordCountsByMember } from "@check-doc/record-utils.js";
+import "@infra/components/app-header.js";
 import "@member/components/member-table.js";
 import { memberStore } from "@member/member-store.js";
-import { getRecordCountsByMember } from "@check-doc/record-utils.js";
+import { byId } from "@tools/utils-dom.js";
 
 /** 회원 목록 테이블 컴포넌트 엘리먼트 */
 const tableEl = byId("member-table");
@@ -18,10 +18,8 @@ let keyword = "";
  * @returns {Array<{id:number,name:string,gender:string,goal:string,trainer:string,recordCount:number}>}
  */
 function buildRows(list) {
-	const countByMember = getRecordCountsByMember(
-		recordStore.getState().records,
-	);
-	return list.map((m) => ({
+	const countByMember = getRecordCountsByMember(recordStore.getState().records);
+	return list.map(m => ({
 		...m,
 		recordCount: countByMember.get(m.id) || 0,
 	}));
@@ -33,9 +31,7 @@ function buildRows(list) {
 function render() {
 	const kw = keyword.trim().toLowerCase();
 	const { members } = memberStore.getState();
-	const filtered = kw
-		? members.filter((m) => m.name.toLowerCase().includes(kw))
-		: members.slice();
+	const filtered = kw ? members.filter(m => m.name.toLowerCase().includes(kw)) : members.slice();
 	tableEl.rows = buildRows(filtered);
 	tableEl.refresh();
 }
@@ -47,13 +43,11 @@ function render() {
  * @returns {void}
  */
 function removeMember(id) {
-	const member = memberStore.getState().members.find((m) => m.id === id);
+	const member = memberStore.getState().members.find(m => m.id === id);
 	if (!member) return;
 
 	// 연관 체크기록 건수 (일괄 삭제 대상)
-	const linkedRecords = recordStore
-		.getState()
-		.records.filter((r) => r.memberId === id);
+	const linkedRecords = recordStore.getState().records.filter(r => r.memberId === id);
 	const recordCount = linkedRecords.length;
 
 	const prompt =
@@ -66,16 +60,16 @@ function removeMember(id) {
 		return;
 	}
 
-	memberStore.setState((prev) => ({
+	memberStore.setState(prev => ({
 		...prev,
-		members: prev.members.filter((m) => m.id !== id),
+		members: prev.members.filter(m => m.id !== id),
 	}));
 
 	// 연관 체크기록 일괄 삭제 (있을 때만 갱신)
 	if (recordCount > 0) {
-		recordStore.setState((prev) => ({
+		recordStore.setState(prev => ({
 			...prev,
-			records: prev.records.filter((r) => r.memberId !== id),
+			records: prev.records.filter(r => r.memberId !== id),
 		}));
 	}
 }
@@ -95,13 +89,13 @@ recordStore.subscribe(render);
  * @param {number} id 선택한 회원 고유 번호
  * @returns {void}
  */
-tableEl.onSelect = (id) => {
+tableEl.onSelect = id => {
 	window.location.href = `member-detail.html?memberID=${id}`;
 };
 /** 회원 삭제 요청 처리 (스토어에서 제거 → 재렌더링)
  * @param {number} id 삭제할 회원 고유 번호
  * @returns {void}
  */
-tableEl.onRemove = (id) => removeMember(id);
+tableEl.onRemove = id => removeMember(id);
 byId("search-input").addEventListener("input", onSearch);
 render();

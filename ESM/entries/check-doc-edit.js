@@ -2,31 +2,19 @@
 // ?docID= 기록을 불러와 상담지 폼(renderBasicFunctionCards 재사용)에 프리필하고, 움직임 평가 항목 추가/삭제(만점 동적 계산) 후
 // 수정 내용을 기록 스토어에 저장한다.
 
+import { ASSESSMENT_ITEMS_FULL, resolveRecordItems } from "@check-doc/assessment-data.js";
+import { setupCheckFormEvents } from "@check-doc/check-form-events.js";
+import { collectPayload, prefillEvalState, prefillForm } from "@check-doc/check-form-payload.js";
+import { configureEvaluation, getEvals, renderBasicFunctionCards, updateTotal } from "@check-doc/evaluation.js";
+import { recordStore } from "@check-doc/record-store.js";
+import { getRecordById } from "@check-doc/record-utils.js";
+import { scoreState } from "@gym/basicFunction-store.js";
 import "@infra/components/app-header.js";
 import { SCORE_MAX } from "@infra/constants.js";
 import { escapeHtml } from "@infra/templates.js";
-import { scoreState } from "@gym/basicFunction-store.js";
+import "@shared/components/index.js";
 import { byId, delegate, dismissOnOverlayClick, queryAll } from "@tools/utils-dom.js";
 import { getNumberParam } from "@tools/utils-url.js";
-import {
-	ASSESSMENT_ITEMS_FULL,
-	resolveRecordItems,
-} from "@check-doc/assessment-data.js";
-import { setupCheckFormEvents } from "@check-doc/check-form-events.js";
-import {
-	collectPayload,
-	prefillEvalState,
-	prefillForm,
-} from "@check-doc/check-form-payload.js";
-import {
-	configureEvaluation,
-	getEvals,
-	renderBasicFunctionCards,
-	updateTotal,
-} from "@check-doc/evaluation.js";
-import { recordStore } from "@check-doc/record-store.js";
-import { getRecordById } from "@check-doc/record-utils.js";
-import "@shared/components/index.js";
 
 /** ?docID= 파라미터 */
 const docId = getNumberParam("docID");
@@ -41,16 +29,16 @@ function getRecord() {
 /** 저장: 기록 payload·상담일(date) 교체 후 조회 화면 이동 — 상담일은 #m-date에서 읽어 기록 레벨 date에 반영한다 */
 function saveRecord() {
 	const dateInput = byId("m-date");
-	recordStore.setState((prev) => ({
+	recordStore.setState(prev => ({
 		...prev,
-		records: prev.records.map((r) =>
+		records: prev.records.map(r =>
 			r.id === docId
 				? {
 						...r,
 						date: dateInput ? dateInput.value || r.date : r.date,
 						payload: collectPayload(),
 					}
-				: r,
+				: r
 		),
 	}));
 
@@ -72,13 +60,12 @@ function init() {
 	if (!rec) {
 		// console.log("기록을 찾을 수 없습니다. 목록에서 다시 선택하세요.");
 
-		byId("eval-cards").innerHTML =
-			'<p class="goal-empty">기록을 찾을 수 없습니다. 목록에서 다시 선택하세요.</p>';
+		byId("eval-cards").innerHTML = '<p class="goal-empty">기록을 찾을 수 없습니다. 목록에서 다시 선택하세요.</p>';
 
 		byId("fb-cards").style.display = "none";
 		byId("btn-cancel").href = "members.html";
 
-		queryAll("[data-action]").forEach((el) => (el.style.display = "none"));
+		queryAll("[data-action]").forEach(el => (el.style.display = "none"));
 
 		return;
 	}
@@ -117,9 +104,7 @@ function rebuildEvalItems(nextItems, removedIndex) {
 		const sp = byId(`sp-${i}`);
 
 		return {
-			checked: [...sp.querySelectorAll(".ctag.on")].map(
-				(el) => el.textContent,
-			),
+			checked: [...sp.querySelectorAll(".ctag.on")].map(el => el.textContent),
 			memo: (sp.querySelector(".eval-memo") || {}).value || "",
 		};
 	});
@@ -162,8 +147,8 @@ function attachRemoveButtons() {
  * @returns {Array<import("@check-doc/assessment-data.js").BasicFunctionItem>} 추가 후보 항목
  */
 function availableEvalItems() {
-	const used = new Set(getEvals().map((it) => it.name));
-	return ASSESSMENT_ITEMS_FULL.filter((it) => !used.has(it.name));
+	const used = new Set(getEvals().map(it => it.name));
+	return ASSESSMENT_ITEMS_FULL.filter(it => !used.has(it.name));
 }
 
 /** 평가 항목 추가 — 자동 추가 대신 후보를 피커에 띄워 사용자가 골라 직접 선택하도록 한다 (전부 사용 시 안내) */
@@ -179,7 +164,7 @@ function addEvalItem() {
 			<button type="button" class="picker-item" data-picker-item="${i}">
 				<span class="pi-name">${escapeHtml(it.name)}</span>
 				${it.desc ? `<span class="pi-desc">${escapeHtml(it.desc)}</span>` : ""}
-			</button>`,
+			</button>`
 		)
 		.join("");
 	byId("eval-picker-overlay").classList.add("open");
@@ -190,7 +175,7 @@ function removeEvalItem(i) {
 	if (getEvals().length <= 1) return;
 	rebuildEvalItems(
 		getEvals().filter((_, idx) => idx !== i),
-		i,
+		i
 	);
 }
 
@@ -200,13 +185,10 @@ setupCheckFormEvents();
 delegate(document, "click", "[data-action]", (e, el) => {
 	if (el.dataset.action === "reset") resetForm();
 	else if (el.dataset.action === "save-edit") saveRecord();
-	else if (el.dataset.action === "close-picker")
-		byId("eval-picker-overlay").classList.remove("open");
+	else if (el.dataset.action === "close-picker") byId("eval-picker-overlay").classList.remove("open");
 });
 byId("add-eval-btn").addEventListener("click", addEvalItem);
-delegate(document, "click", "[data-eval-remove]", (e, el) =>
-	removeEvalItem(Number(el.dataset.evalRemove)),
-);
+delegate(document, "click", "[data-eval-remove]", (e, el) => removeEvalItem(Number(el.dataset.evalRemove)));
 // 피커에서 항목 선택 — 후보 목록을 다시 계산해 인덱스가 항상 최신 후보를 가리키게 한다
 delegate(document, "click", "[data-picker-item]", (e, el) => {
 	const item = availableEvalItems()[Number(el.dataset.pickerItem)];
