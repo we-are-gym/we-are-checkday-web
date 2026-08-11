@@ -1,12 +1,13 @@
 // 파일 용도: 로그인 화면(login.html) — 폼 렌더·검증·로그인 상태 기록·이동 (데모 계정 checkday/1234)
-import { byId, setHTML } from "@tools/utils-dom.js";
 import { isAuthed, login } from "@infra/auth.js";
-import { TPL } from "@infra/templates.js";
 import "@infra/components/app-header.js";
+import { TPL } from "@infra/templates.js";
+import { byId, setHTML } from "@tools/utils-dom.js";
 
-/** 로그인 성공 후 이동 대상 (?redirect=, 기본 index.html) */
-const redirect =
-	new URLSearchParams(window.location.search).get("redirect") || "index.html";
+/** 로그인 성공 후 이동 대상 (?redirect=, 기본 index.html)
+ * @type {string}
+ */
+const redirect = new URLSearchParams(window.location.search).get("redirect") || "index.html";
 
 // ── 시작 ──
 setHTML("login-box", TPL.loginForm());
@@ -19,7 +20,7 @@ const errEl = byId("login-error");
 if (isAuthed()) {
 	window.location.replace(redirect);
 } else {
-	form.addEventListener("submit", (e) => {
+	form.addEventListener("submit", e => {
 		e.preventDefault();
 		const id = byId("login-id").value.trim();
 		const pw = byId("login-pw").value;
@@ -29,8 +30,7 @@ if (isAuthed()) {
 			return;
 		}
 		if (id !== "checkday" || pw !== "1234") {
-			errEl.textContent =
-				"데모 계정이 올바르지 않습니다. (checkday / 1234)";
+			errEl.textContent = "데모 계정이 올바르지 않습니다. (checkday / 1234)";
 			errEl.hidden = false;
 			return;
 		}

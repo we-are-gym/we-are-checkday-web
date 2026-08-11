@@ -1,7 +1,10 @@
 // 파일 용도: 등급·VO₂ 결과 라벨 스타일 맵 — 화면 공용 (checkday·basic_function 공용)
 // 색상은 styles/colors.css의 CSS 변수를 참조해 라이트/다크 테마가 자동 반영된다
 
-/** 총점 → 등급 라벨별 배경/글자색/힌트 */
+/**
+ * 총점 → 등급 라벨별 배경/글자색/힌트
+ * @type {{ [key: string]: { bg: string, fg: string, hint: string } }}
+ */
 export const GRADE_STYLES = {
 	"평가 전": { bg: "var(--surface2)", fg: "var(--text3)", hint: "" },
 	우수: {
