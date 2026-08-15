@@ -1,11 +1,18 @@
-// 파일 용도: 체크기록 스토어 — 세션(sessionStorage) 영속화된 mock 저장소 (회원 상세·조회·작성·편집 공용)
-// 주의: API 미배포 상태이므로 브라우저 세션 동안만 유지되는 mock이다. 탭을 닫으면 시드로 복원된다.
+// 파일 용도: 체크기록 스토어 — Mason API 클라이언트 (회원 상세·조회·작성·편집 공용)
+// 주의: 기존 sessionStorage mock 저장에서 API 영속화로 교첼되었습니다.
+import { getToken } from "@infra/auth.js";
 import { InbodyData } from "@gym/inbody-data.js";
 import { Store } from "@infra/store.js";
 import {
 	ASSESSMENT_ITEMS_BASIC5,
 	ASSESSMENT_ITEMS_FULL,
 } from "./assessment-data.js";
+import {
+	createCheckdoc,
+	deleteCheckdoc,
+	fetchCheckdocs,
+	updateCheckdoc,
+} from "./record-rest.js";
 
 /** 세션 저장 키 (v3 — 26년 5월 기록만 8항목·그 외 5항목 시드로 재작성) */
 const STORAGE_KEY = "checkday.records.v3";
@@ -580,12 +587,98 @@ const SEED_RECORDS = [
 	),
 ];
 
-/** 체크기록 스토어 (전 화면 공용 단일 인스턴스) — 저장값이 손상되면 시드로 폴백 */
+/** 체크기록 스토어 (전 화면 공용 단일 인스턴스) — API 데이터로 채워집니다. */
 export const recordStore = new Store(
-	{ records: SEED_RECORDS, nextId: SEED_RECORDS.length + 1 },
-	{
-		storageKey: STORAGE_KEY,
-		/** 저장값에 records 배열이 있어야 유효 */
-		validate: (data) => Array.isArray(data.records),
-	},
+	{ records: [], loading: false, error: null },
+	{ storageKey: null },
 );
+
+// ── API 클라이언트 함수 (2단계 연동) ──
+
+/**
+ * API Checkdoc 응답을 웹 CheckRecord 형태로 정규화합니다.
+ * @param {object} apiDoc Mason API Checkdoc 리소스
+ * @returns {import("@infra/store.js").CheckRecord}
+ */
+export function normalizeCheckdoc(apiDoc) {
+	return {
+		id: apiDoc.checkdoc_ID,
+		memberId: apiDoc.member_ID,
+		date: apiDoc.session_date,
+		payload: restToPayload(apiDoc),
+	};
+}
+
+/**
+ * 전체 체크기록 목록을 API에서 불러와 스토어에 저장합니다.
+ * @returns {Promise<void>}
+ */
+export async function loadRecords() {
+	recordStore.update({ loading: true, error: null });
+	try {
+		const items = await fetchCheckdocs();
+		recordStore.update({ records: items.map(normalizeCheckdoc), loading: false });
+	} catch (err) {
+		recordStore.update({ loading: false, error: err.message || "체크기록을 불러오지 못했습니다" });
+		throw err;
+	}
+}
+
+/**
+ * 회원별 체크기록 목록을 API에서 불러와 스토어에 저장합니다.
+ * @param {string} member_ID 회원 member_ID
+ * @returns {Promise<void>}
+ */
+export async function loadRecordsByMember(member_ID) {
+	recordStore.update({ loading: true, error: null });
+	try {
+		const items = await fetchCheckdocs(member_ID);
+		recordStore.update({ records: items.map(normalizeCheckdoc), loading: false });
+	} catch (err) {
+		recordStore.update({ loading: false, error: err.message || "체크기록을 불러오지 못했습니다" });
+		throw err;
+	}
+}
+
+/**
+ * 체크기록을 API에 생성하고 스토어에 반영합니다.
+ * @param {import("@infra/store.js").CheckRecordPayload} payload 웹 payload
+ * @param {{ memberId: string, date: string }} meta 기록 맥락
+ * @returns {Promise<number>} 생성된 checkdoc_ID
+ */
+export async function addRecord(payload, meta) {
+	const created = await createCheckdoc(payload, meta);
+	recordStore.setState((prev) => ({
+		...prev,
+		records: [...prev.records, normalizeCheckdoc(created)],
+	}));
+	return created.checkdoc_ID;
+}
+
+/**
+ * 체크기록을 API에 부분 수정하고 스토어에 반영합니다.
+ * @param {number} checkdoc_ID 체크기록 ID
+ * @param {import("@infra/store.js").CheckRecordPayload} payload 웹 payload
+ * @param {{ memberId: string, date: string }} meta 기록 맥락
+ * @returns {Promise<void>}
+ */
+export async function updateRecord(checkdoc_ID, payload, meta) {
+	const updated = await updateCheckdoc(checkdoc_ID, payload, meta);
+	recordStore.setState((prev) => ({
+		...prev,
+		records: prev.records.map((r) => (r.id === checkdoc_ID ? normalizeCheckdoc(updated) : r)),
+	}));
+}
+
+/**
+ * 체크기록을 API에서 삭제하고 스토어에서 제거합니다.
+ * @param {number} checkdoc_ID 체크기록 ID
+ * @returns {Promise<void>}
+ */
+export async function deleteRecord(checkdoc_ID) {
+	await deleteCheckdoc(checkdoc_ID);
+	recordStore.setState((prev) => ({
+		...prev,
+		records: prev.records.filter((r) => r.id !== checkdoc_ID),
+	}));
+}

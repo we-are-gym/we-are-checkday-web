@@ -1,9 +1,8 @@
-// 파일 용도: 웹 기록 모형 ↔ REST DTO 변환 (계약 정합 계층)
-// 기법: 순수 함수 — DOM·저장소에 의존하지 않는다. 웹 payload(CheckRecord.payload)와
-//       REST DTO(CheckdocCreate/Update, BasicFunctionEvaluationDTO, ExerciseGoalDTO,
-//       MovementFeedbackDTO, InbodyResultCreate) 간 필드명·구조를 정규화한다.
-// 주의: 웹은 현재 mock 저장(member.records.v3)이므로 이 모듈은 아직 실제 HTTP 호출에
-//       연결되지 않는다. 작업 5(엔드포인트 추가)에서 웹 필요 매핑에 사용한다.
+// 파일 용도: 웹 기록 모형 ↔ REST DTO 변환 및 API 호출 (계약 정합 계층)
+// 기법: 순수 함수 + fetch 래퍼. 웹 payload와 REST DTO 간 필드명·구조를 정규화한다.
+// 주의: API 연동을 위해 fetch 호출 함수도 함께 제공합니다.
+import { request } from "@infra/api-client.js";
+import { getToken } from "@infra/auth.js";
 
 /** 웹 평가 항목 이름 → API BasicFunctionEvaluation 필드명 */
 const ITEM_NAME_TO_API_FIELD = {
@@ -18,9 +17,7 @@ const ITEM_NAME_TO_API_FIELD = {
 };
 
 /** API 필드명 → 웹 평가 항목 이름 */
-const API_FIELD_TO_ITEM_NAME = Object.fromEntries(
-	Object.entries(ITEM_NAME_TO_API_FIELD).map(([name, field]) => [field, name]),
-);
+const API_FIELD_TO_ITEM_NAME = Object.fromEntries(Object.entries(ITEM_NAME_TO_API_FIELD).map(([name, field]) => [field, name]));
 
 /** API BasicFunctionEvaluation 필드 순서 */
 const API_EVALUATION_FIELDS = Object.keys(API_FIELD_TO_ITEM_NAME);
@@ -60,14 +57,14 @@ const GOAL_TEXT_TO_TAG = {
  */
 export function normalizeGoalTags(tags) {
 	return tags
-		.map((tag) => {
+		.map(tag => {
 			if (ALLOWED_GOAL_TAGS.includes(tag)) return tag;
 			const mapped = GOAL_TEXT_TO_TAG[tag.trim()];
 			if (mapped) return mapped;
 			const normalized = tag.replace(/^\s*[^\p{L}\p{N}]*\s*/u, "").trim();
 			return GOAL_TEXT_TO_TAG[normalized] || null;
 		})
-		.filter((tag) => tag !== null);
+		.filter(tag => tag !== null);
 }
 
 /**
@@ -119,7 +116,7 @@ export function restToIb(inbody) {
  * @returns {object} REST 본문 필드: session_label·session_date·trainer·inbody·evaluations·goals·feedbacks·consult_memo
  */
 export function payloadToRest(p, meta) {
-	const getEvalItem = (name) => {
+	const getEvalItem = name => {
 		const i = p.items.indexOf(name);
 		if (i === -1) {
 			return { score: 0, evaluation_items: [], memo: null };
@@ -142,9 +139,9 @@ export function payloadToRest(p, meta) {
 			one_leg_bridge: getEvalItem("원레그 브릿지"),
 		},
 	];
-	const feedbacks = (p.feedbacks || []).map((fb) => ({
+	const feedbacks = (p.feedbacks || []).map(fb => ({
 		name: fb.name,
-		evaluation_items: (fb.checkItems || []).map((c) => c.text),
+		evaluation_items: (fb.checkItems || []).map(c => c.text),
 		memo: fb.memo ?? null,
 	}));
 	const hasGoals = (p.goals && p.goals.length > 0) || (p.goalMemo || "").trim() !== "";
@@ -168,26 +165,24 @@ export function payloadToRest(p, meta) {
  */
 export function restToPayload(body) {
 	const apiEval = body.evaluations?.[0] || {};
-	const evalEntries = API_EVALUATION_FIELDS
-		.map((field) => {
-			const e = apiEval[field];
-			if (!e) return null;
-			// API는 항상 8개 고정 필드를 저장하므로, 값이 모두 비어 있으면
-			// 이 기록에 포함되지 않은 항목(BASIC5 누락 항목)으로 간주합니다.
-			if (e.score === 0 && (e.evaluation_items || []).length === 0 && (e.memo ?? "") === "") {
-				return null;
-			}
-			return {
-				name: API_FIELD_TO_ITEM_NAME[field],
-				score: e.score,
-				evaluation_items: e.evaluation_items || [],
-				memo: e.memo ?? "",
-			};
-		})
-		.filter((entry) => entry !== null);
-	const scores = evalEntries.map((e) => e.score);
-	const items = evalEntries.map((e) => e.name);
-	const evalData = evalEntries.map((e) => ({
+	const evalEntries = API_EVALUATION_FIELDS.map(field => {
+		const e = apiEval[field];
+		if (!e) return null;
+		// API는 항상 8개 고정 필드를 저장하므로, 값이 모두 비어 있으면
+		// 이 기록에 포함되지 않은 항목(BASIC5 누락 항목)으로 간주합니다.
+		if (e.score === 0 && (e.evaluation_items || []).length === 0 && (e.memo ?? "") === "") {
+			return null;
+		}
+		return {
+			name: API_FIELD_TO_ITEM_NAME[field],
+			score: e.score,
+			evaluation_items: e.evaluation_items || [],
+			memo: e.memo ?? "",
+		};
+	}).filter(entry => entry !== null);
+	const scores = evalEntries.map(e => e.score);
+	const items = evalEntries.map(e => e.name);
+	const evalData = evalEntries.map(e => ({
 		checked: e.evaluation_items,
 		memo: e.memo,
 	}));
@@ -211,4 +206,65 @@ export function restToPayload(body) {
 		})),
 		consultMemo: body.consult_memo || "",
 	};
+}
+// ── API 호출 함수 (2단계 연동) ──
+
+/**
+ * 체크기록 목록을 API에서 조회합니다.
+ * @param {string} [member_ID] 회원 ID — 주어지면 해당 회원 기록만 필터링
+ * @returns {Promise<Array>} Checkdoc 리소스 목록
+ */
+export async function fetchCheckdocs(member_ID) {
+	const path = member_ID ? `/checkday/checkdocs?member_ID=${encodeURIComponent(member_ID)}` : "/checkday/checkdocs";
+	return request(path, { token: getToken() });
+}
+
+/**
+ * 체크기록 단건을 API에서 조회합니다.
+ * @param {number} checkdoc_ID 체크기록 ID
+ * @returns {Promise<object>} Checkdoc 리소스
+ */
+export async function fetchCheckdoc(checkdoc_ID) {
+	return request(`/checkday/checkdocs/${checkdoc_ID}`, { token: getToken() });
+}
+
+/**
+ * 체크기록을 API에 생성합니다.
+ * @param {import("@infra/store.js").CheckRecordPayload} payload 웹 payload
+ * @param {{ memberId: string, date: string }} meta 기록 맥락
+ * @returns {Promise<object>} 생성된 Checkdoc 리소스
+ */
+export async function createCheckdoc(payload, meta) {
+	return request("/checkday/checkdocs", {
+		method: "POST",
+		body: payloadToRest(payload, meta),
+		token: getToken(),
+	});
+}
+
+/**
+ * 체크기록을 API에 부분 수정합니다.
+ * @param {number} checkdoc_ID 체크기록 ID
+ * @param {import("@infra/store.js").CheckRecordPayload} payload 웹 payload
+ * @param {{ memberId: string, date: string }} meta 기록 맥락
+ * @returns {Promise<object>} 수정된 Checkdoc 리소스
+ */
+export async function updateCheckdoc(checkdoc_ID, payload, meta) {
+	return request(`/checkday/checkdocs/${checkdoc_ID}`, {
+		method: "PUT",
+		body: payloadToRest(payload, meta),
+		token: getToken(),
+	});
+}
+
+/**
+ * 체크기록을 API에서 삭제합니다.
+ * @param {number} checkdoc_ID 체크기록 ID
+ * @returns {Promise<object>} 삭제 응답
+ */
+export async function deleteCheckdoc(checkdoc_ID) {
+	return request(`/checkday/checkdocs/${checkdoc_ID}`, {
+		method: "DELETE",
+		token: getToken(),
+	});
 }

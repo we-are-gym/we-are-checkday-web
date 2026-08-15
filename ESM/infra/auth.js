@@ -1,5 +1,6 @@
-// 파일 용도: 인증·로그인 상태 — 세션(sessionStorage) 기반 데모 로그인 (전 화면 공용)
-// 주의: 저장/인증 API 미배포 상태이므로 브라우저 세션 동안만 상태를 기억하는 mock이다.
+// 파일 용도: 인증·로그인 상태 — JWT 액세스 토큰 관리 (전 화면 공용)
+import { request } from "@infra/api-client.js";
+
 const AUTH_KEY = "checkday.auth.v1";
 
 /**
@@ -34,12 +35,19 @@ export function isAuthed() {
 	return getToken() !== null;
 }
 
-/** 로그인 상태를 기록합니다.
- * @returns {void}
+/**
+ * 데모 자격증명으로 로그인하고 JWT 액세스 토큰을 저장합니다.
+ * @param {string} username 아이디
+ * @param {string} password 비밀번호
+ * @returns {Promise<object>} 로그인 응답(access_token·refresh_token·user 등)
  */
-export function login() {
-	// 1단계에서는 mock 값 "1"을 유지합니다. 2단계에서 JWT 토큰 저장으로 교체됩니다.
-	setToken("1");
+export async function login(username, password) {
+	const res = await request("/auth/login", {
+		method: "POST",
+		body: { username, password },
+	});
+	setToken(res.access_token);
+	return res;
 }
 
 /** 로그아웃하여 인증 상태를 해제합니다.
