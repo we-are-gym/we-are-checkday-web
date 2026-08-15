@@ -1,18 +1,18 @@
 // 파일 용도: 회원 상세 조회 및 체크기록 비교 화면(member-detail.html)
 // ?memberID= 로 회원을 조회하고, 회원 정보 카드·스파크라인 4종·체크 기록 탭·변화 분석 탭을 렌더링한다.
 import { buildCompareTable, recordMax, sessionLabel, sparkline } from "@check-doc/record-stats.js";
-import { recordStore } from "@check-doc/record-store.js";
+import { deleteRecord, loadRecordsByMember, recordStore } from "@check-doc/record-store.js";
 import { getRecordById, getRecordsByMember } from "@check-doc/record-utils.js";
 import "@infra/components/app-header.js";
 import { TPL, escapeHtml } from "@infra/templates.js";
-import { memberStore } from "@member/member-store.js";
+import { loadMembers, memberStore } from "@member/member-store.js";
 import { getMemberById } from "@member/member-utils.js";
 import { sum } from "@tools/utils-array.js";
 import { byId, delegate, queryAll, queryOne, setHTML, setText } from "@tools/utils-dom.js";
-import { getNumberParam } from "@tools/utils-url.js";
+import { getUrlParam } from "@tools/utils-url.js";
 
-/** ?memberID= 파라미터 (없으면 0 — 미조회 상태) */
-const memberId = getNumberParam("memberID");
+/** ?memberID= 파라미터 (문자열 member_ID) */
+const memberId = getUrlParam("memberID");
 
 /** 회원의 기록을 날짜 오름차순으로 반환
  * @returns {import("@infra/store.js").CheckRecord[]} 현재 회원의 체크기록 목록
@@ -305,7 +305,17 @@ function exportMemberDetailPNG() {
 /** 초기 렌더링 — 회원을 조회해 정보 카드·통계·기록·비교 select를 채운다 (회원이 없으면 안내만 표시)
  * @returns {void}
  */
-function init() {
+async function init() {
+	try {
+		await Promise.all([loadMembers(), loadRecordsByMember(memberId)]);
+	} catch (err) {
+		console.error("회원/기록 로드 실패:", err);
+		setHTML("stat-charts", "");
+		setHTML("record-list", '<p class="record-empty">회원 정보를 불러오지 못했습니다.</p>');
+		byId("new-record-btn").style.display = "none";
+		return;
+	}
+
 	const member = getMemberById(memberStore.getState().members, memberId);
 
 	if (!member) {
@@ -320,8 +330,8 @@ function init() {
 
 	renderInfoCard(member);
 
-	byId("new-record-btn").href = `check-doc-new.html?memberID=${memberId}`;
-	byId("edit-member-btn").href = `member-edit.html?memberID=${memberId}`;
+	byId("new-record-btn").href = `check-doc-new.html?memberID=${encodeURIComponent(memberId)}`;
+	byId("edit-member-btn").href = `member-edit.html?memberID=${encodeURIComponent(memberId)}`;
 
 	refreshRecords();
 
@@ -334,17 +344,17 @@ function init() {
 }
 
 // 이벤트 1회 등록
-delegate(document, "click", "[data-del-record]", (e, el) => {
+delegate(document, "click", "[data-del-record]", async (e, el) => {
 	e.stopPropagation();
 	if (!confirm("체크기록을 삭제하시겠습니까?")) {
 		return;
 	}
-	recordStore.setState(prev => ({
-		...prev,
-		records: prev.records.filter(r => r.id !== Number(el.dataset.delRecord)),
-	}));
-
-	refreshRecords();
+	try {
+		await deleteRecord(Number(el.dataset.delRecord));
+		refreshRecords();
+	} catch (err) {
+		console.error("기록 삭제 실패:", err);
+	}
 });
 
 // 기록 행 클릭/키보드 → 조회 화면 (삭제 버튼은 제외)

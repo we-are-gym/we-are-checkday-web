@@ -1,10 +1,10 @@
-// 파일 용도: 회원 관리 화면(members.html) — 스토어 기반 회원 목록·검색·제거·상세 이동
-// 상태: memberStore(공용 스토어, 관찰자 패턴) 구독, subscribe 콜백에서 member-table 컴포넌트를 재렌더링한다.
+// 파일 용도: 회원 관리 화면(members.html) — API 기반 회원 목록·검색·제거·상세 이동
+// 상태: memberStore·recordStore(공용 스토어, 관찰자 패턴) 구독, subscribe 콜백에서 member-table 컴포넌트를 재렌더링한다.
 import { recordStore } from "@check-doc/record-store.js";
 import { getRecordCountsByMember } from "@check-doc/record-utils.js";
 import "@infra/components/app-header.js";
 import "@member/components/member-table.js";
-import { memberStore } from "@member/member-store.js";
+import { removeMember as apiRemoveMember, loadMembers, memberStore } from "@member/member-store.js";
 import { byId } from "@tools/utils-dom.js";
 
 /** 회원 목록 테이블 컴포넌트 엘리먼트 */
@@ -14,8 +14,8 @@ let keyword = "";
 
 /**
  * 목록 행 데이터 구성 (체크 횟수는 공용 헬퍼로 기록 스토어에서 실계산)
- * @param {Array<{id:number,name:string,gender:string,goal:string,trainer:string}>} list
- * @returns {Array<{id:number,name:string,gender:string,goal:string,trainer:string,recordCount:number}>}
+ * @param {Array<{id:string,name:string,gender:string,goal:string,trainer:string}>} list
+ * @returns {Array<{id:string,name:string,gender:string,goal:string,trainer:string,recordCount:number}>}
  */
 function buildRows(list) {
 	const countByMember = getRecordCountsByMember(recordStore.getState().records);
@@ -37,41 +37,33 @@ function render() {
 }
 
 /**
- * 회원 삭제 (스토어 상태 갱신 → 구독자 재렌더링)
- * 연관 체크기록이 있으면 함께 일괄 삭제한다 (확인 다이얼로그에 기록 건수 명시)
- * @param {number} id 삭제할 회원 고유 번호
- * @returns {void}
+ * 회원 삭제 (API 호출 → 스토어 상태 갱신 → 구독자 재렌더링)
+ * @param {string} id 삭제할 회원 member_ID
+ * @returns {Promise<void>}
  */
-function removeMember(id) {
+async function removeMember(id) {
 	const member = memberStore.getState().members.find(m => m.id === id);
 	if (!member) return;
 
-	// 연관 체크기록 건수 (일괄 삭제 대상)
+	// 연관 체크기록 건수 (안내용)
 	const linkedRecords = recordStore.getState().records.filter(r => r.memberId === id);
 	const recordCount = linkedRecords.length;
 
 	const prompt =
 		recordCount > 0
-			? `회원 ${member.name} 님을 삭제하시겠습니까?\n\n연결된 체크기록 ${recordCount}건도 함께 삭제됩니다.`
+			? `회원 ${member.name} 님을 삭제하시겠습니까?\n\n연결된 체크기록 ${recordCount}걸 로컬 목록에서도 제거합니다.`
 			: `회원 ${member.name} 님을 삭제하시겠습니까?`;
 
-	// 확인 다이얼로그
 	if (!confirm(prompt)) {
 		return;
 	}
 
-	memberStore.setState(prev => ({
+	await apiRemoveMember(id);
+	// 로컬 기록 목록에서도 해당 회원 기록 제거
+	recordStore.setState(prev => ({
 		...prev,
-		members: prev.members.filter(m => m.id !== id),
+		records: prev.records.filter(r => r.memberId !== id),
 	}));
-
-	// 연관 체크기록 일괄 삭제 (있을 때만 갱신)
-	if (recordCount > 0) {
-		recordStore.setState(prev => ({
-			...prev,
-			records: prev.records.filter(r => r.memberId !== id),
-		}));
-	}
 }
 
 /** 검색어 갱신 후 재렌더링
@@ -85,17 +77,23 @@ function onSearch() {
 // ── 시작 ──
 memberStore.subscribe(render);
 recordStore.subscribe(render);
+loadMembers().catch(err => {
+	console.error("회원 목록 로드 실패:", err);
+});
+
 /** 회원 선택 시 상세 화면으로 이동
- * @param {number} id 선택한 회원 고유 번호
+ * @param {string} id 선택한 회원 member_ID
  * @returns {void}
  */
 tableEl.onSelect = id => {
-	window.location.href = `member-detail.html?memberID=${id}`;
+	window.location.href = `member-detail.html?memberID=${encodeURIComponent(id)}`;
 };
-/** 회원 삭제 요청 처리 (스토어에서 제거 → 재렌더링)
- * @param {number} id 삭제할 회원 고유 번호
+/** 회원 삭제 요청 처리
+ * @param {string} id 삭제할 회원 member_ID
  * @returns {void}
  */
-tableEl.onRemove = id => removeMember(id);
+tableEl.onRemove = id => {
+	removeMember(id);
+};
 byId("search-input").addEventListener("input", onSearch);
 render();

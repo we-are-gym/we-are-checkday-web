@@ -20,7 +20,7 @@ const errEl = byId("login-error");
 if (isAuthed()) {
 	window.location.replace(redirect);
 } else {
-	form.addEventListener("submit", e => {
+	form.addEventListener("submit", async e => {
 		e.preventDefault();
 		const id = byId("login-id").value.trim();
 		const pw = byId("login-pw").value;
@@ -29,13 +29,13 @@ if (isAuthed()) {
 			errEl.hidden = false;
 			return;
 		}
-		if (id !== "checkday" || pw !== "1234") {
-			errEl.textContent = "데모 계정이 올바르지 않습니다. (checkday / 1234)";
+		try {
+			await login(id, pw);
+			window.location.href = redirect;
+		} catch (err) {
+			errEl.textContent = err.message || "로그인에 실패했습니다.";
 			errEl.hidden = false;
-			return;
 		}
-		login();
-		window.location.href = redirect;
 	});
 	byId("login-id").focus();
 }

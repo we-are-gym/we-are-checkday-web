@@ -1,20 +1,21 @@
 // 파일 용도: 체크기록 조회 화면(check-doc-view.html)
-// ?docID= 로 기록 1건을 읽기 전용으로 렌더링한다. 수정은 check-doc-edit.html?docID= 로 이동(커밋 13에서 실링크).
+// ?docID= 로 기록 1건을 API에서 읽기 전용으로 렌더링한다. 수정은 check-doc-edit.html?docID= 로 이동.
 import { resolveRecordItems } from "@check-doc/assessment-data.js";
+import { fetchCheckdoc } from "@check-doc/record-rest.js";
 import { IB_KEYS, recordMax } from "@check-doc/record-stats.js";
-import { recordStore } from "@check-doc/record-store.js";
+import { normalizeCheckdoc, recordStore } from "@check-doc/record-store.js";
 import { getRecordById } from "@check-doc/record-utils.js";
 import { inbodyTagFor } from "@gym/inbody.js";
 import "@infra/components/app-header.js";
 import { escapeHtml, TPL } from "@infra/templates.js";
-import { memberStore } from "@member/member-store.js";
+import { loadMembers, memberStore } from "@member/member-store.js";
 import { getMemberById } from "@member/member-utils.js";
 import { sum } from "@tools/utils-array.js";
 import { byId, queryAll, setHTML, setText } from "@tools/utils-dom.js";
-import { getNumberParam } from "@tools/utils-url.js";
+import { getUrlParam } from "@tools/utils-url.js";
 
-/** ?docID= 파라미터 (없으면 0 — 미조회 상태) */
-const docId = getNumberParam("docID");
+/** ?docID= 파라미터 (숫자 checkdoc_ID) */
+const docId = Number(getUrlParam("docID"));
 
 /**
  * 조회 대상 기록
@@ -34,7 +35,10 @@ function renderHead(rec) {
 	// 회원 이름은 payload 대신 회원 스토어에서 memberId로 동적 해석한다 (회원명 변경 즉시 전파)
 	const member = getMemberById(memberStore.getState().members, rec.memberId);
 	const name = member ? member.name : "회원";
-	setHTML("vh-title", `<a class="vh-member" href="member-detail.html?memberID=${rec.memberId}">${escapeHtml(name)}</a>`);
+	setHTML(
+		"vh-title",
+		`<a class="vh-member" href="member-detail.html?memberID=${encodeURIComponent(rec.memberId)}">${escapeHtml(name)}</a>`
+	);
 	const items = [
 		["회차", p.session || "-"],
 		["작성일", rec.date],
@@ -72,7 +76,7 @@ function renderInbody(rec) {
 }
 
 /**
- * 움직임 평가 카드 목록 (기록별 항목 — payload.items가 있으면 그대로, 없으면 scores 길이로 폴백)
+ * 움직임 평가 카드 목록 (기록별 항목 — payload.items가 있으면 그대로, 없으면 scores 길이로 폰백)
  * @param {import("@infra/store.js").CheckRecord} rec
  * @returns {void}
  */
@@ -161,10 +165,26 @@ function renderConsult(rec) {
 
 // ── 시작 ──
 /**
- * 조회 화면 초기화 — 기록을 불러와 각 섹션을 렌더링하고 편집 링크에 docID를 부여한다.
- * @returns {void}
+ * 조회 화면 초기화 — API에서 기록을 불러와 각 섹션을 렌더링하고 편집 링크에 docID를 부여한다.
+ * @returns {Promise<void>}
  */
-function init() {
+async function init() {
+	try {
+		await loadMembers();
+		const apiDoc = await fetchCheckdoc(docId);
+		recordStore.setState(prev => ({
+			...prev,
+			records: [...prev.records.filter(r => r.id !== docId), normalizeCheckdoc(apiDoc)],
+		}));
+	} catch (err) {
+		console.error("기록 조회 실패:", err);
+		byId("vh-title").textContent = "기록을 불러오지 못했습니다";
+		byId("vh-meta").textContent = err.message || "목록에서 다시 선택하세요.";
+		queryAll(".view-section").forEach(s => (s.style.display = "none"));
+		byId("btn-edit").style.display = "none";
+		return;
+	}
+
 	const rec = getRecord();
 	if (!rec) {
 		byId("vh-title").textContent = "기록을 찾을 수 없습니다";
@@ -179,7 +199,7 @@ function init() {
 	renderGoals(rec);
 	renderFeedbacks(rec);
 	renderConsult(rec);
-	// 편집 링크에 docID 부여 (check-doc-edit.html은 커밋 13에서 실링크)
+	// 편집 링크에 docID 부여
 	byId("btn-edit").href = `check-doc-edit.html?docID=${docId}`;
 }
 

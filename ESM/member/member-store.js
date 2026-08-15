@@ -1,9 +1,37 @@
-// 파일 용도: 회원 스토어 단일 인스턴스 — 세션(sessionStorage) 영속화된 mock 저장소 (회원 관리·등록·상세 공용)
-// 주의: API 미배포 상태이므로 브라우저 세션 동안만 유지되는 mock이다. 탭을 닫으면 시드로 복원된다.
+// 파일 용도: 회원 스토어 단일 인스턴스 — Mason API 클라이언트 (회원 관리·등록·상세 공용)
+// 주의: 기존 sessionStorage mock 저장에서 API 영속화로 교첼되었습니다.
+import { request } from "@infra/api-client.js";
+import { getToken } from "@infra/auth.js";
 import { Store } from "@infra/store.js";
 
-/** 세션 저장 키 */
-const STORAGE_KEY = "checkday.members.v2";
+/** API Member 응답을 웹 Member 형태로 정규화합니다.
+ * @param {object} apiMember Mason API Member 리소스
+ * @returns {import("@infra/store.js").Member}
+ */
+function normalizeMember(apiMember) {
+	return {
+		id: apiMember.member_ID,
+		name: apiMember.name,
+		gender: fromApiGender(apiMember.gender),
+		goal: apiMember.goal,
+		trainer: apiMember.trainer,
+		registered_at: apiMember.registered_at,
+		updated_at: apiMember.updated_at,
+	};
+}
+
+/** 웹 Member 데이터를 API Member 생성·수정 본문으로 변환합니다.
+ * @param {Omit<import("@infra/store.js").Member, "id">} data 웹 회원 데이터
+ * @returns {object} API 요청 본문
+ */
+function toApiMember(data) {
+	return {
+		name: data.name,
+		gender: toApiGender(data.gender),
+		goal: data.goal,
+		trainer: data.trainer,
+	};
+}
 
 /**
  * 웹 성별 표기를 API 성별 표기로 변환합니다.
@@ -27,53 +55,74 @@ export function fromApiGender(gender) {
 	return "";
 }
 
-/** 시드 회원 7명 — 김씨 3인(김민준·김하늘·김도윤) 포함.
- *  주의: API 연동 시 회원 식별자는 숫자 id 대신 API의 member_ID(NanoID 문자열)로 교첼됩니다. */
-export const SEED_MEMBERS = [
-	{ id: 1, name: "김민준", gender: "남", goal: "체지방 감소", trainer: "김지훈" },
-	{ id: 2, name: "이서연", gender: "여", goal: "근력 향상", trainer: "박소연" },
-	{ id: 3, name: "박지훈", gender: "남", goal: "체중 감량", trainer: "정지훈" },
-	{ id: 4, name: "최수아", gender: "여", goal: "체형 교정", trainer: "김지훈" },
-	{ id: 5, name: "정우진", gender: "남", goal: "근력 향상", trainer: "박소연" },
-	// 훼이크 데이터 보강: 체크기록 8건(스파크라인·변화 분석 데모용)을 가진 김씨 회원
-	{ id: 6, name: "김하늘", gender: "여", goal: "체지방 감소", trainer: "김지훈" },
-	{ id: 7, name: "김도윤", gender: "남", goal: "근육량 증가", trainer: "김지훈" },
-];
-
-/** 회원 스토어 (전 화면 공용 단일 인스턴스) — 저장값이 손상되면 시드로 폴백 */
-export const memberStore = new Store(
-	{ members: SEED_MEMBERS, nextId: SEED_MEMBERS.length + 1 },
-	{
-		storageKey: STORAGE_KEY,
-		/** 저장값에 members 배열이 있어야 유효 */
-		validate: (data) => Array.isArray(data.members),
-	},
-);
+/** 회원 스토어 (전 화면 공용 단일 인스턴스) — API 데이터로 채워집니다. */
+export const memberStore = new Store({ members: [], loading: false, error: null }, { storageKey: null });
 
 /**
- * 회원 1명을 추가하고 새 id를 부여한다 (등록 화면 공용)
- * @param {Omit<import("@infra/store.js").Member, "id">} data 신규 회원 데이터 (이름·성별·목표·트레이너)
- * @returns {number} 부여된 회원 id
+ * 회원 목록을 API에서 불러와 스토어에 저장합니다.
+ * @returns {Promise<void>}
  */
-export function addMember(data) {
-	const id = memberStore.getState().nextId;
-	memberStore.setState((prev) => ({
-		...prev,
-		members: [...prev.members, { id, ...data }],
-		nextId: prev.nextId + 1,
-	}));
-	return id;
+export async function loadMembers() {
+	memberStore.update({ loading: true, error: null });
+	try {
+		const items = await request("/members", { token: getToken() });
+		memberStore.update({ members: items.map(normalizeMember), loading: false });
+	} catch (err) {
+		memberStore.update({ loading: false, error: err.message || "회원 목록을 불러오지 못했습니다" });
+		throw err;
+	}
 }
 
 /**
- * 회원 1명의 정보를 갱신한다 (편집 화면 공용)
- * @param {number} id 대상 회원 id
- * @param {Partial<import("@infra/store.js").Member>} patch 갱신할 필드 (이름·성별·목표·트레이너 등)
- * @returns {void}
+ * 회원 1명을 API에 등록하고 스토어에 반영합니다.
+ * @param {Omit<import("@infra/store.js").Member, "id">} data 신규 회원 데이터
+ * @returns {Promise<string>} 생성된 회원 member_ID
  */
-export function updateMember(id, patch) {
-	memberStore.setState((prev) => ({
+export async function addMember(data) {
+	const created = await request("/members", {
+		method: "POST",
+		body: toApiMember(data),
+		token: getToken(),
+	});
+	memberStore.setState(prev => ({
 		...prev,
-		members: prev.members.map((m) => (m.id === id ? { ...m, ...patch } : m)),
+		members: [...prev.members, normalizeMember(created)],
+	}));
+	return created.member_ID;
+}
+
+/**
+ * 회원 1명의 정보를 API에 부분 수정하고 스토어에 반영합니다.
+ * @param {string} id 대상 회원 member_ID
+ * @param {Partial<import("@infra/store.js").Member>} patch 갱신할 필드
+ * @returns {Promise<void>}
+ */
+export async function updateMember(id, patch) {
+	const body = {};
+	if (patch.name !== undefined) body.name = patch.name;
+	if (patch.gender !== undefined) body.gender = toApiGender(patch.gender);
+	if (patch.goal !== undefined) body.goal = patch.goal;
+	if (patch.trainer !== undefined) body.trainer = patch.trainer;
+	const updated = await request(`/members/${id}`, {
+		method: "PUT",
+		body,
+		token: getToken(),
+	});
+	memberStore.setState(prev => ({
+		...prev,
+		members: prev.members.map(m => (m.id === id ? normalizeMember(updated) : m)),
+	}));
+}
+
+/**
+ * 회원 1명을 API에서 삭제하고 스토어에서 제거합니다.
+ * @param {string} id 대상 회원 member_ID
+ * @returns {Promise<void>}
+ */
+export async function removeMember(id) {
+	await request(`/members/${id}`, { method: "DELETE", token: getToken() });
+	memberStore.setState(prev => ({
+		...prev,
+		members: prev.members.filter(m => m.id !== id),
 	}));
 }
