@@ -5,6 +5,71 @@
 // 주의: 웹은 현재 mock 저장(member.records.v3)이므로 이 모듈은 아직 실제 HTTP 호출에
 //       연결되지 않는다. 작업 5(엔드포인트 추가)에서 웹 필요 매핑에 사용한다.
 
+/** 웹 평가 항목 이름 → API BasicFunctionEvaluation 필드명 */
+const ITEM_NAME_TO_API_FIELD = {
+	"호흡 테스트": "breathing",
+	"Lumbar ROM (바닥짚기)": "floor_touch",
+	"Wall Angel Test": "wall_angel",
+	"Over Head Squat": "overhead_squat",
+	"Single Balance Test": "single_balance",
+	"One Leg Squat": "one_leg_squat",
+	"원레그 브릿지": "one_leg_bridge",
+	"VO₂ Max (스텝 테스트)": "vo2_max",
+};
+
+/** API 필드명 → 웹 평가 항목 이름 */
+const API_FIELD_TO_ITEM_NAME = Object.fromEntries(
+	Object.entries(ITEM_NAME_TO_API_FIELD).map(([name, field]) => [field, name]),
+);
+
+/** API BasicFunctionEvaluation 필드 순서 */
+const API_EVALUATION_FIELDS = Object.keys(API_FIELD_TO_ITEM_NAME);
+
+/** API가 허용하는 운동 목표 태그 집합 */
+const ALLOWED_GOAL_TAGS = [
+	"💪 근력 향상",
+	"🔥 체지방 감소",
+	"🧘 자세 교정",
+	"🏃 체력 향상",
+	"⚖️ 체중 유지",
+	"🦵 하체 강화",
+	"🤸 유연성 개선",
+	"🩺 통증 개선",
+	"📈 근육량 증가",
+];
+
+/** 웹 목표 텍스트 → API 태그 매핑(불완전 매칭 fallback 포함) */
+const GOAL_TEXT_TO_TAG = {
+	"근력 향상": "💪 근력 향상",
+	"체지방 감소": "🔥 체지방 감소",
+	"자세 교정": "🧘 자세 교정",
+	"체력 향상": "🏃 체력 향상",
+	"체중 유지": "⚖️ 체중 유지",
+	"하체 강화": "🦵 하체 강화",
+	"유연성 개선": "🤸 유연성 개선",
+	"통증 개선": "🩺 통증 개선",
+	"근육량 증가": "📈 근육량 증가",
+	"체중 감량": "🔥 체지방 감소",
+	"체형 교정": "🧘 자세 교정",
+};
+
+/**
+ * 웹 목표 태그를 API 허용 태그로 정규화합니다.
+ * @param {string[]} tags 웹 태그 목록
+ * @returns {string[]} API 태그 목록(허용되지 않는 태그는 제외)
+ */
+export function normalizeGoalTags(tags) {
+	return tags
+		.map((tag) => {
+			if (ALLOWED_GOAL_TAGS.includes(tag)) return tag;
+			const mapped = GOAL_TEXT_TO_TAG[tag.trim()];
+			if (mapped) return mapped;
+			const normalized = tag.replace(/^\s*[^\p{L}\p{N}]*\s*/u, "").trim();
+			return GOAL_TEXT_TO_TAG[normalized] || null;
+		})
+		.filter((tag) => tag !== null);
+}
+
 /**
  * 웹 인바디 묶음(문자열 7셀) → REST InbodyResultCreate 필드 (숫자 파싱, null 보존)
  * @param {import("@gym/inbody-data.js").InbodyData} ib 웹 인바디 입력값 (문자열)
@@ -54,12 +119,29 @@ export function restToIb(inbody) {
  * @returns {object} REST 본문 필드: session_label·session_date·trainer·inbody·evaluations·goals·feedbacks·consult_memo
  */
 export function payloadToRest(p, meta) {
-	const evaluations = p.items.map((name, i) => ({
-		name,
-		score: (p.scores && p.scores[i]) || 0,
-		evaluation_items: (p.evalData && p.evalData[i] && p.evalData[i].checked) || [],
-		memo: (p.evalData && p.evalData[i] && p.evalData[i].memo) ?? null,
-	}));
+	const getEvalItem = (name) => {
+		const i = p.items.indexOf(name);
+		if (i === -1) {
+			return { score: 0, evaluation_items: [], memo: null };
+		}
+		return {
+			score: (p.scores && p.scores[i]) || 0,
+			evaluation_items: (p.evalData && p.evalData[i] && p.evalData[i].checked) || [],
+			memo: (p.evalData && p.evalData[i] && p.evalData[i].memo) ?? null,
+		};
+	};
+	const evaluations = [
+		{
+			floor_touch: getEvalItem("Lumbar ROM (바닥짚기)"),
+			wall_angel: getEvalItem("Wall Angel Test"),
+			overhead_squat: getEvalItem("Over Head Squat"),
+			single_balance: getEvalItem("Single Balance Test"),
+			vo2_max: getEvalItem("VO₂ Max (스텝 테스트)"),
+			breathing: getEvalItem("호흡 테스트"),
+			one_leg_squat: getEvalItem("One Leg Squat"),
+			one_leg_bridge: getEvalItem("원레그 브릿지"),
+		},
+	];
 	const feedbacks = (p.feedbacks || []).map((fb) => ({
 		name: fb.name,
 		evaluation_items: (fb.checkItems || []).map((c) => c.text),
@@ -74,7 +156,7 @@ export function payloadToRest(p, meta) {
 		consult_memo: p.consultMemo || null,
 		inbody: ibToRest(p.ib, p.ibComment),
 		evaluations,
-		goals: hasGoals ? { tags: p.goals || [], memo: p.goalMemo || null } : null,
+		goals: hasGoals ? { tags: normalizeGoalTags(p.goals || []), memo: p.goalMemo || null } : null,
 		feedbacks,
 	};
 }
@@ -85,12 +167,29 @@ export function payloadToRest(p, meta) {
  * @returns {import("@infra/store.js").CheckRecordPayload}
  */
 export function restToPayload(body) {
-	const evals = body.evaluations || [];
-	const scores = evals.map((/** @type {any} */ e) => e.score);
-	const items = evals.map((/** @type {any} */ e) => e.name);
-	const evalData = evals.map((/** @type {any} */ e) => ({
-		checked: e.evaluation_items || [],
-		memo: e.memo ?? "",
+	const apiEval = body.evaluations?.[0] || {};
+	const evalEntries = API_EVALUATION_FIELDS
+		.map((field) => {
+			const e = apiEval[field];
+			if (!e) return null;
+			// API는 항상 8개 고정 필드를 저장하므로, 값이 모두 비어 있으면
+			// 이 기록에 포함되지 않은 항목(BASIC5 누락 항목)으로 간주합니다.
+			if (e.score === 0 && (e.evaluation_items || []).length === 0 && (e.memo ?? "") === "") {
+				return null;
+			}
+			return {
+				name: API_FIELD_TO_ITEM_NAME[field],
+				score: e.score,
+				evaluation_items: e.evaluation_items || [],
+				memo: e.memo ?? "",
+			};
+		})
+		.filter((entry) => entry !== null);
+	const scores = evalEntries.map((e) => e.score);
+	const items = evalEntries.map((e) => e.name);
+	const evalData = evalEntries.map((e) => ({
+		checked: e.evaluation_items,
+		memo: e.memo,
 	}));
 	return {
 		session: body.session_label || "",

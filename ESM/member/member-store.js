@@ -5,7 +5,30 @@ import { Store } from "@infra/store.js";
 /** 세션 저장 키 */
 const STORAGE_KEY = "checkday.members.v2";
 
-/** 시드 회원 7명 — 김씨 3인(김민준·김하늘·김도윤) 포함 */
+/**
+ * 웹 성별 표기를 API 성별 표기로 변환합니다.
+ * @param {"" | "남" | "여"} gender 웹 성별
+ * @returns {"" | "男" | "女"} API 성별
+ */
+export function toApiGender(gender) {
+	if (gender === "남") return "男";
+	if (gender === "여") return "女";
+	return "";
+}
+
+/**
+ * API 성별 표기를 웹 성별 표기로 변환합니다.
+ * @param {"" | "男" | "女"} gender API 성별
+ * @returns {"" | "남" | "여"} 웹 성별
+ */
+export function fromApiGender(gender) {
+	if (gender === "男") return "남";
+	if (gender === "女") return "여";
+	return "";
+}
+
+/** 시드 회원 7명 — 김씨 3인(김민준·김하늘·김도윤) 포함.
+ *  주의: API 연동 시 회원 식별자는 숫자 id 대신 API의 member_ID(NanoID 문자열)로 교첼됩니다. */
 export const SEED_MEMBERS = [
 	{ id: 1, name: "김민준", gender: "남", goal: "체지방 감소", trainer: "김지훈" },
 	{ id: 2, name: "이서연", gender: "여", goal: "근력 향상", trainer: "박소연" },
