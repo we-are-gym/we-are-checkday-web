@@ -6,11 +6,11 @@
 /**
  * ID로 회원 1명 조회 (없으면 undefined)
  * @param {import("@infra/store.js").Member[]} members 회원 배열
- * @param {number} id 회원 고유 번호
+ * @param {string} id 회원 고유 ID (Mason API `member_ID`)
  * @returns {import("@infra/store.js").Member | undefined}
  */
 export function getMemberById(members, id) {
-	return members.find((m) => m.id === id);
+	return members.find(m => m.id === id);
 }
 
 /**
@@ -20,5 +20,5 @@ export function getMemberById(members, id) {
  * @returns {import("@infra/store.js").Member | undefined}
  */
 export function getMemberByName(members, name) {
-	return members.find((m) => m.name === name);
+	return members.find(m => m.name === name);
 }

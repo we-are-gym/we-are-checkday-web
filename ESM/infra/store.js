@@ -5,10 +5,10 @@
 /**
  * 회원 1명
  * @typedef {Object} Member
- * @property {number} id 회원 고유 번호
+ * @property {string} id 회원 고유 ID (Mason API `member_ID`)
  * @property {string} name 이름
  * @property {"" | "남" | "여"} gender 성별
- * @property {string} goal 운동 목표
+ * @property {string} goal 운송 목표
  * @property {string} trainer 담당 트레이너
  */
 
@@ -104,7 +104,7 @@ export class Store {
 
 		if (storageKey) {
 			// 상태가 바뀔 때마다 세션 저장 (관찰자 패턴 — mock 영속화)
-			this.subscribe((state) => {
+			this.subscribe(state => {
 				try {
 					sessionStorage.setItem(storageKey, JSON.stringify(state));
 				} catch (err) {
@@ -129,7 +129,7 @@ export class Store {
 		const next = updater(this._state);
 		if (next === this._state) return;
 		this._state = next;
-		this._listeners.forEach((listener) => listener(this._state));
+		this._listeners.forEach(listener => listener(this._state));
 	}
 
 	/** 주어진 필드를 얕은 병합해 상태를 갱신한다
@@ -137,7 +137,7 @@ export class Store {
 	 * @returns {void}
 	 */
 	update(partial) {
-		this.setState((prev) => ({ ...prev, ...partial }));
+		this.setState(prev => ({ ...prev, ...partial }));
 	}
 
 	/** 상태 변경 시 호출할 리스너를 등록하고, 구독 해제 함수를 반환한다
