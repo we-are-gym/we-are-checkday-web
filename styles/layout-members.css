@@ -159,7 +159,7 @@
 	border-color: var(--btn-danger-fg);
 }
 /* 빈 목록 안내 행 (목록 안에 표시 — 프로토타입 "검색 결과가 없어요" 대응) */
-.member-empty-cell td {
+.member-table .member-empty-cell td {
 	text-align: center;
 	font-size: 13px;
 	color: var(--text3);
