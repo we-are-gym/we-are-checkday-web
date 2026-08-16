@@ -3,11 +3,21 @@ import { request, storeTokens, clearTokens } from "@infra/api-client.js";
 
 const AUTH_KEY = "checkday.auth.v1";
 
-/** 현재 로그인 상태인지 확인합니다.
- * @returns {boolean} 로그인 상태 여부
+/**
+ * 현재 유효한 로그인 상태인지 확인합니다.
+ * 토큰이 존재하고 만료되지 않은 경우에만 true를 반환합니다.
+ * 만료된 토큰이 남아 있으면 false를 반환하여 login.html의 무한 리다이렉트 루프를 방지합니다.
+ * @returns {boolean} 유효한 로그인 상태 여부
  */
 export function isAuthed() {
-	return sessionStorage.getItem(AUTH_KEY) !== null;
+	const token = sessionStorage.getItem(AUTH_KEY);
+	if (!token) return false;
+	try {
+		const payload = JSON.parse(atob(token.split(".")[1]));
+		return payload.exp * 1000 > Date.now();
+	} catch {
+		return false;
+	}
 }
 
 /**

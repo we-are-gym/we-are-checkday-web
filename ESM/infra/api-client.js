@@ -57,9 +57,88 @@ export function clearTokens() {
 	sessionStorage.removeItem(REFRESH_KEY);
 }
 
+// ── 401 자동 갱신 내부 유틸 ──
+
+/**
+ * JWT 토큰이 만료되었는지 확인합니다.
+ * @param {string} token JWT 문자열
+ * @returns {boolean} 만료 여부
+ */
+function isTokenExpired(token) {
+	try {
+		const payload = JSON.parse(atob(token.split(".")[1]));
+		return payload.exp * 1000 < Date.now();
+	} catch {
+		return true;
+	}
+}
+
+/** 동시 갱신 요청 방지 — 단일 프로미스 기반 뮤텍스 */
+let refreshLock = null;
+
+/**
+ * 리프레시 토큰으로 새 액세스·리프레시 토큰을 발급받아 저장합니다.
+ * 동시 호출 시 단일 갱신만 수행하고 나머지는 대기합니다.
+ * @returns {Promise<boolean>} 갱신 성공 여부
+ */
+async function tryRefreshToken() {
+	if (refreshLock) return refreshLock;
+	refreshLock = doRefresh();
+	try {
+		return await refreshLock;
+	} finally {
+		refreshLock = null;
+	}
+}
+
+/**
+ * 리프레시 토큰 갱신 실제 실행.
+ * @returns {Promise<boolean>} 성공 여부
+ */
+async function doRefresh() {
+	const refreshToken = sessionStorage.getItem(REFRESH_KEY);
+	if (!refreshToken) return false;
+
+	try {
+		const response = await fetch(`${API_BASE}/auth/refresh`, {
+			method: "POST",
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ refresh_token: refreshToken }),
+		});
+
+		if (!response.ok) return false;
+
+		const data = await response.json();
+		const resource = unwrapResource(data);
+		if (resource.access_token && resource.refresh_token) {
+			storeTokens(resource.access_token, resource.refresh_token);
+			return true;
+		}
+		return false;
+	} catch {
+		return false;
+	}
+}
+
+/**
+ * 로그인 페이지로 리다이렉트합니다. 이미 로그인 페이지면 무시합니다 (무한 루프 방지).
+ */
+function goToLogin() {
+	clearTokens();
+	if (!window.location.pathname.endsWith("login.html")) {
+		const redirect = encodeURIComponent(window.location.href);
+		window.location.href = `login.html?redirect=${redirect}`;
+	}
+}
+
 /**
  * Mason API에 HTTP 요청을 별내고 응답 봉투를 언래핑합니다.
  * token 옵션이 없으면 sessionStorage에서 자동으로 액세스 토큰을 읽어 Bearer 헤더에 첨부합니다.
+ * 401 응답 시 리프레시 토큰으로 자동 갱신을 시도하고, 갱신 성공 시 원 요청을 재시도합니다.
+ * 갱신 실패 시 토큰을 삭제하고 로그인 페이지로 리다이렉트합니다.
  * @param {string} path API 경로(API_BASE 제외, 예: "/members")
  * @param {Object} [options]
  * @param {string} [options.method="GET"] HTTP 메서드
@@ -80,7 +159,7 @@ export async function request(path, { method = "GET", body = null, token = null 
 		headers["Content-Type"] = "application/json";
 	}
 
-	const response = await fetch(url, {
+	let response = await fetch(url, {
 		method,
 		headers,
 		body: body !== null ? JSON.stringify(body) : undefined,
@@ -91,6 +170,33 @@ export async function request(path, { method = "GET", body = null, token = null 
 		data = await response.json();
 	} catch {
 		data = {};
+	}
+
+	// ── 401 자동 처리 ──
+	if (response.status === 401 && accessToken && !isTokenExpired(accessToken)) {
+		// 토큰이 아직 만료되지 않았는데 401 — 서버에서 거부됨. 갱신 불가.
+	} else if (response.status === 401 && accessToken) {
+		const refreshed = await tryRefreshToken();
+		if (refreshed) {
+			// 갱신 성공 — 원 요청 재시도 (새 토큰으로)
+			const newToken = sessionStorage.getItem(AUTH_KEY);
+			headers.Authorization = `Bearer ${newToken}`;
+			response = await fetch(url, {
+				method,
+				headers,
+				body: body !== null ? JSON.stringify(body) : undefined,
+			});
+			data = {};
+			try {
+				data = await response.json();
+			} catch {
+				data = {};
+			}
+		} else {
+			// 갱신 실패 — 로그인 페이지로 이동
+			goToLogin();
+			throw new ApiError("인증이 만료되었습니다", "token_expired", 401);
+		}
 	}
 
 	if (!response.ok || data["@error"]) {
