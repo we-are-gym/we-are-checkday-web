@@ -1,7 +1,13 @@
 // 파일 용도: 체크기록 스토어 - Mason API 클라이언트 (회원 상세·조회·작성·편집 공용)
 // 주의: 기존 sessionStorage mock 저장에서 API 영속화로 교첼되었습니다.
 import { Store } from "@infra/store.js";
-import { createCheckdoc, deleteCheckdoc, fetchCheckdocs, restToPayload, updateCheckdoc } from "./record-rest.js";
+import {
+	createCheckdoc,
+	deleteCheckdoc,
+	fetchCheckdocs,
+	restToPayload,
+	updateCheckdoc,
+} from "./record-rest.js";
 
 /** 체크기록 스토어 (전 화면 공용 단일 인스턴스) — API 데이터로 채워집니다. */
 export const recordStore = new Store({ records: [], loading: false, error: null }, { storageKey: null });

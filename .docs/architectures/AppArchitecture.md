@@ -22,14 +22,14 @@
 | `utils-dom.js`           | `byId`, `queryOne`, `queryAll`, `setHTML`, `setText`, `toggle`, `delegate` | DOM 조회·내용 설정·클래스 토글·이벤트 위임                                         | 없음                                     |
 | `basicFunction-store.js` | `createScoreState`, `scoreState`                                           | 평가 점수 배열·총점·평가 항목 단일 소스 (팩토리 + 전역 인스턴스)                   | `utils-array`, `validation`, `constants` |
 
-### 앱 상태·정적 스토어 (관찰자 패턴, sessionStorage mock 영속화)
+### 앱 상태·정적 스토어 (관찰자 패턴, Mason API 연동 영속화)
 
-| 모듈              | 상태                                                                           | 저장 키               |
-| ----------------- | ------------------------------------------------------------------------------ | --------------------- |
-| `member-store.js` | 회원 목록 7명 시드 (김씨 3인 포함)·등록/정보 갱신 헬퍼                         | `checkday.members.v2` |
-| `record-store.js` | 체크기록 시드 26건(김하늘 8건 포함, 기록 0건 회원 박지훈·기록별 5·8항목)       | `checkday.records.v3` |
-| `record-utils.js` | 기록 조회·정렬·건수 순수 헬퍼 (단일 소스 — member-utils에 있던 기록 헬퍼 통합) | —                     |
-| `record-stats.js` | 기록 통계·스파크라인·총점·비교 테이블(순수 함수)                               | —                     |
+| 모듈              | 상태                                                                           | 영속화                    |
+| ----------------- | ------------------------------------------------------------------------------ | ------------------------- |
+| `member-store.js` | 회원 목록 · 등록/정보 갱신 헬퍼 — Mason API CRUD 경유                         | GCP Datastore (REST API)  |
+| `record-store.js` | 체크기록 · CRUD 경유 (목록·작성·편집·삭제)                                   | GCP Datastore (REST API)  |
+| `record-utils.js` | 기록 조회·정렬·건수 순수 헬퍼 (단일 소스 — member-utils에 있던 기록 헬퍼 통합) | —                         |
+| `record-stats.js` | 기록 통계·스파크라인·총점·비교 테이블(순수 함수)                               | —                         |
 
 ### 평가 공용 모듈 (레거시 체크데이 상담지·베이직 펑션)
 
@@ -97,8 +97,8 @@
 
 - 평가 화면(checkday)은 `STATE`(단일 소스)가 평가 점수를 관리한다. (`init`/`get`/`set`/`getTotal`/`reset`)
 - 회원·체크기록은 **관찰자 패턴 스토어**(`Store`)로 관리한다. 화면은 `subscribe`로 구독해 상태가 바뀌면 재렌더링된다.
-  - `memberStore` — `{ members, loading, error }` (Mason API `/members` 엔드포인트와 동기화)
-  - `recordStore` — `{ records, loading, error }` (Mason API `/checkday/checkdocs` 엔드포인트와 동기화)
+  - `memberStore` — `{ members, loading, error }` (API 연동, 회원 목록은 서버에서 로드)
+  - `recordStore` — `{ records, loading, error }` (API 연동, 체크기록은 서버에서 로드)
   - `record.payload` — `{ session(회차, 예: "3회차"), trainer, ib, ibComment, scores[BasicFunctionsCount], items[BasicFunctionsCount], evalData[BasicFunctionsCount], goals(고정 태그만 — 추가 목표 커스터마이징 미지원), goalMemo, feedbacks, consultMemo }`
   - 회원 이름은 `record.memberId → memberStore.members` 참조로 해석한다. 회원 정보 편집 화면에서 회원명을 바꾸면 체크데이 조회 화면과 체크데이 편집 화면에도 즉시 반영된다.
 

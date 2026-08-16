@@ -94,9 +94,9 @@
 
 ## 영속성
 
-- API 미배포 상태라 **세션 mock**을 사용한다. (추후 백엔드 API와 연동 예정)
-- 상태 변경 시 `sessionStorage`(키 `checkday.members.v2`·`checkday.records.v3`·`checkday.auth.v1`)에 직렬화해 브라우저 세션 동안 유지한다.
-- 탭을 닫거나 시드가 손상되면 시드로 되돌아간다.
+- 회원·체크기록은 **Mason API** (`checkday-rest-…run.app`)를 통해 GCP Datastore에 영속화된다.
+- 모든 CRUD(Create/Read/Update/Delete)는 REST API 경유 — 로컬 `sessionStorage`에 의존하지 않는다.
+- 2026-08-16: 웹 UI의 하드코딩 시드 데이터(`SEED_RECORDS` 26건)가 GCP 실제 DB로 마이그레이션 완료. 시드 데이터는 REST API 도구(`migrate_seed_data.py`) 내부에 임베딩되어 별도 관리.
 
 ## 참조 문서
 
