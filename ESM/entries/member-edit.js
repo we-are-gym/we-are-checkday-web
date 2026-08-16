@@ -49,9 +49,13 @@ async function init() {
 	 * @returns {Promise<void>}
 	 */
 	formEl.onSubmit = async data => {
-		await updateMember(memberId, data);
-		// 저장 후 상세 화면으로 복귀
-		window.location.href = detailUrl;
+		try {
+			await updateMember(memberId, data);
+			// 저장 후 상세 화면으로 복귀
+			window.location.href = detailUrl;
+		} catch (err) {
+			console.error("회원 정보 수정 실패:", err);
+		}
 	};
 }
 

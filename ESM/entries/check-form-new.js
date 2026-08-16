@@ -117,17 +117,21 @@ delegate(document, "click", "[data-action]", (e, el) => {
  * @returns {Promise<void>}
  */
 async function saveRecord() {
-	const payload = collectPayload();
-	// 회원 이름(자동완성 입력)을 회원 id로 해석 — 미등록 이름이면 자동 등록한다
-	const name = (memberInput.value || "").trim();
-	if (!name) {
-		alert("회원 이름을 입력해 주세요.");
-		return;
+	try {
+		const payload = collectPayload();
+		// 회원 이름(자동완성 입력)을 회원 id로 해석 — 미등록 이름이면 자동 등록한다
+		const name = (memberInput.value || "").trim();
+		if (!name) {
+			alert("회원 이름을 입력해 주세요.");
+			return;
+		}
+		const matched = getMemberByName(memberStore.getState().members, name);
+		const newMemberId = matched ? matched.id : await addMember({ name, gender: "", goal: "일반", trainer: "" });
+		const recId = await addRecord(payload, { memberId: newMemberId, date: byId("m-date").value || todayISO() });
+		window.location.href = `check-doc-view.html?docID=${recId}`;
+	} catch (err) {
+		console.error("체크기록 저장 실패:", err);
 	}
-	const matched = getMemberByName(memberStore.getState().members, name);
-	const newMemberId = matched ? matched.id : await addMember({ name, gender: "", goal: "일반", trainer: "" });
-	const recId = await addRecord(payload, { memberId: newMemberId, date: byId("m-date").value || todayISO() });
-	window.location.href = `check-doc-view.html?docID=${recId}`;
 }
 
 // 목표·체크·점수·피드백·인바디/VO₂ 위임은 checkday·편집 화면이 공유하는 check-form-events로 처리
