@@ -12,7 +12,11 @@ const formEl = byId("member-form");
  * @returns {void}
  */
 formEl.onSubmit = async data => {
-	await addMember(data);
-	// 저장 후 회원 목록으로 이동
-	window.location.href = "members.html";
+	try {
+		await addMember(data);
+		// 저장 후 회원 목록으로 이동
+		window.location.href = "members.html";
+	} catch (err) {
+		console.error("회원 등록 실패:", err);
+	}
 };

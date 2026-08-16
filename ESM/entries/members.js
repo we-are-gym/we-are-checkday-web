@@ -79,6 +79,9 @@ memberStore.subscribe(render);
 recordStore.subscribe(render);
 loadMembers().catch(err => {
 	console.error("회원 목록 로드 실패:", err);
+	// 빈 목록 안내는 member-table 컴포넌트가 렌더링합니다
+	tableEl.rows = [];
+	tableEl.render?.();
 });
 
 /** 회원 선택 시 상세 화면으로 이동

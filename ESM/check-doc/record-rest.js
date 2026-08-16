@@ -2,7 +2,6 @@
 // 기법: 순수 함수 + fetch 래퍼. 웹 payload와 REST DTO 간 필드명·구조를 정규화한다.
 // 주의: API 연동을 위해 fetch 호출 함수도 함께 제공합니다.
 import { request } from "@infra/api-client.js";
-import { getToken } from "@infra/auth.js";
 
 /** 웹 평가 항목 이름 → API BasicFunctionEvaluation 필드명 */
 const ITEM_NAME_TO_API_FIELD = {
@@ -216,7 +215,7 @@ export function restToPayload(body) {
  */
 export async function fetchCheckdocs(member_ID) {
 	const path = member_ID ? `/checkday/checkdocs?member_ID=${encodeURIComponent(member_ID)}` : "/checkday/checkdocs";
-	return request(path, { token: getToken() });
+	return request(path);
 }
 
 /**
@@ -225,7 +224,7 @@ export async function fetchCheckdocs(member_ID) {
  * @returns {Promise<object>} Checkdoc 리소스
  */
 export async function fetchCheckdoc(checkdoc_ID) {
-	return request(`/checkday/checkdocs/${checkdoc_ID}`, { token: getToken() });
+	return request(`/checkday/checkdocs/${checkdoc_ID}`);
 }
 
 /**
@@ -238,7 +237,6 @@ export async function createCheckdoc(payload, meta) {
 	return request("/checkday/checkdocs", {
 		method: "POST",
 		body: payloadToRest(payload, meta),
-		token: getToken(),
 	});
 }
 
@@ -253,7 +251,6 @@ export async function updateCheckdoc(checkdoc_ID, payload, meta) {
 	return request(`/checkday/checkdocs/${checkdoc_ID}`, {
 		method: "PUT",
 		body: payloadToRest(payload, meta),
-		token: getToken(),
 	});
 }
 
@@ -265,6 +262,5 @@ export async function updateCheckdoc(checkdoc_ID, payload, meta) {
 export async function deleteCheckdoc(checkdoc_ID) {
 	return request(`/checkday/checkdocs/${checkdoc_ID}`, {
 		method: "DELETE",
-		token: getToken(),
 	});
 }

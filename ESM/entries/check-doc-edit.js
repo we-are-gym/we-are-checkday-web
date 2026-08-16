@@ -32,15 +32,19 @@ function getRecord() {
  * @returns {Promise<void>}
  */
 async function saveRecord() {
-	const dateInput = byId("m-date");
-	const rec = getRecord();
-	if (!rec) {
-		alert("편집 대상 기록을 찾을 수 없습니다.");
-		return;
+	try {
+		const dateInput = byId("m-date");
+		const rec = getRecord();
+		if (!rec) {
+			alert("편집 대상 기록을 찾을 수 없습니다.");
+			return;
+		}
+		const date = dateInput ? dateInput.value || rec.date : rec.date;
+		await updateRecord(docId, collectPayload(), { memberId: rec.memberId, date });
+		window.location.href = `check-doc-view.html?docID=${docId}`;
+	} catch (err) {
+		console.error("체크기록 수정 실패:", err);
 	}
-	const date = dateInput ? dateInput.value || rec.date : rec.date;
-	await updateRecord(docId, collectPayload(), { memberId: rec.memberId, date });
-	window.location.href = `check-doc-view.html?docID=${docId}`;
 }
 
 /** 초기화: 편집 내용을 저장 전 상태로 되돌림 */
