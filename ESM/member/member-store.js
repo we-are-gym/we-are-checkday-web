@@ -1,7 +1,6 @@
 // 파일 용도: 회원 스토어 단일 인스턴스 — Mason API 클라이언트 (회원 관리·등록·상세 공용)
 // 주의: 기존 sessionStorage mock 저장에서 API 영속화로 교첼되었습니다.
 import { request } from "@infra/api-client.js";
-import { getToken } from "@infra/auth.js";
 import { Store } from "@infra/store.js";
 
 /** API Member 응답을 웹 Member 형태로 정규화합니다.
@@ -65,7 +64,7 @@ export const memberStore = new Store({ members: [], loading: false, error: null 
 export async function loadMembers() {
 	memberStore.update({ loading: true, error: null });
 	try {
-		const items = await request("/members", { token: getToken() });
+		const items = await request("/members");
 		memberStore.update({ members: items.map(normalizeMember), loading: false });
 	} catch (err) {
 		memberStore.update({ loading: false, error: err.message || "회원 목록을 불러오지 못했습니다" });
@@ -82,7 +81,6 @@ export async function addMember(data) {
 	const created = await request("/members", {
 		method: "POST",
 		body: toApiMember(data),
-		token: getToken(),
 	});
 	memberStore.setState(prev => ({
 		...prev,
@@ -106,7 +104,6 @@ export async function updateMember(id, patch) {
 	const updated = await request(`/members/${id}`, {
 		method: "PUT",
 		body,
-		token: getToken(),
 	});
 	memberStore.setState(prev => ({
 		...prev,
@@ -120,7 +117,7 @@ export async function updateMember(id, patch) {
  * @returns {Promise<void>}
  */
 export async function removeMember(id) {
-	await request(`/members/${id}`, { method: "DELETE", token: getToken() });
+	await request(`/members/${id}`, { method: "DELETE" });
 	memberStore.setState(prev => ({
 		...prev,
 		members: prev.members.filter(m => m.id !== id),
