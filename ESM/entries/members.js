@@ -1,6 +1,6 @@
 // 파일 용도: 회원 관리 화면(members.html) — API 기반 회원 목록·검색·제거·상세 이동
 // 상태: memberStore·recordStore(공용 스토어, 관찰자 패턴) 구독, subscribe 콜백에서 member-table 컴포넌트를 재렌더링한다.
-import { recordStore } from "@check-doc/record-store.js";
+import { loadRecords, recordStore } from "@check-doc/record-store.js";
 import { getRecordCountsByMember } from "@check-doc/record-utils.js";
 import "@infra/components/app-header.js";
 import "@member/components/member-table.js";
@@ -77,12 +77,17 @@ function onSearch() {
 // ── 시작 ──
 memberStore.subscribe(render);
 recordStore.subscribe(render);
-loadMembers().catch(err => {
-	console.error("회원 목록 로드 실패:", err);
-	// 빈 목록 안내는 member-table 컴포넌트가 렌더링합니다
-	tableEl.rows = [];
-	tableEl.render?.();
-});
+Promise.all([
+	loadMembers().catch(err => {
+		console.error("회원 목록 로드 실패:", err);
+		// 빈 목록 안내는 member-table 컴포넌트가 렌더링합니다
+		tableEl.rows = [];
+		tableEl.render?.();
+	}),
+	loadRecords().catch(err => {
+		console.error("체크기록 로드 실패:", err);
+	}),
+]);
 
 /** 회원 선택 시 상세 화면으로 이동
  * @param {string} id 선택한 회원 member_ID
