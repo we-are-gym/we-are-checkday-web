@@ -13,5 +13,7 @@
 		"verify:schema": "node tools/verify-schema.mjs",
 		"bump-version": "uv run python tools/bump_version.py"
 	},
-	"devDependencies": {}
+	"devDependencies": {
+		"vite": "^8.2.1"
+	}
 }
