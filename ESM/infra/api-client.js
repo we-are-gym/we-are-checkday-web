@@ -37,11 +37,13 @@ export class ApiError extends Error {
 
 /**
  * Mason 봉투에서 리소스 본문을 추출합니다.
+ * @embedded 리소스는 최상위 레벨로 병합하여 restToPayload 등에서 바로 접근할 수 있게 합니다.
  * @param {object} body API 응답 본문
- * @returns {object} @namespaces·@controls·@embedded·@error를 제거한 리소스
+ * @returns {object} @namespaces·@controls·@embedded·@error를 제거하고 @embedded는 최상위로 병합한 리소스
  */
 function unwrapResource(body) {
-	const { "@namespaces": _ns, "@controls": _ctrl, "@embedded": _embedded, "@error": _error, "@meta": _meta, ...resource } = body;
+	const { "@namespaces": _ns, "@controls": _ctrl, "@embedded": embedded, "@error": _error, "@meta": _meta, ...resource } = body;
+	if (embedded) Object.assign(resource, embedded);
 	return resource;
 }
 
