@@ -1,6 +1,7 @@
 // 파일 용도: 회원 목록 테이블 컴포넌트 — rows 속성으로 렌더, 행 선택·제거 이벤트 위임 (회원 관리 공용)
 // 기법: 순수 함수형 컴포넌트 팩토리 + 네이티브 웹 컴포넌트 (light DOM 모드)
 // 사용: el.rows = [...]; el.refresh(); / el.onSelect(id), el.onRemove(id) 콜백 설정
+// 주의: 회원 ID(member_ID)는 NanoID 문자열(예: "M-로나미라노소시")이다. 숫자가 아니다.
 import { defineComponent } from "@infra/component-factory.js";
 import { TPL } from "@infra/templates.js";
 
@@ -34,17 +35,24 @@ defineComponent("member-table", {
 	},
 	/**
 	 * 행 선택·제거 이벤트를 루트 위임으로 연결하고 키보드(Enter/Space) 선택을 지원한다
+	 *
+	 * 콜백 시그니처:
+	 * - onSelect(id: string) — 회원 NanoID 문자열 전달
+	 * - onRemove(id: string) — 회원 NanoID 문자열 전달
 	 */
 	onConnect() {
 		// 행 선택·제거는 컴포넌트 루트 위임 (refresh로 tbody가 바뀌어도 유지)
+		// data-remove-id / data-member-id 는 회원 NanoID 문자열을 담는다 (숫자가 아님)
 		this.addEventListener("click", (e) => {
 			const rm = e.target.closest("[data-remove-id]");
 			if (rm) {
 				e.stopPropagation();
+				// TODO: Number() 변환은 NanoID 문자열을 NaN으로 만들어 삭제를 무시한다 — 다음 커밋에서 제거
 				if (this.onRemove) this.onRemove(Number(rm.dataset.removeId));
 				return;
 			}
 			const row = e.target.closest("[data-member-id]");
+			// TODO: Number() 변환은 NanoID 문자열을 NaN으로 만들어 선택을 무시한다 — 다음 커밋에서 제거
 			if (row && this.onSelect)
 				this.onSelect(Number(row.dataset.memberId));
 		});
