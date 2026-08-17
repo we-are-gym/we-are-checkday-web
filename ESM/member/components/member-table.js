@@ -15,7 +15,7 @@ defineComponent("member-table", {
 		// to-be: 프로토타입 배치와 동일하게 「목표」 열을 두지 않는다 (5열)
 		// 빈 목록이면 목록 안에 안내 행을 렌더링한다 (프로토타입 "검색 결과가 없어요" 대응)
 		const body = rows.length
-			? rows.map((m) => TPL.memberRow(m)).join("")
+			? rows.map(m => TPL.memberRow(m)).join("")
 			: `<tr class="member-empty-cell"><td colspan="5">검색 결과가 없어요</td></tr>`;
 		return `
 			<table class="member-table" aria-label="회원 목록">
@@ -43,26 +43,23 @@ defineComponent("member-table", {
 	onConnect() {
 		// 행 선택·제거는 컴포넌트 루트 위임 (refresh로 tbody가 바뀌어도 유지)
 		// data-remove-id / data-member-id 는 회원 NanoID 문자열을 담는다 (숫자가 아님)
-		this.addEventListener("click", (e) => {
+		this.addEventListener("click", e => {
 			const rm = e.target.closest("[data-remove-id]");
 			if (rm) {
 				e.stopPropagation();
-				// TODO: Number() 변환은 NanoID 문자열을 NaN으로 만들어 삭제를 무시한다 — 다음 커밋에서 제거
-				if (this.onRemove) this.onRemove(Number(rm.dataset.removeId));
+				if (this.onRemove) this.onRemove(rm.dataset.removeId);
 				return;
 			}
 			const row = e.target.closest("[data-member-id]");
-			// TODO: Number() 변환은 NanoID 문자열을 NaN으로 만들어 선택을 무시한다 — 다음 커밋에서 제거
-			if (row && this.onSelect)
-				this.onSelect(Number(row.dataset.memberId));
+			if (row && this.onSelect) this.onSelect(row.dataset.memberId);
 		});
 		// 키보드 접근성: 행이 tabindex=0이므로 Enter/Space로도 선택
-		this.addEventListener("keydown", (e) => {
+		this.addEventListener("keydown", e => {
 			if (e.key !== "Enter" && e.key !== " ") return;
 			const row = e.target.closest("[data-member-id]");
 			if (row && this.onSelect) {
 				e.preventDefault();
-				this.onSelect(Number(row.dataset.memberId));
+				this.onSelect(row.dataset.memberId);
 			}
 		});
 	},
