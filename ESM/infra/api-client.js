@@ -206,6 +206,11 @@ export async function request(path, { method = "GET", body = null, token = null 
 				} catch {
 					data = {};
 				}
+				// 갱신 후 재시도 응답이 401이면 로그인 페이지로 이동
+				if (response.status === 401) {
+					goToLogin();
+					throw new ApiError("갱신 후 인증이 거부되었습니다", "refresh_retry_rejected", 401);
+				}
 			} else {
 				// 갱신 실패 — 로그인 페이지로 이동
 				goToLogin();
