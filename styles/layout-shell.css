@@ -54,6 +54,7 @@ app-header {
 	gap: 8px;
 	flex-wrap: wrap;
 }
+
 .nav-link {
 	font-size: 13px;
 	font-weight: 500;
@@ -67,10 +68,12 @@ app-header {
 		background 0.15s,
 		color 0.15s;
 }
+
 .nav-link:hover {
 	background: var(--surface2);
 	color: var(--text);
 }
+
 .nav-link.active {
 	background: var(--blue-bg);
 	color: var(--blue-fg);
@@ -85,6 +88,7 @@ app-header {
 	font-size: 12.5px;
 	color: var(--text3);
 }
+
 .crumb-home,
 .crumb-link {
 	display: inline-flex;
@@ -92,19 +96,23 @@ app-header {
 	color: var(--text3);
 	text-decoration: none;
 }
+
 .crumb-home:hover,
 .crumb-link:hover {
 	color: var(--text);
 }
+
 .crumb-sep {
 	color: var(--text3);
 	opacity: 0.6;
 	user-select: none;
 }
+
 .crumb-cur {
 	color: var(--text2);
 	font-weight: 600;
 }
+
 .link-btn {
 	background: none;
 	border: none;
@@ -114,11 +122,12 @@ app-header {
 	color: var(--text3);
 	cursor: pointer;
 
-	/* 로그아웃 링크 밑줄 빼기 */
-	/* text-decoration: underline; */
+	/* 로그인 링크와 로그아웃 링크 밑줄 빼기 */
+	text-decoration: none;
 
 	text-underline-offset: 3px;
 }
+
 .link-btn:hover {
 	color: var(--text2);
 }
@@ -140,20 +149,24 @@ app-header {
 		border-color 0.15s;
 	cursor: pointer;
 }
+
 .btn:hover {
 	background: var(--surface2);
 	color: var(--text);
 	border-color: var(--border2);
 }
+
 .btn:active {
 	transform: scale(0.97);
 }
+
 .btn-primary {
 	background: var(--accent);
 	border-color: var(--accent);
 	color: var(--accent-text);
 	font-weight: 600;
 }
+
 .btn-primary:hover {
 	background: var(--accent-hover);
 	border-color: var(--accent-hover);
