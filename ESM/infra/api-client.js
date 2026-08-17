@@ -187,7 +187,9 @@ export async function request(path, { method = "GET", body = null, token = null 
 	// ── 401 자동 처리: 토큰 상태에 따라 3개 분기 ──
 	if (response.status === 401) {
 		if (!accessToken) {
-			// 케이스 1: 토큰 없음 — 에러 응답으로 낙하
+			// 케이스 1: 토큰 없음 — 로그인 페이지로 이동
+			goToLogin();
+			throw new ApiError("인증이 필요합니다", "unauthorized", 401);
 		} else if (isTokenExpired(accessToken)) {
 			// 케이스 2: 토큰 만료 — 리프레시 토큰으로 갱신 시도
 			const refreshed = await tryRefreshToken();
