@@ -10,6 +10,7 @@ import { fetchCheckdoc } from "@check-doc/record-rest.js";
 import { normalizeCheckdoc, recordStore, updateRecord } from "@check-doc/record-store.js";
 import { getRecordById } from "@check-doc/record-utils.js";
 import { scoreState } from "@gym/basicFunction-store.js";
+import { guardOnBfcache } from "@infra/auth.js";
 import "@infra/components/app-header.js";
 import { SCORE_MAX } from "@infra/constants.js";
 import { escapeHtml } from "@infra/templates.js";
@@ -17,6 +18,8 @@ import { loadMembers } from "@member/member-store.js";
 import "@shared/components/index.js";
 import { byId, delegate, dismissOnOverlayClick, queryAll } from "@tools/utils-dom.js";
 import { getUrlParam } from "@tools/utils-url.js";
+
+guardOnBfcache();
 
 /** ?docID= 파라미터 (숫자 checkdoc_ID) */
 const docId = Number(getUrlParam("docID"));

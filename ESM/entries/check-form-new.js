@@ -11,6 +11,7 @@ import { renderCheckMovementCards } from "@check-doc/feedback.js";
 import { addRecord, loadRecordsByMember, recordStore } from "@check-doc/record-store.js";
 import { getRecordCountsByMember } from "@check-doc/record-utils.js";
 import { sessionReport } from "@check-doc/session-report.js";
+import { guardOnBfcache } from "@infra/auth.js";
 import "@infra/components/app-header.js";
 import { escapeHtml } from "@infra/templates.js";
 import { addMember, loadMembers, memberStore } from "@member/member-store.js";
@@ -18,6 +19,8 @@ import { getMemberById, getMemberByName } from "@member/member-utils.js";
 import { byId, delegate, dismissOnOverlayClick } from "@tools/utils-dom.js";
 import { todayISO } from "@tools/utils-string.js";
 import { getUrlParam } from "@tools/utils-url.js";
+
+guardOnBfcache();
 
 // ── 날짜 ──
 // 상담일(date picker) 기본값 = 오늘 (기록 date는 YYYY-MM-DD 형식으로 저장)

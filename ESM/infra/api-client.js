@@ -140,7 +140,7 @@ function goToLogin() {
 	clearTokens();
 	if (!window.location.pathname.endsWith("login.html")) {
 		const redirect = encodeURIComponent(window.location.href);
-		window.location.href = `login.html?redirect=${redirect}`;
+		window.location.replace(`login.html?redirect=${redirect}`);
 	}
 }
 

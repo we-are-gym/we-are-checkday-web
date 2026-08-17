@@ -1,11 +1,14 @@
 // 파일 용도: 회원 정보 편집 화면(member-edit.html)
 // ?memberID= 회원을 API에서 조회해 member-form에 프리필하고, 저장 시 API를 통해 갱신한다.
+import { guardOnBfcache } from "@infra/auth.js";
 import "@infra/components/app-header.js";
 import "@member/components/member-form.js";
 import { loadMembers, memberStore, updateMember } from "@member/member-store.js";
 import { getMemberById } from "@member/member-utils.js";
 import { byId } from "@tools/utils-dom.js";
 import { getUrlParam } from "@tools/utils-url.js";
+
+guardOnBfcache();
 
 /** ?memberID= 파라미터 (문자열 member_ID) */
 const memberId = getUrlParam("memberID");
