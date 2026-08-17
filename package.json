@@ -1,0 +1,17 @@
+{
+	"name": "we-are-checkday-web",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "vite build",
+		"preview": "vite preview",
+		"typecheck": "tsc --noEmit",
+		"verify": "node tools/verify.mjs",
+		"verify:rest": "node tools/verify-record-rest.mjs",
+		"verify:compare": "node tools/verify-compare.mjs",
+		"verify:schema": "node tools/verify-schema.mjs",
+		"bump-version": "uv run python tools/bump_version.py"
+	},
+	"devDependencies": {}
+}
