@@ -76,7 +76,9 @@ export function normalizeGoalTags(tags) {
  *          전 셀 빈 값이면 null
  */
 export function ibToRest(inc, comment = "") {
-	if (inc.isEmpty()) return null;
+	// 방어적 빈 판정 — InbodyData 클래스 인스턴스이면 isEmpty()를, plain object이면 값을 직접 검사한다
+	const isEmpty = typeof inc?.isEmpty === "function" ? inc.isEmpty() : Object.values(inc || {}).every(v => v === "");
+	if (isEmpty) return null;
 	const parse = (/** @type {string} */ s) => (s === "" ? null : Number(s));
 	return {
 		weight: parse(inc.w),

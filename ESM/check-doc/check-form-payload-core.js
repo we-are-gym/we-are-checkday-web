@@ -6,7 +6,7 @@
  * 추출된 폼 필드 값으로 체크기록 payload를 조립한다. (순수)
  * @param {{
  *   session: string, trainer: string,
- *   ib: Record<string, string>, ibComment: string,
+ *   ib: import("@gym/inbody-data.js").InbodyData, ibComment: string,
  *   scores: number[], items: string[],
  *   evalData: Array<{ checked: string[], memo: string }>,
  *   goals: string[], goalMemo: string,
@@ -15,19 +15,7 @@
  * }} fields DOM에서 추출한 원시 필드 값
  * @returns {import("@infra/store.js").CheckRecordPayload}
  */
-export function buildPayload({
-	session,
-	trainer,
-	ib,
-	ibComment,
-	scores,
-	items,
-	evalData,
-	goals,
-	goalMemo,
-	feedbacks,
-	consultMemo,
-}) {
+export function buildPayload({ session, trainer, ib, ibComment, scores, items, evalData, goals, goalMemo, feedbacks, consultMemo }) {
 	return {
 		session,
 		trainer,
