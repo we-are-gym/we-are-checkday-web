@@ -131,7 +131,7 @@ function rebuildEvalItems(nextItems, removedIndex) {
 	renderBasicFunctionCards();
 
 	attachRemoveButtons();
-	prefillEvalState({ scores, evalData });
+	prefillEvalState(scores, evalData);
 	updateTotal();
 }
 
