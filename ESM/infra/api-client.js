@@ -29,6 +29,16 @@ export class ApiError extends Error {
 	}
 }
 
+/*
+	as-is:
+	▣ 401 브랜치 시나리오별 단위 테스트 無
+	▣ 401 브랜치 시나리오별 end-to-end 테스트 無
+
+	to-be:
+	▣ 401 브랜치 시나리오별 단위 테스트 有
+	▣ 401 브랜치 시나리오별 end-to-end 테스트 有
+*/
+
 /**
  * Mason 봉투에서 리소스 본문을 추출합니다.
  * @param {object} body API 응답 본문
