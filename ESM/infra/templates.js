@@ -363,12 +363,12 @@ export const TPL = {
 
 	/**
 	 * 헤더 막대 (app-header 컴포넌트 내부용) — navHtml은 우측 영역의 <app-gnb> 등 이동 대상
-	 * 크럼 경로(crumbPath)는 파이프(|)로 구분한 화면 경로다. 각 구간은 "href>라벨"(링크) 또는 라벨만(현재 화면)으로 표기한다.
+	 * 크럼 경로(crumbPath)는 파이프(|)로 구분한 화면 경로다. 각 구간은 "href>라벨"(링크) 또는 "라벨만"(현재 화면)으로 표기한다.
 	 * 마지막 구간은 현재 화면(링크 아님·aria-current="page"), href가 index.html인 구간은 홈 아이콘으로 렌더링된다.
-	 * @param {{ crumbPath?: string, showLogout?: boolean, navHtml?: string }} [p]
+	 * @param {{ crumbPath?: string, authed?: boolean, navHtml?: string }} [p] authed: 로그인 여부 — true면 로그아웃, false면 로그인 버튼 표시
 	 * @returns {string}
 	 */
-	headerBar({ crumbPath = "", showLogout = true, navHtml = "" } = {}) {
+	headerBar({ crumbPath = "", authed = false, navHtml = "" } = {}) {
 		// 파이프 구간을 "href>라벨" | "라벨" 로 해석 (라벨만 있는 마지막 구간 = 현재 화면)
 		const segments = crumbPath
 			.split("|")
@@ -402,7 +402,11 @@ export const TPL = {
 				<div class="header-right">
 					${navHtml}
 					${crumbHtml}
-					${showLogout ? `<button type="button" class="link-btn" data-header-logout aria-label="로그아웃">로그아웃</button>` : ""}
+					${
+						authed
+							? `<button type="button" class="link-btn" data-header-logout aria-label="로그아웃">로그아웃</button>`
+							: `<a class="link-btn" data-header-login href="login.html" aria-label="로그인">로그인</a>`
+					}
 				</div>
 			</header>`;
 	},
