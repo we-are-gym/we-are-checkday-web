@@ -3,8 +3,6 @@
 import { clearTokens, request, storeTokens } from "@infra/api-client.js";
 import { AUTH_KEY } from "./constants.js";
 
-// const AUTH_KEY = "checkday.auth.v1";
-
 /**
  * 현재 유효한 로그인 상태인지 확인합니다.
  * 토큰이 존재하고 만료되지 않은 경우에만 true를 반환합니다.
