@@ -1,7 +1,9 @@
 // 파일 용도: 인증·로그인 상태 — JWT 액세스·리프레시 토큰 관리 (전 화면 공용)
-import { request, storeTokens, clearTokens } from "@infra/api-client.js";
 
-const AUTH_KEY = "checkday.auth.v1";
+import { clearTokens, request, storeTokens } from "@infra/api-client.js";
+import { AUTH_KEY } from "./constants.js";
+
+// const AUTH_KEY = "checkday.auth.v1";
 
 /**
  * 현재 유효한 로그인 상태인지 확인합니다.

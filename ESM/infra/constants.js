@@ -29,4 +29,9 @@ export const GRADE_AVERAGE_PCT = 33;
 
 /** 움직임 평가(8항목·레거시) 총점 최댓값 — 24. 체크기록 작성(5항목)은 15점으로 configureEvaluation()이 교체한다. */
 export const MOTION_TOTAL_MAX = 24;
+
+/** `sessionStorage` 토큰 키 */
+export const AUTH_KEY = "checkday.auth.v1";
+export const REFRESH_KEY = "checkday.refresh.v1";
+
 // EOF
