@@ -58,12 +58,17 @@ async function removeMember(id) {
 		return;
 	}
 
-	await apiRemoveMember(id);
-	// 로컬 기록 목록에서도 해당 회원 기록 제거
-	recordStore.setState(prev => ({
-		...prev,
-		records: prev.records.filter(r => r.memberId !== id),
-	}));
+	try {
+		await apiRemoveMember(id);
+		// 로컬 기록 목록에서도 해당 회원 기록 제거
+		recordStore.setState(prev => ({
+			...prev,
+			records: prev.records.filter(r => r.memberId !== id),
+		}));
+	} catch (err) {
+		console.error("회원 삭제 실패:", err);
+		alert(`회원 삭제에 실패했습니다: ${err.message || "알 수 없는 오류"}`);
+	}
 }
 
 /** 검색어 갱신 후 재렌더링
