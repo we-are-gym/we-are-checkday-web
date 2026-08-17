@@ -1,7 +1,7 @@
 // 파일 용도: Mason API 호출 공용 클라이언트 — fetch 래퍼·Mason 봉투 언래핑·오류 정규화·토큰 자동 관리
 
 /** API 기본 경로 — 상대 경로로 정적 호스팅과 동일 오리진 배포를 가정합니다. */
-const API_BASE = "https://checkday-rest-954930013300.asia-northeast3.run.app/api/v1";
+const API_BASE = "https://checkday-rest-evztw4wu4q-du.a.run.app/api/v1";
 
 /** sessionStorage 토큰 키 — auth.js와 동일한 값을 사용합니다 (순환 임포트 방지). */
 const AUTH_KEY = "checkday.auth.v1";
