@@ -21,6 +21,23 @@ export function isAuthed() {
 }
 
 /**
+ * bfcache(뒤로-앞으로 캐시) 복원 시 인증되지 않은 사용자를 로그인 페이지로 리다이렉트합니다.
+ *
+ * 보호된 페이지의 `<script type="module">` 진입점에서 모듈 최상위에 호출하십시오.
+ * `pageshow` 이벤트의 `event.persisted`로 bfcache 복원 여부를 감지합니다.
+ * 최초 로드(`persisted === false`)에는 동작하지 않으므로, 기존 인증 흐름에 영향이 없습니다.
+ *
+ * @returns {void}
+ */
+export function guardOnBfcache() {
+	window.addEventListener("pageshow", event => {
+		if (event.persisted && !isAuthed()) {
+			window.location.replace("login.html");
+		}
+	});
+}
+
+/**
  * 데모 자격증명으로 로그인하고 JWT 액세스·리프레시 토큰을 저장합니다.
  * @param {string} username 아이디
  * @param {string} password 비밀번호
