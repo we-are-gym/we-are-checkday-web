@@ -184,30 +184,35 @@ export async function request(path, { method = "GET", body = null, token = null 
 		data = {};
 	}
 
-	// ── 401 자동 처리 ──
-	if (response.status === 401 && accessToken && !isTokenExpired(accessToken)) {
-		// 토큰이 아직 만료되지 않았는데 401 — 서버에서 거부됨. 갱신 불가.
-	} else if (response.status === 401 && accessToken) {
-		const refreshed = await tryRefreshToken();
-		if (refreshed) {
-			// 갱신 성공 — 원 요청 재시도 (새 토큰으로)
-			const newToken = sessionStorage.getItem(AUTH_KEY);
-			headers.Authorization = `Bearer ${newToken}`;
-			response = await fetch(url, {
-				method,
-				headers,
-				body: body !== null ? JSON.stringify(body) : undefined,
-			});
-			data = {};
-			try {
-				data = await response.json();
-			} catch {
+	// ── 401 자동 처리: 토큰 상태에 따라 3개 분기 ──
+	if (response.status === 401) {
+		if (!accessToken) {
+			// 케이스 1: 토큰 없음 — 에러 응답으로 낙하
+		} else if (isTokenExpired(accessToken)) {
+			// 케이스 2: 토큰 만료 — 리프레시 토큰으로 갱신 시도
+			const refreshed = await tryRefreshToken();
+			if (refreshed) {
+				// 갱신 성공 — 원 요청 재시도 (새 토큰으로)
+				const newToken = sessionStorage.getItem(AUTH_KEY);
+				headers.Authorization = `Bearer ${newToken}`;
+				response = await fetch(url, {
+					method,
+					headers,
+					body: body !== null ? JSON.stringify(body) : undefined,
+				});
 				data = {};
+				try {
+					data = await response.json();
+				} catch {
+					data = {};
+				}
+			} else {
+				// 갱신 실패 — 로그인 페이지로 이동
+				goToLogin();
+				throw new ApiError("인증이 만료되었습니다", "token_expired", 401);
 			}
 		} else {
-			// 갱신 실패 — 로그인 페이지로 이동
-			goToLogin();
-			throw new ApiError("인증이 만료되었습니다", "token_expired", 401);
+			// 케이스 3: 토큰 유효하지만 서버 거부 — 에러 응답으로 낙하
 		}
 	}
 
