@@ -7,9 +7,18 @@ root = true
 charset = utf-8
 indent_style = space
 indent_size = 2
+max_line_length = 140
 trim_trailing_whitespace = true
 insert_final_newline = false
 end_of_line = crlf
+
+[.prettierrc]
+indent_style = tab
+indent_size = 2
+
+[*.{JSON,Json,json}]
+indent_style = tab
+indent_size = 2
 
 [*.{MD,md}]
 indent_style = space
@@ -18,13 +27,13 @@ indent_size = 2
 [*.{CSS,css}]
 indent_style = tab
 indent_size = 4
-max_line_length = 140
+
 [*.{TS,ts}]
 indent_style = tab
 indent_size = 4
-max_line_length = 140
+
 [*.{JS,js}]
 indent_style = tab
 indent_size = 4
-max_line_length = 140
+
 # EOF
