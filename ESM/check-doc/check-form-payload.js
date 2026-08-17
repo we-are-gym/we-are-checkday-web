@@ -2,15 +2,16 @@
 // 기법: 폼 DOM→기록 payload, 기록 payload→폼 DOM 변환을 함수로 추출하여
 //       편집·작성 화면에서 중복 직렬화 코드가 생기지 않게 한다.
 //       (DOM 헬퍼 byId·document 쿼리에 의존하는 화면 로직 계층이다 — 순수 연산은 check-form-payload-core가 담당한다.)
-import { byId } from "@tools/utils-dom.js";
-import { DOT_COUNT } from "@infra/constants.js";
-import { updateInbodyTags } from "@gym/inbody.js";
 import { scoreState } from "@gym/basicFunction-store.js";
+import { InbodyData } from "@gym/inbody-data.js";
+import { updateInbodyTags } from "@gym/inbody.js";
+import { DOT_COUNT } from "@infra/constants.js";
+import { memberStore } from "@member/member-store.js";
+import { getMemberById } from "@member/member-utils.js";
+import { byId } from "@tools/utils-dom.js";
+import { buildPayload, resolvePrefillValues } from "./check-form-payload-core.js";
 import { getEvals, updateTotal } from "./evaluation.js";
 import { appendCheckMovement } from "./feedback.js";
-import { getMemberById } from "@member/member-utils.js";
-import { memberStore } from "@member/member-store.js";
-import { buildPayload, resolvePrefillValues } from "./check-form-payload-core.js";
 
 /** 인바디 입력 필드 id 목록 (payload.ib 키와 1:1) */
 export const IB_IDS = ["w", "m", "fat", "bmi", "bfp", "bmr", "vis"];
@@ -21,8 +22,7 @@ export const IB_IDS = ["w", "m", "fat", "bmi", "bfp", "bmr", "vis"];
  * @param {number} score 점수 (0~3)
  */
 function paintDots(index, score) {
-	for (let j = 0; j < DOT_COUNT; j++)
-		byId(`dot-${index}-${j}`).classList.toggle("on", j < score);
+	for (let j = 0; j < DOT_COUNT; j++) byId(`dot-${index}-${j}`).classList.toggle("on", j < score);
 }
 
 /**
@@ -41,10 +41,8 @@ export function prefillEvalState(scores, evalData) {
 		const ed = (evalData || [])[i];
 		if (!ed) return;
 		const sp = byId(`sp-${i}`);
-		(ed.checked || []).forEach((text) => {
-			const tag = [...sp.querySelectorAll(".ctag")].find(
-				(el) => el.textContent === text,
-			);
+		(ed.checked || []).forEach(text => {
+			const tag = [...sp.querySelectorAll(".ctag")].find(el => el.textContent === text);
 			if (tag) tag.classList.add("on");
 		});
 		const memo = sp.querySelector(".eval-memo");
@@ -69,7 +67,7 @@ export function prefillForm(rec) {
 	if (dateEl) dateEl.value = v.date;
 
 	// 인바디 + 코멘트
-	IB_IDS.forEach((k) => (byId(`ib-${k}`).value = v.ib?.[k] || ""));
+	IB_IDS.forEach(k => (byId(`ib-${k}`).value = v.ib?.[k] || ""));
 	byId("ib-comment").value = v.ibComment;
 	updateInbodyTags();
 
@@ -78,12 +76,12 @@ export function prefillForm(rec) {
 
 	// 목표 (고정 태그 on/off) — aria-pressed도 상태와 함께 동기화
 	const fixed = [...document.querySelectorAll(".goal-tag")];
-	fixed.forEach((el) => {
+	fixed.forEach(el => {
 		el.classList.remove("on");
 		el.setAttribute("aria-pressed", "false");
 	});
-	v.goals.forEach((g) => {
-		const hit = fixed.find((el) => el.textContent === g);
+	v.goals.forEach(g => {
+		const hit = fixed.find(el => el.textContent === g);
 		if (hit) {
 			hit.classList.add("on");
 			hit.setAttribute("aria-pressed", "true");
@@ -94,10 +92,10 @@ export function prefillForm(rec) {
 
 	// 동작 피드백 (기록에 있는 카드만 재구성)
 	byId("fb-cards").innerHTML = "";
-	v.feedbacks.forEach((fb) => {
+	v.feedbacks.forEach(fb => {
 		appendCheckMovement({
 			name: fb.name,
-			checks: (fb.checkItems || []).map((c) => c.text),
+			checks: (fb.checkItems || []).map(c => c.text),
 		});
 		const card = byId("fb-cards").lastElementChild;
 		const rows = [...card.querySelectorAll(".fb-check-row")];
@@ -123,39 +121,31 @@ export function collectPayload() {
 	const evalData = getEvals().map((_, i) => {
 		const sp = byId(`sp-${i}`);
 		return {
-			checked: [...sp.querySelectorAll(".ctag.on")].map(
-				(el) => el.textContent,
-			),
+			checked: [...sp.querySelectorAll(".ctag.on")].map(el => el.textContent),
 			memo: (sp.querySelector(".eval-memo") || {}).value || "",
 		};
 	});
 	const fixedTags = [...document.querySelectorAll(".goal-tag")];
-	const goals = fixedTags
-		.filter((el) => el.classList.contains("on"))
-		.map((el) => el.textContent);
+	const goals = fixedTags.filter(el => el.classList.contains("on")).map(el => el.textContent);
 	const feedbacks = [...document.querySelectorAll("#fb-cards .fb-item")]
-		.map((fb) => ({
+		.map(fb => ({
 			name: fb.querySelector(".fb-move-input").value,
-			checkItems: [...fb.querySelectorAll(".fb-check-row")].map(
-				(row) => ({
-					text: row.querySelector(".fb-check-input").value,
-					checked: row.querySelector("input[type=checkbox]").checked,
-				}),
-			),
+			checkItems: [...fb.querySelectorAll(".fb-check-row")].map(row => ({
+				text: row.querySelector(".fb-check-input").value,
+				checked: row.querySelector("input[type=checkbox]").checked,
+			})),
 			memo: (fb.querySelector(".eval-memo") || {}).value || "",
 		}))
-		.filter(
-			(fb) => fb.name || fb.checkItems.some((c) => c.text) || fb.memo,
-		);
+		.filter(fb => fb.name || fb.checkItems.some(c => c.text) || fb.memo);
 
 	return buildPayload({
 		session: byId("m-session").value,
 		trainer: byId("m-trainer").value,
-		ib: Object.fromEntries(IB_IDS.map((k) => [k, byId(`ib-${k}`).value])),
+		ib: new InbodyData(Object.fromEntries(IB_IDS.map(k => [k, byId(`ib-${k}`).value]))),
 		ibComment: byId("ib-comment").value,
 		scores: getEvals().map((_, i) => scoreState.get(i)),
 		// 항목 이름 배열 — 기록별 항목 수(예: 편집 화면에서 추가/삭제한 7항목)를 조회·비교 화면이 그대로 재현한다
-		items: getEvals().map((it) => it.name),
+		items: getEvals().map(it => it.name),
 		evalData,
 		goals,
 		goalMemo: byId("goal-memo").value,
