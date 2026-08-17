@@ -5,11 +5,15 @@
 ## 명령어
 
 ```powershell
-# 의존성 설치
-# …
+# 정적 서버 실행 (개발용 — CORS_ORIGINS에 허용된 포트)
+bunx http-server -p 30010
+# → http://localhost:30010
 
-# 실행
-# …
+bunx http-server -p 30016
+# → http://localhost:30016
+
+# 캐시 버전 갱신 (모든 ?v= 쿼리 일괄 갱신)
+uv run python tools/bump_version.py [YYYYMMDDHH]
 
 # 린트 체크
 # …
