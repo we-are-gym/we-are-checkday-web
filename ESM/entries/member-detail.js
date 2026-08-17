@@ -3,6 +3,7 @@
 import { buildCompareTable, recordMax, sessionLabel, sparkline } from "@check-doc/record-stats.js";
 import { deleteRecord, loadRecordsByMember, recordStore } from "@check-doc/record-store.js";
 import { getRecordById, getRecordsByMember } from "@check-doc/record-utils.js";
+import { guardOnBfcache } from "@infra/auth.js";
 import "@infra/components/app-header.js";
 import { TPL, escapeHtml } from "@infra/templates.js";
 import { loadMembers, memberStore } from "@member/member-store.js";
@@ -382,4 +383,5 @@ tabs.forEach(btn => {
 byId("cmp-cur").addEventListener("change", renderCompare);
 byId("cmp-tgt").addEventListener("change", renderCompare);
 
+guardOnBfcache();
 init();

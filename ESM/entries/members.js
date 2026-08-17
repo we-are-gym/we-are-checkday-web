@@ -2,6 +2,7 @@
 // 상태: memberStore·recordStore(공용 스토어, 관찰자 패턴) 구독, subscribe 콜백에서 member-table 컴포넌트를 재렌더링한다.
 import { loadRecords, recordStore } from "@check-doc/record-store.js";
 import { getRecordCountsByMember } from "@check-doc/record-utils.js";
+import { guardOnBfcache } from "@infra/auth.js";
 import "@infra/components/app-header.js";
 import "@member/components/member-table.js";
 import { removeMember as apiRemoveMember, loadMembers, memberStore } from "@member/member-store.js";
@@ -80,6 +81,7 @@ function onSearch() {
 }
 
 // ── 시작 ──
+guardOnBfcache();
 memberStore.subscribe(render);
 recordStore.subscribe(render);
 Promise.all([

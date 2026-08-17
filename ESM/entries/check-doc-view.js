@@ -6,6 +6,7 @@ import { IB_KEYS, recordMax } from "@check-doc/record-stats.js";
 import { normalizeCheckdoc, recordStore } from "@check-doc/record-store.js";
 import { getRecordById } from "@check-doc/record-utils.js";
 import { inbodyTagFor } from "@gym/inbody.js";
+import { guardOnBfcache } from "@infra/auth.js";
 import "@infra/components/app-header.js";
 import { escapeHtml, TPL } from "@infra/templates.js";
 import { loadMembers, memberStore } from "@member/member-store.js";
@@ -13,6 +14,8 @@ import { getMemberById } from "@member/member-utils.js";
 import { sum } from "@tools/utils-array.js";
 import { byId, queryAll, setHTML, setText } from "@tools/utils-dom.js";
 import { getUrlParam } from "@tools/utils-url.js";
+
+guardOnBfcache();
 
 /** ?docID= 파라미터 (숫자 checkdoc_ID) */
 const docId = Number(getUrlParam("docID"));
