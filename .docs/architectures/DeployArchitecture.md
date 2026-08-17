@@ -12,7 +12,7 @@
 - 정적 서빙 환경에서 브라우저가 이전 CSS·진입 스크립트를 캐시해 최신 코드가 반영되지 않는 문제를 막기 위해,
   각 화면 HTML의 `<link rel="stylesheet">`·`<script type="module">` 태그에 `?v=YYYYMMDD` 캐시 버전 쿼리를 붙인다.
 - 코드를 바꾼 뒤에는 다음 명령으로 모든 화면(레거시 포함)의 버전을 오늘 날짜로 일괄 갱신한다:
-  `node tools/bump-version.mjs [YYYYMMDD]` (인자 없으면 오늘 날짜)
+  `uv run python tools/bump_version.py [YYYYMMDDHH]` (인자 없으면 오늘 날짜·시)
 - 모든 HTML 화면이 `<script type="module">` 체계로 통일되어 예외 화면은 없다.
 
 ## URL
