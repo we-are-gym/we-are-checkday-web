@@ -219,7 +219,9 @@ export async function request(path, { method = "GET", body = null, token = null 
 				throw new ApiError("인증이 만료되었습니다", "token_expired", 401);
 			}
 		} else {
-			// 케이스 3: 토큰 유효하지만 서버 거부 — 에러 응답으로 낙하
+			// 케이스 3: 토큰 유효하지만 서버 거부 — 로그인 페이지로 이동
+			goToLogin();
+			throw new ApiError("인증이 거부되었습니다", "token_rejected", 401);
 		}
 	}
 
