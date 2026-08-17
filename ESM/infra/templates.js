@@ -3,7 +3,7 @@
 // 기법: 바닐라JS 템플릿 함수 (DOM·전역 비의존, 단위 테스트 용이)
 // 주의: 사용자 입력을 넣을 때는 반드시 escapeHtml()을 거쳐 XSS를 막는다.
 
-import { createZeroArray } from "../tools/utils-array.js";
+import { createZeroArray } from "@tools/utils-array.js";
 import { DOT_COUNT } from "./constants.js";
 
 /**
@@ -47,13 +47,7 @@ export const TPL = {
 	 *           dataKey: 전체 속성명 (예: "data-i") — 점수 증감 버튼이 참조할 인덱스 속성
 	 * @returns {string}
 	 */
-	scoreCtrl({
-		dataKey,
-		index,
-		displayClass,
-		displayId = "",
-		displayAttr = "",
-	}) {
+	scoreCtrl({ dataKey, index, displayClass, displayId = "", displayAttr = "" }) {
 		const data = `${dataKey}="${index}"`;
 		const idAttr = displayId ? ` id="${displayId}"` : "";
 		const attr = displayAttr ? ` data-${displayAttr}="0"` : "";
@@ -202,7 +196,7 @@ export const TPL = {
 	 * @returns {string}
 	 */
 	goalTags() {
-		return GOAL_TAGS.map((text) => this.goalTag(text)).join("");
+		return GOAL_TAGS.map(text => this.goalTag(text)).join("");
 	},
 
 	/**
@@ -225,7 +219,7 @@ export const TPL = {
 	 * @returns {string}
 	 */
 	feedbackCard({ id, name, checkItems }) {
-		const checksHTML = checkItems.map((ch) => TPL.fbCheckRow(ch)).join("");
+		const checksHTML = checkItems.map(ch => TPL.fbCheckRow(ch)).join("");
 
 		return `
 			<div class="fb-item" id="fb-item-${id}">
@@ -278,10 +272,7 @@ export const TPL = {
 	 */
 	scoreDots({ prefix, count }) {
 		return createZeroArray(count)
-			.map(
-				(_, j) =>
-					`<div class="dot" id="dot-${prefix}-${j}" aria-hidden="true"></div>`,
-			)
+			.map((_, j) => `<div class="dot" id="dot-${prefix}-${j}" aria-hidden="true"></div>`)
 			.join("");
 	},
 
@@ -317,19 +308,8 @@ export const TPL = {
 	 *
 	 * @returns {string}
 	 */
-	compareTable({
-		extraClassNames = [],
-		itemLabel,
-		leftLabel = "",
-		rightLabel = "",
-		rows,
-		footRows,
-		withHeader = true,
-		ariaLabel = "",
-	}) {
-		const ariaAttr = ariaLabel
-			? ` aria-label="${escapeHtml(ariaLabel)}"`
-			: "";
+	compareTable({ extraClassNames = [], itemLabel, leftLabel = "", rightLabel = "", rows, footRows, withHeader = true, ariaLabel = "" }) {
+		const ariaAttr = ariaLabel ? ` aria-label="${escapeHtml(ariaLabel)}"` : "";
 		const head = withHeader
 			? `<thead><tr><th>${itemLabel}</th><th>${escapeHtml(leftLabel)}</th><th>${escapeHtml(rightLabel)}</th><th>변화</th></tr></thead>`
 			: "";
@@ -341,7 +321,7 @@ export const TPL = {
 
 			return `
 				<tfoot>
-					${footRows.map((row) => TPL.compareTableRow(row)).join("")}
+					${footRows.map(row => TPL.compareTableRow(row)).join("")}
 				</tfoot>
 			`;
 		})();
@@ -351,7 +331,7 @@ export const TPL = {
 				${head}
 				${foot}
 				<tbody>
-					${rows.map((r) => TPL.compareTableRow(r)).join("")}
+					${rows.map(r => TPL.compareTableRow(r)).join("")}
 				</tbody>
 			</table>`;
 	},
@@ -362,10 +342,7 @@ export const TPL = {
 	 * @returns {string}
 	 */
 	viewScoreDots({ score, max = DOT_COUNT }) {
-		return Array.from(
-			{ length: max },
-			(_, i) => `<span class="sdot${i < score ? " on" : ""}"></span>`,
-		).join("");
+		return Array.from({ length: max }, (_, i) => `<span class="sdot${i < score ? " on" : ""}"></span>`).join("");
 	},
 
 	/**
@@ -396,11 +373,9 @@ export const TPL = {
 		const segments = crumbPath
 			.split("|")
 			.filter(Boolean)
-			.map((seg) => {
+			.map(seg => {
 				const sep = seg.indexOf(">");
-				return sep === -1
-					? { href: "", label: seg }
-					: { href: seg.slice(0, sep), label: seg.slice(sep + 1) };
+				return sep === -1 ? { href: "", label: seg } : { href: seg.slice(0, sep), label: seg.slice(sep + 1) };
 			});
 		const crumbHtml = segments.length
 			? `<div class="crumb-path">${segments
@@ -413,12 +388,7 @@ export const TPL = {
 								: seg.href
 									? `<a class="crumb-link" href="${escapeHtml(seg.href)}">${escapeHtml(seg.label)}</a>`
 									: `<span class="crumb-cur">${escapeHtml(seg.label)}</span>`;
-						return (
-							part +
-							(isLast
-								? ""
-								: `<span class="crumb-sep" aria-hidden="true">›</span>`)
-						);
+						return part + (isLast ? "" : `<span class="crumb-sep" aria-hidden="true">›</span>`);
 					})
 					.join("")}</div>`
 			: "";

@@ -1,8 +1,8 @@
 // 파일 용도: 내장 도움말 컴포넌트 — 헤더 우측의 도움말 버튼과 모달 오버레이 (전 화면 공용)
 // 기법: 순수 함수형 컴포넌트 팩토리 + 네이티브 웹 컴포넌트 (light DOM 모드)
 // light-DOM 자식이 도움말 본문(HTML)이 된다. (예: <app-help><h4>…</h4><p>…</p></app-help>)
-import { defineComponent } from "../component-factory.js";
-import { TPL } from "../templates.js";
+import { defineComponent } from "@infra/component-factory.js";
+import { TPL } from "@infra/templates.js";
 
 defineComponent("app-help", {
 	/**

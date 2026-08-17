@@ -2,10 +2,10 @@
 // 기법: 점수·만점·항목 상태를 Store(store.js) 인스턴스로 감싼 팩토리 + 단일 인스턴스 (named export)
 //       모든 상태를 Store 하나로 관리해 관찰자 패턴 계약(getState/setState/update/subscribe)을 통일한다.
 //       모듈 전역 가변 변수(evals·currentMax) 없이 항목도 Store가 보유 → 평가 구성 변경이 하나의 상태로 원자화된다.
-import { Store } from "../infra/store.js";
-import { createZeroArray, sum } from "../tools/utils-array.js";
-import { clamp } from "../infra/validation.js";
-import { SCORE_MIN, SCORE_MAX } from "../infra/constants.js";
+import { SCORE_MAX, SCORE_MIN } from "@infra/constants.js";
+import { Store } from "@infra/store.js";
+import { clamp } from "@infra/validation.js";
+import { createZeroArray, sum } from "@tools/utils-array.js";
 
 /**
  * 평가 점수 상태 생성 — 점수 배열(항목 인덱스 → 0~3점)·총점 최댓값·평가 항목을 Store 위에 얹어 한 곳에서 관리한다.
@@ -52,7 +52,7 @@ export function createScoreState() {
 		 * @returns {void}
 		 */
 		set(i, v) {
-			store.setState((prev) => {
+			store.setState(prev => {
 				const scores = [...prev.scores];
 				scores[i] = clamp(v, SCORE_MIN, SCORE_MAX);
 				return { ...prev, scores };
@@ -80,7 +80,7 @@ export function createScoreState() {
 		 * @returns {void}
 		 */
 		reset() {
-			store.setState((prev) => ({ ...prev, scores: createZeroArray(prev.scores.length) }));
+			store.setState(prev => ({ ...prev, scores: createZeroArray(prev.scores.length) }));
 		},
 	};
 }

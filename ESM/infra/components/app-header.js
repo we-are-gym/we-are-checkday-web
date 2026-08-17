@@ -3,11 +3,11 @@
 // light-DOM 자식(<app-gnb>, <app-help>)은 연결 시점에 .header-right로 옮겨 헤더 안에 배치한다.
 // 속성: crumb-path="href>라벨|...|현재화면" (브레드크럼 경로 — 마지막 구간은 현재 화면, index.html 구간은 홈 아이콘), logout (로그아웃 버튼 표시 → login.html 이동)
 // 부수 임포트: app-gnb·app-help 등록까지 이 모듈 하나로 처리
-import { defineComponent } from "../component-factory.js";
-import { TPL } from "../templates.js";
-import { logout } from "../auth.js";
-import "./app-gnb.js";
-import "./app-help.js";
+import { logout } from "@infra/auth.js";
+import { defineComponent } from "@infra/component-factory.js";
+import "@infra/components/app-gnb.js";
+import "@infra/components/app-help.js";
+import { TPL } from "@infra/templates.js";
 
 defineComponent("app-header", {
 	/**
@@ -33,7 +33,7 @@ defineComponent("app-header", {
 	 */
 	onConnect() {
 		const right = this.querySelector(".header-right");
-		this._lightChildren.forEach((child) => right.appendChild(child));
+		this._lightChildren.forEach(child => right.appendChild(child));
 		delete this._lightChildren;
 		const logoutBtn = this.querySelector("[data-header-logout]");
 		if (logoutBtn) {

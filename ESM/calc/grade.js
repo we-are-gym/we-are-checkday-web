@@ -1,9 +1,5 @@
 // 파일 용도: 총점 → 등급 라벨 산정 — basic_function_assessment_2.html·checkday 공용
-import {
-	GRADE_EXCELLENT_PCT,
-	GRADE_GOOD_PCT,
-	GRADE_AVERAGE_PCT,
-} from "../infra/constants.js";
+import { GRADE_AVERAGE_PCT, GRADE_EXCELLENT_PCT, GRADE_GOOD_PCT } from "@infra/constants.js";
 
 /**
  * 퍼센트 기반 등급 라벨 반환

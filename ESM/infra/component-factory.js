@@ -9,4 +9,4 @@
  * @param {{ render?: () => string, onConnect?: () => void, connectedCallback?: () => void }} options 컴포넌트 옵션
  * @returns {void}
  */
-export { defineComponent } from "../shared/components/base/component-factory.js";
+export { defineComponent } from "@shared/components/base/component-factory.js";
