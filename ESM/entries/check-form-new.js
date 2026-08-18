@@ -134,6 +134,8 @@ async function saveRecord() {
 		window.location.href = `check-doc-view.html?docID=${recId}`;
 	} catch (err) {
 		console.error("체크기록 저장 실패:", err);
+		const msg = err instanceof Error ? err.message : "저장에 실패했습니다.";
+		alert(msg);
 	}
 }
 
