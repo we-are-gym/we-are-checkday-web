@@ -3,20 +3,21 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="icon" type="image/x-icon" href="images/favicon.ico?v=2026081812" />
-		<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png?v=2026081812" />
-		<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png?v=2026081812" />
-		<link rel="apple-touch-icon" sizes="180x180" href="images/favicon-180x180.png?v=2026081812" />
+		<link rel="icon" type="image/x-icon" href="images/favicon.ico?v=2026081912" />
+		<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png?v=2026081912" />
+		<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png?v=2026081912" />
+		<link rel="apple-touch-icon" sizes="180x180" href="images/favicon-180x180.png?v=2026081912" />
 		<meta property="og:type" content="website" />
 		<meta property="og:title" content="회원 상세 — 위아짐 체크데이" />
 		<meta property="og:description" content="그룹 트레이닝 격월 점검 · 회원별 움직임 평가와 상담 관리" />
-		<meta property="og:image" content="images/og-image.png?v=2026081812" />
+		<meta property="og:image" content="images/og-image.png?v=2026081912" />
 		<meta property="og:url" content="member-detail.html" />
 		<title>회원 상세 — 위아짐 체크데이</title>
-		<link rel="stylesheet" href="styles/colors.css?v=2026081812" />
-		<link rel="stylesheet" href="styles/font.css?v=2026081812" />
-		<link rel="stylesheet" href="styles/layout-shell.css?v=2026081812" />
-		<link rel="stylesheet" href="styles/layout-member-detail.css?v=2026081812" />
+		<link rel="stylesheet" href="styles/colors.css?v=2026081912" />
+		<link rel="stylesheet" href="styles/font.css?v=2026081912" />
+		<link rel="stylesheet" href="styles/layout-shell.css?v=2026081912" />
+		<link rel="stylesheet" href="styles/layout-member-detail.css?v=2026081912" />
+		<link rel="stylesheet" href="styles/print-member-detail.css?v=2026081912" />
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
 	</head>
 
@@ -32,12 +33,20 @@
 						<div class="page-title" id="md-title" aria-live="polite">―</div>
 						<div class="page-sub" id="md-sub">―</div>
 					</div>
-					<div style="display: flex; gap: 8px; align-items: center">
+					<div class="no-print" style="display: flex; gap: 8px; align-items: center">
 						<a class="btn btn-ghost" id="edit-member-btn" href="#">편집</a>
 						<button type="button" class="btn btn-ghost" id="export-png-btn" aria-label="회원 정보를 PNG 파일로 내보내기">
 							이미지 저장
 						</button>
+						<button type="button" class="btn btn-ghost" id="print-pdf-btn" aria-label="회원 정보를 PDF로 인쇄">
+							PDF 인쇄
+						</button>
 					</div>
+				</div>
+
+				<!-- 인쇄 전용 회원 이름 표시 (page-head 숨김 시 대체) -->
+				<div class="print-only" style="margin-bottom: 4px;">
+					<div class="page-title" id="md-name-print"></div>
 				</div>
 
 				<!-- 좌우 2단 컬럼 (two-col 배치) -->
@@ -68,7 +77,7 @@
 					<!-- 우측 스택: 탭 + 패널 -->
 					<div class="detail-main">
 						<!-- 탭 -->
-						<div class="detail-tabs" role="tablist" aria-label="회원 상세 탭">
+						<div class="detail-tabs no-print" role="tablist" aria-label="회원 상세 탭">
 							<button
 								class="tab-btn"
 								role="tab"
@@ -98,7 +107,7 @@
 								<h2 class="panel-title">
 									<!-- 체크 기록 -->
 								</h2>
-								<a class="btn btn-primary btn-sm" id="new-record-btn" href="check-doc-new.html"> ＋ 체크기록 작성 </a>
+								<a class="btn btn-primary btn-sm no-print" id="new-record-btn" href="check-doc-new.html"> ＋ 체크기록 작성 </a>
 							</div>
 							<div class="record-list" id="record-list" aria-live="polite"></div>
 						</section>
@@ -137,6 +146,6 @@
 				}
 			}
 		</script>
-		<script type="module" src="ESM/entries/member-detail.js?v=2026081812"></script>
+		<script type="module" src="ESM/entries/member-detail.js?v=2026081912"></script>
 	</body>
 </html>

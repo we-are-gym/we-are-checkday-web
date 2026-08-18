@@ -33,6 +33,11 @@ function renderInfoCard(member) {
 	setText("md-name", member.name);
 	setText("md-gender", member.gender || "-");
 	setText("md-trainer", member.trainer || "-");
+	// 인쇄 전용 회원 이름 — page-head가 숨김될 때 인쇄 레이아웃에 표시
+	const printNameEl = byId("md-name-print");
+	if (printNameEl) {
+		printNameEl.textContent = `${member.name} · 체크데이 리포트 (${new Date().toISOString().slice(0, 10)})`;
+	}
 	document.title = `${member.name} — 회원 상세`;
 }
 
@@ -341,6 +346,61 @@ async function init() {
 
 	if (PNGExportButtonElem) {
 		PNGExportButtonElem.addEventListener("click", exportMemberDetailPNG);
+	}
+
+	// PDF 인쇄 버튼 이벤트 — 프로토타입의 printMemberDetail() 패턴 적용
+	const printBtn = byId("print-pdf-btn");
+	if (printBtn) {
+		printBtn.addEventListener("click", printMemberDetail);
+	}
+}
+
+/**
+ * 회원 상세 화면을 A4 가로 한 장으로 인쇄한다.
+ * 프로토타입의 .printing 클래스 패턴을 따르며, 동적 @page 크기 계산으로
+ * 콘텐츠 높이에 딱 맞는 한 장짜리 가로 페이지를 지정한다.
+ * @returns {void}
+ */
+function printMemberDetail() {
+	try {
+		// 1) 인쇄용 레이아웃(.printing) 활성화 — 화면과 동일한 2단 구성을 유지하고 폭만 A4 가로에 맞춘다
+		document.body.classList.add("printing");
+		// 강제 리플로우 — 레이아웃이 즉시 반영되도록
+		// eslint-disable-next-line no-unused-expressions
+		void document.body.offsetHeight;
+
+		// 2) 콘텐츠 실제 높이 측정 (2단 구성이라 세로가 짧다)
+		const target = document.querySelector(".container");
+		const pageWidthMM = 297; // A4 가로
+		const marginMM = 10;
+		const contentHeightMM = (target.scrollHeight * 25.4) / 96; // px → mm (96dpi)
+		// 상하 여백을 더하고, 콘텐츠가 한 장을 넘지 않도록 A4 높이(210mm)를 최대값으로 클램프
+		const pageHeightMM = Math.min(contentHeightMM + marginMM * 2, 210);
+
+		// 3) 동적 @page 크기 설정
+		const styleTag = document.createElement("style");
+		styleTag.id = "dynamic-print-size";
+		styleTag.textContent = `@page{ size:${pageWidthMM}mm ${pageHeightMM}mm; margin:${marginMM}mm; }`;
+		document.head.appendChild(styleTag);
+
+		// 4) 정리 — 인쇄 대화상자 닫힘 후 .printing 클래스와 동적 스타일 제거
+		const cleanup = () => {
+			styleTag.remove();
+			document.body.classList.remove("printing");
+			window.removeEventListener("afterprint", cleanup);
+		};
+		window.addEventListener("afterprint", cleanup);
+
+		// 5) 브라우저 인쇄 대화상자 열기
+		window.print();
+	} catch (err) {
+		// 인쇄 대화상자가 차단된 환경(샌드박스 등)에서 복구
+		document.body.classList.remove("printing");
+		const dynamicStyle = document.getElementById("dynamic-print-size");
+		if (dynamicStyle) dynamicStyle.remove();
+		alert(
+			"인쇄 기능을 열지 못했어요.\n\n파일을 다운로드해서 실제 브라우저 탭에서 열어 다시 시도해 주세요.",
+		);
 	}
 }
 
