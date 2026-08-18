@@ -1,5 +1,5 @@
 // 파일 용도: 체크기록 스토어 - Mason API 클라이언트 (회원 상세·조회·작성·편집 공용)
-// 주의: 기존 sessionStorage mock 저장에서 API 영속화로 교첼되었습니다.
+// 주의: 기존 sessionStorage mock 저장에서 API 영속화로 교체되었습니다.
 import { Store } from "@infra/store.js";
 import {
 	createCheckdoc,

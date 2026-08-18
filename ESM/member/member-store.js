@@ -1,5 +1,5 @@
 // 파일 용도: 회원 스토어 단일 인스턴스 — Mason API 클라이언트 (회원 관리·등록·상세 공용)
-// 주의: 기존 sessionStorage mock 저장에서 API 영속화로 교첼되었습니다.
+// 주의: 기존 sessionStorage mock 저장에서 API 영속화로 교체되었습니다.
 import { request } from "@infra/api-client.js";
 import { Store } from "@infra/store.js";
 

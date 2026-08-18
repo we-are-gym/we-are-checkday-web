@@ -224,8 +224,15 @@ export async function request(path, { method = "GET", body = null, token = null 
 	}
 
 	if (!response.ok || data["@error"]) {
-		const err = data["@error"] || {};
-		throw new ApiError(err["@message"] || "요청을 처리할 수 없습니다", err["@code"] || "request_failed", response.status);
+		// Mason @error 봉투 우선, Pydantic detail 배열 폴백
+		const err = data["@error"];
+		let message;
+		if (err) {
+			message = err["@message"];
+		} else if (Array.isArray(data.detail) && data.detail.length > 0) {
+			message = data.detail.map(d => d.msg).join("; ");
+		}
+		throw new ApiError(message || "요청을 처리할 수 없습니다", err?.["@code"] || "request_failed", response.status);
 	}
 
 	const resource = unwrapResource(data);
