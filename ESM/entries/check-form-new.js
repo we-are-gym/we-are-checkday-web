@@ -8,7 +8,7 @@ import { resetEntireForm, setupCheckFormEvents } from "@check-doc/check-form-eve
 import { collectPayload } from "@check-doc/check-form-payload.js";
 import { configureEvaluation, renderBasicFunctionCards, updateTotal } from "@check-doc/evaluation.js";
 import { renderCheckMovementCards } from "@check-doc/feedback.js";
-import { addRecord, loadRecordsByMember, recordStore } from "@check-doc/record-store.js";
+import { addRecord, loadRecords, loadRecordsByMember, recordStore } from "@check-doc/record-store.js";
 import { getRecordCountsByMember } from "@check-doc/record-utils.js";
 import { sessionReport } from "@check-doc/session-report.js";
 import { guardOnBfcache } from "@infra/auth.js";
@@ -57,6 +57,7 @@ function applyMember(mem) {
 async function init() {
 	try {
 		await loadMembers();
+		await loadRecords();
 		if (memberId) {
 			await loadRecordsByMember(memberId);
 		}
