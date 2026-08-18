@@ -9,6 +9,8 @@
 		"typecheck": "tsc --noEmit",
 		"test": "bun test",
 		"test:watch": "bun test --watch",
+		"storybook": "storybook dev -p 39000",
+		"build-storybook": "storybook build",
 		"verify": "node tools/verify.mjs",
 		"verify:rest": "node tools/verify-record-rest.mjs",
 		"verify:compare": "node tools/verify-compare.mjs",
@@ -16,6 +18,10 @@
 		"bump-version": "uv run python tools/bump_version.py"
 	},
 	"devDependencies": {
+		"@storybook/addon-a11y": "^10.5.9",
+		"@storybook/addon-essentials": "^8.6.14",
+		"@storybook/web-components-vite": "^10.5.9",
+		"storybook": "^10.5.9",
 		"typescript": "^7.0.2",
 		"vite": "^8.2.1"
 	}
