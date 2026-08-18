@@ -10,6 +10,11 @@ const compat = rel => {
 };
 
 export default defineConfig({
+	// ── 전역 상수 주입 — globalThis.__API_BASE__ 등 ──
+	define: {
+		__API_BASE__: JSON.stringify("https://checkday-rest-evztw4wu4q-du.a.run.app/api/v1"),
+	},
+
 	// ── 멀티 페이지 앱: 각 HTML을 진입점으로 지정 ──
 	build: {
 		rollupOptions: {

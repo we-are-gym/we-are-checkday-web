@@ -57,9 +57,10 @@ function applyMember(mem) {
 async function init() {
 	try {
 		await loadMembers();
-		await loadRecords();
 		if (memberId) {
 			await loadRecordsByMember(memberId);
+		} else {
+			await loadRecords();
 		}
 	} catch (err) {
 		console.error("회원/기록 로드 실패:", err);

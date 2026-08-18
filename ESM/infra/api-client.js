@@ -2,8 +2,15 @@
 
 import { AUTH_KEY, REFRESH_KEY } from "./constants.js";
 
-/** API 기본 경로 — 상대 경로로 정적 호스팅과 동일 오리진 배포를 가정합니다. */
-const API_BASE = "https://checkday-rest-evztw4wu4q-du.a.run.app/api/v1";
+/**
+ * API 기본 경로 — HTML <script>에서 globalThis.__API_BASE__로 주입됩니다.
+ * 정적 호스팅: HTML <script>가 globalThis에 설정 → 모듈에서 globalThis.__API_BASE__로 읽음
+ * Vite 개발 서버: vite.config.js define이 코드 내 __API_BASE__ 식별자를 값으로 치환
+ *   (define은 순수 식별자만 치환하므로, 이 모듈은 Vite 환경에서 __API_BASE__로 읽음)
+ *
+ * 참고: 이 모듈은 정적 호스팅(Vite 미경유)에서도 동작해야 하므로 globalThis.__API_BASE__를 사용합니다.
+ */
+const API_BASE = globalThis.__API_BASE__ ?? __API_BASE__;
 
 /**
  * Mason API 오류.
