@@ -209,31 +209,31 @@ hr.div{border:none; border-top:1px solid var(--border); margin:24px 0;}
 /* logo mark reused */
 .logo-mark{width:22px; height:22px;}
 
-/* ---------- print (인쇄 / PDF) ---------- */
+/* ---------- print (인쇄 / PDF) ----------
+   @media print 대신 JS가 붙이는 .printing 클래스를 쓴다.
+   이렇게 해야 "인쇄 직전 높이 측정"과 "실제 인쇄"가 완전히 같은 레이아웃 기준으로 이뤄져서
+   페이지가 예상과 다르게 둘로 갈라지는 일이 없다. */
 .print-only{display:none;}
-@media print{
-  body{background:#fff;}
-  .screen{display:none !important; min-height:0; padding-bottom:0;}
-  #screen-member-detail.active{display:block !important;}
-  .topbar, .no-print, .tab-bar{display:none !important;}
-  .print-only{display:block !important;}
-  .container{max-width:100%; padding:0;}
-  .two-col{display:block;}
-  .stack{gap:14px;}
-  .tab-panel{display:block !important; margin-bottom:18px;}
-  .card, .section-card{
-    background:#fff; border:1px solid #ddd; color:#111;
-    break-inside:avoid; box-shadow:none;
-  }
-  .k, .cell-dim, .text-dim, .page-sub{color:#555 !important;}
-  .v, .cell-name, .section-title, .page-title, .print-only{color:#111 !important;}
-  .compare-table th, .compare-table td{border-color:#ddd; color:#111;}
-  .delta-up{color:#1a8a3a !important;}
-  .delta-down{color:#b23a2c !important;}
-  svg text{fill:#333 !important;}
-  svg polyline{stroke:#333 !important;}
-  svg circle{fill:#333 !important;}
+body.printing{background:#fff;}
+body.printing .screen{display:none !important; min-height:0; padding-bottom:0;}
+body.printing #screen-member-detail.active{display:block !important;}
+body.printing .topbar, body.printing .no-print, body.printing .tab-bar{display:none !important;}
+body.printing .print-only{display:block !important;}
+body.printing .container{width:1046px; max-width:1046px; padding:0; margin:0 auto;} /* 1046px ≈ 277mm(96dpi) - A4 가로(297mm)에서 여백 뺀 실제 인쇄 폭 */
+body.printing .stack{gap:14px;}
+body.printing .tab-panel{display:block !important; margin-bottom:18px;}
+body.printing .card, body.printing .section-card{
+  background:#fff; border:1px solid #ddd; color:#111;
+  break-inside:avoid; box-shadow:none;
 }
+body.printing .k, body.printing .cell-dim, body.printing .text-dim, body.printing .page-sub{color:#555 !important;}
+body.printing .v, body.printing .cell-name, body.printing .section-title, body.printing .page-title, body.printing .print-only{color:#111 !important;}
+body.printing .compare-table th, body.printing .compare-table td{border-color:#ddd; color:#111;}
+body.printing .delta-up{color:#1a8a3a !important;}
+body.printing .delta-down{color:#b23a2c !important;}
+body.printing svg text{fill:#333 !important;}
+body.printing svg polyline{stroke:#333 !important;}
+body.printing svg circle{fill:#333 !important;}
 </style>
 </head>
 <body>
@@ -364,7 +364,7 @@ hr.div{border:none; border-top:1px solid var(--border); margin:24px 0;}
           </div>
 
           <div class="tab-panel active" id="tab-panel-records">
-            <div class="page-head" style="margin-bottom:12px;">
+            <div class="page-head no-print" style="margin-bottom:12px;">
               <div></div>
               <button class="btn btn-sm" onclick="nav('screen-check-form'); resetCheckForm(true);">+ 체크기록 작성</button>
             </div>
@@ -372,7 +372,7 @@ hr.div{border:none; border-top:1px solid var(--border); margin:24px 0;}
           </div>
 
           <div class="tab-panel" id="tab-panel-compare">
-            <div class="page-head" style="margin-bottom:12px;">
+            <div class="page-head no-print" style="margin-bottom:12px;">
               <div></div>
               <button class="btn btn-ghost btn-sm" onclick="openRecordView(state.formRecordId)">편집</button>
             </div>
@@ -619,7 +619,7 @@ function openMember(id){
         <div class="cell-name">${r.session}</div>
         <div class="cell-dim">${r.date}</div>
         <div class="cell-dim">총점 ${r.moves.reduce((a,b)=>a+b,0)}/24</div>
-        <div><button class="btn btn-sm btn-danger" onclick="event.stopPropagation(); deleteRecord(${m.id}, ${r.id})">지우기</button></div>
+        <div><button class="btn btn-sm btn-danger no-print" onclick="event.stopPropagation(); deleteRecord(${m.id}, ${r.id})">지우기</button></div>
       </div>`).join("");
   }
   prepareCompareSelects();
@@ -853,8 +853,35 @@ function exportAsJPG(){
 /* ---------- 인쇄 / PDF ---------- */
 function printMemberDetail(){
   try{
+    // 1) 먼저 인쇄용 레이아웃(.printing)을 적용한다 — 화면과 동일한 2단 구성을 그대로 유지하고,
+    //    폭만 A4 가로(297mm) 인쇄 폭에 맞춘다. 이 상태로 측정해야 실제 인쇄 높이와 일치한다.
+    document.body.classList.add('printing');
+    void document.body.offsetHeight; // 강제 리플로우 (레이아웃이 즉시 반영되도록)
+
+    // 2) 그 상태에서 콘텐츠의 실제 높이를 측정 (2단 구성이라 세로로 길게 쌓일 때보다 훨씬 짧다)
+    const target = document.getElementById('member-detail-printable');
+    const pageWidthMM = 297; // A4 가로
+    const marginMM = 10;
+    const contentHeightMM = target.scrollHeight * 25.4 / 96; // px → mm (96dpi 기준)
+    const pageHeightMM = Math.max(210, contentHeightMM + marginMM*2 + 4).toFixed(1); // 최소 A4 세로폭(210mm) 보장 + 여유분
+
+    // 3) 그 높이에 딱 맞는 '한 장짜리' 가로 페이지로 지정
+    const styleTag = document.createElement('style');
+    styleTag.id = 'dynamic-print-size';
+    styleTag.textContent = `@page{ size:${pageWidthMM}mm ${pageHeightMM}mm; margin:${marginMM}mm; }`;
+    document.head.appendChild(styleTag);
+
+    const cleanup = ()=>{
+      styleTag.remove();
+      document.body.classList.remove('printing');
+      window.removeEventListener('afterprint', cleanup);
+    };
+    window.addEventListener('afterprint', cleanup);
+
     window.print();
   }catch(err){
+    document.body.classList.remove('printing');
+    document.getElementById('dynamic-print-size')?.remove();
     alert('인쇄 기능을 열지 못했어요.\n\n채팅 안의 미리보기(샌드박스)에서는 인쇄 대화상자가 막혀 있을 수 있어요. 파일을 다운로드해서 실제 브라우저 탭에서 열어 다시 시도해 주세요.');
   }
 }
