@@ -7,6 +7,8 @@
 		"build": "vite build",
 		"preview": "vite preview",
 		"typecheck": "tsc --noEmit",
+		"test": "bun test",
+		"test:watch": "bun test --watch",
 		"verify": "node tools/verify.mjs",
 		"verify:rest": "node tools/verify-record-rest.mjs",
 		"verify:compare": "node tools/verify-compare.mjs",

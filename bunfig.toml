@@ -1,0 +1,17 @@
+# bun 설정 — 테스트 및 개발 환경
+# 파일 용도: bun test 커버리지 설정
+
+[test]
+coverage = true
+coverageDir = "coverage"
+
+[resolve]
+"@infra/*" = "./ESM/infra/*"
+"@tools/*" = "./ESM/tools/*"
+"@calc/*" = "./ESM/calc/*"
+"@gym/*" = "./ESM/gym/*"
+"@member/*" = "./ESM/member/*"
+"@check-doc/*" = "./ESM/check-doc/*"
+"@shared/*" = "./ESM/shared/*"
+
+# EOF
