@@ -134,6 +134,8 @@ async function saveRecord() {
 		window.location.href = `check-doc-view.html?docID=${recId}`;
 	} catch (err) {
 		console.error("체크기록 저장 실패:", err);
+		// 401은 request() 내부에서 goToLogin()이 이미 리다이렉트를 처리하므로 alert를 건너뛴다
+		if (err?.status === 401) return;
 		const msg = err instanceof Error ? err.message : "저장에 실패했습니다.";
 		alert(msg);
 	}
