@@ -416,3 +416,97 @@ main {
 		grid-template-columns: 1fr;
 	}
 }
+
+/* ── 인쇄(PDF) — A4 가로 한 장 레이아웃 ── */
+@media print {
+	/* 인쇄 전용 숨김 처리 — JS 동적 사이징은 2단계에서 추가 */
+	.no-print,
+	app-header,
+	.detail-tabs {
+		display: none !important;
+	}
+
+	/* 탭 패널 2개를 모두 표시 (변화 분석 숨김 해제) */
+	#panel-compare[hidden] {
+		display: block !important;
+	}
+	.detail-main > [role="tabpanel"] {
+		display: flex !important;
+		flex-direction: column;
+	}
+
+	/* A4 가로 폭 (297mm − 양쪽 여백 10mm × 2 = 277mm ≈ 1046px @96dpi) */
+	html, body {
+		width: 1046px;
+		margin: 0;
+		padding: 0;
+		background: #fff;
+		color: #111;
+	}
+	.container {
+		width: 1046px;
+		max-width: 1046px;
+		padding: 0;
+		margin: 0 auto;
+	}
+	main {
+		padding: 10px 0 0;
+	}
+
+	/* 2단 컬럼 유지 — 인쇄 폭에 맞춰 그리드 비율 조정 */
+	.member-detail-layout {
+		grid-template-columns: 300px 1fr;
+		gap: 14px;
+	}
+
+	/* 카드 배경·테두리 — 인쇄 흰색 배경 대응 */
+	.info-card,
+	.detail-card,
+	.record-row,
+	.compare-table {
+		background: #fff;
+		color: #111;
+		border-color: #ddd;
+	}
+
+	/* 텍스트 색상 — 다크 테마 → 인쇄용 라이트로 전환 */
+	.page-title { color: #111; }
+	.page-sub,
+	.info-label,
+	.cell-dim,
+	.stat-card-title-note,
+	.chart-stat-top .k,
+	.chart-stat-foot,
+	.spark-empty,
+	.sparkline-empty { color: #555; }
+	.info-value,
+	.cell-name,
+	.panel-title,
+	.stat-card-title,
+	.chart-latest { color: #111; }
+
+	/* 변화 표기 — 인쇄용 색상 */
+	.delta-up { color: #1a8a3a !important; }
+	.delta-down { color: #b23a2c !important; }
+
+	/* SVG 스파크라인 — 인쇄용 단색 */
+	svg text { fill: #333 !important; }
+	svg polyline { stroke: #333 !important; }
+	svg circle { fill: #333 !important; }
+
+	/* 비교 테이블 */
+	.compare-table th { background: #f5f5f5; color: #333; }
+	.compare-table td { color: #111; }
+
+	/* 페이지 나눔 방지 */
+	.info-card,
+	.detail-card,
+	.record-row {
+		break-inside: avoid;
+	}
+
+	/* 그림자 제거 */
+	* {
+		box-shadow: none !important;
+	}
+}
