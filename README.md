@@ -5,27 +5,31 @@
 ## 명령어
 
 ```powershell
-# 정적 서버 실행 (개발용 — CORS_ORIGINS에 허용된 포트)
-bunx http-server -p 30010
+# 개발 서버 실행 (CORS_ORIGINS에 허용된 포트)
+bun run dev
 # → http://localhost:30010
 
-bunx http-server -p 30016
-# → http://localhost:30016
+# 빌드
+bun run build
 
-# 캐시 버전 갱신 (모든 ?v= 쿼리 일괄 갱신)
-uv run python tools/bump_version.py [YYYYMMDDHH]
+# 단위 테스트
+bun test
 
-# 린트 체크
-# …
+# E2E 테스트 (Playwright)
+bun run test:e2e
 
-# 린트 체크 및 오토픽스
-# …
+# 전체 테스트 (단위 + E2E)
+bun run test:all
+
+# Storybook (컴포넌트 독립 개발)
+bun run storybook
+# → http://localhost:39000
 
 # 정적 타입 체크
-# …
+bun run typecheck
 
-# 자동화 테스트
-# …
+# 캐시 버전 갱신 (모든 ?v= 쿼리 일괄 갱신)
+bun run bump-version [YYYYMMDDHH]
 ```
 
 ## 요구사항
