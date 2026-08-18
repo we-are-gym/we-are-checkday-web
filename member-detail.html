@@ -38,14 +38,12 @@
 						<button type="button" class="btn btn-ghost" id="export-png-btn" aria-label="회원 정보를 PNG 파일로 내보내기">
 							이미지 저장
 						</button>
-						<button type="button" class="btn btn-ghost" id="print-pdf-btn" aria-label="회원 정보를 PDF로 인쇄">
-							PDF 인쇄
-						</button>
+						<button type="button" class="btn btn-ghost" id="print-pdf-btn" aria-label="회원 정보를 PDF로 인쇄">PDF 인쇄</button>
 					</div>
 				</div>
 
 				<!-- 인쇄 전용 회원 이름 표시 (page-head 숨김 시 대체) -->
-				<div class="print-only" style="margin-bottom: 4px;">
+				<div class="print-only" style="margin-bottom: 4px">
 					<div class="page-title" id="md-name-print"></div>
 				</div>
 
@@ -107,7 +105,9 @@
 								<h2 class="panel-title">
 									<!-- 체크 기록 -->
 								</h2>
-								<a class="btn btn-primary btn-sm no-print" id="new-record-btn" href="check-doc-new.html"> ＋ 체크기록 작성 </a>
+								<a class="btn btn-primary btn-sm no-print" id="new-record-btn" href="check-doc-new.html">
+									＋ 체크기록 작성
+								</a>
 							</div>
 							<div class="record-list" id="record-list" aria-live="polite"></div>
 						</section>
@@ -147,5 +147,8 @@
 			}
 		</script>
 		<script type="module" src="ESM/entries/member-detail.js?v=2026081815"></script>
+		<script>
+			window.__API_BASE__ = "https://checkday-rest-evztw4wu4q-du.a.run.app/api/v1";
+		</script>
 	</body>
 </html>
