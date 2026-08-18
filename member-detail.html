@@ -17,6 +17,7 @@
 		<link rel="stylesheet" href="styles/font.css?v=2026081812" />
 		<link rel="stylesheet" href="styles/layout-shell.css?v=2026081812" />
 		<link rel="stylesheet" href="styles/layout-member-detail.css?v=2026081812" />
+		<link rel="stylesheet" href="styles/print-member-detail.css?v=2026081812" />
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
 	</head>
 
@@ -37,7 +38,15 @@
 						<button type="button" class="btn btn-ghost" id="export-png-btn" aria-label="회원 정보를 PNG 파일로 내보내기">
 							이미지 저장
 						</button>
+						<button type="button" class="btn btn-ghost" id="print-pdf-btn" aria-label="회원 정보를 PDF로 인쇄">
+							PDF 인쇄
+						</button>
 					</div>
+				</div>
+
+				<!-- 인쇄 전용 회원 이름 표시 (page-head 숨김 시 대체) -->
+				<div class="print-only" style="margin-bottom: 4px;">
+					<div class="page-title" id="md-name-print"></div>
 				</div>
 
 				<!-- 좌우 2단 컬럼 (two-col 배치) -->
