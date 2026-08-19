@@ -1,6 +1,7 @@
 /* 파일 용도: 회원 상세 화면 인쇄(PDF) 전용 스타일 — .printing 클래스 활성화 시 적용 */
 /* 기법: JS가 body에 .printing 클래스를 붙여 인쇄 레이아웃을 활성화하고, 동적 @page 크기를 설정한 뒤 window.print()를 호출한다 */
 /* 참고: 프로토타입 prototypes/checkday-prototype.html의 .printing 규칙을 모듈화 */
+/* 인쇄 시 A4 세로(210mm × 297mm), 체크기록 목록·비교 셀렉터는 숨기고 비교 테이블은 표시 */
 
 /* ── 인쇄 시 숨김 처리 ── */
 body.printing .no-print,
@@ -51,7 +52,9 @@ body.printing .compare-table {
 }
 
 /* ── 텍스트 색상 ── */
-body.printing .page-title { color: #111; }
+body.printing .page-title {
+	color: #111;
+}
 body.printing .page-sub,
 body.printing .info-label,
 body.printing .cell-dim,
@@ -59,25 +62,44 @@ body.printing .stat-card-title-note,
 body.printing .chart-stat-top .k,
 body.printing .chart-stat-foot,
 body.printing .spark-empty,
-body.printing .sparkline-empty { color: #555; }
+body.printing .sparkline-empty {
+	color: #555;
+}
 body.printing .info-value,
 body.printing .cell-name,
 body.printing .panel-title,
 body.printing .stat-card-title,
-body.printing .chart-latest { color: #111; }
+body.printing .chart-latest {
+	color: #111;
+}
 
 /* ── 변화 표기 — 인쇄용 색상 ── */
-body.printing .delta-up { color: #1a8a3a !important; }
-body.printing .delta-down { color: #b23a2c !important; }
+body.printing .delta-up {
+	color: #1a8a3a !important;
+}
+body.printing .delta-down {
+	color: #b23a2c !important;
+}
 
 /* ── SVG 스파크라인 — 인쇄용 단색 ── */
-body.printing svg text { fill: #333 !important; }
-body.printing svg polyline { stroke: #333 !important; }
-body.printing svg circle { fill: #333 !important; }
+body.printing svg text {
+	fill: #333 !important;
+}
+body.printing svg polyline {
+	stroke: #333 !important;
+}
+body.printing svg circle {
+	fill: #333 !important;
+}
 
 /* ── 비교 테이블 ── */
-body.printing .compare-table th { background: #f5f5f5; color: #333; }
-body.printing .compare-table td { color: #111; }
+body.printing .compare-table th {
+	background: #f5f5f5;
+	color: #333;
+}
+body.printing .compare-table td {
+	color: #111;
+}
 
 /* ── 페이지 나눔 방지 ── */
 body.printing .info-card,
@@ -92,5 +114,9 @@ body.printing * {
 }
 
 /* ── 인쇄 전용 표시 요소 (화면에서는 숨김) ── */
-.print-only { display: none; }
-body.printing .print-only { display: block !important; }
+.print-only {
+	display: none;
+}
+body.printing .print-only {
+	display: block !important;
+}
