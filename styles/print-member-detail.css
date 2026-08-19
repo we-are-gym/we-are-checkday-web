@@ -5,7 +5,9 @@
 /* ── 인쇄 시 숨김 처리 ── */
 body.printing .no-print,
 body.printing app-header,
-body.printing .detail-tabs {
+body.printing .detail-tabs,
+body.printing #panel-records,
+body.printing .compare-controls {
 	display: none !important;
 }
 
@@ -18,13 +20,13 @@ body.printing .detail-main > [role="tabpanel"] {
 	flex-direction: column;
 }
 
-/* ── 인쇄용 레이아웃 — A4 가로 폭 (297mm − 양쪽 10mm = 277mm ≈ 1046px @96dpi) ── */
+/* ── 인쇄용 레이아웃 — A4 세로 폭 (210mm − 양쪽 10mm = 190mm ≈ 717px @96dpi) ── */
 body.printing {
 	background: #fff;
 }
 body.printing .container {
-	width: 1046px;
-	max-width: 1046px;
+	width: 717px;
+	max-width: 717px;
 	padding: 0;
 	margin: 0 auto;
 }
@@ -32,9 +34,9 @@ body.printing main {
 	padding: 10px 0 0;
 }
 
-/* ── 2단 컬럼 — 인쇄 폭에 맞춰 그리드 비율 유지 ── */
+/* ── 2단 컬럼 — 세로 인쇄 폭에 맞춰 그리드 비율 축소 ── */
 body.printing .member-detail-layout {
-	grid-template-columns: 300px 1fr;
+	grid-template-columns: 220px 1fr;
 	gap: 14px;
 }
 

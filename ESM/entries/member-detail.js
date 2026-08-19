@@ -355,9 +355,9 @@ async function init() {
 	}
 }
 
-/** A4 인쇄 상수 — mm 단위 */
-const A4_WIDTH_MM = 297;
-const A4_HEIGHT_MM = 210;
+/** A4 인쇄 상수 — mm 단위 (세로: 210 × 297) */
+const A4_WIDTH_MM = 210;
+const A4_HEIGHT_MM = 297;
 const PRINT_MARGIN_MM = 10;
 
 /** DOM 요소의 scrollHeight를 mm로 변환하고, 상하 마진을 더해 인쇄 콘텐츠 높이를 산출한다
@@ -390,9 +390,10 @@ function removePrintStyle() {
 }
 
 /**
- * 회원 상세 화면을 A4 가로 한 장으로 인쇄한다.
+ * 회원 상세 화면을 A4 세로 한 장으로 인쇄한다.
  * 프로토타입의 .printing 클래스 패턴을 따르며, 동적 @page 크기 계산으로
- * 콘텐츠 높이에 딱 맞는 한 장짜리 가로 페이지를 지정한다.
+ * 콘텐츠 높이에 딱 맞는 한 장짜리 세로 페이지를 지정한다.
+ * 인쇄 시 체크기록 목록과 비교 셀렉터는 숨기고, 비교 테이블은 표시한다.
  * @returns {void}
  */
 function printMemberDetail() {
@@ -424,9 +425,7 @@ function printMemberDetail() {
 		// 인쇄 대화상자가 차단된 환경(샌드박스 등)에서 복구
 		document.body.classList.remove("printing");
 		removePrintStyle();
-		alert(
-			"인쇄 기능을 열지 못했어요.\n\n파일을 다운로드해서 실제 브라우저 탭에서 열어 다시 시도해 주세요.",
-		);
+		alert("인쇄 기능을 열지 못했어요.\n\n파일을 다운로드해서 실제 브라우저 탭에서 열어 다시 시도해 주세요.");
 	}
 }
 
