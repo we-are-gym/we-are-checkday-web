@@ -3,6 +3,7 @@
 import { buildCompareTable, recordMax, sessionLabel, sparkline } from "@check-doc/record-stats.js";
 import { deleteRecord, loadRecordsByMember, recordStore } from "@check-doc/record-store.js";
 import { getRecordById, getRecordsByMember } from "@check-doc/record-utils.js";
+import { requestBlob } from "@infra/api-client.js";
 import { guardOnBfcache } from "@infra/auth.js";
 import "@infra/components/app-header.js";
 import { TPL, escapeHtml } from "@infra/templates.js";
@@ -308,6 +309,33 @@ function exportMemberDetailPNG() {
 		});
 }
 
+/**
+ * 회원 정보를 Mason API가 생성한 한 장짜리 PDF로 다운로드한다.
+ * 서버 Content-Disposition의 파일명은 Blob 다운로드에서는 무시되므로,
+ * 클라이언트에서 회원명·생성일로 파일명을 직접 명명한다.
+ * @returns {Promise<void>}
+ */
+async function downloadPdf() {
+	const member = getMemberById(memberStore.getState().members, memberId);
+	const name = member ? member.name : "회원";
+	try {
+		const blob = await requestBlob(`/members/${memberId}/pdf`);
+		const url = URL.createObjectURL(blob);
+		const link = document.createElement("a");
+		link.href = url;
+		link.download = `체크데이_${name}_${new Date().toISOString().slice(0, 10)}.pdf`;
+		document.body.appendChild(link);
+		link.click();
+		link.remove();
+		URL.revokeObjectURL(url);
+	} catch (err) {
+		console.error("PDF 다운로드 실패:", err);
+		// 401은 requestBlob 내부에서 goToLogin()이 이미 리다이렉트를 처리하므로 안내를 건너뛴다
+		if (err?.status === 401) return;
+		alert(`PDF 다운로드에 실패했습니다: ${err.message || "알 수 없는 오류"}`);
+	}
+}
+
 /** 초기 렌더링 — 회원을 조회해 정보 카드·통계·기록·비교 select를 채운다 (회원이 없으면 안내만 표시)
  * @returns {void}
  */
@@ -348,10 +376,10 @@ async function init() {
 		PNGExportButtonElem.addEventListener("click", exportMemberDetailPNG);
 	}
 
-	// PDF 인쇄 버튼 이벤트 — 프로토타입의 printMemberDetail() 패턴 적용
-	const printBtn = byId("print-pdf-btn");
-	if (printBtn) {
-		printBtn.addEventListener("click", printMemberDetail);
+	// PDF 저장 버튼 이벤트 — Mason API가 생성한 한 장짜리 PDF를 다운로드한다
+	const pdfBtn = byId("print-pdf-btn");
+	if (pdfBtn) {
+		pdfBtn.addEventListener("click", downloadPdf);
 	}
 }
 

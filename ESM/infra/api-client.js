@@ -3,14 +3,12 @@
 import { AUTH_KEY, REFRESH_KEY } from "./constants.js";
 
 /**
- * API 기본 경로 — HTML <script>에서 globalThis.__API_BASE__로 주입됩니다.
- * 정적 호스팅: HTML <script>가 globalThis에 설정 → 모듈에서 globalThis.__API_BASE__로 읽음
- * Vite 개발 서버: vite.config.js define이 코드 내 __API_BASE__ 식별자를 값으로 치환
- *   (define은 순수 식별자만 치환하므로, 이 모듈은 Vite 환경에서 __API_BASE__로 읽음)
- *
- * 참고: 이 모듈은 정적 호스팅(Vite 미경유)에서도 동작해야 하므로 globalThis.__API_BASE__를 사용합니다.
+ * API 기본 경로 — 우선순위:
+ * 1. Vite 빌드 타임 치환(__API_BASE__ define): VITE_API_BASE 환경변수로 로컬 검증용 변경 가능
+ * 2. 정적 호스팅: HTML <script>가 설정하는 globalThis.__API_BASE__
+ * Vite 미경유 정적 호스팅에서 `__API_BASE__` 식별자는 정의되지 않으므로 typeof 검사로 안전하게 폴백한다.
  */
-const API_BASE = globalThis.__API_BASE__ ?? __API_BASE__;
+const API_BASE = typeof __API_BASE__ !== "undefined" ? __API_BASE__ : globalThis.__API_BASE__;
 
 /**
  * Mason API 오류.
@@ -31,16 +29,6 @@ export class ApiError extends Error {
 		this.status = status;
 	}
 }
-
-/*
-	as-is:
-	▣ 401 브랜치 시나리오별 단위 테스트 無
-	▣ 401 브랜치 시나리오별 end-to-end 테스트 無
-
-	to-be:
-	▣ 401 브랜치 시나리오별 단위 테스트 有
-	▣ 401 브랜치 시나리오별 end-to-end 테스트 有
-*/
 
 /**
  * Mason 봉투에서 리소스 본문을 추출합니다.
@@ -152,7 +140,32 @@ function goToLogin() {
 }
 
 /**
- * Mason API에 HTTP 요청을 별내고 응답 봉투를 언래핑합니다.
+ * 응답에서 Mason @error 봉투 또는 Pydantic detail 배열을 읽어 ApiError를 생성합니다.
+ * @param {Response} response fetch 응답
+ * @param {object} [body] 이미 파싱된 응답 본문 (없으면 파싱 시도)
+ * @returns {Promise<ApiError>}
+ */
+async function buildApiError(response, body = null) {
+	let data = body;
+	if (data === null) {
+		try {
+			data = await response.json();
+		} catch {
+			data = {};
+		}
+	}
+	const err = data["@error"];
+	let message;
+	if (err) {
+		message = err["@message"];
+	} else if (Array.isArray(data.detail) && data.detail.length > 0) {
+		message = data.detail.map(d => d.msg).join("; ");
+	}
+	return new ApiError(message || "요청을 처리할 수 없습니다", err?.["@code"] || "request_failed", response.status);
+}
+
+/**
+ * Mason API에 HTTP 요청을 보내고 인증·401 자동 갱신·오류 정규화를 처리합니다.
  * token 옵션이 없으면 sessionStorage에서 자동으로 액세스 토큰을 읽어 Bearer 헤더에 첨부합니다.
  * 401 응답 시 리프레시 토큰으로 자동 갱신을 시도하고, 갱신 성공 시 원 요청을 재시도합니다.
  * 갱신 실패 시 토큰을 삭제하고 로그인 페이지로 리다이렉트합니다.
@@ -161,9 +174,10 @@ function goToLogin() {
  * @param {string} [options.method="GET"] HTTP 메서드
  * @param {object|null} [options.body] JSON 본문
  * @param {string|null} [options.token] Bearer 액세스 토큰 (미지정 시 sessionStorage에서 자동 읽기)
- * @returns {Promise<object|Array>} 리소스(단건) 또는 리소스 배열(목록)
+ * @param {"json"|"blob"} [options.as="json"] 응답 파싱 방식 — "blob"이면 파일 바이너리(PDF 등)를 Blob으로 반환
+ * @returns {Promise<object|Array|Blob>} 리소스(단건)·리소스 배열(목록)·Blob(파일)
  */
-export async function request(path, { method = "GET", body = null, token = null } = {}) {
+async function fetchWithAuth(path, { method = "GET", body = null, token = null, as = "json" } = {}) {
 	const url = `${API_BASE}${path}`;
 	/** @type {Record<string, string>} */
 	const headers = { Accept: "application/json" };
@@ -176,18 +190,14 @@ export async function request(path, { method = "GET", body = null, token = null 
 		headers["Content-Type"] = "application/json";
 	}
 
-	let response = await fetch(url, {
-		method,
-		headers,
-		body: body !== null ? JSON.stringify(body) : undefined,
-	});
+	const doFetch = () =>
+		fetch(url, {
+			method,
+			headers,
+			body: body !== null ? JSON.stringify(body) : undefined,
+		});
 
-	let data = {};
-	try {
-		data = await response.json();
-	} catch {
-		data = {};
-	}
+	let response = await doFetch();
 
 	// ── 401 자동 처리: 토큰 상태에 따라 3개 분기 ──
 	if (response.status === 401) {
@@ -200,19 +210,8 @@ export async function request(path, { method = "GET", body = null, token = null 
 			const refreshed = await tryRefreshToken();
 			if (refreshed) {
 				// 갱신 성공 — 원 요청 재시도 (새 토큰으로)
-				const newToken = sessionStorage.getItem(AUTH_KEY);
-				headers.Authorization = `Bearer ${newToken}`;
-				response = await fetch(url, {
-					method,
-					headers,
-					body: body !== null ? JSON.stringify(body) : undefined,
-				});
-				data = {};
-				try {
-					data = await response.json();
-				} catch {
-					data = {};
-				}
+				headers.Authorization = `Bearer ${sessionStorage.getItem(AUTH_KEY)}`;
+				response = await doFetch();
 				// 갱신 후 재시도 응답이 401이면 로그인 페이지로 이동
 				if (response.status === 401) {
 					goToLogin();
@@ -230,18 +229,44 @@ export async function request(path, { method = "GET", body = null, token = null 
 		}
 	}
 
+	if (as === "blob") {
+		if (!response.ok) throw await buildApiError(response);
+		return response.blob();
+	}
+
+	let data = {};
+	try {
+		data = await response.json();
+	} catch {
+		data = {};
+	}
+
 	if (!response.ok || data["@error"]) {
 		// Mason @error 봉투 우선, Pydantic detail 배열 폴백
-		const err = data["@error"];
-		let message;
-		if (err) {
-			message = err["@message"];
-		} else if (Array.isArray(data.detail) && data.detail.length > 0) {
-			message = data.detail.map(d => d.msg).join("; ");
-		}
-		throw new ApiError(message || "요청을 처리할 수 없습니다", err?.["@code"] || "request_failed", response.status);
+		throw await buildApiError(response, data);
 	}
 
 	const resource = unwrapResource(data);
 	return resource.items !== undefined ? resource.items : resource;
+}
+
+/**
+ * Mason API에 JSON 응답 요청을 보냅니다. (fetchWithAuth의 json 모드)
+ * @param {string} path API 경로(API_BASE 제외, 예: "/members")
+ * @param {Object} [options] fetchWithAuth 옵션 (as 제외)
+ * @returns {Promise<object|Array>} 리소스(단건) 또는 리소스 배열(목록)
+ */
+export async function request(path, options = {}) {
+	return fetchWithAuth(path, options);
+}
+
+/**
+ * Mason API에 파일 바이너리(PDF 등) 응답 요청을 보냅니다. (fetchWithAuth의 blob 모드)
+ * 인증·401 자동 갱신 처리는 request와 동일하게 동작합니다.
+ * @param {string} path API 경로(API_BASE 제외, 예: "/members/M-1/pdf")
+ * @param {Object} [options] fetchWithAuth 옵션 (as 제외)
+ * @returns {Promise<Blob>} 응답 Blob
+ */
+export async function requestBlob(path, options = {}) {
+	return fetchWithAuth(path, { ...options, as: "blob" });
 }

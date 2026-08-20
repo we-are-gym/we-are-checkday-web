@@ -6,7 +6,8 @@ export default defineConfig({
 	timeout: 30_000,
 	retries: 0,
 	use: {
-		baseURL: "http://localhost:30010",
+		// E2E_BASE_URL로 대상 웹 주소를 재정의할 수 있다 (IPv6 localhost 중복 등 로컬 검증 대비)
+		baseURL: process.env.E2E_BASE_URL || "http://localhost:30010",
 		screenshot: "only-on-failure",
 		trace: "on-first-retry",
 	},
@@ -16,5 +17,8 @@ export default defineConfig({
 		reuseExistingServer: true,
 		timeout: 60_000,
 	},
-	projects: [{ name: "chromium", use: { browserName: "chromium" } }],
+	projects: [
+		{ name: "chromium", use: { browserName: "chromium" } },
+		{ name: "chromium-edge", use: { browserName: "chromium", channel: "msedge" } },
+	],
 });
