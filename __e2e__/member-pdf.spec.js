@@ -62,7 +62,7 @@ test.describe("회원 정보 PDF 저장", () => {
 		await expect(page.locator("#md-name")).toHaveText("PDF검증회원", { timeout: 15_000 });
 
 		const downloadPromise = page.waitForEvent("download", { timeout: 20_000 });
-		await page.locator("#print-pdf-btn").click();
+		await page.locator("#pdf-download-btn").click();
 		const download = await downloadPromise;
 
 		// 다운로드 파일명 검증 — 체크데이_{회원명}_{날짜}.pdf
