@@ -3,6 +3,7 @@
 import { buildCompareTable, recordMax, sessionLabel, sparkline } from "@check-doc/record-stats.js";
 import { deleteRecord, loadRecordsByMember, recordStore } from "@check-doc/record-store.js";
 import { getRecordById, getRecordsByMember } from "@check-doc/record-utils.js";
+import { requestBlob } from "@infra/api-client.js";
 import { guardOnBfcache } from "@infra/auth.js";
 import "@infra/components/app-header.js";
 import { TPL, escapeHtml } from "@infra/templates.js";
@@ -33,11 +34,6 @@ function renderInfoCard(member) {
 	setText("md-name", member.name);
 	setText("md-gender", member.gender || "-");
 	setText("md-trainer", member.trainer || "-");
-	// 인쇄 전용 회원 이름 — page-head가 숨김될 때 인쇄 레이아웃에 표시
-	const printNameEl = byId("md-name-print");
-	if (printNameEl) {
-		printNameEl.textContent = `${member.name} · 체크데이 리포트 (${new Date().toISOString().slice(0, 10)})`;
-	}
 	document.title = `${member.name} — 회원 상세`;
 }
 
@@ -308,6 +304,33 @@ function exportMemberDetailPNG() {
 		});
 }
 
+/**
+ * 회원 정보를 Mason API가 생성한 한 장짜리 PDF로 다운로드한다.
+ * 서버 Content-Disposition의 파일명은 Blob 다운로드에서는 무시되므로,
+ * 클라이언트에서 회원명·생성일로 파일명을 직접 명명한다.
+ * @returns {Promise<void>}
+ */
+async function downloadPdf() {
+	const member = getMemberById(memberStore.getState().members, memberId);
+	const name = member ? member.name : "회원";
+	try {
+		const blob = await requestBlob(`/members/${memberId}/pdf`);
+		const url = URL.createObjectURL(blob);
+		const link = document.createElement("a");
+		link.href = url;
+		link.download = `체크데이_${name}_${new Date().toISOString().slice(0, 10)}.pdf`;
+		document.body.appendChild(link);
+		link.click();
+		link.remove();
+		URL.revokeObjectURL(url);
+	} catch (err) {
+		console.error("PDF 다운로드 실패:", err);
+		// 401은 requestBlob 내부에서 goToLogin()이 이미 리다이렉트를 처리하므로 안내를 건너뛴다
+		if (err?.status === 401) return;
+		alert(`PDF 다운로드에 실패했습니다: ${err.message || "알 수 없는 오류"}`);
+	}
+}
+
 /** 초기 렌더링 — 회원을 조회해 정보 카드·통계·기록·비교 select를 채운다 (회원이 없으면 안내만 표시)
  * @returns {void}
  */
@@ -348,84 +371,10 @@ async function init() {
 		PNGExportButtonElem.addEventListener("click", exportMemberDetailPNG);
 	}
 
-	// PDF 인쇄 버튼 이벤트 — 프로토타입의 printMemberDetail() 패턴 적용
-	const printBtn = byId("print-pdf-btn");
-	if (printBtn) {
-		printBtn.addEventListener("click", printMemberDetail);
-	}
-}
-
-/** A4 인쇄 상수 — mm 단위 (세로: 210 × 297) */
-const A4_WIDTH_MM = 210;
-const A4_HEIGHT_MM = 297;
-const PRINT_MARGIN_MM = 10;
-
-/** DOM 요소의 scrollHeight를 mm로 변환하고, 상하 마진을 더해 인쇄 콘텐츠 높이를 산출한다
- * @param {HTMLElement} el 높이를 측정할 요소
- * @param {number} maxMM 최대 높이(mm) — 이 값을 초과하면 클램프
- * @returns {number} 인쇄 페이지 높이(mm)
- */
-function calcPrintPageHeightMM(el, maxMM) {
-	const contentHeightMM = (el.scrollHeight * 25.4) / 96; // px → mm (96dpi)
-	return Math.min(contentHeightMM + PRINT_MARGIN_MM * 2, maxMM);
-}
-
-/** 동적 인쇄용 <style> 태그를 <head>에 삽입한다 — 기존에 있으면 먼저 제거
- * @param {string} css 삽입할 CSS 텍스트
- * @returns {HTMLStyleElement} 삽입된 스타일 요소
- */
-function injectPrintStyle(css) {
-	removePrintStyle();
-	const style = document.createElement("style");
-	style.id = "dynamic-print-size";
-	style.textContent = css;
-	document.head.appendChild(style);
-	return style;
-}
-
-/** 동적 인쇄용 <style> 태그를 제거한다 */
-function removePrintStyle() {
-	const el = document.getElementById("dynamic-print-size");
-	if (el) el.remove();
-}
-
-/**
- * 회원 상세 화면을 A4 세로 한 장으로 인쇄한다.
- * 프로토타입의 .printing 클래스 패턴을 따르며, 동적 @page 크기 계산으로
- * 콘텐츠 높이에 딱 맞는 한 장짜리 세로 페이지를 지정한다.
- * 인쇄 시 체크기록 목록과 비교 셀렉터는 숨기고, 비교 테이블은 표시한다.
- * @returns {void}
- */
-function printMemberDetail() {
-	try {
-		// 1) 인쇄용 레이아웃(.printing) 활성화 — 화면과 동일한 2단 구성을 유지하고 폭만 A4 가로에 맞춘다
-		document.body.classList.add("printing");
-		// 강제 리플로우 — 레이아웃이 즉시 반영되도록
-		// eslint-disable-next-line no-unused-expressions
-		void document.body.offsetHeight;
-
-		// 2) 콘텐츠 실제 높이 측정 (2단 구성이라 세로가 짧다)
-		const target = document.querySelector(".container");
-		const pageHeightMM = calcPrintPageHeightMM(target, A4_HEIGHT_MM);
-
-		// 3) 동적 @page 크기 설정
-		injectPrintStyle(`@page{ size:${A4_WIDTH_MM}mm ${pageHeightMM}mm; margin:${PRINT_MARGIN_MM}mm; }`);
-
-		// 4) 정리 — 인쇄 대화상자 닫힘 후 .printing 클래스와 동적 스타일 제거
-		const cleanup = () => {
-			removePrintStyle();
-			document.body.classList.remove("printing");
-			window.removeEventListener("afterprint", cleanup);
-		};
-		window.addEventListener("afterprint", cleanup);
-
-		// 5) 브라우저 인쇄 대화상자 열기
-		window.print();
-	} catch (err) {
-		// 인쇄 대화상자가 차단된 환경(샌드박스 등)에서 복구
-		document.body.classList.remove("printing");
-		removePrintStyle();
-		alert("인쇄 기능을 열지 못했어요.\n\n파일을 다운로드해서 실제 브라우저 탭에서 열어 다시 시도해 주세요.");
+	// PDF 저장 버튼 이벤트 — Mason API가 생성한 한 장짜리 PDF를 다운로드한다
+	const pdfBtn = byId("pdf-download-btn");
+	if (pdfBtn) {
+		pdfBtn.addEventListener("click", downloadPdf);
 	}
 }
 
