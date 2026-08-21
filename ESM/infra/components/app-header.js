@@ -19,24 +19,27 @@ defineComponent("app-header", {
 		this._lightChildren = [...this.children];
 	},
 	/**
-	 * 헤더 막대 HTML을 생성한다 (crumb-path 속성 반영, 인증 상태에 따라 로그인/로그아웃 버튼 전환)
+	 * 헤더 막대 HTML을 생성한다 (crumb-path 속성 반영) — 인증 버튼은 data-auth-area 슬롯만 배치
 	 * @returns {string} 헤더 HTML
 	 */
 	render() {
 		return TPL.headerBar({
 			crumbPath: this.getAttribute("crumb-path") || "",
-			authed: isAuthed(),
 		});
 	},
 	/**
-	 * 캡처한 light-DOM 자식을 .header-right로 옮기고 로그인/로그아웃 버튼·크럼(前화면) 동작을 연결한다
+	 * 인증 영역(data-auth-area)만 로그인/로그아웃 버튼으로 채우고 클릭 동작을 바인딩한다.
+	 * 인증 상태 변경 시 이 메서드만 재호출하면 헤더 전체 재렌더(light-DOM 자식 소실) 없이 버튼이 갱신된다.
+	 * @returns {void}
 	 */
-	onConnect() {
-		const right = this.querySelector(".header-right");
-		this._lightChildren.forEach(child => right.appendChild(child));
-		delete this._lightChildren;
+	renderAuth() {
+		const area = this.querySelector("[data-auth-area]");
+		if (!area) return;
+		area.innerHTML = isAuthed()
+			? `<button type="button" class="link-btn" data-header-logout aria-label="로그아웃">로그아웃</button>`
+			: `<a class="link-btn" data-header-login href="login.html" aria-label="로그인">로그인</a>`;
 
-		const logoutBtn = this.querySelector("[data-header-logout]");
+		const logoutBtn = area.querySelector("[data-header-logout]");
 		if (logoutBtn) {
 			logoutBtn.addEventListener("click", () => {
 				logout();
@@ -44,7 +47,7 @@ defineComponent("app-header", {
 			});
 		}
 
-		const loginBtn = this.querySelector("[data-header-login]");
+		const loginBtn = area.querySelector("[data-header-login]");
 		if (loginBtn) {
 			loginBtn.addEventListener("click", e => {
 				e.preventDefault();
@@ -52,7 +55,15 @@ defineComponent("app-header", {
 				window.location.href = `login.html?redirect=${redirect}`;
 			});
 		}
+	},
+	/**
+	 * 캡처한 light-DOM 자식을 .header-right로 옮기고 인증 버튼을 렌더한다
+	 */
+	onConnect() {
+		const right = this.querySelector(".header-right");
+		this._lightChildren.forEach(child => right.appendChild(child));
+		delete this._lightChildren;
 
-		// 브레드크럼의 링크 구간(index.html·상위 화면)은 템플릿이 <a href>로 렌더링하므로 별도 이벤트 연결 불필요
+		this.renderAuth();
 	},
 });
