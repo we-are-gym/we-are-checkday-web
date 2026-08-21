@@ -1,6 +1,6 @@
 // 파일 용도: Mason API 호출 공용 클라이언트 — fetch 래퍼·Mason 봉투 언래핑·오류 정규화·토큰 자동 관리
 
-import { AUTH_KEY, REFRESH_KEY } from "./constants.js";
+import { AUTH_CHANGE_EVENT, AUTH_KEY, REFRESH_KEY } from "./constants.js";
 
 /**
  * API 기본 경로 — 우선순위:
@@ -51,6 +51,7 @@ function unwrapResource(body) {
 export function storeTokens(accessToken, refreshToken) {
 	sessionStorage.setItem(AUTH_KEY, accessToken);
 	sessionStorage.setItem(REFRESH_KEY, refreshToken);
+	notifyAuthStateChanged();
 }
 
 /**
@@ -60,16 +61,28 @@ export function storeTokens(accessToken, refreshToken) {
 export function clearTokens() {
 	sessionStorage.removeItem(AUTH_KEY);
 	sessionStorage.removeItem(REFRESH_KEY);
+	notifyAuthStateChanged();
+}
+
+/**
+ * 인증 상태 변경을 window CustomEvent로 알린다 — auth.js의 subscribeAuthState가 수신한다.
+ * (auth.js → api-client.js 의존이 이미 있으므로 역방향 import 없이 이벤트로 단방향 통지)
+ * @returns {void}
+ */
+function notifyAuthStateChanged() {
+	if (typeof window === "undefined") return;
+	window.dispatchEvent(new CustomEvent(AUTH_CHANGE_EVENT));
 }
 
 // ── 401 자동 갱신 내부 유틸 ──
 
 /**
  * JWT 토큰이 만료되었는지 확인합니다.
+ * 파싱 실패(손상·비-JWT)는 만료로 간주한다. auth.js의 isAuthed()와 공용한다.
  * @param {string} token JWT 문자열
  * @returns {boolean} 만료 여부
  */
-function isTokenExpired(token) {
+export function isTokenExpired(token) {
 	try {
 		const payload = JSON.parse(atob(token.split(".")[1]));
 		return payload.exp * 1000 < Date.now();

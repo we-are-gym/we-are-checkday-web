@@ -3,7 +3,7 @@
 // light-DOM 자식(<app-gnb>, <app-help>)은 연결 시점에 .header-right로 옮겨 헤더 안에 배치한다.
 // 인증 상태에 따라 로그인/로그아웃 버튼을 자동 전환한다.
 // 부수 임포트: app-gnb·app-help 등록까지 이 모듈 하나로 처리
-import { isAuthed, logout } from "@infra/auth.js";
+import { isAuthed, logout, subscribeAuthState } from "@infra/auth.js";
 import { defineComponent } from "@infra/component-factory.js";
 import "@infra/components/app-gnb.js";
 import "@infra/components/app-help.js";
@@ -19,24 +19,27 @@ defineComponent("app-header", {
 		this._lightChildren = [...this.children];
 	},
 	/**
-	 * 헤더 막대 HTML을 생성한다 (crumb-path 속성 반영, 인증 상태에 따라 로그인/로그아웃 버튼 전환)
+	 * 헤더 막대 HTML을 생성한다 (crumb-path 속성 반영) — 인증 버튼은 data-auth-area 슬롯만 배치
 	 * @returns {string} 헤더 HTML
 	 */
 	render() {
 		return TPL.headerBar({
 			crumbPath: this.getAttribute("crumb-path") || "",
-			authed: isAuthed(),
 		});
 	},
 	/**
-	 * 캡처한 light-DOM 자식을 .header-right로 옮기고 로그인/로그아웃 버튼·크럼(前화면) 동작을 연결한다
+	 * 인증 영역(data-auth-area)만 로그인/로그아웃 버튼으로 채우고 클릭 동작을 바인딩한다.
+	 * 인증 상태 변경 시 이 메서드만 재호출하면 헤더 전체 재렌더(light-DOM 자식 소실) 없이 버튼이 갱신된다.
+	 * @returns {void}
 	 */
-	onConnect() {
-		const right = this.querySelector(".header-right");
-		this._lightChildren.forEach(child => right.appendChild(child));
-		delete this._lightChildren;
+	renderAuth() {
+		const area = this.querySelector("[data-auth-area]");
+		if (!area) return;
+		area.innerHTML = isAuthed()
+			? `<button type="button" class="link-btn" data-header-logout aria-label="로그아웃">로그아웃</button>`
+			: `<a class="link-btn" data-header-login href="login.html" aria-label="로그인">로그인</a>`;
 
-		const logoutBtn = this.querySelector("[data-header-logout]");
+		const logoutBtn = area.querySelector("[data-header-logout]");
 		if (logoutBtn) {
 			logoutBtn.addEventListener("click", () => {
 				logout();
@@ -44,7 +47,7 @@ defineComponent("app-header", {
 			});
 		}
 
-		const loginBtn = this.querySelector("[data-header-login]");
+		const loginBtn = area.querySelector("[data-header-login]");
 		if (loginBtn) {
 			loginBtn.addEventListener("click", e => {
 				e.preventDefault();
@@ -52,7 +55,20 @@ defineComponent("app-header", {
 				window.location.href = `login.html?redirect=${redirect}`;
 			});
 		}
+	},
+	/**
+	 * 캡처한 light-DOM 자식을 .header-right로 옮기고 인증 버튼을 렌더한 뒤,
+	 * 인증 상태 변경(로그인·로그아웃·토큰 갱신·타 탭)을 구독해 버튼을 즉시 갱신한다.
+	 * MPA 특성상 헤더는 페이지 수명 동안 1회 연결되므로 구독 해제는 생략한다 (메모리 누수 없음).
+	 */
+	onConnect() {
+		const right = this.querySelector(".header-right");
+		this._lightChildren.forEach(child => right.appendChild(child));
+		delete this._lightChildren;
 
-		// 브레드크럼의 링크 구간(index.html·상위 화면)은 템플릿이 <a href>로 렌더링하므로 별도 이벤트 연결 불필요
+		this.renderAuth();
+		if (!this._unsubAuth) {
+			this._unsubAuth = subscribeAuthState(() => this.renderAuth());
+		}
 	},
 });
