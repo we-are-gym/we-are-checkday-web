@@ -1,23 +1,19 @@
 // 파일 용도: 인증·로그인 상태 — JWT 액세스·리프레시 토큰 관리 (전 화면 공용)
 
-import { clearTokens, request, storeTokens } from "@infra/api-client.js";
+import { clearTokens, isTokenExpired, request, storeTokens } from "@infra/api-client.js";
 import { AUTH_CHANGE_EVENT, AUTH_KEY, REFRESH_KEY } from "./constants.js";
 
 /**
  * 현재 유효한 로그인 상태인지 확인합니다.
  * 토큰이 존재하고 만료되지 않은 경우에만 true를 반환합니다.
  * 만료된 토큰이 남아 있으면 false를 반환하여 login.html의 무한 리다이렉트 루프를 방지합니다.
+ * 만료 판정은 api-client.isTokenExpired()와 단일 소스로 공유한다.
  * @returns {boolean} 유효한 로그인 상태 여부
  */
 export function isAuthed() {
 	const token = sessionStorage.getItem(AUTH_KEY);
 	if (!token) return false;
-	try {
-		const payload = JSON.parse(atob(token.split(".")[1]));
-		return payload.exp * 1000 > Date.now();
-	} catch {
-		return false;
-	}
+	return !isTokenExpired(token);
 }
 
 /**

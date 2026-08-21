@@ -78,10 +78,11 @@ function notifyAuthStateChanged() {
 
 /**
  * JWT 토큰이 만료되었는지 확인합니다.
+ * 파싱 실패(손상·비-JWT)는 만료로 간주한다. auth.js의 isAuthed()와 공용한다.
  * @param {string} token JWT 문자열
  * @returns {boolean} 만료 여부
  */
-function isTokenExpired(token) {
+export function isTokenExpired(token) {
 	try {
 		const payload = JSON.parse(atob(token.split(".")[1]));
 		return payload.exp * 1000 < Date.now();
