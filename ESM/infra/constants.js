@@ -34,4 +34,7 @@ export const MOTION_TOTAL_MAX = 24;
 export const AUTH_KEY = "checkday.auth.v1";
 export const REFRESH_KEY = "checkday.refresh.v1";
 
+/** 인증 상태 변경 통지 이벤트 이름 (window CustomEvent) — 토큰 저장·삭제 시 api-client가 발화하고 auth.js가 수신한다 */
+export const AUTH_CHANGE_EVENT = "checkday:authchange";
+
 // EOF

@@ -3,7 +3,7 @@
 // light-DOM 자식(<app-gnb>, <app-help>)은 연결 시점에 .header-right로 옮겨 헤더 안에 배치한다.
 // 인증 상태에 따라 로그인/로그아웃 버튼을 자동 전환한다.
 // 부수 임포트: app-gnb·app-help 등록까지 이 모듈 하나로 처리
-import { isAuthed, logout } from "@infra/auth.js";
+import { isAuthed, logout, subscribeAuthState } from "@infra/auth.js";
 import { defineComponent } from "@infra/component-factory.js";
 import "@infra/components/app-gnb.js";
 import "@infra/components/app-help.js";
@@ -57,7 +57,9 @@ defineComponent("app-header", {
 		}
 	},
 	/**
-	 * 캡처한 light-DOM 자식을 .header-right로 옮기고 인증 버튼을 렌더한다
+	 * 캡처한 light-DOM 자식을 .header-right로 옮기고 인증 버튼을 렌더한 뒤,
+	 * 인증 상태 변경(로그인·로그아웃·토큰 갱신·타 탭)을 구독해 버튼을 즉시 갱신한다.
+	 * MPA 특성상 헤더는 페이지 수명 동안 1회 연결되므로 구독 해제는 생략한다 (메모리 누수 없음).
 	 */
 	onConnect() {
 		const right = this.querySelector(".header-right");
@@ -65,5 +67,8 @@ defineComponent("app-header", {
 		delete this._lightChildren;
 
 		this.renderAuth();
+		if (!this._unsubAuth) {
+			this._unsubAuth = subscribeAuthState(() => this.renderAuth());
+		}
 	},
 });

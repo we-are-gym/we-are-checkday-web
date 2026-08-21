@@ -1,7 +1,7 @@
 // 파일 용도: 인증·로그인 상태 — JWT 액세스·리프레시 토큰 관리 (전 화면 공용)
 
 import { clearTokens, request, storeTokens } from "@infra/api-client.js";
-import { AUTH_KEY } from "./constants.js";
+import { AUTH_CHANGE_EVENT, AUTH_KEY, REFRESH_KEY } from "./constants.js";
 
 /**
  * 현재 유효한 로그인 상태인지 확인합니다.
@@ -38,7 +38,7 @@ export function guardOnBfcache() {
 }
 
 /**
- * 데모 자격증명으로 로그인하고 JWT 액세스·리프레시 토큰을 저장합니다.
+ * 자격증명으로 로그인하고 JWT 액세스·리프레시 토큰을 저장합니다.
  * @param {string} username 아이디
  * @param {string} password 비밀번호
  * @returns {Promise<object>} 로그인 응답(access_token·refresh_token·user 등)
@@ -57,4 +57,37 @@ export async function login(username, password) {
  */
 export function logout() {
 	clearTokens();
+}
+
+// ── 인증 상태 변경 통지 (반응형 UI용 구독) ──
+
+/** 인증 상태 구독자 집합 — DOM 비의존 코어 (bun test 등에서도 동작) */
+const authListeners = new Set();
+
+/**
+ * 인증 상태 변경을 구독한다.
+ * 토큰 저장·삭제(로그인·로그아웃·리프레시)와 타 탭 로그인/로그아웃(storage 이벤트) 시 listener()가 호출된다.
+ * @param {() => void} listener 인증 상태 변경 시 호출할 함수
+ * @returns {() => void} 구독 해제 함수
+ */
+export function subscribeAuthState(listener) {
+	authListeners.add(listener);
+	return () => authListeners.delete(listener);
+}
+
+/** 등록된 구독자에게 인증 상태 변경을 통지한다 (내부용 — 이벤트 브릿지·단위 테스트에서 호출)
+ * @returns {void}
+ */
+export function notifyAuthChange() {
+	authListeners.forEach(listener => listener());
+}
+
+// ── DOM 이벤트 브릿지 (browser 전용 — 비-DOM 환경에서는 건너뜀) ──
+// 토큰 저장소 변경은 api-client.js가 window CustomEvent로 알리고, 타 탭 로그인/로그아웃은
+// sessionStorage storage 이벤트로 감지한다. api-client 역방향 import 없이 단방향 수신 구조다.
+if (typeof window !== "undefined") {
+	window.addEventListener(AUTH_CHANGE_EVENT, () => notifyAuthChange());
+	window.addEventListener("storage", event => {
+		if (event.key === AUTH_KEY || event.key === REFRESH_KEY) notifyAuthChange();
+	});
 }
