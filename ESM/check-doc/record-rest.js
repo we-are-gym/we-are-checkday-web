@@ -70,9 +70,9 @@ export function normalizeGoalTags(tags) {
  * 웹 인바디 묶음(문자열 7셀) → REST InbodyResultCreate 필드 (숫자 파싱, null 보존)
  * @param {import("@gym/inbody-data.js").InbodyData} ib 웹 인바디 입력값 (문자열)
  * @param {string} comment 인바디 코멘트
- * @returns {{ weight: (number|null), muscle: (number|null), fat: (number|null),
- *            BMI: (number|null), BFP: (number|null), BMR: (number|null),
- *            visceral: (number|null), comment: (string|null) } | null}
+ * @returns {{ weight_kg: (number|null), muscle_kg: (number|null), fat_kg: (number|null),
+ *            BMI_val: (number|null), BFP_percent: (number|null), BMR_kcal: (number|null),
+ *            visceral_lev: (number|null), comment: (string|null) } | null}
  *          전 셀 빈 값이면 null
  */
 export function ibToRest(inc, comment = "") {
@@ -81,32 +81,32 @@ export function ibToRest(inc, comment = "") {
 	if (isEmpty) return null;
 	const parse = (/** @type {string} */ s) => (s === "" ? null : Number(s));
 	return {
-		weight: parse(inc.w),
-		muscle: parse(inc.m),
-		fat: parse(inc.fat),
-		BMI: parse(inc.bmi),
-		BFP: parse(inc.bfp),
-		BMR: parse(inc.bmr),
-		visceral: parse(inc.vis),
+		weight_kg: parse(inc.w),
+		muscle_kg: parse(inc.m),
+		fat_kg: parse(inc.fat),
+		BMI_val: parse(inc.bmi),
+		BFP_percent: parse(inc.bfp),
+		BMR_kcal: parse(inc.bmr),
+		visceral_lev: parse(inc.vis),
 		comment: comment || null,
 	};
 }
 
 /**
  * REST 인바디 → 웹 InbodyData 문자열 묶음 (비표기 시 빈 문자열)
- * @param {object|null} inbody REST InbodyResultRead (weight·muscle·fat·BMI·BFP·BMR·visceral)
+ * @param {object|null} inbody REST InbodyResultRead (weight_kg·muscle_kg·fat_kg·BMI_val·BFP_percent·BMR_kcal·visceral_lev)
  * @returns {{ w: string, m: string, fat: string, bmi: string, bfp: string, bmr: string, vis: string }}
  */
 export function restToIb(inbody) {
 	const num = (/** @type {any} */ v) => (v === null || v === undefined ? "" : String(v));
 	return {
-		w: num(inbody?.weight),
-		m: num(inbody?.muscle),
-		fat: num(inbody?.fat),
-		bmi: num(inbody?.BMI),
-		bfp: num(inbody?.BFP),
-		bmr: num(inbody?.BMR),
-		vis: num(inbody?.visceral),
+		w: num(inbody?.weight_kg),
+		m: num(inbody?.muscle_kg),
+		fat: num(inbody?.fat_kg),
+		bmi: num(inbody?.BMI_val),
+		bfp: num(inbody?.BFP_percent),
+		bmr: num(inbody?.BMR_kcal),
+		vis: num(inbody?.visceral_lev),
 	};
 }
 
