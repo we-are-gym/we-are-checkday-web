@@ -11,7 +11,7 @@ function normalizeMember(apiMember) {
 	return {
 		id: apiMember.member_ID,
 		name: apiMember.name,
-		gender: fromApiGender(apiMember.gender),
+		gender: apiMember.gender,
 		goal: apiMember.goal,
 		trainer: apiMember.trainer,
 		registered_at: apiMember.registered_at,
@@ -26,32 +26,10 @@ function normalizeMember(apiMember) {
 function toApiMember(data) {
 	return {
 		name: data.name,
-		gender: toApiGender(data.gender),
+		gender: data.gender,
 		goal: data.goal,
 		trainer: data.trainer,
 	};
-}
-
-/**
- * 웹 성별 표기를 API 성별 표기로 변환합니다.
- * @param {"" | "남" | "여"} gender 웹 성별
- * @returns {"" | "男" | "女"} API 성별
- */
-export function toApiGender(gender) {
-	if (gender === "남") return "男";
-	if (gender === "여") return "女";
-	return "";
-}
-
-/**
- * API 성별 표기를 웹 성별 표기로 변환합니다.
- * @param {"" | "男" | "女"} gender API 성별
- * @returns {"" | "남" | "여"} 웹 성별
- */
-export function fromApiGender(gender) {
-	if (gender === "男") return "남";
-	if (gender === "女") return "여";
-	return "";
 }
 
 /** 회원 스토어 (전 화면 공용 단일 인스턴스) — API 데이터로 채워집니다. */
@@ -98,7 +76,7 @@ export async function addMember(data) {
 export async function updateMember(id, patch) {
 	const body = {};
 	if (patch.name !== undefined) body.name = patch.name;
-	if (patch.gender !== undefined) body.gender = toApiGender(patch.gender);
+	if (patch.gender !== undefined) body.gender = patch.gender;
 	if (patch.goal !== undefined) body.goal = patch.goal;
 	if (patch.trainer !== undefined) body.trainer = patch.trainer;
 	const updated = await request(`/members/${id}`, {
