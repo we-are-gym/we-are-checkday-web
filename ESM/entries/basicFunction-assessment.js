@@ -8,7 +8,8 @@ import { getGradeMeta } from "@calc/grade.js";
 import { calcVo2Assessment } from "@calc/vo2.js";
 import { ASSESSMENT_ITEMS } from "@check-doc/assessment-data.js";
 import "@infra/components/app-header.js";
- import { MOTION_TOTAL_MAX, SCORE_MAX, SCORE_MIN } from "@infra/constants.js"; 
+import "@shared/components/index.js"; 
+import { MOTION_TOTAL_MAX, SCORE_MAX, SCORE_MIN } from "@infra/constants.js";
 import { TPL } from "@infra/templates.js";
 import { clamp, parseToNum } from "@infra/validation.js";
 import { byId, delegate, queryAll, queryOne } from "@tools/utils-dom.js";
@@ -124,7 +125,6 @@ function setVo2Score(delta, suggested) {
 function buildItems() {
 	const container = byId("items-container");
 	assessments.forEach(a => {
-		const dotsHTML = TPL.scoreDots({ prefix: a.id, count: SCORE_MAX });
 		const checksHTML = a.checks
 			.map(
 				(c, i) => `
@@ -135,7 +135,7 @@ function buildItems() {
 		`
 			)
 			.join("");
-		container.insertAdjacentHTML("beforeend", TPL.basicItemCard({ id: a.id, item: a, dots: dotsHTML, checks: checksHTML }));
+		container.insertAdjacentHTML("beforeend", TPL.basicItemCard({ id: a.id, item: a, checks: checksHTML }));
 	});
 }
 
@@ -173,13 +173,8 @@ function toggleCheck(id, idx) {
 function adjustScore(id, delta) {
 	const s = state[id];
 	s.score = clamp(s.score + delta, SCORE_MIN, SCORE_MAX);
-	const el = byId(`score-${id}`);
-	el.textContent = s.score;
-	el.dataset.score = s.score;
-	// Update dots
-	for (let i = 0; i < SCORE_MAX; i++) {
-		byId(`dot-${id}-${i}`).classList.toggle("filled", i < s.score);
-	}
+	const sc = byId(`sc-${id}`);
+	if (sc) sc.setProp("score", s.score);
 	updateTotal();
 }
 
@@ -240,12 +235,8 @@ function resetEntireForm() {
 	if (!confirm("모든 점수와 체크를 초기화할까요?")) return;
 	assessments.forEach(a => {
 		state[a.id] = { score: 0, checks: {}, notes: "" };
-		const el = byId(`score-${a.id}`);
-		el.textContent = "0";
-		el.dataset.score = "0";
-		for (let i = 0; i < SCORE_MAX; i++) {
-			byId(`dot-${a.id}-${i}`).classList.remove("filled");
-		}
+		const sc = byId(`sc-${a.id}`);
+		if (sc) sc.setProp("score", 0);
 		a.checks.forEach((_, i) => {
 			byId(`chk-${a.id}-${i}`).classList.remove("checked");
 			byId(`chklbl-${a.id}-${i}`).classList.remove("checked-text");
@@ -384,7 +375,11 @@ delegate(document, "click", ".vo2-header", () => toggleVo2());
 delegate(document, "click", "[data-vo2-delta]", (e, el) => setVo2Score(Number(el.dataset.vo2Delta)));
 // 항목별 체크·점수·펼침 (동적 생성 요소)
 delegate(document, "click", ".check-row", (e, el) => toggleCheck(Number(el.dataset.id), Number(el.dataset.idx)));
-delegate(document, "click", ".item-card .score-btn", (e, el) => adjustScore(Number(el.dataset.aid), Number(el.dataset.delta)));
+byId("items-container").addEventListener("adjust", e => {
+	const { index: id, score: newScore } = e.detail;
+	state[id].score = newScore;
+	updateTotal();
+});
 delegate(document, "click", ".expand-btn", (e, el) => toggleBasicFunctionDetail(Number(el.dataset.id)));
 // 메모 저장 (동적 생성 요소)
 delegate(document, "input", ".notes-area", (e, el) => saveNotes(Number(el.dataset.id), el.value));

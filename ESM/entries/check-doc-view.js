@@ -8,7 +8,8 @@ import { getRecordById } from "@check-doc/record-utils.js";
 import { inbodyTagFor } from "@gym/inbody.js";
 import { guardOnBfcache } from "@infra/auth.js";
 import "@infra/components/app-header.js";
-import { escapeHtml, TPL } from "@infra/templates.js";
+import "@shared/components/index.js";
+import { escapeHtml } from "@infra/templates.js";
 import { loadMembers, memberStore } from "@member/member-store.js";
 import { getMemberById } from "@member/member-utils.js";
 import { sum } from "@tools/utils-array.js";
@@ -102,12 +103,12 @@ function renderEvals(rec) {
 						</div>
 						<div class="ev-score">
 							<span class="ev-score-val">${score}점</span>
-							<span class="score-dots">${TPL.viewScoreDots({ score })}</span>
+							<ui-score-dots class="score-dots-el" score="${score}" max="3" count="3" prefix="view-${i}" aria-label="항목 ${i + 1} 점수 ${score}점"></ui-score-dots>
 						</div>
 					</div>
 					${checks ? `<ul class="ev-checks">${checks}</ul>` : ""}
 					${ed.memo ? `<p class="ev-memo">${escapeHtml(ed.memo)}</p>` : ""}
-					${item.vo2 && rec.payload.vo2Comment ? `<p class="ev-vo2">${escapeHtml(rec.payload.vo2Comment)}</p>` : ""}
+										${item.vo2 && rec.payload.ibComment ? `<p class="ev-vo2">${escapeHtml(rec.payload.ibComment)}</p>` : ""}
 				</div>`;
 			})
 			.join("")
