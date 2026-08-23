@@ -37,20 +37,10 @@ import { defineComponent as baseDefineComponent } from "./component-factory.js";
  * @returns {typeof HTMLElement}
  */
 export function defineComponent(options) {
-	const {
-		tag,
-		props = {},
-		render,
-		connectedCallback,
-		disconnectedCallback,
-		attributeChangedCallback,
-		observedAttributes = [],
-	} = options;
+	const { tag, props = {}, render, connectedCallback, disconnectedCallback, attributeChangedCallback, observedAttributes = [] } = options;
 
 	// props를 observedAttributes에 자동 추가
-	const allObserved = [
-		...new Set([...observedAttributes, ...Object.keys(props)]),
-	];
+	const allObserved = [...new Set([...observedAttributes, ...Object.keys(props)])];
 
 	const spec = {
 		// 렌더 함수
@@ -60,9 +50,7 @@ export function defineComponent(options) {
 
 		// 연결 시: props 초기화 + 사용자 콜백
 		connectedCallback() {
-			// console.log(
-			// 	"웹컴포넌트의 props를 초기화하고 사용자 콜백을 호출합니다…",
-			// );
+			// console.log("웹컴포넌트의 props를 초기화하고 사용자 콜백을 호출합니다…");
 			// console.log({ spec, this: this });
 
 			spec._initProps.call(this);
@@ -83,8 +71,7 @@ export function defineComponent(options) {
 				spec.refresh.call(this);
 			}
 
-			if (attributeChangedCallback)
-				attributeChangedCallback.call(this, name, oldVal, newVal);
+			if (attributeChangedCallback) attributeChangedCallback.call(this, name, oldVal, newVal);
 		},
 
 		// props 초기화
@@ -97,10 +84,7 @@ export function defineComponent(options) {
 			for (const [key, def] of Object.entries(props)) {
 				const attrVal = this.getAttribute(key);
 
-				this._props[key] =
-					attrVal !== null
-						? spec._deserializeProp(key, attrVal)
-						: def.default;
+				this._props[key] = attrVal !== null ? spec._deserializeProp(key, attrVal) : def.default;
 			}
 		},
 
@@ -112,8 +96,7 @@ export function defineComponent(options) {
 			if (def.type === Number) return Number(value);
 			if (def.type === Boolean) return value !== "false" && value !== "";
 
-			if (def.type === Array)
-				return value ? value.split(",").map((v) => v.trim()) : [];
+			if (def.type === Array) return value ? value.split(",").map(v => v.trim()) : [];
 
 			if (def.type === Object) return value ? JSON.parse(value) : {};
 
@@ -154,7 +137,7 @@ export function defineComponent(options) {
 					detail,
 					bubbles: true,
 					composed: true,
-				}),
+				})
 			);
 		},
 
