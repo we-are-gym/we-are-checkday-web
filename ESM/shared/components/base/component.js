@@ -94,7 +94,7 @@ export function defineComponent(options) {
 
 			if (!def || def.type === String) return value;
 			if (def.type === Number) return Number(value);
-			if (def.type === Boolean) return value !== "false" && value !== "";
+						if (def.type === Boolean) return value !== "false"; 
 
 			if (def.type === Array) return value ? value.split(",").map(v => v.trim()) : [];
 
