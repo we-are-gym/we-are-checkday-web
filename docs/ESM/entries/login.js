@@ -1,0 +1,41 @@
+// 파일 용도: 로그인 화면(login.html) — 폼 렌더·검증·로그인 상태 기록·이동 (데모 계정 checkday/1234)
+import { isAuthed, login } from "@infra/auth.js";
+import "@infra/components/app-header.js";
+import { TPL } from "@infra/templates.js";
+import { byId, setHTML } from "@tools/utils-dom.js";
+
+/** 로그인 성공 후 이동 대상 (?redirect=, 기본 index.html)
+ * @type {string}
+ */
+const redirect = new URLSearchParams(window.location.search).get("redirect") || "index.html";
+
+// ── 시작 ──
+setHTML("login-box", TPL.loginForm());
+/** 로그인 폼 엘리먼트 */
+const form = byId("login-form");
+/** 오류 안내 문구 엘리먼트 */
+const errEl = byId("login-error");
+
+// 이미 로그인 상태면 바로 이동
+if (isAuthed()) {
+	window.location.replace(redirect);
+} else {
+	form.addEventListener("submit", async e => {
+		e.preventDefault();
+		const id = byId("login-id").value.trim();
+		const pw = byId("login-pw").value;
+		if (!id || !pw) {
+			errEl.textContent = "아이디와 비밀번호를 모두 입력하세요.";
+			errEl.hidden = false;
+			return;
+		}
+		try {
+			await login(id, pw);
+			window.location.href = redirect;
+		} catch (err) {
+			errEl.textContent = err.message || "로그인에 실패했습니다.";
+			errEl.hidden = false;
+		}
+	});
+	byId("login-id").focus();
+}

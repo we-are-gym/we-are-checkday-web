@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ko">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="icon" type="image/x-icon" href="images/favicon.ico?v=2026082305" />
+		<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png?v=2026082305" />
+		<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png?v=2026082305" />
+		<link rel="apple-touch-icon" sizes="180x180" href="images/favicon-180x180.png?v=2026082305" />
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content="회원 관리 — 위아짐 체크데이" />
+		<meta property="og:description" content="그룹 트레이닝 격월 점검 · 회원별 움직임 평가와 상담 관리" />
+		<meta property="og:image" content="images/og-image.png?v=2026082305" />
+		<meta property="og:url" content="members.html" />
+		<title>회원 관리 — 위아짐 체크데이</title>
+		<link rel="stylesheet" href="styles/colors.css?v=2026082305" />
+		<link rel="stylesheet" href="styles/font.css?v=2026082305" />
+		<link rel="stylesheet" href="styles/layout-shell.css?v=2026082305" />
+		<link rel="stylesheet" href="styles/layout-members.css?v=2026082305" />
+	</head>
+
+	<body>
+		<!-- 파일 용도: 회원 관리 화면 — 회원 목록·검색·생성·제거 (mock 데이터) -->
+		<div class="container">
+			<app-header crumb-path="index.html>홈|회원 관리"> </app-header>
+
+			<main>
+				<!-- 페이지 머리 (프로토타입 배치) — 제목·안내 멘트 -->
+				<div class="page-head">
+					<div>
+						<div class="page-title">회원 관리</div>
+						<div class="page-sub">등록된 회원을 검색하고, 새 회원을 등록하거나 정보를 조회할 수 있어요</div>
+					</div>
+					<a class="btn btn-ghost" href="member-create.html">＋ 회원 등록</a>
+				</div>
+
+				<!-- 검색 -->
+				<section class="member-toolbar">
+					<input
+						id="search-input"
+						class="member-search"
+						type="search"
+						placeholder="회원 이름으로 검색"
+						aria-label="회원 이름으로 검색"
+					/>
+				</section>
+
+				<!-- 목록 (컴포넌트가 테이블 렌더링, 빈 목록 안내도 목록 안에 표시) -->
+				<member-table id="member-table"></member-table>
+			</main>
+		</div>
+
+		<script type="importmap">
+			{
+				"imports": {
+					"@infra/": "./ESM/infra/",
+					"@tools/": "./ESM/tools/",
+					"@calc/": "./ESM/calc/",
+					"@gym/": "./ESM/gym/",
+					"@member/": "./ESM/member/",
+					"@shared/": "./ESM/shared/",
+					"@check-doc/": "./ESM/check-doc/"
+				}
+			}
+		</script>
+		<script type="module" src="ESM/entries/members.js?v=2026082305"></script>
+		<script>
+			window.__API_BASE__ = "https://checkday-rest-evztw4wu4q-du.a.run.app/api/v1";
+		</script>
+	</body>
+</html>
