@@ -63,7 +63,7 @@ export const TPL = {
 	 * @returns {string}
 	 */
 	scoreController({ index, max, score = 0 }) {
-		return `<ui-score-controller class="score-ctrl-el" id="sc-${index}" score="${score}" max="${max}" min="0" index="${index}" interactive show-value aria-label="항목 ${index + 1} 점수"></ui-score-controller>`;
+		return `<ui-score-controller class="score-ctrl-el" id="sc-${index}" score="${score}" max="${max}" min="0" dots="${max}" index="${index}" interactive show-value aria-label="항목 ${index + 1} 점수"></ui-score-controller>`;
 	},
 
 	/**
