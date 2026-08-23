@@ -6,6 +6,7 @@ import { guardOnBfcache } from "@infra/auth.js";
 import "@infra/components/app-header.js";
 import "@member/components/member-table.js";
 import { removeMember as apiRemoveMember, loadMembers, memberStore } from "@member/member-store.js";
+import { displayGender } from "@member/member-utils.js";
 import { byId } from "@tools/utils-dom.js";
 
 /** 회원 목록 테이블 컴포넌트 엘리먼트 */
@@ -22,6 +23,7 @@ function buildRows(list) {
 	const countByMember = getRecordCountsByMember(recordStore.getState().records);
 	return list.map(m => ({
 		...m,
+		gender: displayGender(m.gender),
 		recordCount: countByMember.get(m.id) || 0,
 	}));
 }
