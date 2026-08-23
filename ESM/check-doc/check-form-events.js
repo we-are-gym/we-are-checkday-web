@@ -3,22 +3,12 @@
 //        한 곳으로 모아 checkday(작성)·check-doc-edit(편집) 화면이 똑같이 재사용한다.
 // 기법: delegate(utils-dom.js) 기반 이벤트 위임 — 인라인 onclick·window 오염 없이 정적·동적 요소를 한 루트에서 처리
 // 주의: [data-action] 화면별 액션(reset/save 등)은 화면마다 다르므로 여기서 다루지 않고 각 진입점이 등록한다.
-import { byId, delegate } from "@tools/utils-dom.js";
- import { updateInbodyTags } from "@gym/inbody.js"; 
 import { scoreState } from "@gym/basicFunction-store.js";
+import { updateInbodyTags } from "@gym/inbody.js";
 import { TPL } from "@infra/templates.js";
-import {
-	adjustScore,
-	getEvals,
-	toggleBasicFunctionDetail,
-	updateTotal,
-	updateVO2Disp,
-} from "./evaluation.js";
-import {
-	appendCheckMovement,
-	appendCheckMovementItemRow,
-	resetFeedbacks,
-} from "./feedback.js";
+import { byId, delegate } from "@tools/utils-dom.js";
+import { adjustScore, getEvals, toggleBasicFunctionDetail, updateTotal, updateVO2Disp } from "./evaluation.js";
+import { appendCheckMovement, appendCheckMovementItemRow, resetFeedbacks } from "./feedback.js";
 
 /**
  * 두 화면이 공유하는 상담지 폼 이벤트 위임을 등록한다 (1회 호출).
@@ -43,7 +33,7 @@ export function setupCheckFormEvents() {
 	 * @param {Element} el 토글할 태그 요소
 	 * @returns {void}
 	 */
-	const toggleTag = (el) => {
+	const toggleTag = el => {
 		const on = el.classList.toggle("on");
 		el.setAttribute("aria-pressed", String(on));
 	};
@@ -54,36 +44,20 @@ export function setupCheckFormEvents() {
 		toggleTag(el);
 	});
 	// 평가 카드 펼침 (동적 생성 요소)
-	delegate(document, "click", ".expand-toggle", (e, el) =>
-		toggleBasicFunctionDetail(Number(el.dataset.i)),
-	);
+	delegate(document, "click", ".expand-toggle", (e, el) => toggleBasicFunctionDetail(Number(el.dataset.i)));
 	// 평가 점수 증감 (동적 생성 요소)
-	delegate(document, "click", "#eval-cards .score-btn", (e, el) =>
-		adjustScore(Number(el.dataset.i), Number(el.dataset.delta)),
-	);
+	delegate(document, "click", "#eval-cards .score-btn", (e, el) => adjustScore(Number(el.dataset.i), Number(el.dataset.delta)));
 	// 동작 피드백 카드 CRUD (동적 생성 요소)
-	delegate(document, "click", ".fb-del-btn", (e, el) =>
-		el.closest(".fb-item")?.remove(),
-	);
-	delegate(document, "click", ".add-check-btn", (e, el) =>
-		appendCheckMovementItemRow(el),
-	);
-	delegate(document, "click", ".fb-check-del", (e, el) =>
-		el.closest(".fb-check-row")?.remove(),
-	);
+	delegate(document, "click", ".fb-del-btn", (e, el) => el.closest(".fb-item")?.remove());
+	delegate(document, "click", ".add-check-btn", (e, el) => appendCheckMovementItemRow(el));
+	delegate(document, "click", ".fb-check-del", (e, el) => el.closest(".fb-check-row")?.remove());
 	delegate(document, "click", ".add-fb-btn", () => appendCheckMovement());
 	// input 위임 — 인바디 수치·VO₂ 입력 갱신
-	document.addEventListener("input", (e) => {
+	document.addEventListener("input", e => {
 		const id = e.target.id;
 		if (!id) return;
 		if (id.startsWith("ib-")) updateInbodyTags();
-		else if (
-			id === "vo2-age" ||
-			id === "vo2-ht" ||
-			id === "vo2-wt" ||
-			id === "vo2-hr"
-		)
-			updateVO2Disp();
+		else if (id === "vo2-age" || id === "vo2-ht" || id === "vo2-wt" || id === "vo2-hr") updateVO2Disp();
 	});
 }
 
@@ -93,37 +67,19 @@ export function setupCheckFormEvents() {
  * @returns {void}
  */
 export function resetCheckForm() {
-	document
-		.querySelectorAll("input[type=text],input[type=number],textarea")
-		.forEach((el) => (el.value = ""));
-	document
-		.querySelectorAll(".ctag,.fbtag,.goal-tag")
-		.forEach((el) => {
-			el.classList.remove("on");
-			el.setAttribute("aria-pressed", "false");
-		});
+	document.querySelectorAll("input[type=text],input[type=number],textarea").forEach(el => (el.value = ""));
+	document.querySelectorAll(".ctag,.fbtag,.goal-tag").forEach(el => {
+		el.classList.remove("on");
+		el.setAttribute("aria-pressed", "false");
+	});
 	scoreState.reset();
 	getEvals().forEach((_, i) => {
-		byId(`sv-${i}`).textContent = "0";
-		for (let j = 0; j < scoreState.getMax(); j++)
-			byId(`dot-${i}-${j}`).classList.remove("on");
+		const sc = byId(`sc-${i}`);
+		if (sc) sc.setProp("score", 0);
 	});
-	[
-		"tag-w",
-		"tag-m",
-		"tag-fat",
-		"tag-bmi",
-		"tag-bfp",
-		"tag-bmr",
-		"tag-vis",
-		"vo2-result",
-	].forEach((id) => {
+	["tag-w", "tag-m", "tag-fat", "tag-bmi", "tag-bfp", "tag-bmr", "tag-vis", "vo2-result"].forEach(id => {
 		const el = byId(id);
-		if (el)
-			el.innerHTML =
-				el.tagName === "DIV" && el.id === "vo2-result"
-					? ((el.style.display = "none"), "")
-					: "";
+		if (el) el.innerHTML = el.tagName === "DIV" && el.id === "vo2-result" ? ((el.style.display = "none"), "") : "";
 	});
 	resetFeedbacks();
 	updateTotal();

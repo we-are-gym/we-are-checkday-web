@@ -110,6 +110,15 @@ export function renderBasicFunctionCards() {
 			TPL.assessmentCard({ index: i, item: e, dots, tags, extra }),
 		);
 	});
+	// ui-score-controller "adjust" 이벤트 위임 — 컴포넌트 내부 점수 변경을 scoreState에 동기화
+	if (!c._scoreListenerAttached) {
+		c.addEventListener("adjust", (e) => {
+			const { index: idx, score: newScore } = e.detail;
+			scoreState.set(idx, newScore);
+			updateTotal();
+		});
+		c._scoreListenerAttached = true;
+	}
 }
 
 /** VO₂ 자동 계산 블록 (VO₂ 항목 전용) — 카드 extra 조각 */
@@ -153,9 +162,8 @@ export function toggleBasicFunctionDetail(index) {
 export function adjustScore(index, delta) {
 	const next = clamp(scoreState.get(index) + delta, SCORE_MIN, SCORE_MAX);
 	scoreState.set(index, next);
-	byId(`sv-${index}`).textContent = next;
-	for (let j = 0; j < scoreState.getMax(); j++)
-		byId(`dot-${index}-${j}`).classList.toggle("on", j < next);
+	const sc = byId(`sc-${index}`);
+	if (sc) sc.setProp("score", next);
 	updateTotal();
 }
 

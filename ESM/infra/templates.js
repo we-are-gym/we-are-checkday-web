@@ -58,6 +58,15 @@ export const TPL = {
 	},
 
 	/**
+	 * 점수 컨트롤러 웹 컴포넌트 — <ui-score-controller /> (checkday·베이직 펑션 공용)
+	 * @param {{ index: number, max: number, score?: number }} p
+	 * @returns {string}
+	 */
+	scoreController({ index, max, score = 0 }) {
+		return `<ui-score-controller class="score-ctrl-el" id="sc-${index}" score="${score}" max="${max}" min="0" index="${index}" interactive show-value aria-label="항목 ${index + 1} 점수"></ui-score-controller>`;
+	},
+
+	/**
 	 * 평가 카드 1장 (checkday 화면 스타일) — eval-item 래퍼 포함
 	 * @param {{ index: number, item: { name: string, desc: string }, dots: string, tags: string, extra?: string }} p
 	 * @returns {string}
@@ -69,8 +78,8 @@ export const TPL = {
 					<div class="eval-num-badge">${index + 1}</div>
 					<div style="flex:1"><div class="eval-name">${escapeHtml(item.name)}</div><div class="eval-desc">${escapeHtml(item.desc)}</div></div>
 					<div class="score-ctrl">
-						${TPL.scoreCtrl({ dataKey: "data-i", index, displayClass: "score-val", displayId: `sv-${index}` })}
-						<div class="sdots">${dots}</div>
+											${TPL.scoreController({ index, max: 3 })}
+					<div class="sdots">${dots}</div> 
 					</div>
 				</div>
 				<button class="expand-toggle" id="et-${index}" data-i="${index}" aria-expanded="false" aria-controls="sp-${index}">
@@ -100,7 +109,7 @@ export const TPL = {
 					</div>
 					<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
 						<div class="score-ctrl">
-							${TPL.scoreCtrl({ dataKey: "data-aid", index: id, displayClass: "score-display", displayId: `score-${id}`, displayAttr: "score" })}
+							${TPL.scoreController({ index: id, max: 3 })}
 						</div>
 						<div class="score-dots">${dots}</div>
 					</div>
