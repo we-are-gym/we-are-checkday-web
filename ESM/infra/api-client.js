@@ -2,13 +2,10 @@
 
 import { AUTH_CHANGE_EVENT, AUTH_KEY, REFRESH_KEY } from "./constants.js";
 
-/**
- * API 기본 경로 — 우선순위:
- * 1. Vite 빌드 타임 치환(__API_BASE__ define): VITE_API_BASE 환경변수로 로컬 검증용 변경 가능
- * 2. 정적 호스팅: HTML <script>가 설정하는 globalThis.__API_BASE__
- * Vite 미경유 정적 호스팅에서 `__API_BASE__` 식별자는 정의되지 않으므로 typeof 검사로 안전하게 폴백한다.
- */
-const API_BASE = typeof __API_BASE__ !== "undefined" ? __API_BASE__ : globalThis.__API_BASE__;
+/** API 기본 경로 */
+const API_BASE = import.meta.env.VITE_API_BASE;
+
+console.log({ API_BASE });
 
 /**
  * Mason API 오류.

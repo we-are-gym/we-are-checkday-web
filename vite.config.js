@@ -10,11 +10,8 @@ const compat = rel => {
 };
 
 export default defineConfig({
-	// ── 전역 상수 주입 — globalThis.__API_BASE__ 등 ──
-	// VITE_API_BASE 환경변수로 로컬 검증용 API 주소를 지정할 수 있다 (기본: 운영 Cloud Run)
-	define: {
-		__API_BASE__: JSON.stringify(process.env.VITE_API_BASE || "https://checkday-rest-evztw4wu4q-du.a.run.app/api/v1"),
-	},
+	// ── 전역 상수 주입
+	define: {},
 
 	// ── 멀티 페이지 앱: 각 HTML을 진입점으로 지정 ──
 	build: {
