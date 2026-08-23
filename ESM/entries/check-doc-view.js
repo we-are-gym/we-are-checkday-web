@@ -9,7 +9,7 @@ import { inbodyTagFor } from "@gym/inbody.js";
 import { guardOnBfcache } from "@infra/auth.js";
 import "@infra/components/app-header.js";
 import "@shared/components/index.js";
-import { escapeHtml, TPL } from "@infra/templates.js";
+import { escapeHtml } from "@infra/templates.js";
 import { loadMembers, memberStore } from "@member/member-store.js";
 import { getMemberById } from "@member/member-utils.js";
 import { sum } from "@tools/utils-array.js";
@@ -108,7 +108,7 @@ function renderEvals(rec) {
 					</div>
 					${checks ? `<ul class="ev-checks">${checks}</ul>` : ""}
 					${ed.memo ? `<p class="ev-memo">${escapeHtml(ed.memo)}</p>` : ""}
-					${item.vo2 && rec.payload.vo2Comment ? `<p class="ev-vo2">${escapeHtml(rec.payload.vo2Comment)}</p>` : ""}
+										${item.vo2 && rec.payload.ibComment ? `<p class="ev-vo2">${escapeHtml(rec.payload.ibComment)}</p>` : ""}
 				</div>`;
 			})
 			.join("")
