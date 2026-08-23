@@ -4,8 +4,7 @@
 // 기법: delegate(utils-dom.js) 기반 이벤트 위임 — 인라인 onclick·window 오염 없이 정적·동적 요소를 한 루트에서 처리
 // 주의: [data-action] 화면별 액션(reset/save 등)은 화면마다 다르므로 여기서 다루지 않고 각 진입점이 등록한다.
 import { byId, delegate } from "@tools/utils-dom.js";
-import { DOT_COUNT } from "@infra/constants.js";
-import { updateInbodyTags } from "@gym/inbody.js";
+ import { updateInbodyTags } from "@gym/inbody.js"; 
 import { scoreState } from "@gym/basicFunction-store.js";
 import { TPL } from "@infra/templates.js";
 import {
@@ -106,7 +105,7 @@ export function resetCheckForm() {
 	scoreState.reset();
 	getEvals().forEach((_, i) => {
 		byId(`sv-${i}`).textContent = "0";
-		for (let j = 0; j < DOT_COUNT; j++)
+		for (let j = 0; j < scoreState.getMax(); j++)
 			byId(`dot-${i}-${j}`).classList.remove("on");
 	});
 	[

@@ -1,9 +1,8 @@
 // 파일 용도: 평가 논리 — 움직임 평가 목록 구성 · VO₂ 계산 연동 · 평가 카드 빌드 · 점수/등급/총점 갱신 (checkday 공용)
 // DEPENDS: ASSESSMENT_ITEMS, clamp·parseToNum(validation), byId(utils-dom), scoreState(basicFunction-store), calcVo2Assessment(vo2), STYLE 등
 import { byId } from "@tools/utils-dom.js";
-import {
-	DOT_COUNT,
-	MOTION_TOTAL_MAX,
+ import {
+	MOTION_TOTAL_MAX, 
 	SCORE_MAX,
 	SCORE_MIN,
 } from "@infra/constants.js";
@@ -98,7 +97,7 @@ export function updateVO2Disp() {
 export function renderBasicFunctionCards() {
 	const c = byId("eval-cards");
 	getEvals().forEach((e, i) => {
-		const dots = TPL.scoreDots({ prefix: i, count: DOT_COUNT });
+		 const dots = TPL.scoreDots({ prefix: i, count: scoreState.getMax() }); 
 		const tags = e.checks
 			.map(
 				(ch) =>
@@ -155,7 +154,7 @@ export function adjustScore(index, delta) {
 	const next = clamp(scoreState.get(index) + delta, SCORE_MIN, SCORE_MAX);
 	scoreState.set(index, next);
 	byId(`sv-${index}`).textContent = next;
-	for (let j = 0; j < DOT_COUNT; j++)
+	for (let j = 0; j < scoreState.getMax(); j++)
 		byId(`dot-${index}-${j}`).classList.toggle("on", j < next);
 	updateTotal();
 }

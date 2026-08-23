@@ -5,7 +5,7 @@
 import { scoreState } from "@gym/basicFunction-store.js";
 import { InbodyData } from "@gym/inbody-data.js";
 import { updateInbodyTags } from "@gym/inbody.js";
-import { DOT_COUNT } from "@infra/constants.js";
+ 
 import { memberStore } from "@member/member-store.js";
 import { getMemberById } from "@member/member-utils.js";
 import { byId } from "@tools/utils-dom.js";
@@ -17,12 +17,12 @@ import { appendCheckMovement } from "./feedback.js";
 export const IB_IDS = ["w", "m", "fat", "bmi", "bfp", "bmr", "vis"];
 
 /**
- * i번째 평가 항목의 점수 도트를 점수만큼 채운다 (0~DOT_COUNT)
+  * i번째 평가 항목의 점수 도트를 점수만큼 채운다 (0~max) 
  * @param {number} index 평가 항목 인덱스
  * @param {number} score 점수 (0~3)
  */
 function paintDots(index, score) {
-	for (let j = 0; j < DOT_COUNT; j++) byId(`dot-${index}-${j}`).classList.toggle("on", j < score);
+	 for (let j = 0; j < scoreState.getMax(); j++) byId(`dot-${index}-${j}`).classList.toggle("on", j < score); 
 }
 
 /**

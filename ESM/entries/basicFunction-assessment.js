@@ -8,7 +8,7 @@ import { getGradeMeta } from "@calc/grade.js";
 import { calcVo2Assessment } from "@calc/vo2.js";
 import { ASSESSMENT_ITEMS } from "@check-doc/assessment-data.js";
 import "@infra/components/app-header.js";
-import { DOT_COUNT, MOTION_TOTAL_MAX, SCORE_MAX, SCORE_MIN } from "@infra/constants.js";
+ import { MOTION_TOTAL_MAX, SCORE_MAX, SCORE_MIN } from "@infra/constants.js"; 
 import { TPL } from "@infra/templates.js";
 import { clamp, parseToNum } from "@infra/validation.js";
 import { byId, delegate, queryAll, queryOne } from "@tools/utils-dom.js";
@@ -111,7 +111,7 @@ function setVo2Score(delta, suggested) {
 	const el = byId("vo2-score-display");
 	el.textContent = vo2State.score;
 	el.dataset.score = vo2State.score;
-	for (let i = 0; i < DOT_COUNT; i++) {
+	for (let i = 0; i < SCORE_MAX; i++) {
 		byId("vd" + i).classList.toggle("filled", i < vo2State.score);
 	}
 	updateTotal();
@@ -124,7 +124,7 @@ function setVo2Score(delta, suggested) {
 function buildItems() {
 	const container = byId("items-container");
 	assessments.forEach(a => {
-		const dotsHTML = TPL.scoreDots({ prefix: a.id, count: DOT_COUNT });
+		const dotsHTML = TPL.scoreDots({ prefix: a.id, count: SCORE_MAX });
 		const checksHTML = a.checks
 			.map(
 				(c, i) => `
@@ -177,7 +177,7 @@ function adjustScore(id, delta) {
 	el.textContent = s.score;
 	el.dataset.score = s.score;
 	// Update dots
-	for (let i = 0; i < DOT_COUNT; i++) {
+	for (let i = 0; i < SCORE_MAX; i++) {
 		byId(`dot-${id}-${i}`).classList.toggle("filled", i < s.score);
 	}
 	updateTotal();
@@ -243,7 +243,7 @@ function resetEntireForm() {
 		const el = byId(`score-${a.id}`);
 		el.textContent = "0";
 		el.dataset.score = "0";
-		for (let i = 0; i < DOT_COUNT; i++) {
+		for (let i = 0; i < SCORE_MAX; i++) {
 			byId(`dot-${a.id}-${i}`).classList.remove("filled");
 		}
 		a.checks.forEach((_, i) => {
@@ -271,7 +271,7 @@ function resetEntireForm() {
 		vScoreEl.textContent = "0";
 		vScoreEl.dataset.score = "0";
 	}
-	for (let i = 0; i < DOT_COUNT; i++) {
+	for (let i = 0; i < SCORE_MAX; i++) {
 		const d = byId("vd" + i);
 		if (d) d.classList.remove("filled");
 	}
