@@ -38,7 +38,7 @@ async function createMember(request, token) {
 			Authorization: `Bearer ${token}`,
 			"Content-Type": "application/json",
 		},
-		data: { name: "PDF검증회원", gender: "女", goal: "체중 유지", trainer: "수코치" },
+		data: { name: "PDF검증회원", gender: "녀", goal: "체중 유지", trainer: "수코치" },
 	});
 	expect(response.ok()).toBeTruthy();
 	const body = await response.json();
