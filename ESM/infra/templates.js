@@ -71,17 +71,14 @@ export const TPL = {
 	 * @param {{ index: number, item: { name: string, desc: string }, dots: string, tags: string, extra?: string }} p
 	 * @returns {string}
 	 */
-	assessmentCard({ index, item, dots, tags, extra = "" }) {
+		assessmentCard({ index, item, tags, extra = "" }) {
 		return `
 			<div class="eval-item">
 				<div class="eval-top">
 					<div class="eval-num-badge">${index + 1}</div>
 					<div style="flex:1"><div class="eval-name">${escapeHtml(item.name)}</div><div class="eval-desc">${escapeHtml(item.desc)}</div></div>
-					<div class="score-ctrl">
-											${TPL.scoreController({ index, max: 3 })}
-					<div class="sdots">${dots}</div> 
-					</div>
-				</div>
+					${TPL.scoreController({ index, max: 3 })}
+				</div> 
 				<button class="expand-toggle" id="et-${index}" data-i="${index}" aria-expanded="false" aria-controls="sp-${index}">
 					체크 항목 / 메모 <span class="arr">▾</span>
 				</button>
@@ -98,7 +95,7 @@ export const TPL = {
 	 * @param {{ id: number, item: { name: string, desc: string }, dots: string, checks: string }} p
 	 * @returns {string}
 	 */
-	basicItemCard({ id, item, dots, checks }) {
+		basicItemCard({ id, item, checks }) {
 		return `
 			<div class="item-card" id="card-${id}">
 				<div class="item-top">
@@ -107,13 +104,8 @@ export const TPL = {
 						<div class="item-name">${escapeHtml(item.name)}</div>
 						<div class="item-desc">${escapeHtml(item.desc)}</div>
 					</div>
-					<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
-						<div class="score-ctrl">
-							${TPL.scoreController({ index: id, max: 3 })}
-						</div>
-						<div class="score-dots">${dots}</div>
-					</div>
-				</div>
+					${TPL.scoreController({ index: id, max: 3 })}
+				</div> 
 				<button class="expand-btn" id="expand-${id}" data-id="${id}" aria-expanded="false" aria-controls="detail-${id}">
 					체크 항목 / 메모
 					<span class="expand-arrow">▾</span>

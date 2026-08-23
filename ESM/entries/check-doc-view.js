@@ -102,7 +102,7 @@ function renderEvals(rec) {
 						</div>
 						<div class="ev-score">
 							<span class="ev-score-val">${score}점</span>
-							<span class="score-dots">${TPL.viewScoreDots({ score })}</span>
+							<ui-score-dots class="score-dots-el" score="${score}" max="3" count="3" prefix="view-${i}" aria-label="항목 ${i + 1} 점수 ${score}점"></ui-score-dots>
 						</div>
 					</div>
 					${checks ? `<ul class="ev-checks">${checks}</ul>` : ""}

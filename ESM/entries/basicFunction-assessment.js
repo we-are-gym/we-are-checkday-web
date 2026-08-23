@@ -8,7 +8,7 @@ import { getGradeMeta } from "@calc/grade.js";
 import { calcVo2Assessment } from "@calc/vo2.js";
 import { ASSESSMENT_ITEMS } from "@check-doc/assessment-data.js";
 import "@infra/components/app-header.js";
- import { MOTION_TOTAL_MAX, SCORE_MAX, SCORE_MIN } from "@infra/constants.js"; 
+import { MOTION_TOTAL_MAX, SCORE_MAX, SCORE_MIN } from "@infra/constants.js";
 import { TPL } from "@infra/templates.js";
 import { clamp, parseToNum } from "@infra/validation.js";
 import { byId, delegate, queryAll, queryOne } from "@tools/utils-dom.js";
@@ -124,7 +124,6 @@ function setVo2Score(delta, suggested) {
 function buildItems() {
 	const container = byId("items-container");
 	assessments.forEach(a => {
-		const dotsHTML = TPL.scoreDots({ prefix: a.id, count: SCORE_MAX });
 		const checksHTML = a.checks
 			.map(
 				(c, i) => `
@@ -135,7 +134,7 @@ function buildItems() {
 		`
 			)
 			.join("");
-		container.insertAdjacentHTML("beforeend", TPL.basicItemCard({ id: a.id, item: a, dots: dotsHTML, checks: checksHTML }));
+		container.insertAdjacentHTML("beforeend", TPL.basicItemCard({ id: a.id, item: a, checks: checksHTML }));
 	});
 }
 
@@ -375,7 +374,7 @@ delegate(document, "click", ".vo2-header", () => toggleVo2());
 delegate(document, "click", "[data-vo2-delta]", (e, el) => setVo2Score(Number(el.dataset.vo2Delta)));
 // 항목별 체크·점수·펼침 (동적 생성 요소)
 delegate(document, "click", ".check-row", (e, el) => toggleCheck(Number(el.dataset.id), Number(el.dataset.idx)));
-byId("items-container").addEventListener("adjust", (e) => {
+byId("items-container").addEventListener("adjust", e => {
 	const { index: id, score: newScore } = e.detail;
 	state[id].score = newScore;
 	updateTotal();
