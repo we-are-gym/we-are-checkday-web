@@ -197,6 +197,28 @@
 .dot.filled {
   background: var(--blue);
 }
+/* ui-score-controller 컴포넌트 내부 스타일 — 점수 조절 버튼·값·도트 배치 */
+.score-controller {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.score-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.score-value {
+  font-size: 18px;
+  font-weight: 600;
+  min-width: 26px;
+  text-align: center;
+  color: var(--text);
+}
+.score-dots .dot.on {
+  background: var(--blue);
+}
 
 /* Expand toggle */
 .expand-btn {

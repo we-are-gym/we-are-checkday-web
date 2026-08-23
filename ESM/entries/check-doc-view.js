@@ -8,6 +8,7 @@ import { getRecordById } from "@check-doc/record-utils.js";
 import { inbodyTagFor } from "@gym/inbody.js";
 import { guardOnBfcache } from "@infra/auth.js";
 import "@infra/components/app-header.js";
+import "@shared/components/index.js";
 import { escapeHtml, TPL } from "@infra/templates.js";
 import { loadMembers, memberStore } from "@member/member-store.js";
 import { getMemberById } from "@member/member-utils.js";

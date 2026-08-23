@@ -8,6 +8,7 @@ import { getGradeMeta } from "@calc/grade.js";
 import { calcVo2Assessment } from "@calc/vo2.js";
 import { ASSESSMENT_ITEMS } from "@check-doc/assessment-data.js";
 import "@infra/components/app-header.js";
+import "@shared/components/index.js"; 
 import { MOTION_TOTAL_MAX, SCORE_MAX, SCORE_MIN } from "@infra/constants.js";
 import { TPL } from "@infra/templates.js";
 import { clamp, parseToNum } from "@infra/validation.js";

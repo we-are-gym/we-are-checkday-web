@@ -6,6 +6,7 @@ import { renderBasicFunctionCards, updateTotal } from "@check-doc/evaluation.js"
 import { renderCheckMovementCards } from "@check-doc/feedback.js";
 import { sessionReport } from "@check-doc/session-report.js";
 import "@infra/components/app-header.js";
+import "@shared/components/index.js"; 
 import { loadMembers, memberStore } from "@member/member-store.js";
 import { getMemberById } from "@member/member-utils.js";
 import { byId, delegate, dismissOnOverlayClick, setText } from "@tools/utils-dom.js";

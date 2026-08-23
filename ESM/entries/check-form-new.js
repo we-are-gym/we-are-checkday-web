@@ -13,6 +13,7 @@ import { getRecordCountsByMember } from "@check-doc/record-utils.js";
 import { sessionReport } from "@check-doc/session-report.js";
 import { guardOnBfcache } from "@infra/auth.js";
 import "@infra/components/app-header.js";
+import "@shared/components/index.js"; 
 import { escapeHtml } from "@infra/templates.js";
 import { addMember, loadMembers, memberStore } from "@member/member-store.js";
 import { getMemberById, getMemberByName } from "@member/member-utils.js";
