@@ -3,9 +3,6 @@
 // 기법: 바닐라JS 템플릿 함수 (DOM·전역 비의존, 단위 테스트 용이)
 // 주의: 사용자 입력을 넣을 때는 반드시 escapeHtml()을 거쳐 XSS를 막는다.
 
-import { createZeroArray } from "@tools/utils-array.js";
-import { DOT_COUNT } from "./constants.js";
-
 /**
  * HTML 특수문자 이스케이프 (XSS 방지)
  * @param {string} text
@@ -42,19 +39,12 @@ const HOME_ICON = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" s
 
 export const TPL = {
 	/**
-	 * 점수 조절 컨트롤 3종 (감소 − · 현재 점수 · 증가 +) — checkday 평가 카드·베이직 펑션 카드 공용
-	 * @param {{ dataKey: string, index: number|string, displayClass: string, displayId?: string, displayAttr?: string }} p
-	 *           dataKey: 전체 속성명 (예: "data-i") — 점수 증감 버튼이 참조할 인덱스 속성
+	 * 점수 컨트롤러 웹 컴포넌트 — <ui-score-controller /> (checkday·베이직 펑션 공용)
+	 * @param {{ index: number, max: number, score?: number }} p
 	 * @returns {string}
 	 */
-	scoreCtrl({ dataKey, index, displayClass, displayId = "", displayAttr = "" }) {
-		const data = `${dataKey}="${index}"`;
-		const idAttr = displayId ? ` id="${displayId}"` : "";
-		const attr = displayAttr ? ` data-${displayAttr}="0"` : "";
-		return `
-			<button class="score-btn" ${data} data-delta="-1" aria-label="감소">−</button>
-			<span class="${displayClass}"${idAttr}${attr} aria-live="polite">0</span>
-			<button class="score-btn" ${data} data-delta="1" aria-label="증가">+</button>`;
+	scoreController({ index, max, score = 0 }) {
+		return `<ui-score-controller class="score-ctrl-el" id="sc-${index}" score="${score}" max="${max}" min="0" dots="${max}" index="${index}" interactive show-value aria-label="항목 ${index + 1} 점수"></ui-score-controller>`;
 	},
 
 	/**
@@ -62,16 +52,13 @@ export const TPL = {
 	 * @param {{ index: number, item: { name: string, desc: string }, dots: string, tags: string, extra?: string }} p
 	 * @returns {string}
 	 */
-	assessmentCard({ index, item, dots, tags, extra = "" }) {
+	assessmentCard({ index, item, tags, extra = "" }) {
 		return `
 			<div class="eval-item">
 				<div class="eval-top">
 					<div class="eval-num-badge">${index + 1}</div>
 					<div style="flex:1"><div class="eval-name">${escapeHtml(item.name)}</div><div class="eval-desc">${escapeHtml(item.desc)}</div></div>
-					<div class="score-ctrl">
-						${TPL.scoreCtrl({ dataKey: "data-i", index, displayClass: "score-val", displayId: `sv-${index}` })}
-						<div class="sdots">${dots}</div>
-					</div>
+					${TPL.scoreController({ index, max: 3 })}
 				</div>
 				<button class="expand-toggle" id="et-${index}" data-i="${index}" aria-expanded="false" aria-controls="sp-${index}">
 					체크 항목 / 메모 <span class="arr">▾</span>
@@ -89,7 +76,7 @@ export const TPL = {
 	 * @param {{ id: number, item: { name: string, desc: string }, dots: string, checks: string }} p
 	 * @returns {string}
 	 */
-	basicItemCard({ id, item, dots, checks }) {
+	basicItemCard({ id, item, checks }) {
 		return `
 			<div class="item-card" id="card-${id}">
 				<div class="item-top">
@@ -98,12 +85,7 @@ export const TPL = {
 						<div class="item-name">${escapeHtml(item.name)}</div>
 						<div class="item-desc">${escapeHtml(item.desc)}</div>
 					</div>
-					<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
-						<div class="score-ctrl">
-							${TPL.scoreCtrl({ dataKey: "data-aid", index: id, displayClass: "score-display", displayId: `score-${id}`, displayAttr: "score" })}
-						</div>
-						<div class="score-dots">${dots}</div>
-					</div>
+					${TPL.scoreController({ index: id, max: 3 })}
 				</div>
 				<button class="expand-btn" id="expand-${id}" data-id="${id}" aria-expanded="false" aria-controls="detail-${id}">
 					체크 항목 / 메모
@@ -266,17 +248,6 @@ export const TPL = {
 	},
 
 	/**
-	 * 점수 도트 HTML 생성 (count개 점) — 평가 카드 점수 표시 공용 (checkday·베이직 펑션)
-	 * @param {{ prefix: string|number, count: number }} p prefix: 도트 id 접두어(항목 인덱스 또는 id), count: 도트 수
-	 * @returns {string}
-	 */
-	scoreDots({ prefix, count }) {
-		return createZeroArray(count)
-			.map((_, j) => `<div class="dot" id="dot-${prefix}-${j}" aria-hidden="true"></div>`)
-			.join("");
-	},
-
-	/**
 	 * 비교 테이블 행 1개 (본문·합계 공용) — label만 이스케이프하고 값은 호출부에서 이미 안전하게 가공한다
 	 * 열 순서: [항목 | left(좌측 셀렉터 회차) | right(우측 셀렉터 회차) | 변화]
 	 * @param {{ label: string, left: string, right: string, delta: string }} r 비교 행 데이터
@@ -334,15 +305,6 @@ export const TPL = {
 					${rows.map(r => TPL.compareTableRow(r)).join("")}
 				</tbody>
 			</table>`;
-	},
-
-	/**
-	 * 읽기 전용 점수 도트 (조회 화면) — 채워진 개수 = 점수
-	 * @param {{ score: number, max?: number }} p score: 점수(0~max), max: 도트 총개수(기본 DOT_COUNT)
-	 * @returns {string}
-	 */
-	viewScoreDots({ score, max = DOT_COUNT }) {
-		return Array.from({ length: max }, (_, i) => `<span class="sdot${i < score ? " on" : ""}"></span>`).join("");
 	},
 
 	/**

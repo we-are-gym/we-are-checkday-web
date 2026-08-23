@@ -14,14 +14,14 @@ import { createZeroArray, sum } from "@tools/utils-array.js";
  *   get(i: number): number,
  *   set(i: number, v: number): void,
  *   getTotal(): number,
- *   getMax(): number,
+ *    getMax(i?: number): number,
  *   getItems(): Array<{name: string, desc: string, checks?: string[], vo2?: boolean}>,
  *   reset(): void,
  * }} 점수 상태 API
  */
 export function createScoreState() {
 	/** 평가 점수·만점·항목 상태 (Store — { scores, max, items }) */
-	const store = new Store({ scores: [], max: 0, items: [] });
+	const store = new Store({ scores: [], max: 0, itemMax: 0, items: [] });
 
 	return {
 		/**
@@ -34,6 +34,7 @@ export function createScoreState() {
 			store.setState(() => ({
 				scores: createZeroArray(items.length),
 				max: maxValue,
+				itemMax: items.length > 0 ? Math.floor(maxValue / items.length) : SCORE_MAX,
 				items,
 			}));
 		},
@@ -65,10 +66,12 @@ export function createScoreState() {
 			return sum(store.getState().scores);
 		},
 		/** 총점 최댓값 반환
+		 * @param {number} [i] 항목 인덱스 — 지정 시 해당 항목의 개별 만점, 미지정 시 전역 총점
 		 * @returns {number}
 		 */
-		getMax() {
-			return store.getState().max;
+		getMax(i) {
+			const state = store.getState();
+			return i !== undefined ? state.itemMax : state.max;
 		},
 		/** 현재 평가 항목 목록 반환
 		 * @returns {Array<{name: string, desc: string, checks?: string[], vo2?: boolean}>}

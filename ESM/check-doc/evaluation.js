@@ -1,18 +1,13 @@
 // 파일 용도: 평가 논리 — 움직임 평가 목록 구성 · VO₂ 계산 연동 · 평가 카드 빌드 · 점수/등급/총점 갱신 (checkday 공용)
 // DEPENDS: ASSESSMENT_ITEMS, clamp·parseToNum(validation), byId(utils-dom), scoreState(basicFunction-store), calcVo2Assessment(vo2), STYLE 등
-import { byId } from "@tools/utils-dom.js";
-import {
-	DOT_COUNT,
-	MOTION_TOTAL_MAX,
-	SCORE_MAX,
-	SCORE_MIN,
-} from "@infra/constants.js";
 import { GRADE_STYLES, VO2_GRADE_STYLES } from "@calc/grade-styles.js";
 import { getGradeMeta } from "@calc/grade.js";
+import { calcVo2Assessment } from "@calc/vo2.js";
 import { scoreState } from "@gym/basicFunction-store.js";
+import { MOTION_TOTAL_MAX, SCORE_MAX, SCORE_MIN } from "@infra/constants.js";
 import { TPL } from "@infra/templates.js";
 import { clamp, parseToNum } from "@infra/validation.js";
-import { calcVo2Assessment } from "@calc/vo2.js";
+import { byId } from "@tools/utils-dom.js";
 import { ASSESSMENT_ITEMS_FULL } from "./assessment-data.js";
 
 // ── 움직임 평가 구성 초기화 (기본 8개: 7개 + VO₂ 항목) ──
@@ -98,19 +93,19 @@ export function updateVO2Disp() {
 export function renderBasicFunctionCards() {
 	const c = byId("eval-cards");
 	getEvals().forEach((e, i) => {
-		const dots = TPL.scoreDots({ prefix: i, count: DOT_COUNT });
-		const tags = e.checks
-			.map(
-				(ch) =>
-					`<span class="ctag" role="button" tabindex="0" aria-pressed="false">${ch}</span>`,
-			)
-			.join("");
+		const tags = e.checks.map(ch => `<span class="ctag" role="button" tabindex="0" aria-pressed="false">${ch}</span>`).join("");
 		const extra = e.vo2 ? buildVo2Block() : "";
-		c.insertAdjacentHTML(
-			"beforeend",
-			TPL.assessmentCard({ index: i, item: e, dots, tags, extra }),
-		);
+		c.insertAdjacentHTML("beforeend", TPL.assessmentCard({ index: i, item: e, tags, extra }));
 	});
+	// ui-score-controller "adjust" 이벤트 위임 — 컴포넌트 내부 점수 변경을 scoreState에 동기화
+	if (!c._scoreListenerAttached) {
+		c.addEventListener("adjust", e => {
+			const { index: idx, score: newScore } = e.detail;
+			scoreState.set(idx, newScore);
+			updateTotal();
+		});
+		c._scoreListenerAttached = true;
+	}
 }
 
 /** VO₂ 자동 계산 블록 (VO₂ 항목 전용) — 카드 extra 조각 */
@@ -154,9 +149,8 @@ export function toggleBasicFunctionDetail(index) {
 export function adjustScore(index, delta) {
 	const next = clamp(scoreState.get(index) + delta, SCORE_MIN, SCORE_MAX);
 	scoreState.set(index, next);
-	byId(`sv-${index}`).textContent = next;
-	for (let j = 0; j < DOT_COUNT; j++)
-		byId(`dot-${index}-${j}`).classList.toggle("on", j < next);
+	const sc = byId(`sc-${index}`);
+	if (sc) sc.setProp("score", next);
 	updateTotal();
 }
 
