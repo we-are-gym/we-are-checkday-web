@@ -1,0 +1,1 @@
+function e(e,t){return e.find(e=>e.id===t)}function t(e,t){return e.find(e=>e.name===t)}function n(e){return e===`녀`?`여`:e}export{e as n,t as r,n as t};
