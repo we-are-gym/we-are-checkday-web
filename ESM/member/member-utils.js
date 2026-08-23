@@ -22,3 +22,13 @@ export function getMemberById(members, id) {
 export function getMemberByName(members, name) {
 	return members.find(m => m.name === name);
 }
+
+/**
+ * 저장·전송값(남/녀) 성별을 화면 표기용(남/여)으로 변환한다 (빈 값은 빈 문자열 유지).
+ * 데이터와 표기를 분리하는 단일 소스 — 목록·상세 등 모든 렌더 지점이 이 함수를 경유한다.
+ * @param {"" | "남" | "녀"} gender 저장·전송값 성별
+ * @returns {string} 화면 표기용 성별 ("남"|"여"|"" 그 외 값은 원본 반환)
+ */
+export function displayGender(gender) {
+	return gender === "녀" ? "여" : gender;
+}

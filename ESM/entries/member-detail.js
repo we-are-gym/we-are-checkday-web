@@ -8,7 +8,7 @@ import { guardOnBfcache } from "@infra/auth.js";
 import "@infra/components/app-header.js";
 import { TPL, escapeHtml } from "@infra/templates.js";
 import { loadMembers, memberStore } from "@member/member-store.js";
-import { getMemberById } from "@member/member-utils.js";
+import { displayGender, getMemberById } from "@member/member-utils.js";
 import { sum } from "@tools/utils-array.js";
 import { byId, delegate, queryAll, queryOne, setHTML, setText } from "@tools/utils-dom.js";
 import { getUrlParam } from "@tools/utils-url.js";
@@ -32,7 +32,7 @@ function renderInfoCard(member) {
 	setText("md-title", member.name);
 	setText("md-sub", `체크기록 ${getRecords().length}건`);
 	setText("md-name", member.name);
-	setText("md-gender", member.gender || "-");
+	setText("md-gender", displayGender(member.gender) || "-");
 	setText("md-trainer", member.trainer || "-");
 	document.title = `${member.name} — 회원 상세`;
 }

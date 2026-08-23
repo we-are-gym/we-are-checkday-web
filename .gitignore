@@ -22,5 +22,6 @@ playwright-report/
 
 # Env
 .env.local
+.env.*.local
 
 # EOF

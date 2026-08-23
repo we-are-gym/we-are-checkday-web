@@ -20,7 +20,7 @@ defineComponent("member-form", {
 					<span>성별</span>
 					<select id="mf-gender">
 						<option value="">선택 안 함</option>
-						<option value="여">여</option>
+						<option value="녀">여</option>
 						<option value="남">남</option>
 					</select>
 				</label>
@@ -43,7 +43,7 @@ defineComponent("member-form", {
 	 */
 	onConnect() {
 		const form = this.querySelector("form");
-		form.addEventListener("submit", (e) => {
+		form.addEventListener("submit", e => {
 			e.preventDefault();
 			const nameEl = form.querySelector("#mf-name");
 			const name = nameEl.value.trim();
@@ -74,7 +74,7 @@ defineComponent("member-form", {
 	 * @param {import("@infra/store.js").Member} member 회원 데이터
 	 */
 	prefill(member) {
-		const q = (id) => this.querySelector(`#${id}`);
+		const q = id => this.querySelector(`#${id}`);
 		q("mf-name") && (q("mf-name").value = member.name || "");
 		q("mf-gender") && (q("mf-gender").value = member.gender || "");
 		q("mf-goal") && (q("mf-goal").value = member.goal || "");
