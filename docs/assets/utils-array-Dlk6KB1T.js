@@ -1,0 +1,1 @@
+function e(e){return e.reduce((e,t)=>e+t,0)}function t(e){return Array(e).fill(0)}export{e as n,t};

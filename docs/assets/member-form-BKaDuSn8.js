@@ -1,4 +1,4 @@
-import{a as e}from"./app-header-CP8G8khd.js";e(`member-form`,{render(){return`
+import{r as e}from"./app-header-C6kFERn0.js";e(`member-form`,{render(){return`
 			<form class="member-form" id="member-form" novalidate aria-label="회원 정보 입력 폼">
 				<label class="member-field">
 					<span>이름</span>
