@@ -141,8 +141,8 @@ function rebuildEvalItems(nextItems, removedIndex) {
 
 /** 평가 카드별 삭제 버튼을 붙인다 (재렌더 후 호출 — 인덱스는 부착 시점 기준) */
 function attachRemoveButtons() {
-	queryAll(".eval-card").forEach((card, i) => {
-		const title = card.querySelector(".eval-title");
+	queryAll("#eval-cards .eval-item").forEach((card, i) => {
+		const title = card.querySelector(".eval-name");
 		if (!title || title.querySelector(".eval-remove")) return;
 		const btn = document.createElement("button");
 		btn.type = "button";

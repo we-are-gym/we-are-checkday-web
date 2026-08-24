@@ -119,13 +119,15 @@ export function restToIb(inbody) {
 export function payloadToRest(p, meta) {
 	const getEvalItem = name => {
 		const i = p.items.indexOf(name);
+		// 움직임 평가 목록에 없던 항목은 0점이 아니라 null(미평가)로 저장한다
 		if (i === -1) {
-			return { score: 0, evaluation_items: [], memo: null };
+			return null;
 		}
+		const ed = p.evalData && p.evalData[i];
 		return {
-			score: (p.scores && p.scores[i]) || 0,
-			evaluation_items: (p.evalData && p.evalData[i] && p.evalData[i].checked) || [],
-			memo: (p.evalData && p.evalData[i] && p.evalData[i].memo) ?? null,
+			score: p.scores[i] ?? 0,
+			evaluation_items: (ed && ed.checked) || [],
+			memo: (ed && ed.memo) || null,
 		};
 	};
 	const evaluations = [
@@ -166,14 +168,11 @@ export function payloadToRest(p, meta) {
  */
 export function restToPayload(body) {
 	const apiEval = body.evaluations?.[0] || {};
+	// API의 각 평가 필드는 null(기록에 미포함 항목) 또는 항목 오브젝트다.
+	// score가 0이어도 오브젝트면 실제 0점 평가이므로 그대로 포함한다.
 	const evalEntries = API_EVALUATION_FIELDS.map(field => {
 		const e = apiEval[field];
-		if (!e) return null;
-		// API는 항상 8개 고정 필드를 저장하므로, 값이 모두 비어 있으면
-		// 이 기록에 포함되지 않은 항목(BASIC5 누락 항목)으로 간주합니다.
-		if (e.score === 0 && (e.evaluation_items || []).length === 0 && (e.memo ?? "") === "") {
-			return null;
-		}
+		if (e == null) return null;
 		return {
 			name: API_FIELD_TO_ITEM_NAME[field],
 			score: e.score,
