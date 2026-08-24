@@ -1,6 +1,7 @@
 // 파일 용도: Mason API 호출 공용 클라이언트 — fetch 래퍼·Mason 봉투 언래핑·오류 정규화·토큰 자동 관리
 
 import { AUTH_CHANGE_EVENT, AUTH_KEY, REFRESH_KEY } from "./constants.js";
+import { redirectToLogin } from "./login-redirect.js";
 
 /** API 기본 경로 */
 const API_BASE = import.meta.env.VITE_API_BASE;
@@ -139,16 +140,6 @@ async function doRefresh() {
 	}
 }
 
-/**
- * 로그인 페이지로 리다이렉트합니다. 이미 로그인 페이지면 무시합니다 (무한 루프 방지).
- */
-function goToLogin() {
-	clearTokens();
-	if (!window.location.pathname.endsWith("login.html")) {
-		const redirect = encodeURIComponent(window.location.href);
-		window.location.replace(`login.html?redirect=${redirect}`);
-	}
-}
 
 /**
  * 응답에서 Mason @error 봉투 또는 Pydantic detail 배열을 읽어 ApiError를 생성합니다.
@@ -214,7 +205,7 @@ async function fetchWithAuth(path, { method = "GET", body = null, token = null, 
 	if (response.status === 401) {
 		if (!accessToken) {
 			// 케이스 1: 토큰 없음 — 로그인 페이지로 이동
-			goToLogin();
+			redirectToLogin();
 			throw new ApiError("인증이 필요합니다", "unauthorized", 401);
 		} else if (isTokenExpired(accessToken)) {
 			// 케이스 2: 토큰 만료 — 리프레시 토큰으로 갱신 시도
@@ -225,17 +216,17 @@ async function fetchWithAuth(path, { method = "GET", body = null, token = null, 
 				response = await doFetch();
 				// 갱신 후 재시도 응답이 401이면 로그인 페이지로 이동
 				if (response.status === 401) {
-					goToLogin();
+				redirectToLogin();
 					throw new ApiError("갱신 후 인증이 거부되었습니다", "refresh_retry_rejected", 401);
 				}
 			} else {
 				// 갱신 실패 — 로그인 페이지로 이동
-				goToLogin();
+				redirectToLogin();
 				throw new ApiError("인증이 만료되었습니다", "token_expired", 401);
 			}
 		} else {
 			// 케이스 3: 토큰 유효하지만 서버 거부 — 로그인 페이지로 이동
-			goToLogin();
+			redirectToLogin();
 			throw new ApiError("인증이 거부되었습니다", "token_rejected", 401);
 		}
 	}
