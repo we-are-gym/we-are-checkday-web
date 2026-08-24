@@ -17,7 +17,7 @@
 		"build-storybook": "storybook build",
 		"verify": "node tools/verify.mjs",
 		"verify:compare": "node tools/verify-compare.mjs",
-		"verify:schema": "node tools/verify-schema.mjs",
+		"deploy": "node tools/deploy.mjs",
 		"bump-version": "uv run python tools/bump_version.py"
 	},
 	"devDependencies": {
