@@ -417,5 +417,5 @@ tabs.forEach(btn => {
 byId("cmp-cur").addEventListener("change", renderCompare);
 byId("cmp-tgt").addEventListener("change", renderCompare);
 
-guardOnBfcache();
+guardOnBfcache(init); // 읽기 전용 화면 — 복원 시 다시 읽어 최신 데이터 표시
 init();

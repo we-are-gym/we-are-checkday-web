@@ -8,15 +8,15 @@ import { getRecordById } from "@check-doc/record-utils.js";
 import { inbodyTagFor } from "@gym/inbody.js";
 import { guardOnBfcache } from "@infra/auth.js";
 import "@infra/components/app-header.js";
-import "@shared/components/index.js";
 import { escapeHtml } from "@infra/templates.js";
 import { loadMembers, memberStore } from "@member/member-store.js";
 import { getMemberById } from "@member/member-utils.js";
+import "@shared/components/index.js";
 import { sum } from "@tools/utils-array.js";
 import { byId, queryAll, setHTML, setText } from "@tools/utils-dom.js";
 import { getUrlParam } from "@tools/utils-url.js";
 
-guardOnBfcache();
+guardOnBfcache(init); // 읽기 전용 화면 — 복원 시 다시 읽어 최신 데이터 표시 (init은 함수 선언이라 호이스팅됨)
 
 /** ?docID= 파라미터 (숫자 checkdoc_ID) */
 const docId = Number(getUrlParam("docID"));

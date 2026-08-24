@@ -2,6 +2,7 @@
 
 import { clearTokens, isTokenExpired, request, storeTokens } from "@infra/api-client.js";
 import { AUTH_CHANGE_EVENT, AUTH_KEY, REFRESH_KEY } from "./constants.js";
+import { redirectToLogin } from "./login-redirect.js";
 
 /**
  * 현재 유효한 로그인 상태인지 확인합니다.
@@ -15,20 +16,29 @@ export function isAuthed() {
 	if (!token) return false;
 	return !isTokenExpired(token);
 }
-
 /**
- * bfcache(뒤로-앞으로 캐시) 복원 시 인증되지 않은 사용자를 로그인 페이지로 리다이렉트합니다.
+ * bfcache(뒤로-앞으로 캐시) 복원 시 인증 상태를 검사하고 필요한 갱신을 수행합니다.
+ * - 인증되지 않은 복원: 원래 화면 경로를 ?redirect= 쿼리로 보존하여 로그인 페이지로 리다이렉트합니다.
+ *   재로그인하면 밀려났던 화면으로 돌아옵니다.
+ * - 인증된 복원: onRestore 콜백을 실행해 스토어 등 화면 데이터를 다시 읽어 최신 상태를 표시합니다.
  *
- * 보호된 페이지의 `<script type="module">` 진입점에서 모듈 최상위에 호출하십시오.
- * `pageshow` 이벤트의 `event.persisted`로 bfcache 복원 여부를 감지합니다.
- * 최초 로드(`persisted === false`)에는 동작하지 않으므로, 기존 인증 흐름에 영향이 없습니다.
- *
+ * @param {() => (void | Promise<void>)} [onRestore] 복원 직후 실행할 데이터 갱신 콜백.
+ *   편집 폼처럼 미저장 입력이 있는 화면은 프리필을 다시 실행하는 콜백을 넘기지 말 것 —
+ *   복원 시점의 DOM 입력이 사라진다.
  * @returns {void}
  */
-export function guardOnBfcache() {
-	window.addEventListener("pageshow", event => {
-		if (event.persisted && !isAuthed()) {
-			window.location.replace("login.html");
+export function guardOnBfcache(onRestore) {
+	window.addEventListener("pageshow", async event => {
+		if (!event.persisted) return;
+		if (!isAuthed()) {
+			redirectToLogin();
+			return;
+		}
+		if (!onRestore) return;
+		try {
+			await onRestore();
+		} catch (err) {
+			console.error("bfcache 복원 후 화면 데이터 갱신 실패:", err);
 		}
 	});
 }
