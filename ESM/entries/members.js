@@ -54,7 +54,7 @@ async function removeMember(id) {
 
 	const prompt =
 		recordCount > 0
-			? `회원 ${member.name} 님을 삭제하시겠습니까?\n\n연결된 체크기록 ${recordCount}걸 로컬 목록에서도 제거합니다.`
+			? `회원 ${member.name} 님을 삭제하시겠습니까?\n\n연결된 체크기록 ${recordCount}건도 함께 삭제합니다.`
 			: `회원 ${member.name} 님을 삭제하시겠습니까?`;
 
 	if (!confirm(prompt)) {
