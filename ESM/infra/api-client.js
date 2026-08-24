@@ -140,7 +140,6 @@ async function doRefresh() {
 	}
 }
 
-
 /**
  * 응답에서 Mason @error 봉투 또는 Pydantic detail 배열을 읽어 ApiError를 생성합니다.
  * @param {Response} response fetch 응답
@@ -216,7 +215,7 @@ async function fetchWithAuth(path, { method = "GET", body = null, token = null, 
 				response = await doFetch();
 				// 갱신 후 재시도 응답이 401이면 로그인 페이지로 이동
 				if (response.status === 401) {
-				redirectToLogin();
+					redirectToLogin();
 					throw new ApiError("갱신 후 인증이 거부되었습니다", "refresh_retry_rejected", 401);
 				}
 			} else {

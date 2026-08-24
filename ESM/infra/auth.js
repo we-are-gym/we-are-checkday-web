@@ -1,6 +1,7 @@
 // 파일 용도: 인증·로그인 상태 — JWT 액세스·리프레시 토큰 관리 (전 화면 공용)
 
 import { clearTokens, isTokenExpired, request, storeTokens } from "@infra/api-client.js";
+import { redirectToLogin } from "./login-redirect.js";
 import { AUTH_CHANGE_EVENT, AUTH_KEY, REFRESH_KEY } from "./constants.js";
 
 /**
@@ -18,17 +19,14 @@ export function isAuthed() {
 
 /**
  * bfcache(뒤로-앞으로 캐시) 복원 시 인증되지 않은 사용자를 로그인 페이지로 리다이렉트합니다.
- *
- * 보호된 페이지의 `<script type="module">` 진입점에서 모듈 최상위에 호출하십시오.
- * `pageshow` 이벤트의 `event.persisted`로 bfcache 복원 여부를 감지합니다.
- * 최초 로드(`persisted === false`)에는 동작하지 않으므로, 기존 인증 흐름에 영향이 없습니다.
+ * 이때 원래 화면 경로를 ?redirect= 쿼리로 보존하므로, 재로그인하면 밀려났던 화면으로 돌아옵니다.
  *
  * @returns {void}
  */
 export function guardOnBfcache() {
 	window.addEventListener("pageshow", event => {
 		if (event.persisted && !isAuthed()) {
-			window.location.replace("login.html");
+			redirectToLogin();
 		}
 	});
 }
