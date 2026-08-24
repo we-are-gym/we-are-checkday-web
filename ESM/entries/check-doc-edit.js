@@ -19,6 +19,7 @@ import "@shared/components/index.js";
 import { byId, delegate, dismissOnOverlayClick, queryAll } from "@tools/utils-dom.js";
 import { getUrlParam } from "@tools/utils-url.js";
 
+// bfcache 복원 갱신 콜백을 넘기지 않는다 — 프리필 재실행 시 미저장 폼 입력이 덮여쓰이기 때문
 guardOnBfcache();
 
 /** ?docID= 파라미터 (숫자 checkdoc_ID) */

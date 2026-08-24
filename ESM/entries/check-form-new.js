@@ -13,15 +13,19 @@ import { getRecordCountsByMember } from "@check-doc/record-utils.js";
 import { sessionReport } from "@check-doc/session-report.js";
 import { guardOnBfcache } from "@infra/auth.js";
 import "@infra/components/app-header.js";
-import "@shared/components/index.js"; 
 import { escapeHtml } from "@infra/templates.js";
 import { addMember, loadMembers, memberStore } from "@member/member-store.js";
 import { getMemberById, getMemberByName } from "@member/member-utils.js";
+import "@shared/components/index.js";
 import { byId, delegate, dismissOnOverlayClick } from "@tools/utils-dom.js";
 import { todayISO } from "@tools/utils-string.js";
 import { getUrlParam } from "@tools/utils-url.js";
 
-guardOnBfcache();
+// bfcache 복원 시 스토어·datalist만 다시 읽는다 — 폼 입력·평가 카드 상태는 미저장 입력 보호를 위해 그대로 둔다
+guardOnBfcache(async () => {
+	await reloadStores();
+	fillMemberDatalist();
+});
 
 // ── 날짜 ──
 // 상담일(date picker) 기본값 = 오늘 (기록 date는 YYYY-MM-DD 형식으로 저장)
@@ -52,10 +56,11 @@ function applyMember(mem) {
 }
 
 /**
- * 페이지 초기화 — 회원 목록을 API에서 불러온 뒤 datalist와 프리필을 채운다.
+ * 회원·체크기록 스토어를 API에서 다시 읽어온다 — 최초 로드와 bfcache 복원 갱신에서 공용.
+ * 실패 시 화면이 죽지 않도록 잡아 기록만 남긴다.
  * @returns {Promise<void>}
  */
-async function init() {
+async function reloadStores() {
 	try {
 		await loadMembers();
 		if (memberId) {
@@ -66,9 +71,24 @@ async function init() {
 	} catch (err) {
 		console.error("회원/기록 로드 실패:", err);
 	}
+}
 
+/**
+ * memberStore 기준으로 화면의 회원 datalist를 최신화한다 — 최초 로드·bfcache 복원 갱신 공용.
+ * @returns {void}
+ */
+function fillMemberDatalist() {
 	const members = memberStore.getState().members;
 	byId("member-list").innerHTML = members.map(m => `<option value="${escapeHtml(m.name)}">`).join("");
+}
+
+/**
+ * 페이지 초기화 — 스토어를 API에서 불러온 뒤 datalist와 프리필을 채운다.
+ * @returns {Promise<void>}
+ */
+async function init() {
+	await reloadStores();
+	fillMemberDatalist();
 
 	// 입력한 이름과 일치하는 회원을 찾아 트레이너·회차 자동 기입 (회차는 읽기전용, 트레이너는 이후 수정 가능)
 	memberInput.addEventListener("input", () => {
@@ -78,7 +98,7 @@ async function init() {
 
 	// ?memberID= 진입 시 해당 회원으로 고정 (이름 입력 잠금) 후 자동 기입
 	if (memberId) {
-		const mem = getMemberById(members, memberId);
+		const mem = getMemberById(memberStore.getState().members, memberId);
 		if (mem) {
 			memberInput.value = mem.name;
 			memberInput.setAttribute("readonly", "");

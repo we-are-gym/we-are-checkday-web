@@ -85,20 +85,30 @@ function onSearch() {
 }
 
 // ── 시작 ──
-guardOnBfcache();
+/**
+ * 회원·체크기록을 API에서 다시 읽어온다 — 최초 로드와 bfcache 복원 갱신에서 공용.
+ * 실패해도 화면이 죽지 않도록 각각 잡아 기록만 남긴다.
+ * @returns {Promise<void>}
+ */
+async function loadAll() {
+	await Promise.all([
+		loadMembers().catch(err => {
+			console.error("회원 목록 로드 실패:", err);
+			// 빈 목록 안내는 member-table 컴포넌트가 렌더링합니다
+			tableEl.rows = [];
+			tableEl.render?.();
+		}),
+		loadRecords().catch(err => {
+			console.error("체크기록 로드 실패:", err);
+		}),
+	]);
+}
+
+// bfcache 복원 시 스토어를 다시 읽어 최신 데이터를 표시한다 (구독 render가 재렌더링)
+guardOnBfcache(loadAll);
 memberStore.subscribe(render);
 recordStore.subscribe(render);
-Promise.all([
-	loadMembers().catch(err => {
-		console.error("회원 목록 로드 실패:", err);
-		// 빈 목록 안내는 member-table 컴포넌트가 렌더링합니다
-		tableEl.rows = [];
-		tableEl.render?.();
-	}),
-	loadRecords().catch(err => {
-		console.error("체크기록 로드 실패:", err);
-	}),
-]);
+loadAll();
 
 /** 회원 선택 시 상세 화면으로 이동
  * @param {string} id 선택한 회원 member_ID
