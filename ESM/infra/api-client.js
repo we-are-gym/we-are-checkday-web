@@ -6,7 +6,7 @@ import { redirectToLogin } from "./login-redirect.js";
 /** API 기본 경로 */
 const API_BASE = import.meta.env.VITE_API_BASE;
 
-console.log({ API_BASE });
+// console.log({ API_BASE });
 
 /**
  * Mason API 오류.

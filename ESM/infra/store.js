@@ -166,7 +166,7 @@ function loadStored(storageKey, seed, validate) {
 			if (validate(data)) return data;
 		}
 	} catch (err) {
-		// 손상된 데이터는 시드로 폴백
+		console.warn(`[Store] sessionStorage 읽기 실패 (${storageKey}):`, err);
 	}
 	return seed;
 }
