@@ -140,6 +140,29 @@ export class Store {
 		this.setState(prev => ({ ...prev, ...partial }));
 	}
 
+	/** error 필드를 설정하고 구독자에게 알린다
+	 * @param {string | null} msg 에러 메시지 (null이면 에러 없음)
+	 * @returns {void}
+	 */
+	setError(msg) {
+		this.update({ error: msg });
+	}
+
+	/** error 필드를 null로 초기화한다
+	 * @returns {void}
+	 */
+	clearError() {
+		this.update({ error: null });
+	}
+
+	/** loading 필드를 설정하고 구독자에게 알린다
+	 * @param {boolean} isLoading 로딩 진행 중 여부
+	 * @returns {void}
+	 */
+	setLoading(isLoading) {
+		this.update({ loading: isLoading });
+	}
+
 	/** 상태 변경 시 호출할 리스너를 등록하고, 구독 해제 함수를 반환한다
 	 * @param {(state: T) => void} listener 상태 변경 리스너
 	 * @returns {() => void} 구독 해제 함수

@@ -7,6 +7,7 @@ import { scoreState } from "@gym/basicFunction-store.js";
 import { MOTION_TOTAL_MAX, SCORE_MAX, SCORE_MIN } from "@infra/constants.js";
 import { TPL } from "@infra/templates.js";
 import { clamp, parseToNum } from "@infra/validation.js";
+import { debounce } from "@tools/debounce.js";
 import { byId } from "@tools/utils-dom.js";
 import { ASSESSMENT_ITEMS_FULL } from "./assessment-data.js";
 
@@ -27,6 +28,9 @@ scoreState.init(ASSESSMENT_ITEMS_FULL, MOTION_TOTAL_MAX);
 export function configureEvaluation({ items, max }) {
 	scoreState.init(items, max);
 }
+
+/** 점수 변경 시 디바운스된 총점 갱신 (연속 클릭 시 마지막만 반영) */
+const debouncedUpdateTotal = debounce(updateTotal, 150);
 
 // ── 평가 상태 읽기 (세션 리포트 등 공용 읽기 API — scoreState 직접 접근 대신 사용) ──
 /** 현재 평가 항목 목록 반환 (configureEvaluation()으로 교체된 값 포함)
@@ -151,7 +155,7 @@ export function adjustScore(index, delta) {
 	scoreState.set(index, next);
 	const sc = byId(`sc-${index}`);
 	if (sc) sc.setProp("score", next);
-	updateTotal();
+	debouncedUpdateTotal();
 }
 
 /**

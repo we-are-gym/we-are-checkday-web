@@ -6,12 +6,17 @@ import { renderBasicFunctionCards, updateTotal } from "@check-doc/evaluation.js"
 import { renderCheckMovementCards } from "@check-doc/feedback.js";
 import { sessionReport } from "@check-doc/session-report.js";
 import "@infra/components/app-header.js";
-import "@shared/components/index.js"; 
 import { loadMembers, memberStore } from "@member/member-store.js";
 import { getMemberById } from "@member/member-utils.js";
+import "@shared/components/index.js";
+import "@shared/components/toast/toast.js";
+import { hideLoading, showLoading } from "@shared/components/toast/toast.js";
 import { byId, delegate, dismissOnOverlayClick, setText } from "@tools/utils-dom.js";
 import { today } from "@tools/utils-string.js";
 import { getUrlParam } from "@tools/utils-url.js";
+
+// 로딩 오버레이 — memberStore의 loading 상태 구독
+memberStore.subscribe(state => (state.loading ? showLoading() : hideLoading()));
 
 // ── 날짜 ──
 setText("date-badge", today());

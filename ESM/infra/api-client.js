@@ -1,5 +1,6 @@
 // 파일 용도: Mason API 호출 공용 클라이언트 — fetch 래퍼·Mason 봉투 언래핑·오류 정규화·토큰 자동 관리
 
+import { showToast } from "@shared/components/toast/toast.js";
 import { AUTH_CHANGE_EVENT, AUTH_KEY, REFRESH_KEY } from "./constants.js";
 import { redirectToLogin } from "./login-redirect.js";
 
@@ -258,6 +259,14 @@ async function fetchWithAuth(path, { method = "GET", body = null, token = null, 
  * @returns {Promise<object|Array>} 리소스(단건) 또는 리소스 배열(목록)
  */
 export async function request(path, options = {}) {
+	try {
+		return await fetchWithAuth(path, options);
+	} catch (err) {
+		if (err?.status !== 401) {
+			showToast(err.message || "요청을 처리할 수 없습니다", { type: "error" });
+		}
+		throw err;
+	}
 	return fetchWithAuth(path, options);
 }
 
@@ -269,5 +278,13 @@ export async function request(path, options = {}) {
  * @returns {Promise<Blob>} 응답 Blob
  */
 export async function requestBlob(path, options = {}) {
+	try {
+		return await fetchWithAuth(path, { ...options, as: "blob" });
+	} catch (err) {
+		if (err?.status !== 401) {
+			showToast(err.message || "요청을 처리할 수 없습니다", { type: "error" });
+		}
+		throw err;
+	}
 	return fetchWithAuth(path, { ...options, as: "blob" });
 }

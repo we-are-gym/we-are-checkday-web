@@ -9,12 +9,18 @@ import "@infra/components/app-header.js";
 import { TPL, escapeHtml } from "@infra/templates.js";
 import { loadMembers, memberStore } from "@member/member-store.js";
 import { displayGender, getMemberById } from "@member/member-utils.js";
+import "@shared/components/toast/toast.js";
+import { hideLoading, showLoading } from "@shared/components/toast/toast.js";
 import { sum } from "@tools/utils-array.js";
 import { byId, delegate, queryAll, queryOne, setHTML, setText } from "@tools/utils-dom.js";
 import { getUrlParam } from "@tools/utils-url.js";
 
 /** ?memberID= 파라미터 (문자열 member_ID) */
 const memberId = getUrlParam("memberID");
+
+// 로딩 오버레이 — memberStore/recordStore의 loading 상태 구독
+memberStore.subscribe(state => (state.loading ? showLoading() : hideLoading()));
+recordStore.subscribe(state => (state.loading ? showLoading() : hideLoading()));
 
 /** 회원의 기록을 날짜 오름차순으로 반환
  * @returns {import("@infra/store.js").CheckRecord[]} 현재 회원의 체크기록 목록

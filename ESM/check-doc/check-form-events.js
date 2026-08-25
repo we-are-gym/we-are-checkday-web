@@ -6,6 +6,7 @@
 import { scoreState } from "@gym/basicFunction-store.js";
 import { updateInbodyTags } from "@gym/inbody.js";
 import { TPL } from "@infra/templates.js";
+import { debounce } from "@tools/debounce.js";
 import { byId, delegate } from "@tools/utils-dom.js";
 import { adjustScore, getEvals, toggleBasicFunctionDetail, updateTotal, updateVO2Disp } from "./evaluation.js";
 import { appendCheckMovement, appendCheckMovementItemRow, resetFeedbacks } from "./feedback.js";
@@ -52,12 +53,14 @@ export function setupCheckFormEvents() {
 	delegate(document, "click", ".add-check-btn", (e, el) => appendCheckMovementItemRow(el));
 	delegate(document, "click", ".fb-check-del", (e, el) => el.closest(".fb-check-row")?.remove());
 	delegate(document, "click", ".add-fb-btn", () => appendCheckMovement());
+	const debouncedInbodyTags = debounce(updateInbodyTags, 250);
+	const debouncedVO2Disp = debounce(updateVO2Disp, 250);
 	// input 위임 — 인바디 수치·VO₂ 입력 갱신
 	document.addEventListener("input", e => {
 		const id = e.target.id;
 		if (!id) return;
-		if (id.startsWith("ib-")) updateInbodyTags();
-		else if (id === "vo2-age" || id === "vo2-ht" || id === "vo2-wt" || id === "vo2-hr") updateVO2Disp();
+		if (id.startsWith("ib-")) debouncedInbodyTags();
+		else if (id === "vo2-age" || id === "vo2-ht" || id === "vo2-wt" || id === "vo2-hr") debouncedVO2Disp();
 	});
 }
 
