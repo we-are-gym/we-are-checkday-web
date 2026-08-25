@@ -1,13 +1,7 @@
 // 파일 용도: 체크기록 스토어 - Mason API 클라이언트 (회원 상세·조회·작성·편집 공용)
 // 주의: 기존 sessionStorage mock 저장에서 API 영속화로 교체되었습니다.
 import { Store } from "@infra/store.js";
-import {
-	createCheckdoc,
-	deleteCheckdoc,
-	fetchCheckdocs,
-	restToPayload,
-	updateCheckdoc,
-} from "./record-rest.js";
+import { createCheckdoc, deleteCheckdoc, fetchCheckdocs, restToPayload, updateCheckdoc } from "./record-rest.js";
 
 /** 체크기록 스토어 (전 화면 공용 단일 인스턴스) — API 데이터로 채워집니다. */
 export const recordStore = new Store({ records: [], loading: false, error: null }, { storageKey: null });
@@ -30,6 +24,21 @@ export function normalizeCheckdoc(apiDoc) {
  * 전체 체크기록 목록을 API에서 불러와 스토어에 저장합니다.
  * @returns {Promise<void>}
  */
+/**
+ * 체크기록을 API에서 페이지네이션으로 불러옵니다.
+ * @param {{ memberID?: string, offset?: number, limit?: number }} [options]
+ *   memberID: 회원 ID (선택), offset: 시작 위치 (기본 0), limit: 가져올 건수 (기본 50)
+ * @returns {Promise<Array<import("@infra/store.js").CheckRecord>>} 불러온 체크기록 목록
+ */
+export async function fetchRecords({ memberID, offset = 0, limit = 50 } = {}) {
+	const params = new URLSearchParams();
+	if (memberID) params.set("member_ID", memberID);
+	params.set("offset", String(offset));
+	params.set("limit", String(limit));
+	const items = await fetchCheckdocs(memberID);
+	return items.slice(offset, offset + limit).map(normalizeCheckdoc);
+}
+
 export async function loadRecords() {
 	recordStore.update({ loading: true, error: null });
 	try {

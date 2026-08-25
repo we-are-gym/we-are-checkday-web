@@ -36,6 +36,17 @@ function toApiMember(data) {
 export const memberStore = new Store({ members: [], loading: false, error: null }, { storageKey: null });
 
 /**
+ * 회원 목록을 API에서 페이지네이션으로 불러옵니다.
+ * @param {{ offset?: number, limit?: number }} [options] 페이지네이션 옵션 (기본: offset=0, limit=50)
+ * @returns {Promise<Array<import("@infra/store.js").Member>>} 불러온 회원 목록
+ */
+export async function fetchMembers({ offset = 0, limit = 50 } = {}) {
+	const query = `?offset=${offset}&limit=${limit}`;
+	const items = await request(`/members${query}`);
+	return items.map(normalizeMember);
+}
+
+/**
  * 회원 목록을 API에서 불러와 스토어에 저장합니다.
  * @returns {Promise<void>}
  */

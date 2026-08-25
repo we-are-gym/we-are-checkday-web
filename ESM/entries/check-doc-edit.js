@@ -16,11 +16,16 @@ import { SCORE_MAX } from "@infra/constants.js";
 import { escapeHtml } from "@infra/templates.js";
 import { loadMembers } from "@member/member-store.js";
 import "@shared/components/index.js";
+import "@shared/components/toast/toast.js";
+import { hideLoading, showLoading } from "@shared/components/toast/toast.js";
 import { byId, delegate, dismissOnOverlayClick, queryAll } from "@tools/utils-dom.js";
 import { getUrlParam } from "@tools/utils-url.js";
 
 // bfcache 복원 갱신 콜백을 넘기지 않는다 — 프리필 재실행 시 미저장 폼 입력이 덮여쓰이기 때문
 guardOnBfcache();
+
+// 로딩 오버레이 — recordStore의 loading 상태 구독
+recordStore.subscribe(state => (state.loading ? showLoading() : hideLoading()));
 
 /** ?docID= 파라미터 (숫자 checkdoc_ID) */
 const docId = Number(getUrlParam("docID"));

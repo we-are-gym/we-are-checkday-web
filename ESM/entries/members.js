@@ -7,7 +7,18 @@ import "@infra/components/app-header.js";
 import "@member/components/member-table.js";
 import { removeMember as apiRemoveMember, loadMembers, memberStore } from "@member/member-store.js";
 import { displayGender } from "@member/member-utils.js";
+import "@shared/components/toast/toast.js";
+import { hideLoading, showLoading } from "@shared/components/toast/toast.js";
 import { byId } from "@tools/utils-dom.js";
+
+// 로딩 오버레이 — memberStore/recordStore의 loading 상태 구독
+memberStore.subscribe(state => (state.loading ? showLoading() : hideLoading()));
+recordStore.subscribe(state => (state.loading ? showLoading() : hideLoading()));
+
+/** 한 번에 표시할 회원 수 */
+const PAGE_SIZE = 50;
+/** 현재까지 표시한 회원 수 */
+let displayCount = PAGE_SIZE;
 
 /** 회원 목록 테이블 컴포넌트 엘리먼트 */
 const tableEl = byId("member-table");
@@ -35,8 +46,56 @@ function render() {
 	const kw = keyword.trim().toLowerCase();
 	const { members } = memberStore.getState();
 	const filtered = kw ? members.filter(m => m.name.toLowerCase().includes(kw)) : members.slice();
-	tableEl.rows = buildRows(filtered);
+	const sliced = filtered.slice(0, displayCount);
+	tableEl.rows = buildRows(sliced);
 	tableEl.refresh();
+
+	// "더 보기" 버튼 표시/숨김
+	let loadMoreBtn = byId("load-more-btn");
+	if (filtered.length > displayCount) {
+		if (!loadMoreBtn) {
+			loadMoreBtn = document.createElement("button");
+			loadMoreBtn.id = "load-more-btn";
+			loadMoreBtn.textContent = "더 보기";
+			loadMoreBtn.className = "btn-load-more";
+			loadMoreBtn.style.cssText =
+				"width:100%;padding:.75rem;margin-top:.5rem;background:#f3f4f6;border:1px solid #d1d5db;border-radius:8px;font-size:14px;cursor:pointer;color:#374151;";
+			loadMoreBtn.addEventListener("click", () => {
+				displayCount += PAGE_SIZE;
+				render();
+			});
+			tableEl.parentNode?.insertBefore(loadMoreBtn, tableEl.nextSibling);
+		}
+		loadMoreBtn.style.display = "";
+		loadMoreBtn.textContent = `더 보기 (${filtered.length - displayCount}건 남음)`;
+	} else if (loadMoreBtn) {
+		loadMoreBtn.style.display = "none";
+	}
+
+	// 스켈레톤 플레이스홀더 (로딩 중일 때 표시)
+	const { loading } = memberStore.getState();
+	let skeletonEl = byId("skeleton-placeholder");
+	if (loading && members.length === 0) {
+		if (!skeletonEl) {
+			skeletonEl = document.createElement("div");
+			skeletonEl.id = "skeleton-placeholder";
+			skeletonEl.className = "skeleton-placeholder";
+			skeletonEl.style.cssText = "padding:1rem;display:flex;flex-direction:column;gap:.5rem;";
+			for (let i = 0; i < 5; i++) {
+				const row = document.createElement("div");
+				row.style.cssText =
+					"height:2.5rem;background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:es-skeleton-shimmer 1.5s infinite;border-radius:6px;";
+				skeletonEl.appendChild(row);
+			}
+			const style = document.createElement("style");
+			style.textContent = "@keyframes es-skeleton-shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}";
+			skeletonEl.prepend(style);
+			tableEl.parentNode?.insertBefore(skeletonEl, tableEl);
+		}
+		skeletonEl.style.display = "";
+	} else if (skeletonEl) {
+		skeletonEl.style.display = "none";
+	}
 }
 
 /**
