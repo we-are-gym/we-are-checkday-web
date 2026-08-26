@@ -17,6 +17,7 @@ recordStore.subscribe(state => (state.loading ? showLoading() : hideLoading()));
 
 /** 한 번에 표시할 회원 수 */
 const PAGE_SIZE = 50;
+
 /** 현재까지 표시한 회원 수 */
 let displayCount = PAGE_SIZE;
 
@@ -47,11 +48,13 @@ function render() {
 	const { members } = memberStore.getState();
 	const filtered = kw ? members.filter(m => m.name.toLowerCase().includes(kw)) : members.slice();
 	const sliced = filtered.slice(0, displayCount);
+
 	tableEl.rows = buildRows(sliced);
 	tableEl.refresh();
 
 	// "더 보기" 버튼 표시/숨김
 	let loadMoreBtn = byId("load-more-btn");
+
 	if (filtered.length > displayCount) {
 		if (!loadMoreBtn) {
 			loadMoreBtn = document.createElement("button");
@@ -60,12 +63,15 @@ function render() {
 			loadMoreBtn.className = "btn-load-more";
 			loadMoreBtn.style.cssText =
 				"width:100%;padding:.75rem;margin-top:.5rem;background:#f3f4f6;border:1px solid #d1d5db;border-radius:8px;font-size:14px;cursor:pointer;color:#374151;";
+
 			loadMoreBtn.addEventListener("click", () => {
 				displayCount += PAGE_SIZE;
 				render();
 			});
+
 			tableEl.parentNode?.insertBefore(loadMoreBtn, tableEl.nextSibling);
 		}
+
 		loadMoreBtn.style.display = "";
 		loadMoreBtn.textContent = `더 보기 (${filtered.length - displayCount}건 남음)`;
 	} else if (loadMoreBtn) {
@@ -122,6 +128,7 @@ async function removeMember(id) {
 
 	try {
 		await apiRemoveMember(id);
+
 		// 로컬 기록 목록에서도 해당 회원 기록 제거
 		recordStore.setState(prev => ({
 			...prev,
@@ -129,6 +136,7 @@ async function removeMember(id) {
 		}));
 	} catch (err) {
 		console.error("회원 삭제 실패:", err);
+
 		// 401은 request() 내부에서 goToLogin()이 이미 리다이렉트를 처리하므로 alert를 건너뛴다
 		if (err?.status === 401) return;
 		alert(`회원 삭제에 실패했습니다: ${err.message || "알 수 없는 오류"}`);
@@ -157,9 +165,7 @@ async function loadAll() {
 			tableEl.rows = [];
 			tableEl.render?.();
 		}),
-		loadRecords().catch(err => {
-			console.error("체크기록 로드 실패:", err);
-		}),
+		loadRecords().catch(err => console.error("체크기록 로드 실패:", err)),
 	]);
 }
 
