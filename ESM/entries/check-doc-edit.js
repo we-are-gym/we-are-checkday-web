@@ -2,11 +2,12 @@
 // ?docID= 기록을 API에서 불러와 상담지 폼(renderBasicFunctionCards 재사용)에 프리필하고,
 // 움직임 평가 항목 추가/삭제(만점 동적 계산) 후 수정 내용을 API에 저장한다.
 // 유의: 편집 중 항목 목록의 단일 소스는 scoreState/getEvals()이며, getRecord().payload.items는 저장 전까지
-// stale하다. 추가·삭제 연산은 반드시 live 상태를 기준으로 해야 한다(후속 커밋에서 교정).
+// stale하다. 추가·삭제 연산은 반드시 live 상태를 기준으로 한다.
 
 import { ASSESSMENT_ITEMS_FULL, resolveRecordItems } from "@check-doc/assessment-data.js";
 import { setupCheckFormEvents } from "@check-doc/check-form-events.js";
 import { collectPayload, prefillEvalState, prefillForm } from "@check-doc/check-form-payload.js";
+import { availableCandidates, nextAfterAdd, nextAfterRemove } from "@check-doc/eval-item-ops.js";
 import { configureEvaluation, getEvals, renderBasicFunctionCards, updateTotal } from "@check-doc/evaluation.js";
 import { fetchCheckdoc } from "@check-doc/record-rest.js";
 import { normalizeCheckdoc, recordStore, updateRecord } from "@check-doc/record-store.js";
@@ -110,9 +111,9 @@ async function init() {
 
 /**
  * 항목 목록을 교체해 평가 카드를 재렌더한다 — 현재 점수·체크·메모를 캡처해 복원하고 만점(항목 수 × 3점)을 동적 갱신한다.
+ * live getEvals() 기준으로 캡처하며, removedIndex가 주어지면 해당 인덱스의 캡처를 제거해 새 카드 수와 정렬을 맞춘다.
  * @param {Array<{ name: string, desc: string, checks?: string[], vo2?: boolean }>} nextItems 새 항목 목록
  * @param {number} [removedIndex] 삭제된 항목의 캡처 인덱스 — 제공 시 해당 캡처를 제거해 새 카드 수와 정렬을 맞춘다
- *   (제거하지 않으면 prefillEvalState가 없는 sv-N을 참조해 TypeError로 중단된다)
  * @returns {void}
  */
 function rebuildEvalItems(nextItems, removedIndex) {
@@ -162,12 +163,11 @@ function attachRemoveButtons() {
 }
 
 /**
- * 현재 목록에 사용되지 않은 평가 항목 후보 — ASSESSMENT_ITEMS_FULL(공용 7 + VO₂) 중 아직 안 쓴 것만 반환한다.
+ * 현재 목록에 사용되지 않은 평가 항목 후보 — live getEvals()를 단일 소스로 계산한다
  * @returns {Array<import("@check-doc/assessment-data.js").BasicFunctionItem>} 추가 후보 항목
  */
 function availableEvalItems() {
-	const usedNames = new Set(resolveRecordItems(getRecord().payload).map(item => item.name));
-	return ASSESSMENT_ITEMS_FULL.filter(item => !usedNames.has(item.name));
+	return availableCandidates(ASSESSMENT_ITEMS_FULL, getEvals());
 }
 
 /** 평가 항목 추가 — 자동 추가 대신 후보를 피커에 띄워 사용자가 골라 직접 선택하도록 한다 (전부 사용 시 안내) */
@@ -187,14 +187,12 @@ function addEvalItem() {
 
 /** i번째 평가 항목 삭제 — 최소 1개는 남긴다 */
 function removeEvalItem(i) {
-	const current = resolveRecordItems(getRecord().payload);
+	const current = getEvals();
 	if (current.length <= 1) {
 		alert("최소 1개의 평가 항목은 남겨야 합니다.");
 		return;
 	}
-	const next = current.slice();
-	next.splice(i, 1);
-	rebuildEvalItems(next, i);
+	rebuildEvalItems(nextAfterRemove(current, i), i);
 }
 
 // 목표·체크·점수·피드백·인바디/VO₂ 위임은 checkday·편집 화면이 공유하는 check-form-events로 처리
@@ -221,8 +219,7 @@ delegate(document, "click", "[data-picker-item]", (e, el) => {
 	const candidates = availableEvalItems();
 	const picked = candidates[index];
 	if (!picked) return;
-	const current = resolveRecordItems(getRecord().payload);
-	rebuildEvalItems([...current, picked]);
+	rebuildEvalItems(nextAfterAdd(getEvals(), picked));
 	byId("eval-picker-overlay").classList.remove("open");
 });
 // 피커 배경(오버레이 자신) 클릭 시 닫기 — 공용 헬퍼
