@@ -81,27 +81,35 @@ function render() {
 	// 스켈레톤 플레이스홀더 (로딩 중일 때 표시)
 	const { loading } = memberStore.getState();
 	let skeletonEl = byId("skeleton-placeholder");
-	if (loading && members.length === 0) {
-		if (!skeletonEl) {
-			skeletonEl = document.createElement("div");
-			skeletonEl.id = "skeleton-placeholder";
-			skeletonEl.className = "skeleton-placeholder";
-			skeletonEl.style.cssText = "padding:1rem;display:flex;flex-direction:column;gap:.5rem;";
-			for (let i = 0; i < 5; i++) {
-				const row = document.createElement("div");
-				row.style.cssText =
-					"height:2.5rem;background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:es-skeleton-shimmer 1.5s infinite;border-radius:6px;";
-				skeletonEl.appendChild(row);
-			}
-			const style = document.createElement("style");
-			style.textContent = "@keyframes es-skeleton-shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}";
-			skeletonEl.prepend(style);
-			tableEl.parentNode?.insertBefore(skeletonEl, tableEl);
-		}
-		skeletonEl.style.display = "";
-	} else if (skeletonEl) {
-		skeletonEl.style.display = "none";
-	}
+
+	// if (loading && members.length === 0) {
+	// 	if (!skeletonEl) {
+	// 		skeletonEl = document.createElement("div");
+	// 		skeletonEl.id = "skeleton-placeholder";
+	// 		skeletonEl.className = "skeleton-placeholder";
+	// 		skeletonEl.style.cssText = "padding:1rem;display:flex;flex-direction:column;gap:.5rem;";
+
+	// 		for (let i = 0; i < 5; i++) {
+	// 			const row = document.createElement("div");
+
+	// 			row.style.cssText =
+	// 				"height:2.5rem;background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:es-skeleton-shimmer 1.5s infinite;border-radius:6px;";
+
+	// 			skeletonEl.appendChild(row);
+	// 		}
+
+	// 		const style = document.createElement("style");
+
+	// 		style.textContent = "@keyframes es-skeleton-shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}";
+	// 		skeletonEl.prepend(style);
+
+	// 		tableEl.parentNode?.insertBefore(skeletonEl, tableEl);
+	// 	}
+
+	// 	skeletonEl.style.display = "";
+	// } else if (skeletonEl) {
+	// 	skeletonEl.style.display = "none";
+	// }
 }
 
 /**
