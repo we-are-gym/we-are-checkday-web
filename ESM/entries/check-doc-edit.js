@@ -166,7 +166,7 @@ function attachRemoveButtons() {
  * @returns {Array<import("@check-doc/assessment-data.js").BasicFunctionItem>} 추가 후보 항목
  */
 function availableEvalItems() {
-	const usedNames = new Set(resolveRecordItems(getRecord().payload).map(item => item.name));
+	const usedNames = new Set(getEvals().map(item => item.name));
 	return ASSESSMENT_ITEMS_FULL.filter(item => !usedNames.has(item.name));
 }
 
@@ -187,7 +187,7 @@ function addEvalItem() {
 
 /** i번째 평가 항목 삭제 — 최소 1개는 남긴다 */
 function removeEvalItem(i) {
-	const current = resolveRecordItems(getRecord().payload);
+	const current = getEvals();
 	if (current.length <= 1) {
 		alert("최소 1개의 평가 항목은 남겨야 합니다.");
 		return;
@@ -221,7 +221,7 @@ delegate(document, "click", "[data-picker-item]", (e, el) => {
 	const candidates = availableEvalItems();
 	const picked = candidates[index];
 	if (!picked) return;
-	const current = resolveRecordItems(getRecord().payload);
+	const current = getEvals();
 	rebuildEvalItems([...current, picked]);
 	byId("eval-picker-overlay").classList.remove("open");
 });
