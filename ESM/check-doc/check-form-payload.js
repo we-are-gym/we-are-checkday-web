@@ -29,6 +29,7 @@ function paintDots(index, score) {
 /**
  * 평가 카드의 점수·체크 문구·메모 상태를 폼에 되돌려 채운다 — prefillForm(편집 프리필)과
  * 편집 화면의 항목 추가/삭제 후 재렌더 복원이 공용한다. 카드 렌더(renderBasicFunctionCards) 후 호출해야 한다.
+ * 편집 재렌더 경로(rebuildEvalItems)에서도 재사용되므로 scoreState/getEvals()와 인덱스가 정렬돼야 한다.
  * @param {number[]} scores 항목별 점수 (0~3)
  * @param {Array<{ checked: string[], memo: string }>} evalData 항목별 체크 문구·메모
  */

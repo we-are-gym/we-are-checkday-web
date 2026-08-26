@@ -1,6 +1,8 @@
 // 파일 용도: 체크기록 편집 화면(check-doc-edit.html)
 // ?docID= 기록을 API에서 불러와 상담지 폼(renderBasicFunctionCards 재사용)에 프리필하고,
 // 움직임 평가 항목 추가/삭제(만점 동적 계산) 후 수정 내용을 API에 저장한다.
+// 유의: 편집 중 항목 목록의 단일 소스는 scoreState/getEvals()이며, getRecord().payload.items는 저장 전까지
+// stale하다. 추가·삭제 연산은 반드시 live 상태를 기준으로 해야 한다(후속 커밋에서 교정).
 
 import { ASSESSMENT_ITEMS_FULL, resolveRecordItems } from "@check-doc/assessment-data.js";
 import { setupCheckFormEvents } from "@check-doc/check-form-events.js";
