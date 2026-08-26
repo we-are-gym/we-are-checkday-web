@@ -9,7 +9,7 @@ import { BasicFunctionItem } from "./basic-function-item.js";
  * @param {{ name: string, desc: string, checks: string[], vo2?: boolean }} data 항목 데이터
  * @returns {BasicFunctionItem} 평가 항목
  */
-const item = (data) => new BasicFunctionItem(data);
+const item = data => new BasicFunctionItem(data);
 
 export const ASSESSMENT_ITEMS = [
 	item({
@@ -26,57 +26,32 @@ export const ASSESSMENT_ITEMS = [
 	item({
 		name: "Lumbar ROM (바닥짚기)",
 		desc: "힌지 / 햄스트링 / 요추 안정성 평가",
-		checks: [
-			"앞으로만 숙여짐 (힙 후방 이동 없음)",
-			"무릎이 많이 구부려짐 (햄스트링 타이트)",
-			"등이 솟고 허리 긴장으로 하강 제한",
-		],
+		checks: ["앞으로만 숙여짐 (힙 후방 이동 없음)", "무릎이 많이 구부려짐 (햄스트링 타이트)", "등이 솟고 허리 긴장으로 하강 제한"],
 	}),
 	item({
 		name: "Wall Angel Test",
 		desc: "흉추 · 목 · 어깨 · 코어 평가",
-		checks: [
-			"손목이 꺾임",
-			"허리 과도하게 꺾임 (늑골 과도 상승)",
-			"턱이 들림",
-		],
+		checks: ["손목이 꺾임", "허리 과도하게 꺾임 (늑골 과도 상승)", "턱이 들림"],
 	}),
 	item({
 		name: "Over Head Squat",
 		desc: "상체 / 하체 통합 코디네이션 평가",
-		checks: [
-			"발목·무릎 정렬 불량",
-			"허리 아치 또는 말림",
-			"상체 과도한 굽힘",
-			"팔이 앞으로 떨어짐",
-			"비대칭 체중이동",
-		],
+		checks: ["발목·무릎 정렬 불량", "허리 아치 또는 말림", "상체 과도한 굽힘", "팔이 앞으로 떨어짐", "비대칭 체중이동"],
 	}),
 	item({
 		name: "Single Balance Test",
 		desc: "감각기능 / 전정기관 평가",
-		checks: [
-			"시각 ON – 골반 틀어짐",
-			"시각 OFF – 균형 불안정",
-			"고개 회전 시 균형 손실 (전정기관)",
-		],
+		checks: ["시각 ON – 골반 틀어짐", "시각 OFF – 균형 불안정", "고개 회전 시 균형 손실 (전정기관)"],
 	}),
 	item({
 		name: "One Leg Squat",
 		desc: "발목 / 무릎 / 고관절 하지패턴 평가",
-		checks: [
-			"무릎이 안으로 들어감 (통증 동반 여부)",
-			"지지측 엉덩이 돌아감 (중둔근 부전)",
-			"상체 숙여짐 (발목 가동성 제한)",
-		],
+		checks: ["무릎이 안으로 들어감 (통증 동반 여부)", "지지측 엉덩이 돌아감 (중둔근 부전)", "상체 숙여짐 (발목 가동성 제한)"],
 	}),
 	item({
 		name: "원레그 브릿지",
 		desc: "회전기능 평가 (후면사슬 / X자 기능)",
-		checks: [
-			"골반 과도한 틀어짐 (코어 회전 기능 저하)",
-			"엉덩이가 잘 안 올라감 (둔근 기능 부전)",
-		],
+		checks: ["골반 과도한 틀어짐 (코어 회전 기능 저하)", "엉덩이가 잘 안 올라감 (둔근 기능 부전)"],
 	}),
 ];
 
@@ -101,7 +76,7 @@ export const ASSESSMENT_ITEMS_FULL = [
  * @param {string} name 항목 이름 (예: "Lumbar ROM (바닥짚기)")
  * @returns {BasicFunctionItem | undefined} 항목 데이터 (없으면 undefined)
  */
-const pickByName = (name) => ASSESSMENT_ITEMS.find((it) => it.name === name);
+const pickByName = name => ASSESSMENT_ITEMS.find(it => it.name === name);
 export const ASSESSMENT_ITEMS_BASIC5 = [
 	pickByName("Lumbar ROM (바닥짚기)"),
 	pickByName("Wall Angel Test"),
@@ -122,9 +97,7 @@ export const ASSESSMENT_ITEMS_BASIC5 = [
  * @returns {Array<BasicFunctionItem>} 평가 항목 목록
  */
 export function itemsForRecord(scoresLength) {
-	return scoresLength === ASSESSMENT_ITEMS_BASIC5.length
-		? ASSESSMENT_ITEMS_BASIC5
-		: ASSESSMENT_ITEMS_FULL;
+	return scoresLength === ASSESSMENT_ITEMS_BASIC5.length ? ASSESSMENT_ITEMS_BASIC5 : ASSESSMENT_ITEMS_FULL;
 }
 
 /**
@@ -137,7 +110,7 @@ export function itemsForRecord(scoresLength) {
 export function resolveRecordItems(payload) {
 	const items = payload?.items;
 	if (Array.isArray(items) && items.length) {
-		return items.map((name) => ASSESSMENT_ITEMS_FULL.find((it) => it.name === name) || { name, desc: "", checks: [] });
+		return items.map(name => ASSESSMENT_ITEMS_FULL.find(it => it.name === name) || { name, desc: "", checks: [] });
 	}
 	return itemsForRecord(payload?.scores?.length ?? 0);
 }
