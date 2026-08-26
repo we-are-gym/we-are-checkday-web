@@ -2,12 +2,12 @@
 // ?docID= 기록을 API에서 불러와 상담지 폼(renderBasicFunctionCards 재사용)에 프리필하고,
 // 움직임 평가 항목 추가/삭제(만점 동적 계산) 후 수정 내용을 API에 저장한다.
 // 유의: 편집 중 항목 목록의 단일 소스는 scoreState/getEvals()이며, getRecord().payload.items는 저장 전까지
-// stale하다. 추가·삭제 연산은 반드시 live 상태를 기준으로 해야 한다(후속 커밋에서 교정).
+// stale하다. 추가·삭제 연산은 반드시 live 상태를 기준으로 한다.
 
 import { ASSESSMENT_ITEMS_FULL, resolveRecordItems } from "@check-doc/assessment-data.js";
-import { availableCandidates, nextAfterAdd, nextAfterRemove } from "@check-doc/eval-item-ops.js";
 import { setupCheckFormEvents } from "@check-doc/check-form-events.js";
 import { collectPayload, prefillEvalState, prefillForm } from "@check-doc/check-form-payload.js";
+import { availableCandidates, nextAfterAdd, nextAfterRemove } from "@check-doc/eval-item-ops.js";
 import { configureEvaluation, getEvals, renderBasicFunctionCards, updateTotal } from "@check-doc/evaluation.js";
 import { fetchCheckdoc } from "@check-doc/record-rest.js";
 import { normalizeCheckdoc, recordStore, updateRecord } from "@check-doc/record-store.js";
@@ -111,9 +111,9 @@ async function init() {
 
 /**
  * 항목 목록을 교체해 평가 카드를 재렌더한다 — 현재 점수·체크·메모를 캡처해 복원하고 만점(항목 수 × 3점)을 동적 갱신한다.
+ * live getEvals() 기준으로 캡처하며, removedIndex가 주어지면 해당 인덱스의 캡처를 제거해 새 카드 수와 정렬을 맞춘다.
  * @param {Array<{ name: string, desc: string, checks?: string[], vo2?: boolean }>} nextItems 새 항목 목록
  * @param {number} [removedIndex] 삭제된 항목의 캡처 인덱스 — 제공 시 해당 캡처를 제거해 새 카드 수와 정렬을 맞춘다
- *   (제거하지 않으면 prefillEvalState가 없는 sv-N을 참조해 TypeError로 중단된다)
  * @returns {void}
  */
 function rebuildEvalItems(nextItems, removedIndex) {
