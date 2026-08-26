@@ -5,6 +5,7 @@
 // stale하다. 추가·삭제 연산은 반드시 live 상태를 기준으로 해야 한다(후속 커밋에서 교정).
 
 import { ASSESSMENT_ITEMS_FULL, resolveRecordItems } from "@check-doc/assessment-data.js";
+import { availableCandidates, nextAfterAdd, nextAfterRemove } from "@check-doc/eval-item-ops.js";
 import { setupCheckFormEvents } from "@check-doc/check-form-events.js";
 import { collectPayload, prefillEvalState, prefillForm } from "@check-doc/check-form-payload.js";
 import { configureEvaluation, getEvals, renderBasicFunctionCards, updateTotal } from "@check-doc/evaluation.js";
@@ -162,12 +163,11 @@ function attachRemoveButtons() {
 }
 
 /**
- * 현재 목록에 사용되지 않은 평가 항목 후보 — ASSESSMENT_ITEMS_FULL(공용 7 + VO₂) 중 아직 안 쓴 것만 반환한다.
+ * 현재 목록에 사용되지 않은 평가 항목 후보 — live getEvals()를 단일 소스로 계산한다
  * @returns {Array<import("@check-doc/assessment-data.js").BasicFunctionItem>} 추가 후보 항목
  */
 function availableEvalItems() {
-	const usedNames = new Set(getEvals().map(item => item.name));
-	return ASSESSMENT_ITEMS_FULL.filter(item => !usedNames.has(item.name));
+	return availableCandidates(ASSESSMENT_ITEMS_FULL, getEvals());
 }
 
 /** 평가 항목 추가 — 자동 추가 대신 후보를 피커에 띄워 사용자가 골라 직접 선택하도록 한다 (전부 사용 시 안내) */
@@ -192,9 +192,7 @@ function removeEvalItem(i) {
 		alert("최소 1개의 평가 항목은 남겨야 합니다.");
 		return;
 	}
-	const next = current.slice();
-	next.splice(i, 1);
-	rebuildEvalItems(next, i);
+	rebuildEvalItems(nextAfterRemove(current, i), i);
 }
 
 // 목표·체크·점수·피드백·인바디/VO₂ 위임은 checkday·편집 화면이 공유하는 check-form-events로 처리
@@ -221,8 +219,7 @@ delegate(document, "click", "[data-picker-item]", (e, el) => {
 	const candidates = availableEvalItems();
 	const picked = candidates[index];
 	if (!picked) return;
-	const current = getEvals();
-	rebuildEvalItems([...current, picked]);
+	rebuildEvalItems(nextAfterAdd(getEvals(), picked));
 	byId("eval-picker-overlay").classList.remove("open");
 });
 // 피커 배경(오버레이 자신) 클릭 시 닫기 — 공용 헬퍼
