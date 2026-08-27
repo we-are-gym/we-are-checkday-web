@@ -1,0 +1,15 @@
+import{_ as e,g as t,i as n,r,t as i}from"./app-header-ClqCbYrV.js";/* empty css                     */import{t as a}from"./utils-dom-AA-aQdFf.js";/* empty css                       */import{i as o,n as s,r as c}from"./member-store-Cy4lAjwZ.js";import{l,n as u,o as d}from"./record-utils-BGwhCqAf.js";import{t as f}from"./member-utils-C3eDrFg1.js";r(`member-table`,{render(){let e=this.rows||[];return`
+			<table class="member-table" aria-label="회원 목록">
+				<thead>
+					<tr>
+						<th>이름</th>
+						<th>성별</th>
+						<th>담당 트레이너</th>
+						<th>체크 횟수</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					${e.length?e.map(e=>i.memberRow(e)).join(``):`<tr class="member-empty-cell"><td colspan="5">검색 결과가 없어요</td></tr>`}
+				</tbody>
+			</table>`},onConnect(){this.addEventListener(`click`,e=>{let t=e.target.closest(`[data-remove-id]`);if(t){e.stopPropagation(),this.onRemove&&this.onRemove(t.dataset.removeId);return}let n=e.target.closest(`[data-member-id]`);n&&this.onSelect&&this.onSelect(n.dataset.memberId)}),this.addEventListener(`keydown`,e=>{if(e.key!==`Enter`&&e.key!==` `)return;let t=e.target.closest(`[data-member-id]`);t&&this.onSelect&&(e.preventDefault(),this.onSelect(t.dataset.memberId))})}}),c.subscribe(n=>n.loading?e():t()),l.subscribe(n=>n.loading?e():t());var p=50,m=p,h=a(`member-table`),g=``;function _(e){let t=u(l.getState().records);return e.map(e=>({...e,gender:f(e.gender),recordCount:t.get(e.id)||0}))}function v(){let e=g.trim().toLowerCase(),{members:t}=c.getState(),n=e?t.filter(t=>t.name.toLowerCase().includes(e)):t.slice();h.rows=_(n.slice(0,m)),h.refresh();let r=a(`load-more-btn`);n.length>m?(r||(r=document.createElement(`button`),r.id=`load-more-btn`,r.textContent=`더 보기`,r.className=`btn-load-more`,r.style.cssText=`width:100%;padding:.75rem;margin-top:.5rem;background:#f3f4f6;border:1px solid #d1d5db;border-radius:8px;font-size:14px;cursor:pointer;color:#374151;`,r.addEventListener(`click`,()=>{m+=p,v()}),h.parentNode?.insertBefore(r,h.nextSibling)),r.style.display=``,r.textContent=`더 보기 (${n.length-m}건 남음)`):r&&(r.style.display=`none`);let{loading:i}=c.getState();a(`skeleton-placeholder`)}async function y(e){let t=c.getState().members.find(t=>t.id===e);if(!t)return;let n=l.getState().records.filter(t=>t.memberId===e).length,r=n>0?`회원 ${t.name} 님을 삭제하시겠습니까?\n\n연결된 체크기록 ${n}건도 함께 삭제합니다.`:`회원 ${t.name} 님을 삭제하시겠습니까?`;if(confirm(r))try{await o(e),l.setState(t=>({...t,records:t.records.filter(t=>t.memberId!==e)}))}catch(e){if(console.error(`회원 삭제 실패:`,e),e?.status===401)return;alert(`회원 삭제에 실패했습니다: ${e.message||`알 수 없는 오류`}`)}}function b(){g=a(`search-input`).value,v()}async function x(){await Promise.all([s().catch(e=>{console.error(`회원 목록 로드 실패:`,e),h.rows=[],h.render?.()}),d().catch(e=>console.error(`체크기록 로드 실패:`,e))])}n(x),c.subscribe(v),l.subscribe(v),x(),h.onSelect=e=>{window.location.href=`member-detail.html?memberID=${encodeURIComponent(e)}`},h.onRemove=e=>{y(e)},a(`search-input`).addEventListener(`input`,b),v();
