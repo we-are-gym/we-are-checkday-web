@@ -1,55 +1,56 @@
 <!doctype html>
 <html lang="ko">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="icon" type="image/x-icon" href="/we-are-checkday-web/assets/favicon-CQNUT7CF.ico?v=2026082311" />
-		<link rel="icon" type="image/png" sizes="16x16" href="/we-are-checkday-web/assets/favicon-16x16-DzY_eUWI.png?v=2026082311" />
-		<link rel="icon" type="image/png" sizes="32x32" href="/we-are-checkday-web/assets/favicon-32x32-CG0kj_kC.png?v=2026082311" />
-		<link rel="apple-touch-icon" sizes="180x180" href="/we-are-checkday-web/assets/favicon-180x180-D7qnPUvA.png?v=2026082311" />
-		<meta property="og:type" content="website" />
-		<meta property="og:title" content="회원 정보 편집 — 위아짐 체크데이" />
-		<meta property="og:description" content="그룹 트레이닝 격월 점검 · 회원별 움직임 평가와 상담 관리" />
-		<meta property="og:image" content="/we-are-checkday-web/assets/og-image-COWdCeR5.png?v=2026082311" />
-		<meta property="og:url" content="member-edit.html" />
-		<title>회원 정보 편집 — 위아짐 체크데이</title>
-		<script type="importmap">
-			{
-				"imports": {
-					"@infra/": "./ESM/infra/",
-					"@tools/": "./ESM/tools/",
-					"@calc/": "./ESM/calc/",
-					"@gym/": "./ESM/gym/",
-					"@member/": "./ESM/member/",
-					"@shared/": "./ESM/shared/",
-					"@check-doc/": "./ESM/check-doc/"
-				}
-			}
-		</script>
-		<script type="module" crossorigin src="/we-are-checkday-web/assets/member-edit-Dk7bpGn6.js"></script>
-		<link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/app-header-CZMorswj.js">
-		<link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/utils-dom-AA-aQdFf.js">
-		<link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/member-store-1q3pjhCj.js">
-		<link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/member-utils-C3eDrFg1.js">
-		<link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/member-form-Coqte7C2.js">
-		<link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/utils-url-B0nUYPTI.js">
-		<link rel="stylesheet" crossorigin href="/we-are-checkday-web/assets/app-header-xc_EjZYv.css">
-		<link rel="stylesheet" crossorigin href="/we-are-checkday-web/assets/layout-shell-BA7I2lRI.css">
-		<link rel="stylesheet" crossorigin href="/we-are-checkday-web/assets/layout-members-mZbGjmlm.css">
-	</head>
-	<body>
-		<!-- 파일 용도: 회원 정보 편집 화면 — ?memberID= 회원의 이름·성별·목표·담당 트레이너를 수정한다 -->
-		<div class="container">
-			<app-header crumb-path="index.html>홈|members.html>회원 관리|회원 정보 편집"> </app-header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="/we-are-checkday-web/assets/favicon-CQNUT7CF.ico?v=2026082311" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/we-are-checkday-web/assets/favicon-16x16-DzY_eUWI.png?v=2026082311" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/we-are-checkday-web/assets/favicon-32x32-CG0kj_kC.png?v=2026082311" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/we-are-checkday-web/assets/favicon-180x180-D7qnPUvA.png?v=2026082311" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="회원 정보 편집 — 위아짐 체크데이" />
+    <meta property="og:description" content="그룹 트레이닝 격월 점검 · 회원별 움직임 평가와 상담 관리" />
+    <meta property="og:image" content="/we-are-checkday-web/assets/og-image-COWdCeR5.png?v=2026082311" />
+    <meta property="og:url" content="member-edit.html" />
+    <title>회원 정보 편집 — 위아짐 체크데이</title>
+    <script type="importmap">
+      {
+        "imports": {
+          "@infra/": "./ESM/infra/",
+          "@tools/": "./ESM/tools/",
+          "@calc/": "./ESM/calc/",
+          "@gym/": "./ESM/gym/",
+          "@member/": "./ESM/member/",
+          "@shared/": "./ESM/shared/",
+          "@check-doc/": "./ESM/check-doc/",
+          "@types/": "./ESM/types/"
+        }
+      }
+    </script>
+    <script type="module" crossorigin src="/we-are-checkday-web/assets/member-edit-Dk7bpGn6.js"></script>
+    <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/app-header-CZMorswj.js">
+    <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/utils-dom-AA-aQdFf.js">
+    <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/member-store-1q3pjhCj.js">
+    <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/member-utils-C3eDrFg1.js">
+    <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/member-form-Coqte7C2.js">
+    <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/utils-url-B0nUYPTI.js">
+    <link rel="stylesheet" crossorigin href="/we-are-checkday-web/assets/app-header-xc_EjZYv.css">
+    <link rel="stylesheet" crossorigin href="/we-are-checkday-web/assets/layout-shell-BA7I2lRI.css">
+    <link rel="stylesheet" crossorigin href="/we-are-checkday-web/assets/layout-members-mZbGjmlm.css">
+  </head>
+  <body>
+    <!-- 파일 용도: 회원 정보 편집 화면 — ?memberID= 회원의 이름·성별·목표·담당 트레이너를 수정한다 -->
+    <div class="container">
+      <app-header crumb-path="index.html>홈|members.html>회원 관리|회원 정보 편집"> </app-header>
 
-			<main>
-				<section class="member-create">
-					<h2 class="member-create-title">회원 정보 수정</h2>
-					<member-form id="member-form"></member-form>
-				</section>
-			</main>
-		</div>
+      <main>
+        <section class="member-create">
+          <h2 class="member-create-title">회원 정보 수정</h2>
+          <member-form id="member-form"></member-form>
+        </section>
+      </main>
+    </div>
 
 
-	</body>
+  </body>
 </html>
