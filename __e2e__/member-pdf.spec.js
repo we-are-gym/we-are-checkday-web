@@ -4,7 +4,8 @@
 //       (기본: 로컬 에뮬레이터 API·시드 사용자)
 import { expect, test } from "@playwright/test";
 
-const API_BASE = process.env.E2E_API_BASE || "http://localhost:8900/api/v1";
+const API_BASE =
+	process.env.E2E_API_BASE || (process.env.E2E_PORT ? `http://127.0.0.1:${process.env.E2E_PORT}/api/v1` : "http://127.0.0.1:8900/api/v1");
 const LOGIN_ID = process.env.E2E_LOGIN_ID || "trainer@gym.kr";
 const PASSWORD = process.env.E2E_PASSWORD || "secure123";
 

@@ -1,6 +1,11 @@
 // 파일 용도: 회원 관리 흐름 E2E 테스트 — 목록 로드·검색·상세 이동
-
+// to-be: 인증 토큰 주입으로 로그인 리다이렉트 없이 검증, API 주소·계정은 환경변수 주입
 import { expect, test } from "@playwright/test";
+import { loginAndInjectToken } from "./checkdoc-helpers.js";
+
+test.beforeEach(async ({ page }) => {
+	await loginAndInjectToken(page);
+});
 
 test.describe("회원 관리", () => {
 	test("회원 목록 로드", async ({ page }) => {

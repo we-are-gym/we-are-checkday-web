@@ -1,6 +1,7 @@
 // 파일 용도: 로그인/로그아웃 흐름 E2E 테스트
+// to-be: 시드 계정 하드코딩 제거 — 환경변수 주입 (E2E_LOGIN_ID/E2E_PASSWORD)
 import { expect, test } from "@playwright/test";
-
+import { LOGIN_ID, PASSWORD } from "./checkdoc-helpers.js";
 test.describe("인증 흐름", () => {
 	test("로그인 페이지 이동", async ({ page }) => {
 		// index.html에서 로그인 버튼 클릭 → login.html로 이동 확인
@@ -16,14 +17,13 @@ test.describe("인증 흐름", () => {
 		// 로그인 폼이 렌더되었는지 확인
 		await expect(page.locator("#login-form")).toBeVisible();
 	});
-
 	test("로그인 성공", async ({ page }) => {
 		// login.html에서 아이디/비밀번호 입력 → 제출 → index.html로 리다이렉트 확인
 		await page.goto("/login.html");
 		await page.waitForSelector("#login-form");
 
-		await page.fill("#login-id", "checkday");
-		await page.fill("#login-pw", "1234");
+		await page.fill("#login-id", LOGIN_ID);
+		await page.fill("#login-pw", PASSWORD);
 		await page.locator("#login-form button[type='submit']").click();
 
 		// 리다이렉트 후 index.html 도착 확인
@@ -52,15 +52,14 @@ test.describe("인증 흐름", () => {
 		await expect(page).toHaveURL(/login\.html/);
 		await expect(page.locator("#login-form")).toBeVisible();
 	});
-
 	test("로그아웃", async ({ page }) => {
 		// 로그인 상태에서 로그아웃 버튼 클릭 → login.html로 이동 확인
 		// 1단계: 먼저 로그인
 		await page.goto("/login.html");
 		await page.waitForSelector("#login-form");
 
-		await page.fill("#login-id", "checkday");
-		await page.fill("#login-pw", "1234");
+		await page.fill("#login-id", LOGIN_ID);
+		await page.fill("#login-pw", PASSWORD);
 		await page.locator("#login-form button[type='submit']").click();
 		await page.waitForURL("**/index.html**", { timeout: 15_000 });
 

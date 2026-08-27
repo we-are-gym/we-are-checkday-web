@@ -1,6 +1,7 @@
 // 파일 용도: 네비게이션·탭 전환 E2E 테스트
+// to-be: 탭 전환은 인증 토큰 주입 및 시드 회원으로 검증
 import { expect, test } from "@playwright/test";
-
+import { createMemberViaApi, getToken, loginAndInjectToken } from "./checkdoc-helpers.js";
 test.describe("메인 링크 네비게이션", () => {
 	test("메인 → 회원 관리 이동", async ({ page }) => {
 		await page.goto("/index.html");
@@ -26,10 +27,12 @@ test.describe("메인 링크 네비게이션", () => {
 		await expect(page).toHaveURL(/check-doc-new\.html/);
 	});
 });
-
 test.describe("탭 전환", () => {
 	test("탭 전환 — 변화 분석 패널 표시", async ({ page }) => {
-		await page.goto("/member-detail.html");
+		await loginAndInjectToken(page);
+		const token = await getToken(page.request);
+		const memberId = await createMemberViaApi(page.request, token);
+		await page.goto(`/member-detail.html?memberID=${memberId}`);
 
 		// 탭 컨테이너와 탭 버튼 확인
 		const tabList = page.locator('[role="tablist"]');
