@@ -1,8 +1,9 @@
 // 파일 용도: 체크기록 E2E 공용 헬퍼 — 로그인 토큰 주입·API 회원 생성 (로컬 Mason API 대상)
 import { expect } from "@playwright/test";
 
-/** 로컬 Mason API 주소·계정 — E2E_API_BASE·E2E_LOGIN_ID·E2E_PASSWORD 환경변수로 재정의할 수 있다 */
-export const API_BASE = process.env.E2E_API_BASE || "http://127.0.0.1:8900/api/v1";
+/** 로컬 Mason API 주소·계정 — E2E_API_BASE·E2E_LOGIN_ID·E2E_PASSWORD·E2E_PORT 환경변수로 재정의할 수 있다 */
+export const API_BASE =
+	process.env.E2E_API_BASE || (process.env.E2E_PORT ? `http://127.0.0.1:${process.env.E2E_PORT}/api/v1` : "http://127.0.0.1:8900/api/v1");
 export const LOGIN_ID = process.env.E2E_LOGIN_ID || "trainer@gym.kr";
 export const PASSWORD = process.env.E2E_PASSWORD || "secure123";
 
