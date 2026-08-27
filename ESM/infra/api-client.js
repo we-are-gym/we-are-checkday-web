@@ -1,7 +1,7 @@
 // 파일 용도: Mason API 호출 공용 클라이언트 — fetch 래퍼·Mason 봉투 언래핑·오류 정규화·토큰 자동 관리
-
 import { showToast } from "@shared/components/toast/toast.js";
 import { AUTH_CHANGE_EVENT, AUTH_KEY, REFRESH_KEY } from "./constants.js";
+import { AppError } from "./errors.js";
 import { redirectToLogin } from "./login-redirect.js";
 
 /** API 기본 경로 */
@@ -10,22 +10,20 @@ const API_BASE = import.meta.env.VITE_API_BASE;
 // console.log({ API_BASE });
 
 /**
- * Mason API 오류.
+ * Mason API 오류 — AppError 기반 (Error 직접 throw 금지 — to-be)
  * @property {string} message 사람이 읽는 오류 메시지
  * @property {string} code Mason @error 코드
  * @property {number} status HTTP 상태 코드
  */
-export class ApiError extends Error {
+export class ApiError extends AppError {
 	/**
 	 * @param {string} message 오류 메시지
 	 * @param {string} code 오류 코드
 	 * @param {number} status HTTP 상태 코드
 	 */
 	constructor(message, code, status) {
-		super(message);
+		super(message, { code, status });
 		this.name = "ApiError";
-		this.code = code;
-		this.status = status;
 	}
 }
 

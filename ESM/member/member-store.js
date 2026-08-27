@@ -1,7 +1,10 @@
 // 파일 용도: 회원 스토어 단일 인스턴스 — Mason API 클라이언트 (회원 관리·등록·상세 공용)
 // 주의: 기존 sessionStorage mock 저장에서 API 영속화로 교체되었습니다.
+// to-be: API 실패 시 toUserMessage + showToast로 사용자 피드백 제공
 import { request } from "@infra/api-client.js";
+import { toUserMessage } from "@infra/errors.js";
 import { Store } from "@infra/store.js";
+import { showToast } from "@shared/components/toast/toast.js";
 
 /** API Member 응답을 웹 Member 형태로 정규화합니다.
  * @param {object} apiMember Mason API Member 리소스
@@ -56,7 +59,9 @@ export async function loadMembers() {
 		const items = await request("/members");
 		memberStore.update({ members: items.map(normalizeMember), loading: false });
 	} catch (err) {
-		memberStore.update({ loading: false, error: err.message || "회원 목록을 불러오지 못했습니다" });
+		const msg = toUserMessage(err);
+		memberStore.update({ loading: false, error: msg });
+		showToast(msg, { type: "error" });
 		throw err;
 	}
 }

@@ -1,6 +1,9 @@
 // 파일 용도: 체크기록 스토어 - Mason API 클라이언트 (회원 상세·조회·작성·편집 공용)
 // 주의: 기존 sessionStorage mock 저장에서 API 영속화로 교체되었습니다.
+// to-be: API 실패 시 toUserMessage + showToast로 사용자 피드백 제공
+import { toUserMessage } from "@infra/errors.js";
 import { Store } from "@infra/store.js";
+import { showToast } from "@shared/components/toast/toast.js";
 import { createCheckdoc, deleteCheckdoc, fetchCheckdocs, restToPayload, updateCheckdoc } from "./record-rest.js";
 
 /** 체크기록 스토어 (전 화면 공용 단일 인스턴스) — API 데이터로 채워집니다. */
@@ -45,7 +48,9 @@ export async function loadRecords() {
 		const items = await fetchCheckdocs();
 		recordStore.update({ records: items.map(normalizeCheckdoc), loading: false });
 	} catch (err) {
-		recordStore.update({ loading: false, error: err.message || "체크기록을 불러오지 못했습니다" });
+		const msg = toUserMessage(err);
+		recordStore.update({ loading: false, error: msg });
+		showToast(msg, { type: "error" });
 		throw err;
 	}
 }
@@ -61,7 +66,9 @@ export async function loadRecordsByMember(member_ID) {
 		const items = await fetchCheckdocs(member_ID);
 		recordStore.update({ records: items.map(normalizeCheckdoc), loading: false });
 	} catch (err) {
-		recordStore.update({ loading: false, error: err.message || "체크기록을 불러오지 못했습니다" });
+		const msg = toUserMessage(err);
+		recordStore.update({ loading: false, error: msg });
+		showToast(msg, { type: "error" });
 		throw err;
 	}
 }
