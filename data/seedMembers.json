@@ -1,0 +1,51 @@
+[
+  {
+    "member_idx": 1,
+    "name": "김민준",
+    "gender": "남",
+    "goal": "🔥 체지방 감소",
+    "trainer": "김지훈"
+  },
+  {
+    "member_idx": 2,
+    "name": "이서연",
+    "gender": "녀",
+    "goal": "💪 근력 향상",
+    "trainer": "박소연"
+  },
+  {
+    "member_idx": 3,
+    "name": "박준호",
+    "gender": "남",
+    "goal": "💪 근력 향상",
+    "trainer": "김지훈"
+  },
+  {
+    "member_idx": 4,
+    "name": "최수아",
+    "gender": "녀",
+    "goal": "🧘 자세 교정",
+    "trainer": "김지훈"
+  },
+  {
+    "member_idx": 5,
+    "name": "정우진",
+    "gender": "남",
+    "goal": "💪 근력 향상",
+    "trainer": "박소연"
+  },
+  {
+    "member_idx": 6,
+    "name": "김하늘",
+    "gender": "녀",
+    "goal": "🔥 체지방 감소",
+    "trainer": "김지훈"
+  },
+  {
+    "member_idx": 7,
+    "name": "김도윤",
+    "gender": "남",
+    "goal": "📈 근육량 증가",
+    "trainer": "김지훈"
+  }
+]
