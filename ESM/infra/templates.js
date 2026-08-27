@@ -2,6 +2,8 @@
 // DEPENDS: createZeroArray(utils-array) — scoreDots 도트 배열 생성용
 // 기법: 바닐라JS 템플릿 함수 (DOM·전역 비의존, 단위 테스트 용이)
 // 주의: 사용자 입력을 넣을 때는 반드시 escapeHtml()을 거쳐 XSS를 막는다.
+// to-be: 도메인 설정(다음 목표 태그)은 conf/rules.json이 단일 소스
+import rules from "../../conf/rules.json" with { type: "json" };
 
 /**
  * HTML 특수문자 이스케이프 (XSS 방지)
@@ -20,17 +22,7 @@ export function escapeHtml(text) {
  * 다음 목표 고정 태그 목록 (checkday_1·check-doc-new·check-doc-edit 공용 단일 소스)
  * @type {string[]}
  */
-export const GOAL_TAGS = [
-	"💪 근력 향상",
-	"🔥 체지방 감소",
-	"🧘 자세 교정",
-	"🏃 체력 향상",
-	"⚖️ 체중 유지",
-	"🦵 하체 강화",
-	"🤸 유연성 개선",
-	"🩺 통증 개선",
-	"📈 근육량 증가",
-];
+export const GOAL_TAGS = rules.allowedGoalTags;
 
 /**
  * 홈 브레드크럼 아이콘 — 크럼 첫 구간(index.html 링크)용 인라인 SVG

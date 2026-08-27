@@ -1,0 +1,90 @@
+{
+  "score": { "min": 0, "max": 3, "dotCount": 4 },
+  "grade": { "excellent": 83, "good": 58, "average": 33 },
+  "motion": { "totalMax": 24, "basic5Max": 15 },
+  "allowedGoalTags": [
+    "💪 근력 향상",
+    "🔥 체지방 감소",
+    "🧘 자세 교정",
+    "🏃 체력 향상",
+    "⚖️ 체중 유지",
+    "🦵 하체 강화",
+    "🤸 유연성 개선",
+    "🩺 통증 개선",
+    "📈 근육량 증가"
+  ],
+  "vo2Norms": [
+    {
+      "ageMin": 18,
+      "ageMax": 25,
+      "col": 1,
+      "excellent": 56,
+      "good": [47, 56],
+      "above_avg": [42, 46],
+      "average": [38, 41],
+      "below_avg": [33, 37],
+      "poor": [28, 32],
+      "very_poor": 28
+    },
+    {
+      "ageMin": 26,
+      "ageMax": 35,
+      "col": 2,
+      "excellent": 52,
+      "good": [45, 52],
+      "above_avg": [39, 44],
+      "average": [35, 38],
+      "below_avg": [31, 34],
+      "poor": [26, 30],
+      "very_poor": 26
+    },
+    {
+      "ageMin": 36,
+      "ageMax": 45,
+      "col": 3,
+      "excellent": 45,
+      "good": [38, 45],
+      "above_avg": [34, 37],
+      "average": [31, 33],
+      "below_avg": [27, 30],
+      "poor": [22, 26],
+      "very_poor": 22
+    },
+    {
+      "ageMin": 46,
+      "ageMax": 55,
+      "col": 4,
+      "excellent": 40,
+      "good": [34, 40],
+      "above_avg": [31, 33],
+      "average": [28, 30],
+      "below_avg": [25, 27],
+      "poor": [20, 24],
+      "very_poor": 20
+    },
+    {
+      "ageMin": 56,
+      "ageMax": 65,
+      "col": 5,
+      "excellent": 37,
+      "good": [32, 37],
+      "above_avg": [28, 31],
+      "average": [25, 27],
+      "below_avg": [22, 24],
+      "poor": [18, 21],
+      "very_poor": 18
+    },
+    {
+      "ageMin": 66,
+      "ageMax": 120,
+      "col": 6,
+      "excellent": 32,
+      "good": [28, 32],
+      "above_avg": [25, 27],
+      "average": [22, 24],
+      "below_avg": [19, 21],
+      "poor": [17, 18],
+      "very_poor": 17
+    }
+  ]
+}
