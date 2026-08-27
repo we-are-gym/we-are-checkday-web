@@ -44,6 +44,7 @@ export default defineConfig({
 			"@member/": compat("ESM/member/"),
 			"@check-doc/": compat("ESM/check-doc/"),
 			"@shared/": compat("ESM/shared/"),
+			"@types/": compat("ESM/types/"),
 		},
 		// .js → .ts 자동 리졸버 (TypeScript 마이그레이션 후 필요)
 		extensions: [".mjs", ".js", ".ts", ".mts", ".jsx", ".tsx", ".json"],
