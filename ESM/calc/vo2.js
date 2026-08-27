@@ -1,7 +1,7 @@
 // 파일 용도: VO₂ Max 계산 공식·정상치·등급 산정 — basic_function_assessment_2.html·checkday 공용
 /**
  * 여성 VO₂ 맥스 정상치 표 (Topendsports) — 연령 구간별 나쁨~우수 임계값
- * @type {Array<{ ageMin: number, ageMax: number, poor: number, fair: number, good: number, excellent: number }>}
+ * @type {Array<{ ageMin: number, ageMax: number, col: number, excellent: number, good: [number, number], above_avg: [number, number], average: [number, number], below_avg: [number, number], poor: [number, number], very_poor: number }>}
  */
 export const VO2_NORMS = [
 	{

@@ -1,28 +1,23 @@
 // 파일 용도: 평가 논리 — 움직임 평가 목록 구성 · VO₂ 계산 연동 · 평가 카드 빌드 · 점수/등급/총점 갱신 (checkday 공용)
-// DEPENDS: ASSESSMENT_ITEMS, clamp·parseToNum(validation), byId(utils-dom), scoreState(basicFunction-store), calcVo2Assessment(vo2), STYLE 등
+// DEPENDS: clamp·parseToNum(validation), byId(utils-dom), scoreState(basicFunction-store), calcVo2Assessment(vo2), STYLE 등
 import { GRADE_STYLES, VO2_GRADE_STYLES } from "@calc/grade-styles.js";
 import { getGradeMeta } from "@calc/grade.js";
 import { calcVo2Assessment } from "@calc/vo2.js";
 import { scoreState } from "@gym/basicFunction-store.js";
-import { MOTION_TOTAL_MAX, SCORE_MAX, SCORE_MIN } from "@infra/constants.js";
+import { SCORE_MAX, SCORE_MIN } from "@infra/constants.js";
 import { TPL } from "@infra/templates.js";
 import { clamp, parseToNum } from "@infra/validation.js";
 import { debounce } from "@tools/debounce.js";
 import { byId } from "@tools/utils-dom.js";
-import { ASSESSMENT_ITEMS_FULL } from "./assessment-data.js";
 
-// ── 움직임 평가 구성 초기화 (기본 8개: 7개 + VO₂ 항목) ──
+// ── 움직임 평가 구성 초기화 ──
 // 주의: 평가 구성(항목·만점)은 scoreState(Store)가 단일 소스로 보유한다. 외부는 getEvals()로만 읽는다.
-//       (check-form-payload·check-doc-edit·세션 리포트 공용) — 기본 8항목/24점으로 초기화하며,
-//       레거시 checkday_1·basic_function_assessment_2는 재구성 없이 이대로 동작한다.
-scoreState.init(ASSESSMENT_ITEMS_FULL, MOTION_TOTAL_MAX);
+//       (check-form-payload·check-doc-edit·세션 리포트 공용) — 기본값은 두지 않는다.
+//       각 진입점이 명시적으로 configureEvaluation()을 호출해야 한다. (모듈 레벨 init 금지 — to-be)
 
 /**
  * 화면별 평가 구성을 설정하고 점수 상태를 초기화한다.
- * 체크기록 작성(check-doc-new)처럼 전용 항목·만점을 쓰는 화면이 렌더 전에 호출한다.
- * (같은 페이지 로드 그래프 안에는 평가 구성이 1개뿐이므로 충돌이 없다.)
- * @param {{ items: Array<{name: string, desc: string, checks?: string[], vo2?: boolean}>, max: number }} config
- *           items: 평가 항목 목록 (예: ASSESSMENT_ITEMS_BASIC5), max: 총점 최댓값 (예: 15)
+ * @param {{ items: Array<{name: string, desc: string, checks?: string[], vo2?: boolean}>, max: number }} opts 평가 항목·만점
  * @returns {void}
  */
 export function configureEvaluation({ items, max }) {

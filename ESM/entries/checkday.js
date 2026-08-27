@@ -1,11 +1,12 @@
 // 파일 용도: 체크데이 상담지 시작점 — 날짜 표기 · 초기화 오케스트레이션 (checkday_1 전용, 레거시 8항목/24점 유지)
 // 새 체크기록 작성(check-doc-new) 화면은 전용 진입점 ESM/check-form-new.js를 사용한다 (5항목/15점).
 // ?memberID= 로 열리면 회원 이름·트레이너를 프리필한다 (checkday_1은 헤더·자동완성 없음).
-import { resetEntireForm, setupCheckFormEvents } from "@check-doc/check-form-events.js";
-import { renderBasicFunctionCards, updateTotal } from "@check-doc/evaluation.js";
+import { ASSESSMENT_ITEMS_FULL } from "@check-doc/assessment-data.js";
+import { configureEvaluation, renderBasicFunctionCards, updateTotal } from "@check-doc/evaluation.js";
 import { renderCheckMovementCards } from "@check-doc/feedback.js";
 import { sessionReport } from "@check-doc/session-report.js";
 import "@infra/components/app-header.js";
+import { MOTION_TOTAL_MAX } from "@infra/constants.js";
 import { loadMembers, memberStore } from "@member/member-store.js";
 import { getMemberById } from "@member/member-utils.js";
 import "@shared/components/index.js";
@@ -14,6 +15,9 @@ import { hideLoading, showLoading } from "@shared/components/toast/toast.js";
 import { byId, delegate, dismissOnOverlayClick, setText } from "@tools/utils-dom.js";
 import { today } from "@tools/utils-string.js";
 import { getUrlParam } from "@tools/utils-url.js";
+
+// ── 평가 구성: 레거시 8항목·24점 — 각 진입점에서 명시적 init (모듈 레벨 init 금지) ──
+configureEvaluation({ items: ASSESSMENT_ITEMS_FULL, max: MOTION_TOTAL_MAX });
 
 // 로딩 오버레이 — memberStore의 loading 상태 구독
 memberStore.subscribe(state => (state.loading ? showLoading() : hideLoading()));
