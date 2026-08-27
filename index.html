@@ -1,56 +1,57 @@
 <!doctype html>
 <html lang="ko">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="icon" type="image/x-icon" href="images/favicon.ico?v=2026082311" />
-		<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png?v=2026082311" />
-		<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png?v=2026082311" />
-		<link rel="apple-touch-icon" sizes="180x180" href="images/favicon-180x180.png?v=2026082311" />
-		<meta property="og:type" content="website" />
-		<meta property="og:title" content="위아짐 체크데이" />
-		<meta property="og:description" content="그룹 트레이닝 격월 점검 · 회원별 움직임 평가와 상담 관리" />
-		<meta property="og:image" content="images/og-image.png?v=2026082311" />
-		<meta property="og:url" content="index.html" />
-		<title>위아짐 체크데이</title>
-		<link rel="stylesheet" href="styles/colors.css?v=2026082311" />
-		<link rel="stylesheet" href="styles/font.css?v=2026082311" />
-		<link rel="stylesheet" href="styles/layout-shell.css?v=2026082311" />
-		<link rel="stylesheet" href="styles/layout-index.css?v=2026082311" />
-	</head>
-	<body>
-		<!-- 파일 용도: 메인 화면 — 위아짐 로고와 회원 관리·체크회차 관리 링크 제공 -->
-		<div class="container">
-			<app-header> </app-header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico?v=2026082311" />
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png?v=2026082311" />
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png?v=2026082311" />
+    <link rel="apple-touch-icon" sizes="180x180" href="images/favicon-180x180.png?v=2026082311" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="위아짐 체크데이" />
+    <meta property="og:description" content="그룹 트레이닝 격월 점검 · 회원별 움직임 평가와 상담 관리" />
+    <meta property="og:image" content="images/og-image.png?v=2026082311" />
+    <meta property="og:url" content="index.html" />
+    <title>위아짐 체크데이</title>
+    <link rel="stylesheet" href="styles/colors.css?v=2026082311" />
+    <link rel="stylesheet" href="styles/font.css?v=2026082311" />
+    <link rel="stylesheet" href="styles/layout-shell.css?v=2026082311" />
+    <link rel="stylesheet" href="styles/layout-index.css?v=2026082311" />
+  </head>
+  <body>
+    <!-- 파일 용도: 메인 화면 — 위아짐 로고와 회원 관리·체크회차 관리 링크 제공 -->
+    <div class="container">
+      <app-header> </app-header>
 
-			<main>
-				<section class="main-screen">
-					<!-- 활성 히어로 로고: CSS 배경 이미지로 위아짐 하양 심볼 -->
-					<span class="hero-mark" role="img" aria-label="위아짐 심볼"></span>
-					<h1>Check Day</h1>
-					<!-- <p>그룹 트레이닝 격월 점검 · 회원별 움직임 평가와 상담 관리</p> -->
+      <main>
+        <section class="main-screen">
+          <!-- 활성 히어로 로고: CSS 배경 이미지로 위아짐 하양 심볼 -->
+          <span class="hero-mark" role="img" aria-label="위아짐 심볼"></span>
+          <h1>Check Day</h1>
+          <!-- <p>그룹 트레이닝 격월 점검 · 회원별 움직임 평가와 상담 관리</p> -->
 
-					<div class="main-actions">
-						<a class="btn btn-primary" href="check-doc-new.html">체크기록 작성</a>
-						<a class="btn btn-primary" href="members.html">회원 관리</a>
-					</div>
-				</section>
-			</main>
-		</div>
+          <div class="main-actions">
+            <a class="btn btn-primary" href="check-doc-new.html">체크기록 작성</a>
+            <a class="btn btn-primary" href="members.html">회원 관리</a>
+          </div>
+        </section>
+      </main>
+    </div>
 
-		<script type="importmap">
-			{
-				"imports": {
-					"@infra/": "./ESM/infra/",
-					"@tools/": "./ESM/tools/",
-					"@calc/": "./ESM/calc/",
-					"@gym/": "./ESM/gym/",
-					"@member/": "./ESM/member/",
-					"@shared/": "./ESM/shared/",
-					"@check-doc/": "./ESM/check-doc/"
-				}
-			}
-		</script>
-		<script type="module" src="ESM/entries/index.js?v=2026082311"></script>
-	</body>
+    <script type="importmap">
+      {
+        "imports": {
+          "@infra/": "./ESM/infra/",
+          "@tools/": "./ESM/tools/",
+          "@calc/": "./ESM/calc/",
+          "@gym/": "./ESM/gym/",
+          "@member/": "./ESM/member/",
+          "@shared/": "./ESM/shared/",
+          "@check-doc/": "./ESM/check-doc/",
+          "@types/": "./ESM/types/"
+        }
+      }
+    </script>
+    <script type="module" src="ESM/entries/index.js?v=2026082311"></script>
+  </body>
 </html>

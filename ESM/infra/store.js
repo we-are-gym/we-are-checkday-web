@@ -1,7 +1,7 @@
 // 파일 용도: GUI 상태 스토어 — 관찰자 패턴 기반 단일 상태 관리 + sessionStorage 영속화 (전체 화면 공용)
 // 기법: 관찰자 패턴 + 상태 컨테이너 클래스 (손수 구현, 의존성 없음)
 // 사용: 화면 진입점이 `new Store(시드, { storageKey })`로 스토어를 만들고, UI는 subscribe로 구독해 상태가 바뀌면 재렌더링한다.
-
+// to-be: 타입 정의는 ESM/types/store.js로 중앙화됨 — 이 파일의 JSDoc은 중앙 타입을 미러링한다.
 /**
  * 회원 1명
  * @typedef {Object} Member

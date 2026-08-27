@@ -1,174 +1,171 @@
 <!doctype html>
 <html lang="ko">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="icon" type="image/x-icon" href="images/favicon.ico?v=2026082311" />
-		<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png?v=2026082311" />
-		<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png?v=2026082311" />
-		<link rel="apple-touch-icon" sizes="180x180" href="images/favicon-180x180.png?v=2026082311" />
-		<meta property="og:type" content="website" />
-		<meta property="og:title" content="체크데이 상담지 — 위아짐 체크데이" />
-		<meta property="og:description" content="그룹 트레이닝 격월 점검 · 회원별 움직임 평가와 상담 관리" />
-		<meta property="og:image" content="images/og-image.png?v=2026082311" />
-		<meta property="og:url" content="checkday_1.html" />
-		<title>체크데이 상담지</title>
-		<link rel="stylesheet" href="styles/colors.css?v=2026082311" />
-		<link rel="stylesheet" href="styles/font.css?v=2026082311" />
-		<link rel="stylesheet" href="styles/layout-checkday.css?v=2026082311" />
-	</head>
-	<body>
-		<!-- 파일 용도: 체크데이 상담지 화면 — 그룹 트레이닝 격월 점검 · 회원 움직임 평가와 상담 기록 -->
-		<div class="container">
-			<!-- 헤더 -->
-			<div class="page-header">
-				<div>
-					<h1>체크데이 상담지</h1>
-					<p>그룹 트레이닝 격월 점검 · 30분</p>
-				</div>
-				<div class="date-badge" id="date-badge"></div>
-			</div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico?v=2026082311" />
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png?v=2026082311" />
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png?v=2026082311" />
+    <link rel="apple-touch-icon" sizes="180x180" href="images/favicon-180x180.png?v=2026082311" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="체크데이 상담지 — 위아짐 체크데이" />
+    <meta property="og:description" content="그룹 트레이닝 격월 점검 · 회원별 움직임 평가와 상담 관리" />
+    <meta property="og:image" content="images/og-image.png?v=2026082311" />
+    <meta property="og:url" content="checkday_1.html" />
+    <title>체크데이 상담지</title>
+    <link rel="stylesheet" href="styles/colors.css?v=2026082311" />
+    <link rel="stylesheet" href="styles/font.css?v=2026082311" />
+    <link rel="stylesheet" href="styles/layout-checkday.css?v=2026082311" />
+  </head>
+  <body>
+    <!-- 파일 용도: 체크데이 상담지 화면 — 그룹 트레이닝 격월 점검 · 회원 움직임 평가와 상담 기록 -->
+    <div class="container">
+      <!-- 헤더 -->
+      <div class="page-header">
+        <div>
+          <h1>체크데이 상담지</h1>
+          <p>그룹 트레이닝 격월 점검 · 30분</p>
+        </div>
+        <div class="date-badge" id="date-badge"></div>
+      </div>
 
-			<!-- 회원 정보 -->
-			<div class="member-bar">
-				<div class="mf"><label>회원 이름</label><input id="m-name" type="text" placeholder="홍길동" /></div>
-				<div class="mf"><label>회차</label><input id="m-session" type="text" placeholder="2025-06 (2회차)" /></div>
-				<div class="mf"><label>트레이너</label><input id="m-trainer" type="text" placeholder="김지훈" /></div>
-			</div>
+      <!-- 회원 정보 -->
+      <div class="member-bar">
+        <div class="mf"><label>회원 이름</label><input id="m-name" type="text" placeholder="홍길동" /></div>
+        <div class="mf"><label>회차</label><input id="m-session" type="text" placeholder="2025-06 (2회차)" /></div>
+        <div class="mf"><label>트레이너</label><input id="m-trainer" type="text" placeholder="김지훈" /></div>
+      </div>
 
-			<!-- 움직임 총점 -->
-			<div class="total-bar">
-				<div class="tl">
-					<div class="tl-label">움직임 총점</div>
-					<div class="tl-num" id="total-num">0 <span>/ 24</span></div>
-				</div>
-				<div class="tr">
-					<div class="prog-track">
-						<div class="prog-fill" id="prog-fill"></div>
-					</div>
-					<div class="total-grade">
-						<div class="grade-pill" id="grade-pill">평가 전</div>
-						<span class="grade-hint" id="grade-hint"></span>
-					</div>
-				</div>
-			</div>
+      <!-- 움직임 총점 -->
+      <div class="total-bar">
+        <div class="tl">
+          <div class="tl-label">움직임 총점</div>
+          <div class="tl-num" id="total-num">0 <span>/ 24</span></div>
+        </div>
+        <div class="tr">
+          <div class="prog-track">
+            <div class="prog-fill" id="prog-fill"></div>
+          </div>
+          <div class="total-grade">
+            <div class="grade-pill" id="grade-pill">평가 전</div>
+            <span class="grade-hint" id="grade-hint"></span>
+          </div>
+        </div>
+      </div>
 
-			<!-- ① 인바디 -->
-			<div class="section">
-				<div class="sec-header">
-					<div class="sec-num">1</div>
-					<div class="sec-title">인바디 확인</div>
-					<div class="sec-sub">체성분 수치 입력</div>
-				</div>
-				<div class="card">
-					<div class="ib-grid" id="ib-grid"></div>
-					<!-- 내장지방 -->
-					<div class="ib-vis-row">
-						<div class="ib-vis-field">
-							<label class="ib-vis-label">내장지방 레벨</label>
-							<input class="ib-num ib-vis-input" id="ib-vis" type="number" placeholder="8" min="1" max="20" />
-						</div>
-						<div id="tag-vis" class="tag-vis"></div>
-					</div>
-					<div class="ib-comment-row">
-						<span class="ib-comment-lbl">코멘트</span>
-						<textarea
-							class="ib-comment"
-							id="ib-comment"
-							placeholder="지난 회차 대비 변화, 방향 코멘트 (예: 근육↑ 체지방↓ 유지 잘 됨)"
-						></textarea>
-					</div>
-				</div>
-			</div>
+      <!-- ① 인바디 -->
+      <div class="section">
+        <div class="sec-header">
+          <div class="sec-num">1</div>
+          <div class="sec-title">인바디 확인</div>
+          <div class="sec-sub">체성분 수치 입력</div>
+        </div>
+        <div class="card">
+          <div class="ib-grid" id="ib-grid"></div>
+          <!-- 내장지방 -->
+          <div class="ib-vis-row">
+            <div class="ib-vis-field">
+              <label class="ib-vis-label">내장지방 레벨</label>
+              <input class="ib-num ib-vis-input" id="ib-vis" type="number" placeholder="8" min="1" max="20" />
+            </div>
+            <div id="tag-vis" class="tag-vis"></div>
+          </div>
+          <div class="ib-comment-row">
+            <span class="ib-comment-lbl">코멘트</span>
+            <textarea
+              class="ib-comment"
+              id="ib-comment"
+              placeholder="지난 회차 대비 변화, 방향 코멘트 (예: 근육↑ 체지방↓ 유지 잘 됨)"
+            ></textarea>
+          </div>
+        </div>
+      </div>
 
-			<!-- ② 움직임 평가 -->
-			<div class="section">
-				<div class="sec-header">
-					<div class="sec-num">2</div>
-					<div class="sec-title">움직임 평가</div>
-					<div class="sec-sub">8개 항목 · 각 0–3점</div>
-				</div>
-				<div class="card" id="eval-cards"></div>
-			</div>
+      <!-- ② 움직임 평가 -->
+      <div class="section">
+        <div class="sec-header">
+          <div class="sec-num">2</div>
+          <div class="sec-title">움직임 평가</div>
+          <div class="sec-sub">8개 항목 · 각 0–3점</div>
+        </div>
+        <div class="card" id="eval-cards"></div>
+      </div>
 
-			<!-- ③ 다음 목표 -->
-			<div class="section">
-				<div class="sec-header">
-					<div class="sec-num">3</div>
-					<div class="sec-title">다음 목표 / 방향</div>
-					<div class="sec-sub">태그 선택 + 메모</div>
-				</div>
-				<div class="card">
-					<div class="goal-tags" id="goal-tags"></div>
-					<div class="goal-memo-wrap">
-						<textarea
-							class="goal-memo"
-							id="goal-memo"
-							placeholder="구체적인 방향이나 다음 회차까지의 목표를 기록하세요..."
-						></textarea>
-					</div>
-				</div>
-			</div>
+      <!-- ③ 다음 목표 -->
+      <div class="section">
+        <div class="sec-header">
+          <div class="sec-num">3</div>
+          <div class="sec-title">다음 목표 / 방향</div>
+          <div class="sec-sub">태그 선택 + 메모</div>
+        </div>
+        <div class="card">
+          <div class="goal-tags" id="goal-tags"></div>
+          <div class="goal-memo-wrap">
+            <textarea class="goal-memo" id="goal-memo" placeholder="구체적인 방향이나 다음 회차까지의 목표를 기록하세요..."></textarea>
+          </div>
+        </div>
+      </div>
 
-			<!-- ④ 동작 피드백 -->
-			<div class="section">
-				<div class="sec-header">
-					<div class="sec-num">4</div>
-					<div class="sec-title">동작 피드백</div>
-					<div class="sec-sub">동작 추가/삭제 가능</div>
-				</div>
-				<div class="card" id="fb-cards"></div>
-				<button class="add-fb-btn">+ 동작 추가</button>
-			</div>
+      <!-- ④ 동작 피드백 -->
+      <div class="section">
+        <div class="sec-header">
+          <div class="sec-num">4</div>
+          <div class="sec-title">동작 피드백</div>
+          <div class="sec-sub">동작 추가/삭제 가능</div>
+        </div>
+        <div class="card" id="fb-cards"></div>
+        <button class="add-fb-btn">+ 동작 추가</button>
+      </div>
 
-			<!-- ⑤ 종합 상담 메모 -->
-			<div class="section">
-				<div class="sec-header">
-					<div class="sec-num">5</div>
-					<div class="sec-title">종합 상담 메모</div>
-					<div class="sec-sub">특이사항 · 요청사항</div>
-				</div>
-				<div class="card">
-					<textarea
-						class="consult-memo"
-						id="consult-memo"
-						placeholder="부상 이력, 생활 패턴, 회원 요청, 다음 체크데이 주의사항 등..."
-					></textarea>
-				</div>
-			</div>
+      <!-- ⑤ 종합 상담 메모 -->
+      <div class="section">
+        <div class="sec-header">
+          <div class="sec-num">5</div>
+          <div class="sec-title">종합 상담 메모</div>
+          <div class="sec-sub">특이사항 · 요청사항</div>
+        </div>
+        <div class="card">
+          <textarea
+            class="consult-memo"
+            id="consult-memo"
+            placeholder="부상 이력, 생활 패턴, 회원 요청, 다음 체크데이 주의사항 등..."
+          ></textarea>
+        </div>
+      </div>
 
-			<div class="actions">
-				<button class="btn btn-ghost" data-action="reset">초기화</button>
-				<button class="btn btn-ghost" data-action="report">📋 결과 보기</button>
-				<button class="btn btn-primary" data-action="print">인쇄 / PDF</button>
-			</div>
-		</div>
+      <div class="actions">
+        <button class="btn btn-ghost" data-action="reset">초기화</button>
+        <button class="btn btn-ghost" data-action="report">📋 결과 보기</button>
+        <button class="btn btn-primary" data-action="print">인쇄 / PDF</button>
+      </div>
+    </div>
 
-		<!-- 결과 모달 -->
-		<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="overlay-title">
-			<div class="modal">
-				<h3 id="overlay-title">체크데이 결과 요약</h3>
-				<div id="report-body"></div>
-				<div class="modal-footer">
-					<button class="btn btn-ghost" data-action="close-modal">닫기</button>
-					<button class="btn btn-primary" data-action="copy">텍스트 복사</button>
-				</div>
-			</div>
-		</div>
+    <!-- 결과 모달 -->
+    <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="overlay-title">
+      <div class="modal">
+        <h3 id="overlay-title">체크데이 결과 요약</h3>
+        <div id="report-body"></div>
+        <div class="modal-footer">
+          <button class="btn btn-ghost" data-action="close-modal">닫기</button>
+          <button class="btn btn-primary" data-action="copy">텍스트 복사</button>
+        </div>
+      </div>
+    </div>
 
-		<script type="importmap">
-			{
-				"imports": {
-					"@infra/": "./ESM/infra/",
-					"@tools/": "./ESM/tools/",
-					"@calc/": "./ESM/calc/",
-					"@gym/": "./ESM/gym/",
-					"@member/": "./ESM/member/",
-					"@shared/": "./ESM/shared/",
-					"@check-doc/": "./ESM/check-doc/"
-				}
-			}
-		</script>
-		<script type="module" src="ESM/entries/checkday.js?v=2026082311"></script>
-	</body>
+    <script type="importmap">
+      {
+        "imports": {
+          "@infra/": "./ESM/infra/",
+          "@tools/": "./ESM/tools/",
+          "@calc/": "./ESM/calc/",
+          "@gym/": "./ESM/gym/",
+          "@member/": "./ESM/member/",
+          "@shared/": "./ESM/shared/",
+          "@check-doc/": "./ESM/check-doc/",
+          "@types/": "./ESM/types/"
+        }
+      }
+    </script>
+    <script type="module" src="ESM/entries/checkday.js?v=2026082311"></script>
+  </body>
 </html>
