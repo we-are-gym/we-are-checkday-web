@@ -1,9 +1,46 @@
 {
-	"tabWidth": 4,
-	"useTabs": true,
-	"printWidth": 140,
-	"endOfLine": "crlf",
-	"singleQuote": false,
-	"trailingComma": "es5",
-	"arrowParens": "avoid"
+  "useTabs": false,
+  "tabWidth": 2,
+  "singleQuote": false,
+  "arrowParens": "avoid",
+  "trailingComma": "es5",
+  "printWidth": 140,
+  "endOfLine": "crlf",
+  "overrides": [
+    {
+      "files": ["*.MD", "*.md"],
+      "options": {
+        "useTabs": false,
+        "tabWidth": 3
+      }
+    },
+    {
+      "files": ["*.CSS", "*.css"],
+      "options": {
+        "useTabs": true,
+        "tabWidth": 4
+      }
+    },
+    {
+      "files": ["*.TS", "*.ts"],
+      "options": {
+        "useTabs": true,
+        "tabWidth": 4
+      }
+    },
+    {
+      "files": ["*.JS", "*.js"],
+      "options": {
+        "useTabs": true,
+        "tabWidth": 4
+      }
+    },
+    {
+      "files": ["*.py"],
+      "options": {
+        "useTabs": false,
+        "tabWidth": 4
+      }
+    }
+  ]
 }

@@ -1,29 +1,30 @@
 {
-	"compilerOptions": {
-		"target": "ES2022",
-		"module": "ESNext",
-		"moduleResolution": "bundler",
-		"allowJs": true,
-		"checkJs": false,
-		"noEmit": true,
-		"strict": false,
-		"esModuleInterop": true,
-		"skipLibCheck": true,
-		"forceConsistentCasingInFileNames": true,
-		"resolveJsonModule": true,
-		"isolatedModules": true,
-		"verbatimModuleSyntax": false,
-		"lib": ["ES2022", "DOM", "DOM.Iterable"],
-		"paths": {
-			"@infra/*": ["./ESM/infra/*"],
-			"@tools/*": ["./ESM/tools/*"],
-			"@calc/*": ["./ESM/calc/*"],
-			"@gym/*": ["./ESM/gym/*"],
-			"@member/*": ["./ESM/member/*"],
-			"@check-doc/*": ["./ESM/check-doc/*"],
-			"@shared/*": ["./ESM/shared/*"]
-		}
-	},
-	"include": ["ESM/**/*.js", "ESM/**/*.ts"],
-	"exclude": ["node_modules", "dist"]
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowJs": true,
+    "checkJs": false,
+    "noEmit": true,
+    "strict": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": false,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "paths": {
+      "@infra/*": ["./ESM/infra/*"],
+      "@tools/*": ["./ESM/tools/*"],
+      "@calc/*": ["./ESM/calc/*"],
+      "@gym/*": ["./ESM/gym/*"],
+      "@member/*": ["./ESM/member/*"],
+      "@check-doc/*": ["./ESM/check-doc/*"],
+      "@shared/*": ["./ESM/shared/*"],
+      "@types/*": ["./ESM/types/*"]
+    }
+  },
+  "include": ["ESM/**/*.js", "ESM/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }

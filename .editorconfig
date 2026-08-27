@@ -13,16 +13,16 @@ insert_final_newline = false
 end_of_line = crlf
 
 [.prettierrc]
-indent_style = tab
+indent_style = space
 indent_size = 2
 
 [*.{JSON,Json,json}]
-indent_style = tab
+indent_style = space
 indent_size = 2
 
 [*.{MD,md}]
 indent_style = space
-indent_size = 2
+indent_size = 3
 
 [*.{CSS,css}]
 indent_style = tab
