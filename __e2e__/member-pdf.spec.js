@@ -1,13 +1,16 @@
 // 파일 용도: 회원 정보 PDF 저장 E2E 테스트 — Mason API PDF 다운로드·콘솔 오류 0건 검증
 // 사용: 로컬 검증 시 로컬 API(에뮬레이터)와 함께 실행한다.
-//       API 주소는 E2E_API_BASE, 자격증명은 E2E_LOGIN_ID·E2E_PASSWORD 환경변수로 재정의할 수 있다.
+//       API 주소는 `E2E_API_URL_PREFIX`, `E2E_API_PORT`, `E2E_API_BASE_PATH` 환경변수로 재정의할 수 있다.
 //       (기본: 로컬 에뮬레이터 API·시드 사용자)
-import { expect, test } from "@playwright/test";
-
-const API_BASE =
-	process.env.E2E_API_BASE || (process.env.E2E_PORT ? `http://127.0.0.1:${process.env.E2E_PORT}/api/v1` : "http://127.0.0.1:8900/api/v1");
-const LOGIN_ID = process.env.E2E_LOGIN_ID || "trainer@gym.kr";
-const PASSWORD = process.env.E2E_PASSWORD || "secure123";
+ import { expect, test } from "@playwright/test";
+ 
+/** 로컬 Mason API 주소·계정 — `E2E_API_URL_PREFIX`, `E2E_API_PORT`, `E2E_API_BASE_PATH` 환경변수로 재정의할 수 있다 */
+const API_PREFIX = process.env.E2E_API_URL_PREFIX || "http://localhost";
+const API_PORT = process.env.E2E_API_PORT || "8900";
+const API_BASE_PATH = process.env.E2E_API_BASE_PATH || "/api/v1";
+const API_BASE = `${API_PREFIX}:${API_PORT}${API_BASE_PATH}`;
+ const LOGIN_ID = process.env.E2E_LOGIN_ID || "trainer@gym.kr";
+ const PASSWORD = process.env.E2E_PASSWORD || "secure123";
 
 /**
  * 로그인하고 sessionStorage에 저장된 액세스 토큰을 반환한다.
