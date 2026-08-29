@@ -15,6 +15,7 @@ export default defineConfig({
 	},
 	// E2E_PORT로 웹 서버 포트를 재정의할 수 있다 (타 워크그룹 preview 등 포트 충돌 대비)
 	webServer: {
+		// Question: `bun run dev …` 명령어 대신 `npx vite build && npx vite preview` 명령어를 사용하는 이유는?
 		command: `npx vite build && npx vite preview --port ${PORT} --strictPort`,
 		port: PORT,
 		reuseExistingServer: true,
