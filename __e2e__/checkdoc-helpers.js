@@ -1,13 +1,13 @@
 // 앱 준비 3원칙 — P1 세션 선존재(addInitScript→goto), P2 요청 선대기(waitForResponse 선등록→click), P3 렌더 선확인(goto→toBeVisible/networkidle) + expect.poll 왕복 흡수(100ms 폴링)
- import { expect } from "@playwright/test";
- 
+import { expect } from "@playwright/test";
+
 /** 로컬 Mason API 주소·계정 — `E2E_API_URL_PREFIX`, `E2E_API_PORT`, `E2E_API_BASE_PATH` 환경변수로 재정의할 수 있다 */
 const API_PREFIX = process.env.E2E_API_URL_PREFIX || "http://localhost";
 const API_PORT = process.env.E2E_API_PORT || "8900";
 const API_BASE_PATH = process.env.E2E_API_BASE_PATH || "/api/v1";
 export const API_BASE = `${API_PREFIX}:${API_PORT}${API_BASE_PATH}`;
- export const LOGIN_ID = process.env.E2E_LOGIN_ID || "trainer@gym.kr";
- export const PASSWORD = process.env.E2E_PASSWORD || "secure123";
+export const LOGIN_ID = process.env.E2E_LOGIN_ID || "trainer@gym.kr";
+export const PASSWORD = process.env.E2E_PASSWORD || "secure123";
 
 /** 콘솔 오류 수집기 — 각 테스트 beforeEach에서 reset해 사용한다 */
 export function collectConsoleErrors(page, errors) {
@@ -27,11 +27,16 @@ export async function getToken(request) {
 	return (await loginRes.json()).access_token;
 }
 
-/** 세션에 토큰을 주입한 뒤 화면을 연다 */
+/** 세션에 토큰을 주입한 뒤 화면을 연다 — addInitScript 선주입으로 goto 전 세션 보장 */
 export async function loginAndInjectToken(page) {
 	const token = await getToken(page.request);
+	// 다음 탐색부터 세션이 선존재하도록 addInitScript로 주입 — goto 전 설정이 핵심
+	await page.addInitScript(t => sessionStorage.setItem("checkday.auth.v1", t), token);
 	await page.goto("/login.html");
-	await page.evaluate(t => sessionStorage.setItem("checkday.auth.v1", t), token);
+	// 이미 열린 페이지 오리진이 있으면 즉시 보정 (초기 페이지가 about:blank인 경우 catch)
+	try {
+		await page.evaluate(t => sessionStorage.setItem("checkday.auth.v1", t), token);
+	} catch {}
 }
 
 /** API로 회원을 만들고 회원 ID를 반환한다 */

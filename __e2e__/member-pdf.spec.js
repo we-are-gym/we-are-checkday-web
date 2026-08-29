@@ -2,15 +2,15 @@
 // 사용: 로컬 검증 시 로컬 API(에뮬레이터)와 함께 실행한다.
 //       API 주소는 `E2E_API_URL_PREFIX`, `E2E_API_PORT`, `E2E_API_BASE_PATH` 환경변수로 재정의할 수 있다.
 //       (기본: 로컬 에뮬레이터 API·시드 사용자)
- import { expect, test } from "@playwright/test";
- 
+import { expect, test } from "@playwright/test";
+
 /** 로컬 Mason API 주소·계정 — `E2E_API_URL_PREFIX`, `E2E_API_PORT`, `E2E_API_BASE_PATH` 환경변수로 재정의할 수 있다 */
 const API_PREFIX = process.env.E2E_API_URL_PREFIX || "http://localhost";
 const API_PORT = process.env.E2E_API_PORT || "8900";
 const API_BASE_PATH = process.env.E2E_API_BASE_PATH || "/api/v1";
 const API_BASE = `${API_PREFIX}:${API_PORT}${API_BASE_PATH}`;
- const LOGIN_ID = process.env.E2E_LOGIN_ID || "trainer@gym.kr";
- const PASSWORD = process.env.E2E_PASSWORD || "secure123";
+const LOGIN_ID = process.env.E2E_LOGIN_ID || "trainer@gym.kr";
+const PASSWORD = process.env.E2E_PASSWORD || "secure123";
 
 /**
  * 로그인하고 sessionStorage에 저장된 액세스 토큰을 반환한다.
@@ -64,6 +64,7 @@ test.describe("회원 정보 PDF 저장", () => {
 		// 회원 상세 화면 진입 → PDF 저장 클릭
 		await page.goto(`/member-detail.html?memberID=${encodeURIComponent(memberId)}`);
 		await expect(page.locator("#md-name")).toHaveText("PDF검증회원", { timeout: 15_000 });
+		await expect(page.locator("#pdf-download-btn")).toBeEnabled();
 
 		const downloadPromise = page.waitForEvent("download", { timeout: 20_000 });
 		await page.locator("#pdf-download-btn").click();
