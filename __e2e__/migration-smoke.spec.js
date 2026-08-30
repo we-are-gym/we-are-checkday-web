@@ -1,5 +1,6 @@
 // 파일 용도: 스키마 마이그레이션 검증 E2E — 회원 등록(남/녀 성별)·콘솔 오류 수집 (로컬 Mason API 대상)
 import { expect, test } from "@playwright/test";
+import { API_BASE, LOGIN_ID, PASSWORD, loginAndInjectToken } from "./checkdoc-helpers.js";
 
 // 콘솔 오류 수집 — 모든 페이지 탐색에서 브라우저 콘솔 error가 없어야 한다
 const consoleErrors = [];
@@ -14,30 +15,7 @@ test.beforeEach(async ({ page }) => {
 	page.on("pageerror", err => consoleErrors.push(String(err)));
 });
 
-/** 로컬 Mason API 주소·계정 — `E2E_API_URL_PREFIX`, `E2E_API_PORT`, `E2E_API_BASE_PATH` 환경변수로 재정의할 수 있다 */
-const API_PREFIX = process.env.E2E_API_URL_PREFIX || "http://localhost";
-const API_PORT = process.env.E2E_API_PORT || "8900";
-const API_BASE_PATH = process.env.E2E_API_BASE_PATH ?? "/api/v1";
-const API_BASE = `${API_PREFIX}:${API_PORT}${API_BASE_PATH}`;
-const LOGIN_ID = process.env.E2E_LOGIN_ID || "trainer@gym.kr";
-const PASSWORD = process.env.E2E_PASSWORD || "secure123";
-
-async function loginAndInjectToken(page) {
-	const loginRes = await page.request.post(`${API_BASE}/auth/login`, {
-		data: { username: LOGIN_ID, password: PASSWORD },
-	});
-
-	expect(loginRes.ok()).toBeTruthy();
-
-	const { access_token: token } = await loginRes.json();
-
-	await page.addInitScript(t => sessionStorage.setItem("checkday.auth.v1", t), token);
-	await page.goto("/login.html");
-	await page.evaluate(t => sessionStorage.setItem("checkday.auth.v1", t), token).catch(() => {});
-}
-
-test("회원 등록 화면에서 남/녀 성별로 신규 회원 생성", async ({ page }) => {
-	await loginAndInjectToken(page);
+ test("회원 등록 화면에서 남/녀 성별로 신규 회원 생성", async ({ page }) => {
 	await page.goto("/member-create.html");
 
 	await page.fill("#mf-name", "스모크회원");

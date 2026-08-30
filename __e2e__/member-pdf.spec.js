@@ -3,32 +3,7 @@
 //       API 주소는 `E2E_API_URL_PREFIX`, `E2E_API_PORT`, `E2E_API_BASE_PATH` 환경변수로 재정의할 수 있다.
 //       (기본: 로컬 에뮬레이터 API·시드 사용자)
 import { expect, test } from "@playwright/test";
-
-/** 로컬 Mason API 주소·계정 — `E2E_API_URL_PREFIX`, `E2E_API_PORT`, `E2E_API_BASE_PATH` 환경변수로 재정의할 수 있다 */
-const API_PREFIX = process.env.E2E_API_URL_PREFIX || "http://localhost";
-const API_PORT = process.env.E2E_API_PORT || "8900";
-const API_BASE_PATH = process.env.E2E_API_BASE_PATH || "/api/v1";
-const API_BASE = `${API_PREFIX}:${API_PORT}${API_BASE_PATH}`;
-const LOGIN_ID = process.env.E2E_LOGIN_ID || "trainer@gym.kr";
-const PASSWORD = process.env.E2E_PASSWORD || "secure123";
-
-/**
- * 로그인하고 sessionStorage에 저장된 액세스 토큰을 반환한다.
- * @param {import("@playwright/test").Page} page
- * @returns {Promise<string>} Bearer 액세스 토큰
- */
-async function loginAndGetToken(page) {
-	await page.goto("/login.html");
-	await page.waitForSelector("#login-form");
-	await page.fill("#login-id", LOGIN_ID);
-	await page.fill("#login-pw", PASSWORD);
-	await page.locator("#login-form button[type='submit']").click();
-	await page.waitForURL("**/index.html**", { timeout: 15_000 });
-
-	const token = await page.evaluate(() => sessionStorage.getItem("checkday.auth.v1"));
-	expect(token).toBeTruthy();
-	return token;
-}
+import { API_BASE, getToken, loginAndInjectToken } from "./checkdoc-helpers.js";
 
 /**
  * 테스트용 회원을 Mason API로 생성하고 member_ID를 반환한다.
@@ -49,7 +24,6 @@ async function createMember(request, token) {
 	expect(body.member_ID).toMatch(/^M-/);
 	return body.member_ID;
 }
-
 test.describe("회원 정보 PDF 저장", () => {
 	test("PDF 저장 버튼이 한 장짜리 PDF를 다운로드한다", async ({ page, request }) => {
 		/** @type {string[]} */
@@ -58,7 +32,8 @@ test.describe("회원 정보 PDF 저장", () => {
 			if (msg.type() === "error") consoleErrors.push(msg.text());
 		});
 
-		const token = await loginAndGetToken(page);
+		await loginAndInjectToken(page);
+		const token = await getToken(page.request);
 		const memberId = await createMember(request, token);
 
 		// 회원 상세 화면 진입 → PDF 저장 클릭
