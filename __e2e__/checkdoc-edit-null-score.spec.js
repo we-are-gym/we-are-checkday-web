@@ -41,9 +41,9 @@ test("0점 포함 점수가 프리필되고, 삭제한 항목은 PUT 본문에�
 	await page.locator('.eval-name button[title="항목 삭제"]').first().click();
 	await expect(page.locator("#eval-cards .eval-item")).toHaveCount(1);
 
-	const updated = page.waitForRequest(req => req.url().includes("/checkday/checkdocs/") && req.method() === "PUT");
+	const updated = page.waitForResponse(r => r.url().includes("/checkday/checkdocs/") && r.request().method() === "PUT" && r.ok());
 	await page.click('[data-action="save"]');
-	const body = (await updated).postDataJSON();
+	const body = (await updated).request().postDataJSON();
 	const evaluation = body.evaluations[0];
 
 	// 삭제한 항목은 이전 값(1점)이 남지 않고 null로 대체된다

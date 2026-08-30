@@ -5,7 +5,7 @@ import { AppError } from "./errors.js";
 import { redirectToLogin } from "./login-redirect.js";
 
 /** API 기본 경로 */
-const API_BASE = import.meta.env.VITE_API_BASE;
+const API_BASE = import.meta.env?.VITE_API_BASE || "http://localhost:8900/api/v1";
 
 // console.log({ API_BASE });
 

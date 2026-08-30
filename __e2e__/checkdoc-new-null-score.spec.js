@@ -19,9 +19,9 @@ test("0점 평가는 오브젝트로, 목록에 없던 항목은 null로 저장�
 	// 모든 카드를 건드리지 않은 채 저장 — 첫 카드(Lumbar ROM)만 0점으로 평가된 상태
 	await page.fill("#m-member", "계약검증");
 
-	const created = page.waitForRequest(req => req.url().includes("/checkday/checkdocs") && req.method() === "POST");
+	const created = page.waitForResponse(r => r.url().includes("/checkday/checkdocs") && r.request().method() === "POST" && r.ok());
 	await page.click('[data-action="save"]');
-	const body = (await created).postDataJSON();
+	const body = (await created).request().postDataJSON();
 	const evaluation = body.evaluations[0];
 
 	// 목록에 있는 항목은 0점이라도 오브젝트로 저장된다

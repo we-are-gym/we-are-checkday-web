@@ -3,6 +3,10 @@
 import { expect, test } from "@playwright/test";
 import { createMemberViaApi, getToken, loginAndInjectToken } from "./checkdoc-helpers.js";
 test.describe("메인 링크 네비게이션", () => {
+	test.beforeEach(async ({ page }) => {
+		await loginAndInjectToken(page);
+	});
+
 	test("메인 → 회원 관리 이동", async ({ page }) => {
 		await page.goto("/index.html");
 
