@@ -24,7 +24,7 @@ export default defineConfig({
 		*/
 		command: `bun run build && bun run preview --port ${WEB_PORT} --strictPort`,
 		port: WEB_PORT,
-		reuseExistingServer: true,
+		reuseExistingServer: false,
 		timeout: 60_000,
 	},
 	projects: [
