@@ -58,7 +58,7 @@ test.describe("회원 정보 PDF 저장", () => {
 		// 비로그인 상태로 상세 화면 진입 → API 401 → 로그인 페이지 리다이렉트
 		// (401 시 앱이 의도적으로 console.error를 남기므로 콘솔 단언은 하지 않는다)
 		await page.goto("/member-detail.html?memberID=M-none");
-		await page.waitForURL("**/login.html**", { timeout: 15_000 });
-		await expect(page.locator("#login-form")).toBeVisible();
+		await expect(page.locator("#login-form")).toBeVisible({ timeout: 15_000 });
+		await expect(page).toHaveURL(/login\.html/);
 	});
 });

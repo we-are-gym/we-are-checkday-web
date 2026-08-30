@@ -1,6 +1,6 @@
 // 파일 용도: 스키마 마이그레이션 검증 E2E — 회원 등록(남/녀 성별)·콘솔 오류 수집 (로컬 Mason API 대상)
 import { expect, test } from "@playwright/test";
-import { API_BASE, LOGIN_ID, PASSWORD, loginAndInjectToken } from "./checkdoc-helpers.js";
+import { loginAndInjectToken } from "./checkdoc-helpers.js";
 
 // 콘솔 오류 수집 — 모든 페이지 탐색에서 브라우저 콘솔 error가 없어야 한다
 const consoleErrors = [];
@@ -15,7 +15,8 @@ test.beforeEach(async ({ page }) => {
 	page.on("pageerror", err => consoleErrors.push(String(err)));
 });
 
- test("회원 등록 화면에서 남/녀 성별로 신규 회원 생성", async ({ page }) => {
+test("회원 등록 화면에서 남/녀 성별로 신규 회원 생성", async ({ page }) => {
+	await loginAndInjectToken(page);
 	await page.goto("/member-create.html");
 
 	await page.fill("#mf-name", "스모크회원");
