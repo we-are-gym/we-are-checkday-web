@@ -28,7 +28,7 @@ export const MOTION_TOTAL_MAX = rules.motion.totalMax;
 /** 체크기록 작성(5항목) 총점 최댓값 — 15 (5×3점). rules.json 단일 소스. */
 export const MOTION_BASIC5_MAX = rules.motion.basic5Max;
 
-/** `sessionStorage` 토큰 키 */
+/** 토큰 키 (localStorage 영속, 비-DOM 시 메모리 폴백) */
 export const AUTH_KEY = "checkday.auth.v1";
 export const REFRESH_KEY = "checkday.refresh.v1";
 
