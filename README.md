@@ -103,8 +103,8 @@ bun run bump-version [YYYYMMDDHH]
 ## 영속성
 
 - 회원·체크기록은 **Mason API** (`checkday-rest-…run.app`)를 통해 GCP Datastore에 영속화된다.
-- 모든 CRUD(Create/Read/Update/Delete)는 REST API 경유 — 로컬 `sessionStorage`에 의존하지 않는다.
-- 2026-08-16: 웹 UI의 하드코딩 시드 데이터(`SEED_RECORDS` 26건)가 GCP 실제 DB로 마이그레이션 완료. 시드 데이터는 REST API 도구(`migrate_seed_data.py`) 내부에 임베딩되어 별도 관리.
+- 모든 CRUD(Create/Read/Update/Delete)는 REST API 경유 — 로컬 데이터에 의존하지 않는다.
+- 인증 토큰은 `localStorage`에 영속되어 탭·브라우저 재시작 후에도 유지된다.
 
 ## 참조 문서
 

@@ -41,4 +41,16 @@ describe("Store", () => {
 		store.setState(prev => ({ ...prev, count: 2 }));
 		expect(callCount).toBe(1);
 	});
+
+	it("storage 주입 → 상태 변경 시 주입된 저장소에 영속화", () => {
+		const store = new Map();
+		const mockStorage = {
+			getItem: key => (store.has(key) ? store.get(key) : null),
+			setItem: (key, value) => store.set(key, value),
+			removeItem: key => store.delete(key),
+		};
+		const s = new Store({ count: 0 }, { storageKey: "test.count", storage: mockStorage });
+		s.setState(prev => ({ ...prev, count: 7 }));
+		expect(store.get("test.count")).toBe('{"count":7}');
+	});
 });

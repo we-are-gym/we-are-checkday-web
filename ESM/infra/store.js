@@ -1,4 +1,4 @@
-// 파일 용도: GUI 상태 스토어 — 관찰자 패턴 기반 단일 상태 관리 + sessionStorage 영속화 (전체 화면 공용)
+// 파일 용도: GUI 상태 스토어 — 관찰자 패턴 기반 단일 상태 관리 + Storage 영속화 (전체 화면 공용)
 // 기법: 관찰자 패턴 + 상태 컨테이너 클래스 (손수 구현, 의존성 없음)
 // 사용: 화면 진입점이 `new Store(시드, { storageKey })`로 스토어를 만들고, UI는 subscribe로 구독해 상태가 바뀌면 재렌더링한다.
 // to-be: 타입 정의는 ESM/types/store.js로 중앙화됨 — 이 파일의 JSDoc은 중앙 타입을 미러링한다.
@@ -77,7 +77,7 @@
  */
 
 /**
- * 옵저버 패턴 기반 상태 스토어 — 선택적으로 sessionStorage에 영속화
+ * 옵저버 패턴 기반 상태 스토어 — 선택적으로 Storage에 영속화
  *
  * - `getState()`: 현재 상태 반환
  * - `setState(updater)`: `updater(이전 상태)`가 돌려준 새 상태로 교체 후 구독자 알림
@@ -85,7 +85,7 @@
  * - `subscribe(listener)`: 상태 변경 시 `listener(새 상태)` 호출, 반환값은 구독 해제 함수
  *
  * `storageKey`를 주면 초기 상태를 해당 키의 저장값으로 되돌리되, 없거나 손상됐거나
- * `validate`를 통과하지 못하면 `seed`로 시작하고, 상태가 바뀔 때마다 키에 직렬화해 저장한다. (mock 영속화)
+ * `validate`를 통과하지 못하면 `seed`로 시작하고, 상태가 바뀔 때마다 키에 직렬화해 저장한다.
  *
  * @template T
  */
@@ -93,22 +93,23 @@ export class Store {
 	/**
 	 * @param {T} seed 초기(시드) 상태 — 저장값이 없거나 손상됐을 때 사용
 	 * @param {Object} [options]
-	 * @param {string} [options.storageKey] sessionStorage 키 — 주어지면 영속화
+	 * @param {string} [options.storageKey] 저장소 키 — 주어지면 영속화
 	 * @param {(data: T) => boolean} [options.validate] 저장값 형식 검증 (기본: 항상 통과)
+	 * @param {Storage} [options.storage] 영속화할 저장소 (기본: globalThis.localStorage ?? globalThis.sessionStorage)
 	 */
-	constructor(seed, { storageKey, validate = () => true } = {}) {
+	constructor(seed, { storageKey, validate = () => true, storage } = {}) {
+		const store = storage ?? globalThis.localStorage ?? globalThis.sessionStorage;
 		/** @type {T} */
-		this._state = storageKey ? loadStored(storageKey, seed, validate) : seed;
+		this._state = storageKey ? loadStored(storageKey, seed, validate, store) : seed;
 		/** @type {Set<(state: T) => void>} */
 		this._listeners = new Set();
 
 		if (storageKey) {
-			// 상태가 바뀔 때마다 세션 저장 (관찰자 패턴 — mock 영속화)
 			this.subscribe(state => {
 				try {
-					sessionStorage.setItem(storageKey, JSON.stringify(state));
+					store.setItem(storageKey, JSON.stringify(state));
 				} catch (err) {
-					// 저장 실패는 mock이므로 무시
+					// 저장 실패는 무시
 				}
 			});
 		}
@@ -176,20 +177,21 @@ export class Store {
 /**
  * 저장된 상태를 읽고 없거나 손상됐으면 시드로 폴백한다
  * @template T
- * @param {string} storageKey sessionStorage 키
+ * @param {string} storageKey 저장소 키
  * @param {T} seed 손상·부재 시 초기 상태
  * @param {(data: T) => boolean} validate 저장값 형식 검증
+ * @param {Storage} storage 읽을 저장소
  * @returns {T} 복원된 상태 또는 시드
  */
-function loadStored(storageKey, seed, validate) {
+function loadStored(storageKey, seed, validate, storage) {
 	try {
-		const raw = sessionStorage.getItem(storageKey);
+		const raw = storage.getItem(storageKey);
 		if (raw) {
 			const data = JSON.parse(raw);
 			if (validate(data)) return data;
 		}
 	} catch (err) {
-		console.warn(`[Store] sessionStorage 읽기 실패 (${storageKey}):`, err);
+		console.warn(`[Store] 저장소 읽기 실패 (${storageKey}):`, err);
 	}
 	return seed;
 }

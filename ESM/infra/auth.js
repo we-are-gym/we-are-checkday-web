@@ -2,6 +2,7 @@
 
 import { clearTokens, isTokenExpired, request, storeTokens } from "@infra/api-client.js";
 import { AUTH_CHANGE_EVENT, AUTH_KEY, REFRESH_KEY } from "./constants.js";
+import { getAuthToken } from "./token-storage.js";
 import { redirectToLogin } from "./login-redirect.js";
 
 /**
@@ -12,7 +13,7 @@ import { redirectToLogin } from "./login-redirect.js";
  * @returns {boolean} 유효한 로그인 상태 여부
  */
 export function isAuthed() {
-	const token = sessionStorage.getItem(AUTH_KEY);
+	const token = getAuthToken();
 	if (!token) return false;
 	return !isTokenExpired(token);
 }
@@ -90,7 +91,7 @@ export function notifyAuthChange() {
 
 // ── DOM 이벤트 브릿지 (browser 전용 — 비-DOM 환경에서는 건너뜀) ──
 // 토큰 저장소 변경은 api-client.js가 window CustomEvent로 알리고, 타 탭 로그인/로그아웃은
-// sessionStorage storage 이벤트로 감지한다. api-client 역방향 import 없이 단방향 수신 구조다.
+// localStorage storage 이벤트로 감지한다. api-client 역방향 import 없이 단방향 수신 구조다.
 if (typeof window !== "undefined") {
 	window.addEventListener(AUTH_CHANGE_EVENT, () => notifyAuthChange());
 	window.addEventListener("storage", event => {

@@ -31,11 +31,11 @@ export async function getToken(request) {
 export async function loginAndInjectToken(page) {
 	const token = await getToken(page.request);
 	// 다음 탐색부터 세션이 선존재하도록 addInitScript로 주입 — goto 전 설정이 핵심
-	await page.addInitScript(t => sessionStorage.setItem("checkday.auth.v1", t), token);
+	await page.addInitScript(t => localStorage.setItem("checkday.auth.v1", t), token);
 	await page.goto("/login.html");
 	// 이미 열린 페이지 오리진이 있으면 즉시 보정 (초기 페이지가 about:blank인 경우 catch)
 	try {
-		await page.evaluate(t => sessionStorage.setItem("checkday.auth.v1", t), token);
+		await page.evaluate(t => localStorage.setItem("checkday.auth.v1", t), token);
 	} catch {}
 }
 
