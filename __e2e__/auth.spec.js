@@ -71,4 +71,22 @@ test.describe("인증 흐름", () => {
 		await page.waitForURL("**/login.html**", { timeout: 10_000 });
 		await expect(page).toHaveURL(/login\.html/);
 	});
+
+	test("새 탭에서 로그인 상태가 유지된다", async ({ page }) => {
+		// 1단계: 로그인
+		await page.goto("/login.html");
+		await page.waitForSelector("#login-form");
+		await page.fill("#login-id", LOGIN_ID);
+		await page.fill("#login-pw", PASSWORD);
+		await page.locator("#login-form button[type='submit']").click();
+		await page.waitForURL("**/index.html**", { timeout: 15_000 });
+		await expect(page.locator("[data-header-logout]")).toBeVisible();
+
+		// 2단계: 새 탭에서 로그인 상태 유지 확인
+		const newPage = await page.context().newPage();
+		await newPage.goto("/members.html");
+		await newPage.waitForSelector("app-header");
+		await expect(newPage.locator("[data-header-logout]")).toBeVisible({ timeout: 10_000 });
+		await newPage.close();
+	});
 });
