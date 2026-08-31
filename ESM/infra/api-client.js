@@ -209,6 +209,7 @@ async function fetchWithAuth(path, { method = "GET", body = null, token = null, 
 			if (refreshed) {
 				// 갱신 성공 — 원 요청 재시도 (새 토큰으로)
 				headers.Authorization = `Bearer ${getAuthToken()}`;
+				response = await doFetch();
 				// 갱신 후 재시도 응답이 401이면 로그인 페이지로 이동
 				if (response.status === 401) {
 					redirectToLogin();
