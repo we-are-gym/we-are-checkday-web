@@ -1,7 +1,8 @@
 // 파일 용도: Mason API 호출 공용 클라이언트 — fetch 래퍼·Mason 봉투 언래핑·오류 정규화·토큰 자동 관리
 import { showToast } from "@shared/components/toast/toast.js";
-import { AUTH_CHANGE_EVENT, AUTH_KEY, REFRESH_KEY } from "./constants.js";
+import { AUTH_CHANGE_EVENT } from "./constants.js";
 import { AppError } from "./errors.js";
+import { clearTokensRaw, getAuthToken, getRefreshToken, setAuthToken, setRefreshToken } from "./token-storage.js";
 import { redirectToLogin } from "./login-redirect.js";
 
 /** API 기본 경로 */
@@ -38,26 +39,24 @@ function unwrapResource(body) {
 	if (embedded) Object.assign(resource, embedded);
 	return resource;
 }
-
 /**
- * 액세스·리프레시 토큰을 sessionStorage에 저장합니다.
+ * 액세스·리프레시 토큰을 저장합니다.
  * @param {string} accessToken 액세스 토큰
  * @param {string} refreshToken 리프레시 토큰
  * @returns {void}
  */
 export function storeTokens(accessToken, refreshToken) {
-	sessionStorage.setItem(AUTH_KEY, accessToken);
-	sessionStorage.setItem(REFRESH_KEY, refreshToken);
+	setAuthToken(accessToken);
+	setRefreshToken(refreshToken);
 	notifyAuthStateChanged();
 }
 
 /**
- * sessionStorage에서 액세스·리프레시 토큰을 삭제합니다.
+ * 액세스·리프레시 토큰을 삭제합니다.
  * @returns {void}
  */
 export function clearTokens() {
-	sessionStorage.removeItem(AUTH_KEY);
-	sessionStorage.removeItem(REFRESH_KEY);
+	clearTokensRaw();
 	notifyAuthStateChanged();
 }
 
@@ -112,7 +111,7 @@ async function tryRefreshToken() {
  * @returns {Promise<boolean>} 성공 여부
  */
 async function doRefresh() {
-	const refreshToken = sessionStorage.getItem(REFRESH_KEY);
+	const refreshToken = getRefreshToken();
 	if (!refreshToken) return false;
 
 	try {
@@ -172,8 +171,7 @@ async function buildApiError(response, body = null) {
  * @param {string} path API 경로(API_BASE 제외, 예: "/members")
  * @param {Object} [options]
  * @param {string} [options.method="GET"] HTTP 메서드
- * @param {object|null} [options.body] JSON 본문
- * @param {string|null} [options.token] Bearer 액세스 토큰 (미지정 시 sessionStorage에서 자동 읽기)
+ * @param {string|null} [options.token] Bearer 액세스 토큰 (미지정 시 저장소에서 자동 읽기)
  * @param {"json"|"blob"} [options.as="json"] 응답 파싱 방식 — "blob"이면 파일 바이너리(PDF 등)를 Blob으로 반환
  * @returns {Promise<object|Array|Blob>} 리소스(단건)·리소스 배열(목록)·Blob(파일)
  */
@@ -181,8 +179,8 @@ async function fetchWithAuth(path, { method = "GET", body = null, token = null, 
 	const url = `${API_BASE}${path}`;
 	/** @type {Record<string, string>} */
 	const headers = { Accept: "application/json" };
-	// token 옵션이 없으면 sessionStorage에서 자동 읽기
-	const accessToken = token ?? sessionStorage.getItem(AUTH_KEY);
+	// token 옵션이 없으면 저장소에서 자동 읽기
+	const accessToken = token ?? getAuthToken();
 	if (accessToken) {
 		headers.Authorization = `Bearer ${accessToken}`;
 	}
@@ -210,8 +208,7 @@ async function fetchWithAuth(path, { method = "GET", body = null, token = null, 
 			const refreshed = await tryRefreshToken();
 			if (refreshed) {
 				// 갱신 성공 — 원 요청 재시도 (새 토큰으로)
-				headers.Authorization = `Bearer ${sessionStorage.getItem(AUTH_KEY)}`;
-				response = await doFetch();
+				headers.Authorization = `Bearer ${getAuthToken()}`;
 				// 갱신 후 재시도 응답이 401이면 로그인 페이지로 이동
 				if (response.status === 401) {
 					redirectToLogin();

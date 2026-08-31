@@ -3,18 +3,19 @@ import { afterEach, describe, expect, it } from "bun:test";
 import { AUTH_KEY, REFRESH_KEY } from "../../ESM/infra/constants.js";
 import { redirectToLogin } from "../../ESM/infra/login-redirect.js";
 
-/** window·sessionStorage 스텁을 설치하고 원복 함수를 반환한다 */
+/** window·localStorage 스텁을 설치하고 원복 함수를 반환한다 */
 function installStubs({ pathname }) {
 	const originalWindow = globalThis.window;
-	const originalSessionStorage = globalThis.sessionStorage;
+	const originalLocalStorage = globalThis.localStorage;
 	const store = new Map();
 	let replaced = null;
-	globalThis.sessionStorage = {
+	globalThis.localStorage = {
 		getItem: key => (store.has(key) ? store.get(key) : null),
 		setItem: (key, value) => store.set(key, value),
 		removeItem: key => store.delete(key),
 	};
 	globalThis.window = {
+		get localStorage() { return globalThis.localStorage; },
 		location: {
 			pathname,
 			href: `http://localhost:30010${pathname}${pathname.includes("?") ? "" : "?docID=42"}`,
@@ -30,14 +31,14 @@ function installStubs({ pathname }) {
 		getReplaced: () => replaced,
 		restore() {
 			globalThis.window = originalWindow;
-			globalThis.sessionStorage = originalSessionStorage;
+			globalThis.localStorage = originalLocalStorage;
 		},
 	};
 }
 
 afterEach(() => {
 	delete globalThis.window;
-	delete globalThis.sessionStorage;
+	delete globalThis.localStorage;
 });
 
 describe("redirectToLogin", () => {

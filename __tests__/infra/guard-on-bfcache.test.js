@@ -12,17 +12,18 @@ function makeToken(expOffsetSeconds) {
 
 const makeExpiredToken = () => makeToken(-60);
 
-/** window·sessionStorage 스텁을 설치하고 pageshow 핸들러 캡처를 돌려준다 */
+/** window·localStorage 스텁을 설치하고 pageshow 핸들러 캡처를 돌려준다 */
 function installStubs(pathname) {
 	const store = new Map();
 	const listeners = new Map();
 	let replaced = null;
-	globalThis.sessionStorage = {
+	globalThis.localStorage = {
 		getItem: key => (store.has(key) ? store.get(key) : null),
 		setItem: (key, value) => store.set(key, value),
 		removeItem: key => store.delete(key),
 	};
 	globalThis.window = {
+		get localStorage() { return globalThis.localStorage; },
 		location: {
 			pathname,
 			href: `http://localhost:30010${pathname}?docID=42`,
@@ -42,7 +43,7 @@ function installStubs(pathname) {
 
 afterEach(() => {
 	delete globalThis.window;
-	delete globalThis.sessionStorage;
+	delete globalThis.localStorage;
 });
 
 describe("guardOnBfcache", () => {

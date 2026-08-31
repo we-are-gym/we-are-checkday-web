@@ -13,7 +13,7 @@
 | `store.js`               | `Store`                                                                    | 관찰자 패턴 GUI 상태 스토어 — `getState`/`setState`/`subscribe`                    | 없음                                     |
 | `component-factory.js`   | `defineComponent`                                                          | 순수 함수형 컴포넌트 + 네이티브 웹 컴포넌트(light DOM) 팩토리                      | 없음                                     |
 | `templates.js`           | `TPL`, `escapeHtml`                                                        | 바닐라JS 템플릿 함수 — 화면 공용 HTML 조각 (카드·행·도트·비교테이블·헤더·GNB·모달) | `utils-array`                            |
-| `auth.js`                | `isAuthed`, `login`, `logout`                                              | 세션 기반 데모 로그인 상태                                                         | 없음                                     |
+| `auth.js`                | `isAuthed`, `login`, `logout`                                              | localStorage 영속 로그인 상태                                         | `token-storage` · `api-client` |
 | `utils-array.js`         | `sum`, `createZeroArray`                                                   | 배열 합계·0 배열                                                                   | 없음                                     |
 | `utils-string.js`        | `pad2`, `today`                                                            | 날짜 포맷·숫자 2자리                                                               | 없음                                     |
 | `utils-url.js`           | `getUrlParam`, `getNumberParam`                                            | URL 쿼리 파라미터 읽기 헬퍼 (문자열·숫자, 기본값 폴백)                             | 없음                                     |
