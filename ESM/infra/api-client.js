@@ -262,7 +262,7 @@ export async function request(path, options = {}) {
 		}
 		throw err;
 	}
-	return fetchWithAuth(path, options);
+
 }
 
 /**
@@ -281,5 +281,5 @@ export async function requestBlob(path, options = {}) {
 		}
 		throw err;
 	}
-	return fetchWithAuth(path, { ...options, as: "blob" });
+
 }
