@@ -15,6 +15,7 @@ dist/
 storybook-static/
 
 # Test
+playwright.env
 coverage/
 test-results/
 playwright-report/
