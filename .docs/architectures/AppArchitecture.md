@@ -45,6 +45,17 @@
 | `check-form-events.js` | `setupCheckFormEvents`, `resetCheckForm`                                                                                                                                    | 상담지 폼 공용 이벤트 위임·인바디/목표 주입·전체 초기화                                                    | `UI`, `templates`, `constants`, `states`, `evaluation`, `inbody`, `feedback`                              |
 | `session-report.js`    | `sessionReport`, `SessionReport`                                                                                                                                            | 결과 요약 HTML 조립·세션 리포트 모달·클립보드 복사                                                         | `UI`, `states`, `evaluation`, `feedback`                                                                  |
 
+### 회원 상세 화면 모듈 (member-detail 분할 — `ESM/member/`·`ESM/infra/`)
+
+| 모듈                  | 내보내기                          | 용도                                                          | 의존                                       |
+| --------------------- | --------------------------------- | ------------------------------------------------------------- | ------------------------------------------ |
+| `member-view.js`      | `getRecords`, `renderRecords`, `refreshRecords`, `init`, `goView` | 회원 상세 조회·화면 조립 — 데이터 로드와 렌더 조합, 진입점이 호출 | `member-info-card`, `charts`, `checkdoc-compare`, `export-image`, `record-store`, `record-utils`, `member-store`, `member-utils`, `templates`, `record-stats`, `utils-array`, `utils-dom` |
+| `member-info-card.js` | `renderInfoCard`                 | 회원 정보 카드 렌더링 (스토어 비의존 — member·recordCount 주입) | `member-utils`, `utils-dom`                |
+| `charts.js`           | `renderStatCards`                | 변화 차트 — 지표별 스파크라인·누적 델타 카드                   | `record-stats`, `templates`, `utils-dom`   |
+| `checkdoc-compare.js` | `fillCompareSelects`, `renderCompare` | 체크기록 회차 비교 테이블                                     | `record-stats`, `record-utils`, `utils-dom` |
+| `export-image.js`     | `exportMemberDetailPNG`, `downloadPdf` | 화면 PNG 캡처·PDF 다운로드                                    | `api-client`, `member-store`, `member-utils`, `utils-dom` |
+| `UI-tabs.js`          | `setupTabs`                      | 탭 위젯 — role=tablist 규약(aria-selected·방향키 이동) 배선    | `utils-dom`                                 |
+
 ### 웹 컴포넌트 (light DOM — `ESM/infra/components/`·`ESM/member/components/`)
 
 | 컴포넌트       | 기능                                                     |
@@ -63,7 +74,8 @@
 | `members.js`                  | `members.html`                     | 회원 관리 — 목록·검색·제거·상세 이동 (member-store·record-store 구독)                           |
 | `member-create.js`            | `member-create.html`               | 회원 등록                                                                                       |
 | `member-edit.js`              | `member-edit.html`                 | 회원 정보 수정·저장                                                                             |
-| `member-detail.js`            | `member-detail.html`               | 회원 상세 — 정보 카드·스파크 라인·기록 목록·변화 분석 비교                                      |
+
+| `member-detail.js`            | `member-detail.html`               | 회원 상세 화면 조립자 — memberID 파싱·UI 이벤트 배선·초기 렌더 트리거 (조회·카드·차트·비교·탭·내보내기는 분할 모듈 위임)|
 | `check-form-new.js`           | `check-doc-new.html`               | 체크기록 작성 — 베이직 펑션 5항목·15점, 회원 이름 통합·회차 자동계산(N+1) + `?memberID=` 프리필 |
 | `check-doc-view.js`           | `check-doc-view.html`              | 체크기록 조회 — 읽기 전용 전체 보기 (5·8항목 기록별 맞춤)                                       |
 | `check-doc-edit.js`           | `check-doc-edit.html`              | 체크기록 편집 — 기록 항목 구성(5·8)에 맞춰 프리필·수정·저장                                     |
