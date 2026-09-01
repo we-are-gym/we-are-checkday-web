@@ -32,11 +32,12 @@ function getRecords() {
 
 /** 회원 정보 카드 렌더링 (to-be: 프로토타입처럼 이름·성별·담당 트레이너 3행만)
  * @param {import("@infra/store.js").Member} member 대상 회원
+ * @param {number} recordCount 회원의 체크기록 건수 (화면 조립자가 주입)
  * @returns {void}
  */
-function renderInfoCard(member) {
+function renderInfoCard(member, recordCount) {
 	setText("md-title", member.name);
-	setText("md-sub", `체크기록 ${getRecords().length}건`);
+	setText("md-sub", `체크기록 ${recordCount}건`);
 	setText("md-name", member.name);
 	setText("md-gender", displayGender(member.gender) || "-");
 	setText("md-trainer", member.trainer || "-");
@@ -363,7 +364,7 @@ async function init() {
 		return;
 	}
 
-	renderInfoCard(member);
+	renderInfoCard(member, getRecords().length);
 
 	byId("new-record-btn").href = `check-doc-new.html?memberID=${encodeURIComponent(memberId)}`;
 	byId("edit-member-btn").href = `member-edit.html?memberID=${encodeURIComponent(memberId)}`;
