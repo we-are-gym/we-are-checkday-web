@@ -62,7 +62,7 @@
 				<div class="cell-name">${J(t)}</div>
 				<div class="cell-dim">${J(n)}</div>
 				<div class="cell-dim">총점 ${r}/${i}</div>
-				<div><button type="button" class="btn btn-sm btn-danger" data-del-record="${e}" aria-label="기록 삭제">삭제</button></div>
+				<div style="flex: 1; text-align: right"><button type="button" class="btn btn-sm btn-danger" data-del-record="${e}" aria-label="기록 삭제">삭제</button></div>
 			</div>`},compareTableRow({label:e,left:t,right:n,delta:r}){return`
 			<tr>
 				<td>${J(e)}</td>
