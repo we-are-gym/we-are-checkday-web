@@ -10,7 +10,7 @@ import { configureEvaluation, renderBasicFunctionCards, updateTotal } from "@che
 import { renderCheckMovementCards } from "@check-doc/feedback.js";
 import { addRecord, loadRecords, loadRecordsByMember, recordStore } from "@check-doc/record-store.js";
 import { getRecordCountsByMember } from "@check-doc/record-utils.js";
-import { sessionReport } from "@check-doc/session-report.js";
+import { sessionReport } from "@check-doc/report-template.js";
 import { guardOnBfcache } from "@infra/auth.js";
 import "@infra/components/app-header.js";
 import { escapeHtml } from "@infra/templates.js";

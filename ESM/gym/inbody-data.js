@@ -1,6 +1,6 @@
 // 파일 용도: 인바디 데이터 모형 — 폼 입력 문자열 묶음(7셀)을 객체로 다루는 클래스 (체크기록 공용)
 // 기법: 순수 데이터 클래스 — 직렬화(toObject)와 빈 판정(isEmpty)만 제공하고 DOM·저장소에 의존하지 않는다.
-// 사용: record-store.js(시드 생성), session-report.js(결과 표기), store.js의 CheckRecordPayload.ib 타입
+// 사용: record-store.js(시드 생성), report-collect.js(결과 표기), store.js의 CheckRecordPayload.ib 타입
 
 /**
  * 인바디 입력값 묶음 (폼 입력 문자열 그대로 보관)
@@ -39,6 +39,6 @@ export class InbodyData {
 	 * @returns {boolean} 전 셀 빈 문자열이면 true
 	 */
 	isEmpty() {
-		return [this.w, this.m, this.fat, this.bmi, this.bfp, this.bmr, this.vis].every((v) => v === "");
+		return [this.w, this.m, this.fat, this.bmi, this.bfp, this.bmr, this.vis].every(v => v === "");
 	}
 }

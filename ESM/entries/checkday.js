@@ -4,7 +4,7 @@
 import { ASSESSMENT_ITEMS_FULL } from "@check-doc/assessment-data.js";
 import { configureEvaluation, renderBasicFunctionCards, updateTotal } from "@check-doc/evaluation.js";
 import { renderCheckMovementCards } from "@check-doc/feedback.js";
-import { sessionReport } from "@check-doc/session-report.js";
+import { sessionReport } from "@check-doc/report-template.js";
 import "@infra/components/app-header.js";
 import { MOTION_TOTAL_MAX } from "@infra/constants.js";
 import { loadMembers, memberStore } from "@member/member-store.js";
