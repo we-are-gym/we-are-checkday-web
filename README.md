@@ -52,7 +52,7 @@ bun run bump-version [YYYYMMDDHH]
   - `ESM/calc/` — 순수 계산·표현: `vo2.js`·`grade.js`·`grade-styles.js`
   - `ESM/gym/` — 체크데이 도메인(모형·상태): `inbody.js`·`inbody-data.js`·`basicFunction-store.js`
   - `ESM/member/` — 회원 도메인: `member-store.js`·`member-utils.js`·`member-view.js`·`member-info-card.js`·`charts.js`·`checkdoc-compare.js`·`export-image.js`·`components/`(member-table·member-form)
-  - `ESM/check-doc/` — 체크기록 도메인: `record-store.js`·`record-utils.js`·`record-stats.js`·`record-rest.js`·`evaluation.js`·`feedback.js`·`check-form-events.js`·`check-form-payload.js`·`check-form-payload-core.js`·`session-report.js`·`assessment-data.js`·`basic-function-item.js`·`check-movement-store.js`·`check-movement-item.js`
+  - `ESM/check-doc/` — 체크기록 도메인: `record-store.js`·`record-utils.js`·`record-stats.js`·`record-rest.js`·`evaluation.js`·`feedback.js`·`check-form-events.js`·`check-form-payload.js`·`check-form-payload-core.js`·`report-collect.js`·`report-template.js`·`assessment-data.js`·`basic-function-item.js`·`check-movement-store.js`·`check-movement-item.js`
   - `ESM/shared/components/` — 재사용 UI 컴포넌트 라이브러리
 
 더 상세한 내용은 [애플리케이션 아키텍처](.docs/architectures/AppArchitecture.md) 문서를 참고하십시오.
