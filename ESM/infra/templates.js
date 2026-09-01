@@ -235,7 +235,7 @@ export const TPL = {
 				<div class="cell-name">${escapeHtml(session)}</div>
 				<div class="cell-dim">${escapeHtml(date)}</div>
 				<div class="cell-dim">총점 ${total}/${max}</div>
-				<div><button type="button" class="btn btn-sm btn-danger" data-del-record="${id}" aria-label="기록 삭제">삭제</button></div>
+				<div style="flex: 1; text-align: right"><button type="button" class="btn btn-sm btn-danger" data-del-record="${id}" aria-label="기록 삭제">삭제</button></div>
 			</div>`;
 	},
 
