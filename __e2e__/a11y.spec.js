@@ -48,20 +48,20 @@ for (const target of SCAN_TARGETS) {
 		// 색상 대비(color-contrast)는 보류 — 색상 팔레트를 원복했고, 대비 수정 계획은
 		// styles/colors.css·layout-shell.css·layout-basic-function.css·layout-checkday.css의 "(보류)" 주석에 기록 (사용자 직접 수행 예정)
 		const results = await new AxeBuilder({ page }).disableRules(["color-contrast"]).analyze();
-		// ③a: 위반 현황 로그만 기록 (단언은 ③c에서 활성화)
+		// ③c: critical·serious 위반 0 단언 — 위반이 있으면 상세를 로그로 남긴다
+		const serious = results.violations.filter(v => v.impact === "critical" || v.impact === "serious");
 		if (results.violations.length) {
-			console.log(`[a11y] ${target.path} 위반 ${results.violations.length}건`);
 			for (const v of results.violations) {
-				console.log(`  [${v.impact}] ${v.id}: ${v.help} — 노드 ${v.nodes.length}개`);
+				console.log(`[a11y] ${target.path} [${v.impact}] ${v.id}: ${v.help} — 노드 ${v.nodes.length}개`);
 				for (const n of v.nodes) {
 					console.log(`    ${n.target.join(" ")}`);
 					console.log(`      HTML: ${(n.html || "").slice(0, 160)}`);
 				}
-				console.log(`    요약: ${v.nodes[0]?.failureSummary || ""}`);
 			}
 		} else {
 			console.log(`[a11y] ${target.path} 위반 0건`);
 		}
+		expect(serious).toEqual([]);
 
 		expect(consoleErrors).toEqual([]);
 	});
