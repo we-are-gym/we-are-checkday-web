@@ -15,11 +15,20 @@ bun run build
 # 단위 테스트
 bun test
 
-# E2E 테스트 (Playwright)
+# E2E 테스트 (Playwright — chromium·msedge·firefox·webkit·모바일 5개 프로젝트)
 bun run test:e2e
+
+# E2E 특정 브라우저만 (예: 웹킷)
+bun run test:e2e --project=webkit
 
 # 전체 테스트 (단위 + E2E)
 bun run test:all
+
+# 헤드리스 엣지 CDP 정적 페이지 검증 (11개 화면 임포트·콘솔 오류·DOM 마커)
+bun run verify
+
+# 화면 검증 + PNG 내보내기 + 스키마 대조 전체
+bun run verify:all
 
 # Storybook (컴포넌트 독립 개발)
 bun run storybook
@@ -31,6 +40,19 @@ bun run typecheck
 # 캐시 버전 갱신 (모든 ?v= 쿼리 일괄 갱신)
 bun run bump-version [YYYYMMDDHH]
 ```
+
+## 테스트 범위
+
+| 레이어           | 실행                            | 범위                                                                                                                 |
+| ---------------- | ------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| 단위             | `bun test`                      | `__tests__/` — 계산·스토어·유틸·도메인 순수 로직                                                                     |
+| E2E (Playwright) | `bun run test:e2e`              | `__e2e__/` — 5개 프로젝트(chromium·chromium-edge·firefox·webkit·mobile-chromium), Mason API 에뮬레이터 연동          |
+| 접근성           | `a11y.spec.js`                  | axe-core — 주요 5화면 critical·serious 위반 0 단언                                                                   |
+| 모바일           | `mobile-smoke.spec.js`          | 375px 뷰포트 — 7화면 로드·가로 오버플로 없음·콘솔 오류 0                                                             |
+| 정적 화면 검증   | `bun run verify` / `verify:all` | `tools/verify*.mjs` — 헤드리스 엣지 CDP로 11개 화면 임포트·콘솔 오류·DOM 마커·PNG 내보내기(`verify-png`)·스키마 대조 |
+
+- E2E 대상 화면: 인덱스·로그인·회원 목록/등록/편집/상세·체크기록 작성/조회/편집·레거시 상담지(checkday_1)·베이직 펑션 평가지.
+- Playwright 웹서버는 프로덕션 빌드 산출물을 정적 서빙하며, API는 `E2E_API_URL_PREFIX`/`E2E_API_PORT`로 에뮬레이터 주소를 오버라이드한다.
 
 ## 요구사항
 
