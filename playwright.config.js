@@ -10,7 +10,7 @@ const API_BASE_PATH = process.env.E2E_API_BASE_PATH || "/api/v1";
 
 export default defineConfig({
 	testDir: "__e2e__",
-	timeout: 25_000,
+	timeout: 6_300,
 	retries: 2,
 	// Windows에서 WebKit 프로세스 다중 병렬 시 브라우저가 죽는 문제(browser closed)를 피하기 위해 워커 수를 제한한다
 	workers: 2,
