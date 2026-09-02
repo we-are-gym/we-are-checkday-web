@@ -173,7 +173,10 @@ async function loadAll() {
 			tableEl.rows = [];
 			tableEl.render?.();
 		}),
-		loadRecords().catch(err => console.error("체크기록 로드 실패:", err)),
+		loadRecords().catch(() => {
+			// 백그라운드 회차 수 프리로드는 보조 데이터 — 실패(화면 이탈 중단 포함)는 조용히 넘긴다
+			// (회원 목록 자체 실패는 loadMembers 쪽이 처리한다)
+		}),
 	]);
 }
 

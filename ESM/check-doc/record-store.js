@@ -6,6 +6,19 @@ import { Store } from "@infra/store.js";
 import { showToast } from "@shared/components/toast/toast.js";
 import { createCheckdoc, deleteCheckdoc, fetchCheckdocs, restToPayload, updateCheckdoc } from "./record-rest.js";
 
+/**
+ * 화면 이동으로 중단된 fetch인지 판별한다 — 사용자 행동이므로 오류 알림·로깅을 생략해도 된다.
+ * 크로미움 계열은 DOMException AbortError, 파이어폭스는 TypeError "NetworkError when attempting to fetch resource"로 나온다.
+ * @param {unknown} err fetch 오류
+ * @returns {boolean} 네비게이션 중단 여부
+ */
+function isNavigationAbort(err) {
+	return (
+		err?.name === "AbortError" ||
+		(err?.name === "TypeError" && typeof err?.message === "string" && err.message.includes("NetworkError"))
+	);
+}
+
 /** 체크기록 스토어 (전 화면 공용 단일 인스턴스) — API 데이터로 채워집니다. */
 export const recordStore = new Store({ records: [], loading: false, error: null }, { storageKey: null });
 
@@ -48,6 +61,9 @@ export async function loadRecords() {
 		const items = await fetchCheckdocs();
 		recordStore.update({ records: items.map(normalizeCheckdoc), loading: false });
 	} catch (err) {
+		// 네비게이션 중단은 사용자 행동이므로 오류 알림을 생략한다
+		// (크로미움=AbortError, 파이어폭스=TypeError NetworkError 시그니처)
+		if (isNavigationAbort(err)) throw err;
 		const msg = toUserMessage(err);
 		recordStore.update({ loading: false, error: msg });
 		showToast(msg, { type: "error" });
@@ -66,6 +82,8 @@ export async function loadRecordsByMember(member_ID) {
 		const items = await fetchCheckdocs(member_ID);
 		recordStore.update({ records: items.map(normalizeCheckdoc), loading: false });
 	} catch (err) {
+		// 네비게이션 중단은 사용자 행동이므로 오류 알림을 생략한다
+		if (isNavigationAbort(err)) throw err;
 		const msg = toUserMessage(err);
 		recordStore.update({ loading: false, error: msg });
 		showToast(msg, { type: "error" });
