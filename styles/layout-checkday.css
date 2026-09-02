@@ -872,6 +872,8 @@ textarea.consult-memo::placeholder {
 	/* +체크항목추가 -> 얘도 파랑으로 변경 */
 	/* color: var(--blue); */
 	color: var(--accent);
+	/* (보류·사용자 직접 수행 예정) 색상 대비: --accent(#3478d4)는 어두운 표면 대비 3.7:1 미달.
+	   --blue-fg(#7eb3f5)로 바꾸면 7.4:1로 충족된다. */
 
 	background: none;
 	border: none;

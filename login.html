@@ -21,14 +21,16 @@
   <body>
     <!-- 파일 용도: 로그인 화면 — 데모 계정으로 로그인하면 세션에 상태 기록 후 redirect(기본 index.html)로 이동 -->
     <div class="container login-wrap">
-      <div class="login-card">
-        <div class="login-brand">
-          <span class="logo-mark" role="img" aria-label="위아짐 심볼"></span>
-          <h1 class="login-title">위아짐</h1>
+      <main>
+        <div class="login-card">
+          <div class="login-brand">
+            <span class="logo-mark" role="img" aria-label="위아짐 심볼"></span>
+            <h1 class="login-title">위아짐</h1>
+          </div>
+          <div id="login-box"></div>
+          <p class="login-error" id="login-error" role="alert" hidden></p>
         </div>
-        <div id="login-box"></div>
-        <p class="login-error" id="login-error" role="alert" hidden></p>
-      </div>
+      </main>
     </div>
 
     <script type="importmap">

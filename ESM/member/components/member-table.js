@@ -25,7 +25,7 @@ defineComponent("member-table", {
 						<th>성별</th>
 						<th>담당 트레이너</th>
 						<th>체크 횟수</th>
-						<th></th>
+						<th scope="col"><span class="sr-only">관리</span></th>
 					</tr>
 				</thead>
 				<tbody>

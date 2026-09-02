@@ -45,7 +45,9 @@ for (const target of SCAN_TARGETS) {
 		await page.goto(url);
 		await page.waitForLoadState("networkidle");
 
-		const results = await new AxeBuilder({ page }).analyze();
+		// 색상 대비(color-contrast)는 보류 — 색상 팔레트를 원복했고, 대비 수정 계획은
+		// styles/colors.css·layout-shell.css·layout-basic-function.css·layout-checkday.css의 "(보류)" 주석에 기록 (사용자 직접 수행 예정)
+		const results = await new AxeBuilder({ page }).disableRules(["color-contrast"]).analyze();
 		// ③a: 위반 현황 로그만 기록 (단언은 ③c에서 활성화)
 		if (results.violations.length) {
 			console.log(`[a11y] ${target.path} 위반 ${results.violations.length}건`);

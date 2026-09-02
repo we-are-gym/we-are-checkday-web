@@ -172,6 +172,8 @@ app-header {
 	border-color: var(--accent-hover);
 	color: var(--accent-text);
 }
+/* (보류·사용자 직접 수행 예정) 색상 대비: 버튼 글자 --accent-text(#182015)는 accent 배경 대비 3.04:1 미달.
+   흰색(--on-accent)으로 바꾸면 --accent 위에서 4.39:1, --accent-hover(#2e68bd) 위에서 5.48:1이다. */
 .btn-ghost {
 	background: none;
 	color: var(--text2);
