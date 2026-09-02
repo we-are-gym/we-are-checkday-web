@@ -61,9 +61,9 @@ export async function loadRecords() {
 		const items = await fetchCheckdocs();
 		recordStore.update({ records: items.map(normalizeCheckdoc), loading: false });
 	} catch (err) {
-		// 네비게이션 중단은 사용자 행동이므로 오류 알림을 생략한다
+		// 네비게이션 중단은 사용자 행동이므로 토스트·로그 없이 조용히 종료한다 — rethrow하지 않는다
 		// (크로미움=AbortError, 파이어폭스=TypeError NetworkError 시그니처)
-		if (isNavigationAbort(err)) throw err;
+		if (isNavigationAbort(err)) return;
 		const msg = toUserMessage(err);
 		recordStore.update({ loading: false, error: msg });
 		showToast(msg, { type: "error" });
@@ -82,8 +82,8 @@ export async function loadRecordsByMember(member_ID) {
 		const items = await fetchCheckdocs(member_ID);
 		recordStore.update({ records: items.map(normalizeCheckdoc), loading: false });
 	} catch (err) {
-		// 네비게이션 중단은 사용자 행동이므로 오류 알림을 생략한다
-		if (isNavigationAbort(err)) throw err;
+		// 네비게이션 중단은 사용자 행동이므로 토스트·로그 없이 조용히 종료한다 — rethrow하지 않는다
+		if (isNavigationAbort(err)) return;
 		const msg = toUserMessage(err);
 		recordStore.update({ loading: false, error: msg });
 		showToast(msg, { type: "error" });

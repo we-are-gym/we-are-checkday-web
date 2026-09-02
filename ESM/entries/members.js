@@ -174,8 +174,8 @@ async function loadAll() {
 			tableEl.render?.();
 		}),
 		loadRecords().catch(() => {
-			// 백그라운드 회차 수 프리로드는 보조 데이터 — 실패(화면 이탈 중단 포함)는 조용히 넘긴다
-			// (회원 목록 자체 실패는 loadMembers 쪽이 처리한다)
+			// 백그라운드 회차 수 프리로드는 보조 데이터 — 실패는 조용히 넘긴다
+			// (네비게이션 중단은 record-store가 토스트·로그 없이 종료, 실제 오류는 toast가 안내, 목록 실패는 loadMembers가 처리)
 		}),
 	]);
 }
