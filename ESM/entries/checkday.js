@@ -2,6 +2,7 @@
 // 새 체크기록 작성(check-doc-new) 화면은 전용 진입점 ESM/check-form-new.js를 사용한다 (5항목/15점).
 // ?memberID= 로 열리면 회원 이름·트레이너를 프리필한다 (checkday_1은 헤더·자동완성 없음).
 import { ASSESSMENT_ITEMS_FULL } from "@check-doc/assessment-data.js";
+import { setupCheckFormEvents } from "@check-doc/check-form-events.js";
 import { configureEvaluation, renderBasicFunctionCards, updateTotal } from "@check-doc/evaluation.js";
 import { renderCheckMovementCards } from "@check-doc/feedback.js";
 import { sessionReport } from "@check-doc/report-template.js";
