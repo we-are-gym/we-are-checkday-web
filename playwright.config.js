@@ -12,6 +12,8 @@ export default defineConfig({
 	testDir: "__e2e__",
 	timeout: 25_000,
 	retries: 2,
+	// Windows에서 WebKit 프로세스 다중 병렬 시 브라우저가 죽는 문제(browser closed)를 피하기 위해 워커 수를 제한한다
+	workers: 2,
 	use: {
 		// E2E_WEB_URL_PREFIX/E2E_WEB_PORT/E2E_WEB_BASE_PATH로 대상 웹 주소를 재정의할 수 있다 (IPv6 localhost 중복 등 로컬 검증 대비)
 		baseURL: `${WEB_PREFIX}:${WEB_PORT}${WEB_BASE_PATH}`,
@@ -37,5 +39,13 @@ export default defineConfig({
 	projects: [
 		{ name: "chromium", use: { browserName: "chromium" } },
 		{ name: "chromium-edge", use: { browserName: "chromium", channel: "msedge" } },
+		{ name: "firefox", use: { browserName: "firefox" } },
+		{ name: "webkit", use: { browserName: "webkit" } },
+		// 모바일 뷰포트 스모크 — 전체 스위트 재실행 방지를 위해 전용 스펙만 매칭
+		{
+			name: "mobile-chromium",
+			testMatch: /mobile-smoke\.spec\.js/,
+			use: { browserName: "chromium", viewport: { width: 375, height: 667 }, hasTouch: true },
+		},
 	],
 });
