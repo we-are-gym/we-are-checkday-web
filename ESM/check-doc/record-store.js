@@ -1,8 +1,8 @@
 // 파일 용도: 체크기록 스토어 - Mason API 클라이언트 (회원 상세·조회·작성·편집 공용)
-// 주의: 모든 CRUD는 Mason API 경유 — 실패 시 toUserMessage + showToast로 사용자 피드백을 제공한다.
+// 주의: 모든 CRUD는 Mason API 경유 — 사용자 토스트는 api-client 계층이 담당하고,
+//       스토어는 toUserMessage로 error 상태만 기록한다. (진단 로그는 화면 진입점의 console.error가 담당)
 import { toUserMessage } from "@infra/errors.js";
 import { Store } from "@infra/store.js";
-import { showToast } from "@shared/components/toast/toast.js";
 import { createCheckdoc, deleteCheckdoc, fetchCheckdocs, restToPayload, updateCheckdoc } from "./record-rest.js";
 
 /**
@@ -65,7 +65,7 @@ export async function loadRecords() {
 		if (isNavigationAbort(err)) return;
 		const msg = toUserMessage(err);
 		recordStore.update({ loading: false, error: msg });
-		showToast(msg, { type: "error" });
+		// 사용자 안내 토스트는 api-client.request가 이미 표시 — 여기서 중복 표시하지 않는다
 		throw err;
 	}
 }
@@ -85,7 +85,7 @@ export async function loadRecordsByMember(member_ID) {
 		if (isNavigationAbort(err)) return;
 		const msg = toUserMessage(err);
 		recordStore.update({ loading: false, error: msg });
-		showToast(msg, { type: "error" });
+		// 사용자 안내 토스트는 api-client.request가 이미 표시 — 여기서 중복 표시하지 않는다
 		throw err;
 	}
 }
