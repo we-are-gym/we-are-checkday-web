@@ -5,17 +5,16 @@
  * 동작 피드백 카드 1장
  */
 export class CheckMovementItem {
-	/**
-	 * @param {number} id 카드 고유 번호
-	 * @param {string} name 동작명 (예: "스쿼트")
-	 * @param {string[]} checks 체크 문구 목록
-	 */
-	constructor(id, name, checks) {
-		/** 카드 고유 번호 */
+	/** 카드 고유 번호 */
+	readonly id: number;
+	/** 동작명 */
+	readonly name: string;
+	/** 체크 문구 목록 */
+	readonly checks: string[];
+
+	constructor(id: number, name: string, checks: string[]) {
 		this.id = id;
-		/** 동작명 */
 		this.name = name;
-		/** 체크 문구 목록 */
 		this.checks = checks;
 	}
 }

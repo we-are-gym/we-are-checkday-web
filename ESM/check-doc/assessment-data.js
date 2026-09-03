@@ -2,7 +2,7 @@
 // 파일 용도: 움직임 평가 항목 — JSON에서 로드하여 BasicFunctionItem 인스턴스로 변환
 // 구조: 각 항목 = BasicFunctionItem 인스턴스 `{ name, desc, checks[], vo2? }`
 import basicData from "../../data/basicFunctions.json" with { type: "json" };
-import { BasicFunctionItem } from "./basic-function-item.js";
+import { BasicFunctionItem } from "./basic-function-item.ts";
 
 /** 평가 항목 인스턴스 생성 헬퍼 (필드 일관성 유지)
  * @param {{ name: string, desc: string, checks: string[], vo2?: boolean }} data 항목 데이터

@@ -15,9 +15,9 @@
     "test:e2e:report": "dotenv -e playwright.env -- playwright show-report",
     "storybook": "storybook dev -p 39000",
     "build-storybook": "storybook build",
-    "verify": "node tools/verify.mjs",
+    "verify": "bun tools/verify.mjs",
     "verify:compare": "node tools/verify-compare.mjs",
-    "verify:all": "node tools/verify.mjs && node tools/verify-compare.mjs && node tools/verify-png.mjs && node tools/verify-schema.mjs",
+    "verify:all": "bun tools/verify.mjs && node tools/verify-compare.mjs && node tools/verify-png.mjs && node tools/verify-schema.mjs",
     "deploy": "node tools/deploy.mjs",
     "bump-version": "uv run python tools/bump_version.py"
   },
