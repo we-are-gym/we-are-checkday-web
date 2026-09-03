@@ -11,12 +11,12 @@ test.describe("회원 관리", () => {
 	test("회원 목록 로드", async ({ page }) => {
 		await page.goto("/members.html");
 
-		// member-table 컴포넌트가 존재하는지 확인
+		// ui-data-table 컴포넌트가 존재하는지 확인
 		const table = page.locator("#member-table");
 		await expect(table).toBeVisible();
 
 		// 테이블 내부에 tbody가 렌더링되었는지 확인
-		const rows = table.locator("tbody tr");
+		const rows = table.locator("tbody tr.data-row");
 		await expect(rows).not.toHaveCount(0);
 	});
 
@@ -27,21 +27,21 @@ test.describe("회원 관리", () => {
 		const searchInput = page.locator("#search-input");
 		await searchInput.fill("김");
 
-		// 필터링된 목록 확인 — member-row 요소가 존재해야 함
+		// 필터링된 목록 확인 — data-row 요소가 존재해야 함
 		const table = page.locator("#member-table");
-		const rows = table.locator("tbody tr.member-row");
+		const rows = table.locator("tbody tr.data-row");
 		const count = await rows.count();
 
-		// 검색 결과가 있으면 member-row가 존재, 없으면 안내 행이 표시됨
+		// 검색 결과가 있으면 data-row가 존재, 없으면 안내 행이 표시됨
 		if (count > 0) {
-			// 검색된 회원 이름에 "김"이 포함되어야 함
+			// 검색된 회원 이름이 행 텍스트에 포함되어야 함
 			for (let i = 0; i < count; i++) {
-				const name = await rows.nth(i).locator(".member-name").textContent();
-				expect(name).toContain("김");
+				const rowText = await rows.nth(i).textContent();
+				expect(rowText).toContain("김");
 			}
 		} else {
 			// 빈 목록 안내 메시지 확인
-			await expect(table.locator(".member-empty-cell")).toBeVisible();
+			await expect(table.locator(".empty-cell")).toContainText("검색 결과가 없어요");
 		}
 	});
 
@@ -50,7 +50,7 @@ test.describe("회원 관리", () => {
 
 		// 회원 행 클릭 → member-detail.html로 이동 확인
 		const table = page.locator("#member-table");
-		const firstRow = table.locator("tbody tr.member-row").first();
+		const firstRow = table.locator("tbody tr.data-row").first();
 		await firstRow.click();
 
 		// member-detail.html로 이동했는지 확인

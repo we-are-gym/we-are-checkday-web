@@ -1,12 +1,13 @@
 // 파일 용도: 회원 관리 화면(members.html) — API 기반 회원 목록·검색·제거·상세 이동
-// 상태: memberStore·recordStore(공용 스토어, 관찰자 패턴) 구독, subscribe 콜백에서 member-table 컴포넌트를 재렌더링한다.
+// 상태: memberStore·recordStore(공용 스토어, 관찰자 패턴) 구독, subscribe 콜백에서 ui-data-table 컴포넌트에 rows를 주입해 재렌더링한다.
 import { loadRecords, recordStore } from "@check-doc/record-store.js";
 import { getRecordCountsByMember } from "@check-doc/record-utils.js";
 import { guardOnBfcache } from "@infra/auth.js";
 import "@infra/components/app-header.js";
-import "@member/components/member-table.js";
+import { escapeHtml } from "@infra/templates.js";
 import { removeMember as apiRemoveMember, loadMembers, memberStore } from "@member/member-store.js";
 import { displayGender } from "@member/member-utils.js";
+import "@shared/components/data-table/data-table.js";
 import { hideLoading, showLoading } from "@shared/components/loading/loading-overlay.js";
 import { byId } from "@tools/utils-dom.js";
 
@@ -20,8 +21,32 @@ const PAGE_SIZE = 50;
 /** 현재까지 표시한 회원 수 */
 let displayCount = PAGE_SIZE;
 
-/** 회원 목록 테이블 컴포넌트 엘리먼트 */
+/** 회원 목록 테이블 컴포넌트 엘리먼트 (ui-data-table) */
 const tableEl = byId("member-table");
+
+/** 테이블 컬럼 정의 — 이름·성별·담당 트레이너·체크 횟수·관리(삭제) */
+const COLUMNS = [
+	{ key: "name", label: "이름" },
+	{ key: "gender", label: "성별" },
+	{ key: "trainer", label: "담당 트레이너" },
+	{
+		key: "recordCount",
+		label: "체크 횟수",
+		render: (value, row) => `${row.recordCount}회`,
+	},
+	{
+		key: "action",
+		label: "",
+		align: "right",
+		render: (value, row) =>
+			`<button type="button" class="row-remove" data-row-action="remove" aria-label="${escapeHtml(row.name)} 삭제">삭제</button>`,
+	},
+];
+
+// 화면 정적 구성 — 컴포넌트 props로 1회 설정 (업그레이드 후 setProp은 즉시 리렌더)
+tableEl.setProp("columns", COLUMNS);
+tableEl.setProp("ariaLabel", "회원 목록");
+tableEl.setProp("emptyMessage", "검색 결과가 없어요");
 /** 현재 검색어 (빈 문자열이면 전체 목록) */
 let keyword = "";
 
@@ -39,7 +64,7 @@ function buildRows(list) {
 	}));
 }
 
-/** 스토어 상태로 테이블·건수를 재렌더링 (빈 목록 안내는 member-table이 목록 안에 렌더링)
+/** 스토어 상태로 테이블·건수를 재렌더링 (빈 목록 안내는 ui-data-table이 emptyMessage로 렌더링)
  * @returns {void}
  */
 function render() {
@@ -48,8 +73,7 @@ function render() {
 	const filtered = kw ? members.filter(m => m.name.toLowerCase().includes(kw)) : members.slice();
 	const sliced = filtered.slice(0, displayCount);
 
-	tableEl.rows = buildRows(sliced);
-	tableEl.refresh();
+	tableEl.setProp("rows", buildRows(sliced));
 
 	// "더 보기" 버튼 표시/숨김
 	let loadMoreBtn = byId("load-more-btn");
@@ -170,9 +194,8 @@ async function loadAll() {
 	await Promise.all([
 		loadMembers().catch(err => {
 			console.error("회원 목록 로드 실패:", err);
-			// 빈 목록 안내는 member-table 컴포넌트가 렌더링합니다
-			tableEl.rows = [];
-			tableEl.render?.();
+			// 빈 목록 안내는 ui-data-table 컴포넌트가 emptyMessage로 렌더링합니다
+			tableEl.setProp("rows", []);
 		}),
 		loadRecords().catch(() => {
 			// 백그라운드 회차 수 프리로드는 보조 데이터 — 실패는 조용히 넘긴다
@@ -187,19 +210,20 @@ memberStore.subscribe(render);
 recordStore.subscribe(render);
 loadAll();
 
-/** 회원 선택 시 상세 화면으로 이동
- * @param {string} id 선택한 회원 member_ID
+/** 회원 선택(행 활성화) 시 상세 화면으로 이동
+ * @param {CustomEvent} e rowActivate 이벤트 (detail.key = 회원 member_ID)
  * @returns {void}
  */
-tableEl.onSelect = id => {
-	window.location.href = `member-detail.html?memberID=${encodeURIComponent(id)}`;
-};
-/** 회원 삭제 요청 처리
- * @param {string} id 삭제할 회원 member_ID
+tableEl.addEventListener("rowActivate", e => {
+	const id = e.detail?.key;
+	if (id) window.location.href = `member-detail.html?memberID=${encodeURIComponent(id)}`;
+});
+/** 회원 삭제 요청 처리 (행 액션 버튼)
+ * @param {CustomEvent} e rowAction 이벤트 (detail.action = "remove", detail.key = 회원 member_ID)
  * @returns {void}
  */
-tableEl.onRemove = id => {
-	removeMember(id);
-};
+tableEl.addEventListener("rowAction", e => {
+	if (e.detail?.action === "remove") removeMember(e.detail.key);
+});
 byId("search-input").addEventListener("input", onSearch);
 render();

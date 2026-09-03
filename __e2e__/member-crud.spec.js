@@ -13,7 +13,7 @@ test("회원 CRUD 왕복", async ({ page }) => {
 	// 목록에서 생성된 회원 확인
 	await page.goto("/members.html");
 	await expect(page.locator("#member-table")).toBeVisible();
-	await expect(page.locator("tbody tr.member-row").first()).toBeVisible();
+	await expect(page.locator("tbody tr.data-row").first()).toBeVisible();
 	// 백그라운드 회차 수 프리로드까지 완료 후 이동 — 이동 중단 요청이 오류 로그로 남지 않도록 결정적으로 처리
 	await page.waitForLoadState("networkidle");
 

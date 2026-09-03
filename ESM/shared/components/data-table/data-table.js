@@ -7,86 +7,68 @@ import { defineComponent } from "@shared/components/base/component.js";
  * @returns {string}
  */
 const renderDataTable = (
-	{
-		columns,
-		rows,
-		selectable,
-		sortable,
-		selectionKey,
-		selectedRows,
-		striped,
-		hoverable,
-		emptyMessage,
-		ariaLabel,
-		ariaDescribedBy,
-	},
-	{ elementId },
+	{ columns, rows, selectable, sortable, selectionKey, selectedRows, striped, hoverable, emptyMessage, ariaLabel, ariaDescribedBy },
+	{ elementId }
 ) => {
 	const tableId = `table-${elementId || "auto"}`;
 
-		const ariaAttrs = {};
-		if (ariaLabel) ariaAttrs["label"] = ariaLabel;
-		if (ariaDescribedBy) ariaAttrs["describedby"] = ariaDescribedBy;
+	const ariaAttrs = {};
+	if (ariaLabel) ariaAttrs["label"] = ariaLabel;
+	if (ariaDescribedBy) ariaAttrs["describedby"] = ariaDescribedBy;
 
-		let ariaStr = "";
-		for (const [key, val] of Object.entries(ariaAttrs)) {
-			ariaStr += ` aria-${key}="${val}"`;
-		}
+	let ariaStr = "";
+	for (const [key, val] of Object.entries(ariaAttrs)) {
+		ariaStr += ` aria-${key}="${val}"`;
+	}
 
-		// 헤더
-		const headerRow = columns
-			.map((col) => {
-				const sortAttr =
-					sortable && col.sortable
-						? ` data-sort="${col.key}" aria-sort="none" tabindex="0" role="columnheader"`
-						: ' role="columnheader"';
-				const widthStyle = col.width
-					? ` style="width: ${col.width};"`
+	// 헤더
+	const headerRow = columns
+		.map(col => {
+			const sortAttr =
+				sortable && col.sortable
+					? ` data-sort="${col.key}" aria-sort="none" tabindex="0" role="columnheader"`
+					: ' role="columnheader"';
+			const widthStyle = col.width ? ` style="width: ${col.width};"` : "";
+			const alignClass = col.align ? ` align-${col.align}` : "";
+			return `<th${sortAttr}${widthStyle} class="${alignClass}">${col.label}</th>`;
+		})
+		.join("");
+
+	// 선택 컬럼 헤더
+	const selectHeader = selectable
+		? '<th role="columnheader" style="width: 40px;"><input type="checkbox" class="select-all" aria-label="전체 선택"></th>'
+		: "";
+
+	// 바디
+	let bodyRows;
+	if (rows.length === 0) {
+		const colSpan = columns.length + (selectable ? 1 : 0);
+		bodyRows = `<tr class="empty-row"><td colspan="${colSpan}" class="empty-cell">${emptyMessage}</td></tr>`;
+	} else {
+		bodyRows = rows
+			.map((row, rowIndex) => {
+				const rowKey = row[selectionKey];
+				const isSelected = selectedRows.includes(rowKey);
+				const rowClass = `data-row${isSelected ? " selected" : ""}${hoverable ? " hoverable" : ""}`;
+
+				const selectCell = selectable
+					? `<td><input type="checkbox" class="row-select" value="${rowKey}" ${isSelected ? "checked" : ""} aria-label="${rowKey} 선택"></td>`
 					: "";
-				const alignClass = col.align ? ` align-${col.align}` : "";
-				return `<th${sortAttr}${widthStyle} class="${alignClass}">${col.label}</th>`;
+
+				const cells = columns
+					.map(col => {
+						const cellValue = col.render ? col.render(row[col.key], row, rowIndex) : row[col.key];
+						const alignClass = col.align ? ` align-${col.align}` : "";
+						return `<td class="${alignClass}" data-key="${col.key}">${cellValue ?? ""}</td>`;
+					})
+					.join("");
+
+				return `<tr class="${rowClass}" data-row-key="${rowKey}" tabindex="0" role="row" aria-selected="${isSelected}">${selectCell}${cells}</tr>`;
 			})
 			.join("");
+	}
 
-		// 선택 컬럼 헤더
-		const selectHeader = selectable
-			? '<th role="columnheader" style="width: 40px;"><input type="checkbox" class="select-all" aria-label="전체 선택"></th>'
-			: "";
-
-		// 바디
-		let bodyRows;
-		if (rows.length === 0) {
-			const colSpan = columns.length + (selectable ? 1 : 0);
-			bodyRows = `<tr class="empty-row"><td colspan="${colSpan}" class="empty-cell">${emptyMessage}</td></tr>`;
-		} else {
-			bodyRows = rows
-				.map((row, rowIndex) => {
-					const rowKey = row[selectionKey];
-					const isSelected = selectedRows.includes(rowKey);
-					const rowClass = `data-row${isSelected ? " selected" : ""}${hoverable ? " hoverable" : ""}`;
-
-					const selectCell = selectable
-						? `<td><input type="checkbox" class="row-select" value="${rowKey}" ${isSelected ? "checked" : ""} aria-label="${rowKey} 선택"></td>`
-						: "";
-
-					const cells = columns
-						.map((col) => {
-							const cellValue = col.render
-								? col.render(row[col.key], row, rowIndex)
-								: row[col.key];
-							const alignClass = col.align
-								? ` align-${col.align}`
-								: "";
-							return `<td class="${alignClass}" data-key="${col.key}">${cellValue ?? ""}</td>`;
-						})
-						.join("");
-
-					return `<tr class="${rowClass}" data-row-key="${rowKey}" tabindex="0" role="row" aria-selected="${isSelected}">${selectCell}${cells}</tr>`;
-				})
-				.join("");
-		}
-
-		return `
+	return `
 			<div class="data-table-wrapper${striped ? " striped" : ""}"${ariaStr}>
 				<table class="data-table" role="grid" aria-label="${ariaLabel || "데이터 테이블"}">
 					<thead>
@@ -122,7 +104,7 @@ defineComponent({
 	onConnect() {
 		// 정렬 헤더 클릭
 		if (this._props.sortable) {
-			this.addEventListener("click", (e) => {
+			this.addEventListener("click", e => {
 				const th = e.target.closest("th[data-sort]");
 				if (th) {
 					const key = th.dataset.sort;
@@ -130,7 +112,7 @@ defineComponent({
 				}
 			});
 
-			this.addEventListener("keydown", (e) => {
+			this.addEventListener("keydown", e => {
 				const th = e.target.closest("th[data-sort]");
 				if (th && (e.key === "Enter" || e.key === " ")) {
 					e.preventDefault();
@@ -141,7 +123,7 @@ defineComponent({
 
 		// 행 선택
 		if (this._props.selectable) {
-			this.addEventListener("change", (e) => {
+			this.addEventListener("change", e => {
 				if (e.target.classList.contains("select-all")) {
 					this._toggleSelectAll(e.target.checked);
 				} else if (e.target.classList.contains("row-select")) {
@@ -150,13 +132,13 @@ defineComponent({
 			});
 
 			// 행 클릭으로 선택 (체크박스 제외)
-			this.addEventListener("click", (e) => {
+			this.addEventListener("click", e => {
 				if (e.target.closest("input")) return;
 				const row = e.target.closest("tr[data-row-key]");
 				if (row) {
 					const key = row.dataset.rowKey;
 					const newSelected = this._props.selectedRows.includes(key)
-						? this._props.selectedRows.filter((k) => k !== key)
+						? this._props.selectedRows.filter(k => k !== key)
 						: [...this._props.selectedRows, key];
 					this.setProp("selectedRows", newSelected);
 					this.emit("rowSelect", {
@@ -167,13 +149,13 @@ defineComponent({
 			});
 
 			// 키보드: Space로 행 선택 토글
-			this.addEventListener("keydown", (e) => {
+			this.addEventListener("keydown", e => {
 				if (e.key === " " && e.target.closest("tr[data-row-key]")) {
 					e.preventDefault();
 					const row = e.target.closest("tr[data-row-key]");
 					const key = row.dataset.rowKey;
 					const newSelected = this._props.selectedRows.includes(key)
-						? this._props.selectedRows.filter((k) => k !== key)
+						? this._props.selectedRows.filter(k => k !== key)
 						: [...this._props.selectedRows, key];
 					this.setProp("selectedRows", newSelected);
 					this.emit("rowSelect", {
@@ -184,8 +166,24 @@ defineComponent({
 			});
 		}
 
+		// 행 활성화(비선택형 전용) — 행 클릭·Enter/Space로 rowActivate 이벤트 발화 (목록→상세 이동 등)
+		if (!this._props.selectable) {
+			this.addEventListener("click", e => {
+				if (e.target.closest("input") || e.target.closest("[data-row-action]")) return;
+				const row = e.target.closest("tr[data-row-key]");
+				if (row) this.emit("rowActivate", { key: row.dataset.rowKey });
+			});
+			this.addEventListener("keydown", e => {
+				const row = e.target.closest("tr[data-row-key]");
+				if (row && (e.key === "Enter" || e.key === " ")) {
+					e.preventDefault();
+					this.emit("rowActivate", { key: row.dataset.rowKey });
+				}
+			});
+		}
+
 		// 행 액션 버튼
-		this.addEventListener("click", (e) => {
+		this.addEventListener("click", e => {
 			const actionBtn = e.target.closest("[data-row-action]");
 			if (actionBtn) {
 				const row = actionBtn.closest("tr[data-row-key]");
@@ -201,7 +199,7 @@ defineComponent({
 	},
 
 	_handleSort(key) {
-		const column = this._props.columns.find((c) => c.key === key);
+		const column = this._props.columns.find(c => c.key === key);
 		if (!column || !column.sortable) return;
 
 		const currentSort = this._sortState?.[key] || "none";
@@ -215,16 +213,14 @@ defineComponent({
 	},
 
 	_toggleSelectAll(checked) {
-		const keys = this._props.rows.map((r) => r[this._props.selectionKey]);
+		const keys = this._props.rows.map(r => r[this._props.selectionKey]);
 		const newSelected = checked ? keys : [];
 		this.setProp("selectedRows", newSelected);
 		this.emit("selectAll", { selected: newSelected });
 	},
 
 	_toggleRowSelect(key, checked) {
-		const newSelected = checked
-			? [...this._props.selectedRows, key]
-			: this._props.selectedRows.filter((k) => k !== key);
+		const newSelected = checked ? [...this._props.selectedRows, key] : this._props.selectedRows.filter(k => k !== key);
 		this.setProp("selectedRows", newSelected);
 		this.emit("rowSelect", { key, selected: checked });
 	},
