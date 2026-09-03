@@ -1,6 +1,5 @@
 // 파일 용도: 체크기록 스토어 - Mason API 클라이언트 (회원 상세·조회·작성·편집 공용)
-// 주의: 기존 sessionStorage mock 저장에서 API 영속화로 교체되었습니다.
-// to-be: API 실패 시 toUserMessage + showToast로 사용자 피드백 제공
+// 주의: 모든 CRUD는 Mason API 경유 — 실패 시 toUserMessage + showToast로 사용자 피드백을 제공한다.
 import { toUserMessage } from "@infra/errors.js";
 import { Store } from "@infra/store.js";
 import { showToast } from "@shared/components/toast/toast.js";

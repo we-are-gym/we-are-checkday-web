@@ -4,7 +4,14 @@
 
 - JS는 **ES Modules**(`<script type="module">`)로 로드된다. 각 페이지는 진입점 모듈 하나만 `<script>` 태그로 로드하고, 나머지 의존성은 `import`/`export`로 모듈 그래프가 자동 구성된다. 페이지마다 공용 모듈을 수동 로드할 필요가 없다.
 - 계층 구조나 클린 아키텍처 따위에 집착하지 마십시오.
-- `ESM` 모듈은 책임에 따라 폴더로 나뉜다: `infra`(앱 인프라)·`tools`(재사용 유틸)·`calc`(순수 계산)·`gym`(체크데이 도메인)·`member`·`check-doc`·`shared/components` (importmap 별칭 `@infra/`·`@tools/`·`@calc/`·`@gym/`·`@member/`·`@check-doc/`·`@shared/`).
+- `ESM` 모듈은 책임에 따라 폴더로 나뉜다:
+   - `infra`(앱 인프라, 임포트맵 별징은 `@infra/`입니다.)
+   - `tools`(재사용 유틸, 임포트맵 별징은 `@tools/`입니다.)
+   - `calc`(순수 계산, 임포트맵 별징은 `@calc/`입니다.)
+   - `gym`(체크데이 도메인, 임포트맵 별징은 `@gym/`입니다.)
+   - `member`(회원, 임포트맵 별징은 `@member/`입니다.)
+   - `check-doc`(체크기록, 임포트맵 별징은 `@check-doc/`입니다.)
+   - `shared` (importmap 별칭은 `@shared/`입니다.).
 
 ### 공용 인프라 모듈 (임포트 그래프의 잎·화면 공용)
 
@@ -57,34 +64,33 @@
 | `export-image.js`     | `exportMemberDetailPNG`, `downloadPdf`                            | 화면 PNG 캡처·PDF 다운로드                                        | `api-client`, `member-store`, `member-utils`, `utils-dom`                                                                                                                                 |
 | `UI-tabs.js`          | `setupTabs`                                                       | 탭 위젯 — role=tablist 규약(aria-selected·방향키 이동) 배선       | `utils-dom`                                                                                                                                                                               |
 
-### 웹 컴포넌트 (light DOM — `ESM/infra/components/`·`ESM/member/components/`)
+### 웹컴포넌트 (light dom)
 
-| 컴포넌트       | 기능                                                     |
-| -------------- | -------------------------------------------------------- |
-| `app-header`   | 헤더 막대 — 로고·crumb·로그아웃(세션 해제 후 login.html) |
-| `app-gnb`      | 주 메뉴(GNB) — aria-current로 활성 표시                  |
-| `app-help`     | 내장 도움말 모달 — ESC·오버레이 클릭 닫기                |
-| `member-table` | 회원 목록 표 — 행 선택/제거 콜백 위임                    |
-| `member-form`  | 회원 등록 폼 (member-create 화면)                        |
+| 컴포넌트           | 기능                                                     |
+| ------------------ | -------------------------------------------------------- |
+| `<app-header />`   | 헤더 막대 — 로고·crumb·로그아웃(세션 해제 후 login.html) |
+| `<app-gnb />`      | 주 메뉴(GNB) — aria-current로 활성 표시                  |
+| `<app-help />`     | 내장 도움말 모달 — ESC·오버레이 클릭 닫기                |
+| `<member-table />` | 회원 목록 표 — 행 선택/제거 콜백 위임                    |
+| `<member-form />`  | 회원 등록 폼 (member-create 화면)                        |
 
 ### 화면 진입점 (엔트리 모듈)
 
-| 모듈               | 대상 화면            | 역할                                                                  |
-| ------------------ | -------------------- | --------------------------------------------------------------------- |
-| `index.js`         | `index.html`         | 메인 — 배치·빠른 연결                                                 |
-| `members.js`       | `members.html`       | 회원 관리 — 목록·검색·제거·상세 이동 (member-store·record-store 구독) |
-| `member-create.js` | `member-create.html` | 회원 등록                                                             |
-| `member-edit.js`   | `member-edit.html`   | 회원 정보 수정·저장                                                   |
+| 모듈                          | 대상 화면                          | 역할                                                                                                                       |
+| ----------------------------- | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `index.js`                    | `index.html`                       | 메인 — 배치·빠른 연결                                                                                                      |
+| `members.js`                  | `members.html`                     | 회원 관리 — 목록·검색·제거·상세 이동 (`member-store`와 `record-store` 구독)                                                |
+| `member-create.js`            | `member-create.html`               | 회원 등록                                                                                                                  |
+| `member-edit.js`              | `member-edit.html`                 | 회원 정보 수정·저장                                                                                                        |
+| `member-detail.js`            | `member-detail.html`               | 회원 상세 화면 조립자 — `memberID` 파싱·UI 이벤트 배선·초기 렌더 트리거 (조회·카드·차트·비교·탭·내보내기는 분할 모듈 위임) |
+| `check-form-new.js`           | `check-doc-new.html`               | 체크기록 작성 — 베이직 펑션 5항목·15점, 회원 이름 통합·회차 자동계산(N+1) + `?memberID=` 프리필                            |
+| `check-doc-view.js`           | `check-doc-view.html`              | 체크기록 조회 — 읽기 전용 전체 보기 (5·8항목 기록별 맞춤)                                                                  |
+| `check-doc-edit.js`           | `check-doc-edit.html`              | 체크기록 편집 — 기록 항목 구성(5·8)에 맞춰 프리필·수정·저장                                                                |
+| `login.js`                    | `login.html`                       | 등록된 유저로 로그인 — 토큰 저장·리로드 이동                                                                               |
+| `checkday.js`                 | `checkday_1.html`                  | 레거시 상담지 (무조치 유지)                                                                                                |
+| `basicFunction-assessment.js` | `basic_function_assessment_2.html` | 레거시 베이직 펑션 평가지                                                                                                  |
 
-| `member-detail.js`            | `member-detail.html`               | 회원 상세 화면 조립자 — memberID 파싱·UI 이벤트 배선·초기 렌더 트리거 (조회·카드·차트·비교·탭·내보내기는 분할 모듈 위임)|
-| `check-form-new.js`           | `check-doc-new.html`               | 체크기록 작성 — 베이직 펑션 5항목·15점, 회원 이름 통합·회차 자동계산(N+1) + `?memberID=` 프리필 |
-| `check-doc-view.js`           | `check-doc-view.html`              | 체크기록 조회 — 읽기 전용 전체 보기 (5·8항목 기록별 맞춤)                                       |
-| `check-doc-edit.js`           | `check-doc-edit.html`              | 체크기록 편집 — 기록 항목 구성(5·8)에 맞춰 프리필·수정·저장                                     |
-| `login.js`                    | `login.html`                       | 데모 로그인 — 세션 기록·리로드 이동                                                             |
-| `checkday.js`                 | `checkday_1.html`                  | 레거시 상담지 (무조치 유지)                                                                     |
-| `basicFunction-assessment.js` | `basic_function_assessment_2.html` | 레거시 베이직 펑션 평가지                                                                       |
-
-> 이벤트는 `addEventListener` 위임 패턴(`delegate`(utils-dom.js))으로 바인딩되며, 인라인 `onclick`·`oninput`과 `window` 오염은 사용하지 않는다.
+> 이벤트는 `addEventListener` 위임 패턴(`delegate`(`utils-dom.js`))으로 바인딩되며, 인라인 `onclick`·`oninput`과 `window` 오염은 사용하지 않는다.
 
 ## 화면 구성
 
@@ -95,7 +101,7 @@
 | 베이직 펑션 평가지 | `basic_function_assessment_2.html` | 640px            | 레거시 유지                                                                  |
 | 체크데이 상담지    | `checkday_1.html`                  | 640px            | 레거시 유지                                                                  |
 | 메인               | `index.html`                       | 640px            | 라우팅 허브 역할                                                             |
-| 로그인             | `login.html`                       | 650px            | 데모 로그인 (`checkday`/`1234`)                                              |
+| 로그인             | `login.html`                       | 650px            | 등록된 유저로 로그인                                                         |
 | 회원 관리          | `members.html`                     | 640px            | 목록, 검색, 제거, 등록                                                       |
 | 회원 정보          | `member-detail.html`               | 960px            | 정보 카드, 변화 차트, 체크 기록, 변화 분석 비교, PNG 내보내기 (`?memberID=`) |
 | 회원 등록          | `member-create.html`               | 640px            | 회원 등록 폼                                                                 |

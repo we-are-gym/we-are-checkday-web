@@ -1,4 +1,4 @@
-// 파일 용도: 로그인 화면(login.html) — 폼 렌더·검증·로그인 상태 기록·이동 (데모 계정 checkday/1234)
+// 파일 용도: 로그인 화면(login.html) — 폼 렌더·검증·로그인(Mason API 등록 사용자)·이동
 import { isAuthed, login } from "@infra/auth.js";
 import "@infra/components/app-header.js";
 import { TPL } from "@infra/templates.js";
