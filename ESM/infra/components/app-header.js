@@ -1,17 +1,19 @@
 // 파일 용도: 공용 헤더 막대 컴포넌트 — 브랜드(로고)·헤더 우측 영역(로그인/로그아웃) 제공 (전 화면 공용)
-// 기법: 순수 함수형 컴포넌트 팩토리 + 네이티브 웹 컴포넌트 (light DOM 모드)
+// 기법: 단일 컴포넌트 팩토리(base/component.js) + 네이티브 웹 컴포넌트 (light DOM 모드)
 // light-DOM 자식(<app-gnb>, <app-help>)은 연결 시점에 .header-right로 옮겨 헤더 안에 배치한다.
 // 인증 상태에 따라 로그인/로그아웃 버튼을 자동 전환한다.
 // 부수 임포트: app-gnb·app-help 등록까지 이 모듈 하나로 처리
 import { isAuthed, logout, subscribeAuthState } from "@infra/auth.js";
-import { defineComponent } from "@infra/component-factory.js";
 import "@infra/components/app-gnb.js";
 import "@infra/components/app-help.js";
 import { TPL } from "@infra/templates.js";
+import { defineComponent } from "@shared/components/base/component.js";
 
-defineComponent("app-header", {
+defineComponent({
+	tag: "app-header",
 	/**
 	 * 재렌더(innerHTML 재작성) 전에 원래 light-DOM 자식을 캡처해 보존한다
+	 * (연결 순서 정책상 첫 렌더 전에 호출된다)
 	 */
 	connectedCallback() {
 		// innerHTML 재작성 전에 원래 light-DOM 자식을 캡처 (refresh가 자식을 지우기 때문)

@@ -1,12 +1,14 @@
 // 파일 용도: 내장 도움말 컴포넌트 — 헤더 우측의 도움말 버튼과 모달 오버레이 (전 화면 공용)
-// 기법: 순수 함수형 컴포넌트 팩토리 + 네이티브 웹 컴포넌트 (light DOM 모드)
+// 기법: 단일 컴포넌트 팩토리(base/component.js) + 네이티브 웹 컴포넌트 (light DOM 모드)
 // light-DOM 자식이 도움말 본문(HTML)이 된다. (예: <app-help><h4>…</h4><p>…</p></app-help>)
-import { defineComponent } from "@infra/component-factory.js";
 import { TPL } from "@infra/templates.js";
+import { defineComponent } from "@shared/components/base/component.js";
 
-defineComponent("app-help", {
+defineComponent({
+	tag: "app-help",
 	/**
 	 * 최초 연결 시 light-DOM 자식(도움말 본문)을 HTML 문자열로 캡처해 보존한다
+	 * (연결 순서 정책상 첫 렌더 전에 호출된다)
 	 */
 	connectedCallback() {
 		// innerHTML 재작성 전에 원래 light-DOM 자식을 HTML 문자열로 캡처 (재연결 시에도 본문 유지)
@@ -39,10 +41,10 @@ defineComponent("app-help", {
 		};
 		this.querySelector("[data-help-open]").addEventListener("click", this.open);
 		this.querySelector("[data-help-close]").addEventListener("click", this.close);
-		this.querySelector(".help-overlay").addEventListener("click", (e) => {
+		this.querySelector(".help-overlay").addEventListener("click", e => {
 			if (e.target === e.currentTarget) this.close();
 		});
-		document.addEventListener("keydown", (e) => {
+		document.addEventListener("keydown", e => {
 			if (e.key === "Escape" && !this.querySelector(".help-overlay").hidden) this.close();
 		});
 	},

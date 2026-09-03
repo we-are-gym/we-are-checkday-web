@@ -1,68 +1,58 @@
-// 파일 용도: 순수 함수형 컴포넌트 팩토리 — 네이티브 웹 컴포넌트(light DOM 모드) 정의 헬퍼 (전체 화면 공용)
-// 기법: 순수 함수형 컴포넌트 팩토리 + 네이티브 웹 컴포넌트
-// light DOM 모드: Shadow DOM을 쓰지 않으므로 전역 CSS 변수(var(--blue) 등)를 그대로 상속받는다.
+// 파일 용도: 웹 컴포넌트 저수준 팩토리 — 커스텀 엘리먼트 정의의 순수 기계부 (base/component.js 전용 내부 구현)
+// 기법: spec의 라이프사이클 훅(connected/disconnected/attributeChanged)을 엘리먼트 클래스에 연결하고,
+//       예약 키 이외의 함수 키는 프로토타입 메서드로 복사해 외부에서 this.*()로 호출 가능하게 한다.
+// 주의: 렌더·연결 순서 정책은 base/component.js가 단일로 소유한다. (이 모듈은 순서 결정을 내리지 않음)
+//       외부(컴포넌트 모듈)는 반드시 base/component.js의 defineComponent를 사용한다.
+
+/** 라이프사이클·렌더 예약 키 — 프로토타입 복사 제외 */
+const RESERVED_KEYS = new Set([
+	"render",
+	"onConnect",
+	"refreshAfter",
+	"connectedCallback",
+	"disconnectedCallback",
+	"attributeChangedCallback",
+	"observedAttributes",
+]);
 
 /**
  * 컴포넌트 명세
  * @typedef {Object} ComponentSpec
- * @property {(this: HTMLElement) => void} [connectedCallback] — innerHTML 재작성 전 1회 호출 (light-DOM 자식 캡처 등)
- * @property {(this: HTMLElement) => string} render — 현재 속성으로 마크업 문자열 반환 (내부 HTML 채움)
- * @property {(this: HTMLElement) => void} [onConnect] — 문서 연결 시 render 후 1회 호출 (이벤트 바인딩)
- * @property {(this: HTMLElement) => void} [refreshAfter] — refresh() 후 추가 처리
+ * @property {string[]} [observedAttributes] 감시할 속성 목록
+ * @property {() => void} [connectedCallback] 연결 시 콜백
+ * @property {() => void} [disconnectedCallback] 해제 시 콜백
+ * @property {(name: string, oldVal: string | null, newVal: string | null) => void} [attributeChangedCallback] 속성 변경 콜백
  */
 
 /**
- * light DOM 모드 커스텀 엘리먼트를 정의한다.
- *
- * 생성된 클래스는 `refresh()` 메서드를 갖는다: `render()` 반환 문자열로 innerHTML을 다시 채운 뒤
- * `refreshAfter`를 호출한다. 스토어 구독 콜백에서 상태 변경 후 `refresh()`를 호출해 UI를 갱신한다.
- *
- * @param {string} tag 정의할 태그명 (예: "app-header")
- * @param {ComponentSpec} spec
- * @returns {typeof HTMLElement}
+ * 라이트 DOM 모드 커스텀 엘리먼트를 정의한다. (저수준 단일 구현)
+ * @param {string} tag 정의할 태그명 (예: "ui-button")
+ * @param {ComponentSpec & Record<string, Function>} spec 컴포넌트 명세
+ * @returns {typeof HTMLElement} 정의된 컴포넌트 클래스
  */
 export function defineComponent(tag, spec) {
-	// console.log({ tag, spec });
-
 	class Component extends HTMLElement {
-		connectedCallback() {
-			// console.log(
-			// 	`\`Component\` 오브젝트(<${tag} />)의 \`connectedCallback()\` 메서드가 호출되었습니다.`,
-			// );
-			// console.log({ spec, this: this });
-
-			if (spec.connectedCallback) spec.connectedCallback.call(this);
-			this.refresh();
-			if (spec.onConnect) spec.onConnect.call(this);
+		static get observedAttributes() {
+			return spec.observedAttributes || [];
 		}
 
-		/**
-		 * render() 결과로 내부를 다시 채운다.
-		 * @returns {void}
-		 */
-		refresh() {
-			// console.log(
-			// 	`\`Component\` 오브젝트(<${tag} />)의 \`refresh()\` 메서드가 호출되었습니다.`,
-			// );
-			// console.log({ spec, this: this });
+		connectedCallback() {
+			if (spec.connectedCallback) spec.connectedCallback.call(this);
+		}
 
-			this.innerHTML = spec.render.call(this);
-			if (spec.refreshAfter) spec.refreshAfter.call(this);
+		disconnectedCallback() {
+			if (spec.disconnectedCallback) spec.disconnectedCallback.call(this);
+		}
+
+		attributeChangedCallback(name, oldVal, newVal) {
+			if (spec.attributeChangedCallback) spec.attributeChangedCallback.call(this, name, oldVal, newVal);
 		}
 	}
 
-	// 지정된 커스텀 메서드(onConnect·render·refreshAfter·connectedCallback 제외)를
-	// 프로토타입에 복사해 외부에서 this.prefill() 등으로 호출할 수 있게 한다.
+	// 예약 키가 아닌 함수 키는 프로토타입 메서드로 복사 — spec.refresh·setProp·emit·사용자 정의 메서드 등
 	for (const key of Object.keys(spec)) {
-		if (
-			key === "render" ||
-			key === "onConnect" ||
-			key === "refreshAfter" ||
-			key === "connectedCallback"
-		)
-			continue;
-		if (typeof spec[key] === "function")
-			Component.prototype[key] = spec[key];
+		if (RESERVED_KEYS.has(key)) continue;
+		if (typeof spec[key] === "function") Component.prototype[key] = spec[key];
 	}
 
 	customElements.define(tag, Component);
