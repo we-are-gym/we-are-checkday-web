@@ -1,4 +1,4 @@
-// 파일 용도: 에러/성공/정보 토스트 알림 + 로딩 오버레이 웹 컴포넌트
+// 파일 용도: 에러/성공/정보 토스트 알림 웹 컴포넌트 (로딩 오버레이는 loading-overlay.js로 분리)
 // 기법: 라이트 DOM 웹컴포넌트 — Shadow DOM 없이 인라인 스타일 + aria-live="polite" 접근성
 
 /** 토스트 타입별 기본 색상·아이콘 */
@@ -23,7 +23,6 @@ if (typeof HTMLElement !== "undefined") {
 	 * 호출:
 	 * - `el.show(message, { type, duration, action })`
 	 * - `el.hideAll()`
-	 * - `el.showLoading()` / `el.hideLoading()`
 	 *
 	 * @example
 	 * ```js
@@ -48,7 +47,7 @@ if (typeof HTMLElement !== "undefined") {
 			this._toasts = [];
 		}
 
-		/** 컨테이너 + 로딩 오버레이 셀 생성 */
+		/** 토스트 컨테이너 셸 생성 (1회) */
 		_renderShell() {
 			if (this.querySelector(".toast-container")) return;
 
@@ -60,19 +59,11 @@ if (typeof HTMLElement !== "undefined") {
 				"position:fixed;top:1rem;right:1rem;z-index:10000;display:flex;flex-direction:column;gap:.5rem;pointer-events:none;max-width:360px;";
 			this.appendChild(container);
 
-			const overlay = document.createElement("div");
-			overlay.className = "loading-overlay";
-			overlay.style.cssText =
-				"position:fixed;inset:0;z-index:9999;background:rgba(255,255,255,.65);display:none;align-items:center;justify-content:center;";
-			overlay.innerHTML =
-				'<div style="display:flex;flex-direction:column;align-items:center;gap:.75rem;">' +
-				'<div class="spinner" style="width:32px;height:32px;border:3px solid #e5e7eb;border-top-color:#3b82f6;border-radius:50%;animation:es-toast-spin .6s linear infinite;"></div>' +
-				'<span style="font-size:14px;color:#374151;">로딩 중…</span></div>';
-
+			// 토스트 출현·퇴장 슬라이드 키프레임 — 스타일 시트에 별도 정의가 없어 이곳에서 단일 정의
 			const style = document.createElement("style");
-			style.textContent = "@keyframes es-toast-spin{to{transform:rotate(360deg)}}";
+			style.textContent =
+				"@keyframes es-toast-slide{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}";
 			this.appendChild(style);
-			this.appendChild(overlay);
 		}
 
 		/** 토스트 메시지 표시
@@ -137,18 +128,6 @@ if (typeof HTMLElement !== "undefined") {
 			this._toasts = [];
 		}
 
-		/** 로딩 오버레이를 표시합니다. */
-		showLoading() {
-			const overlay = this.querySelector(".loading-overlay");
-			if (overlay) overlay.style.display = "flex";
-		}
-
-		/** 로딩 오버레이를 숨깁니다. */
-		hideLoading() {
-			const overlay = this.querySelector(".loading-overlay");
-			if (overlay) overlay.style.display = "none";
-		}
-
 		/**
 		 * 토스트 항목을 제거하고 애니메이션 후 DOM에서 삭제합니다.
 		 * @param {number} id 토스트 ID
@@ -169,9 +148,9 @@ if (typeof HTMLElement !== "undefined") {
 // ── 싱글톤 헬퍼 — 화면에 <es-toast> 마크업이 없어도 자동 부착되어 동작 ──
 
 /**
- * 토스트·로딩 오버레이 루트(<es-toast>)를 body에 보장한다.
+ * 토스트 루트(<es-toast>)를 body에 보장한다.
  * 첫 사용 시점에 엘리먼트가 없으면 생성·부착하므로, HTML에 마크업이 없는 화면에서도
- * showToast/showLoading이 항상 동작한다. 비-DOM 환경(bun 테스트 등)이거나
+ * showToast가 항상 동작한다. 비-DOM 환경(bun 테스트 등)이거나
  * 컴포넌트가 아직 정의되지 않았으면 null을 반환한다.
  * @returns {EsToast | null} 토스트 엘리먼트 (사용 불가 환경이면 null)
  */
@@ -200,27 +179,4 @@ export function showToast(message, options) {
 export function hideAllToasts() {
 	const el = ensureFeedbackRoot();
 	if (el) el.hideAll();
-}
-
-/** 로딩 오버레이 참조카운터 — 동시 로딩(memberStore+recordStore 등) 시 마지막 hide까지 오버레이를 유지한다 */
-let loadingCount = 0;
-
-/** 로딩 오버레이를 표시합니다. (호출마다 참조카운터 증가)
- * @returns {void}
- */
-export function showLoading() {
-	const el = ensureFeedbackRoot();
-	if (!el) return;
-	loadingCount++;
-	el.showLoading();
-}
-
-/** 로딩 오버레이를 숨깁니다. (참조카운터가 0이 된 시점에만 실제로 숨김)
- * @returns {void}
- */
-export function hideLoading() {
-	const el = singletonEl || (typeof document !== "undefined" ? document.querySelector("es-toast") : null);
-	if (!el) return;
-	loadingCount = Math.max(0, loadingCount - 1);
-	if (loadingCount === 0) el.hideLoading();
 }

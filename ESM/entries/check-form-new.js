@@ -17,7 +17,6 @@ import { escapeHtml } from "@infra/templates.js";
 import { addMember, loadMembers, memberStore } from "@member/member-store.js";
 import { getMemberById, getMemberByName } from "@member/member-utils.js";
 import "@shared/components/index.js";
-import "@shared/components/toast/toast.js";
 import { byId, delegate, dismissOnOverlayClick } from "@tools/utils-dom.js";
 import { todayISO } from "@tools/utils-string.js";
 import { getUrlParam } from "@tools/utils-url.js";

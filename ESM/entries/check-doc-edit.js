@@ -19,8 +19,7 @@ import { SCORE_MAX } from "@infra/constants.js";
 import { escapeHtml } from "@infra/templates.js";
 import { loadMembers } from "@member/member-store.js";
 import "@shared/components/index.js";
-import "@shared/components/toast/toast.js";
-import { hideLoading, showLoading } from "@shared/components/toast/toast.js";
+import { hideLoading, showLoading } from "@shared/components/loading/loading-overlay.js";
 import { byId, delegate, dismissOnOverlayClick, queryAll } from "@tools/utils-dom.js";
 import { getUrlParam } from "@tools/utils-url.js";
 

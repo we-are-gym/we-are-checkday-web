@@ -11,7 +11,6 @@ import { MOTION_TOTAL_MAX } from "@infra/constants.js";
 import { loadMembers, memberStore } from "@member/member-store.js";
 import { getMemberById } from "@member/member-utils.js";
 import "@shared/components/index.js";
-import "@shared/components/toast/toast.js";
 import { byId, delegate, dismissOnOverlayClick, setText } from "@tools/utils-dom.js";
 import { today } from "@tools/utils-string.js";
 import { getUrlParam } from "@tools/utils-url.js";
