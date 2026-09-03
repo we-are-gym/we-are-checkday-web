@@ -20,6 +20,7 @@ import { escapeHtml } from "@infra/templates.js";
 import { loadMembers } from "@member/member-store.js";
 import "@shared/components/index.js";
 import { hideLoading, showLoading } from "@shared/components/loading/loading-overlay.js";
+import { showToast } from "@shared/components/toast/toast.js";
 import { byId, delegate, dismissOnOverlayClick, queryAll } from "@tools/utils-dom.js";
 import { getUrlParam } from "@tools/utils-url.js";
 
@@ -47,7 +48,7 @@ async function saveRecord() {
 		const dateInput = byId("m-date");
 		const rec = getRecord();
 		if (!rec) {
-			alert("편집 대상 기록을 찾을 수 없습니다.");
+			showToast("편집 대상 기록을 찾을 수 없습니다.", { type: "error" });
 			return;
 		}
 		const date = dateInput ? dateInput.value || rec.date : rec.date;
@@ -173,7 +174,7 @@ function availableEvalItems() {
 function addEvalItem() {
 	const candidates = availableEvalItems();
 	if (candidates.length === 0) {
-		alert("추가할 수 있는 평가 항목이 없습니다.");
+		showToast("추가할 수 있는 평가 항목이 없습니다.", { type: "warning" });
 		return;
 	}
 	const overlay = byId("eval-picker-overlay");
@@ -188,7 +189,7 @@ function addEvalItem() {
 function removeEvalItem(i) {
 	const current = getEvals();
 	if (current.length <= 1) {
-		alert("최소 1개의 평가 항목은 남겨야 합니다.");
+		showToast("최소 1개의 평가 항목은 남겨야 합니다.", { type: "warning" });
 		return;
 	}
 	rebuildEvalItems(nextAfterRemove(current, i), i);

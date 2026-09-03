@@ -18,6 +18,7 @@ import { addMember, loadMembers, memberStore } from "@member/member-store.js";
 import { getMemberById, getMemberByName } from "@member/member-utils.js";
 import "@shared/components/index.js";
 import { hideLoading, showLoading } from "@shared/components/loading/loading-overlay.js";
+import { showToast } from "@shared/components/toast/toast.js";
 import { byId, delegate, dismissOnOverlayClick } from "@tools/utils-dom.js";
 import { todayISO } from "@tools/utils-string.js";
 import { getUrlParam } from "@tools/utils-url.js";
@@ -153,7 +154,7 @@ async function saveRecord() {
 		// 회원 이름(자동완성 입력)을 회원 id로 해석 — 미등록 이름이면 자동 등록한다
 		const name = (memberInput.value || "").trim();
 		if (!name) {
-			alert("회원 이름을 입력해 주세요.");
+			showToast("회원 이름을 입력해 주세요.", { type: "warning" });
 			return;
 		}
 		const matched = getMemberByName(memberStore.getState().members, name);
@@ -162,10 +163,8 @@ async function saveRecord() {
 		window.location.href = `check-doc-view.html?docID=${recId}`;
 	} catch (err) {
 		console.error("체크기록 저장 실패:", err);
-		// 401은 request() 내부에서 goToLogin()이 이미 리다이렉트를 처리하므로 alert를 건너뛴다
-		if (err?.status === 401) return;
-		const msg = err instanceof Error ? err.message : "저장에 실패했습니다.";
-		alert(msg);
+		// 401은 request() 내부에서 goToLogin()이 이미 리다이렉트를 처리하고,
+		// 그 밖의 실패 안내 토스트는 api-client.request가 표시한다 — 여기서 중복 안내하지 않는다
 	}
 }
 

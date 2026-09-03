@@ -3,6 +3,7 @@
 import { requestBlob } from "@infra/api-client.js";
 import { memberStore } from "@member/member-store.js";
 import { getMemberById } from "@member/member-utils.js";
+import { showToast } from "@shared/components/toast/toast.js";
 import { queryOne } from "@tools/utils-dom.js";
 
 /**
@@ -20,12 +21,12 @@ export function exportMemberDetailPNG(memberId) {
 	const target = queryOne("main");
 
 	if (!target) {
-		alert("내보낼 화면을 찾을 수 없습니다.");
+		showToast("내보낼 화면을 찾을 수 없습니다.", { type: "error" });
 		return;
 	}
 
 	if (typeof html2canvas === "undefined") {
-		alert("이미지 생성 라이브러리(html2canvas)를 불러오지 못했습니다. 네트워크 확인 후 다시 시도하세요.");
+		showToast("이미지 생성 라이브러리(html2canvas)를 불러오지 못했습니다. 네트워크 확인 후 다시 시도하세요.", { type: "error" });
 		return;
 	}
 
@@ -79,7 +80,8 @@ export function exportMemberDetailPNG(memberId) {
 		.catch(err => {
 			restoreSelects();
 			restoreControls();
-			alert(`이미지 생성에 실패했어요: ${err.message}`);
+			console.error("회원 상세 PNG 내보내기 실패:", err);
+			showToast(`이미지 생성에 실패했어요: ${err.message}`, { type: "error" });
 		});
 }
 
@@ -105,8 +107,7 @@ export async function downloadPdf(memberId) {
 		URL.revokeObjectURL(url);
 	} catch (err) {
 		console.error("PDF 다운로드 실패:", err);
-		// 401은 requestBlob 내부에서 goToLogin()이 이미 리다이렉트를 처리하므로 안내를 건너뛴다
-		if (err?.status === 401) return;
-		alert(`PDF 다운로드에 실패했습니다: ${err.message || "알 수 없는 오류"}`);
+		// 401은 requestBlob 내부에서 goToLogin()이 이미 리다이렉트를 처리하고,
+		// 그 밖의 실패 안내 토스트는 requestBlob이 표시한다 — 여기서 중복 안내하지 않는다
 	}
 }

@@ -147,10 +147,8 @@ async function removeMember(id) {
 		}));
 	} catch (err) {
 		console.error("회원 삭제 실패:", err);
-
-		// 401은 request() 내부에서 goToLogin()이 이미 리다이렉트를 처리하므로 alert를 건너뛴다
-		if (err?.status === 401) return;
-		alert(`회원 삭제에 실패했습니다: ${err.message || "알 수 없는 오류"}`);
+		// 401은 request() 내부에서 goToLogin()이 이미 리다이렉트를 처리하고,
+		// 그 밖의 실패 안내 토스트는 api-client.request가 표시한다 — 여기서 중복 안내하지 않는다
 	}
 }
 
