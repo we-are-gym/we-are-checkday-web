@@ -18,7 +18,7 @@ import{r as e}from"./app-header-Jju2jUlD.js";e(`member-form`,{render(){return`
 				</label>
 				<label class="member-field">
 					<span>담당 트레이너</span>
-					<input id="mf-trainer" type="text" placeholder="예: 김지훈" />
+					<input id="mf-trainer" type="text" placeholder="예: 정지훈" />
 				</label>
 				<div class="member-form-actions">
 					<button class="btn btn-ghost" type="submit">저장</button>
