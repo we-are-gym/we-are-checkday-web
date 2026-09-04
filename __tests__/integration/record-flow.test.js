@@ -7,7 +7,7 @@ import { describe, expect, test } from "bun:test";
 describe("record-flow integration", () => {
 	test("회원 조회 + 기록 필터 + 총점", () => {
 		const members = [
-			{ id: "M-1", name: "김민준", gender: "남", goal: "", trainer: "김지훈" },
+			{ id: "M-1", name: "김민준", gender: "남", goal: "", trainer: "정지훈" },
 			{ id: "M-2", name: "이서연", gender: "녀", goal: "", trainer: "박소연" },
 		];
 		const records = [
