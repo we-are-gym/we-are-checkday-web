@@ -134,6 +134,10 @@ async function removeMember(id) {
 		return;
 	}
 
+	if (!confirm("정말 삭제하실 겁니까? 확실해요?")) {
+		return;
+	}
+
 	try {
 		await apiRemoveMember(id);
 
