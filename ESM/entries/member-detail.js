@@ -1,24 +1,22 @@
 // 파일 용도: 회원 상세 화면 진입점(member-detail.html) — memberID 파싱·로딩 오버레이·UI 이벤트 배선·초기 렌더링 트리거
 // 기법: 조회·렌더 조합은 member-view에 위임하고, 이 파일은 화면 조립자(진입점) 역할만 한다.
 //       분할 모듈: member-view(조회)·member-info-card(정보 카드)·charts(변화 차트)·checkdoc-compare(비교)·UI-tabs(탭)·export-image(내보내기)
-import { deleteRecord, recordStore } from "@check-doc/record-store.js";
+import { deleteRecord } from "@check-doc/record-store.js";
 import { guardOnBfcache } from "@infra/auth.js";
 import "@infra/components/app-header.js";
 import { setupTabs } from "@infra/UI-tabs.js";
 import { renderCompare } from "@member/checkdoc-compare.js";
-import { memberStore } from "@member/member-store.js";
 import { getRecords, goView, init, refreshRecords } from "@member/member-view.js";
 import "@shared/components/toast/toast.js";
-import { hideLoading, showLoading } from "@shared/components/toast/toast.js";
 import { byId, delegate } from "@tools/utils-dom.js";
 import { getUrlParam } from "@tools/utils-url.js";
 
 /** ?memberID= 파라미터 (문자열 member_ID) */
 const memberId = getUrlParam("memberID");
 
-// 로딩 오버레이 — memberStore/recordStore의 loading 상태 구독
-memberStore.subscribe(state => (state.loading ? showLoading() : hideLoading()));
-recordStore.subscribe(state => (state.loading ? showLoading() : hideLoading()));
+// // 로딩 오버레이 — memberStore/recordStore의 loading 상태 구독
+// memberStore.subscribe(state => (state.loading ? showLoading() : hideLoading()));
+// recordStore.subscribe(state => (state.loading ? showLoading() : hideLoading()));
 
 // 이벤트 1회 등록
 delegate(document, "click", "[data-del-record]", async (e, el) => {
