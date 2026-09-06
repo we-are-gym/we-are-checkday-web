@@ -56,4 +56,61 @@ test.describe("회원 관리", () => {
 		// member-detail.html로 이동했는지 확인
 		await expect(page).toHaveURL(/member-detail\.html/);
 	});
+
+	test("테이블 시각 계약 — 4열 중앙·삭제 열 우측 정렬, 줄무늬 없음, 이름 강조, 행 포인터 커서", async ({ page }) => {
+		await page.goto("/members.html");
+		const table = page.locator("#member-table");
+		const rows = table.locator("tbody tr.data-row");
+		await expect(rows.first()).toBeVisible();
+
+		// 열 정렬 — 이름·성별·담당 트레이너·체크 횟수는 헤더·셀 모두 중앙, 관리(삭제) 열은 우측
+		for (const col of [1, 2, 3, 4]) {
+			await expect(table.locator(`thead th:nth-child(${col})`)).toHaveCSS("text-align", "center");
+			await expect(rows.first().locator(`td:nth-child(${col})`)).toHaveCSS("text-align", "center");
+		}
+		await expect(table.locator("thead th:nth-child(5)")).toHaveCSS("text-align", "right");
+		await expect(rows.first().locator("td:nth-child(5)")).toHaveCSS("text-align", "right");
+
+		// 홀/짝 행 배경 동등 — striped 클래스 부재와 1·2행 실배경 일치로 확인
+		await expect(table.locator(".data-table-wrapper")).not.toHaveClass(/striped/);
+		const bgs = await rows.evaluateAll(els => els.slice(0, 2).map(r => getComputedStyle(r).backgroundColor));
+		expect(new Set(bgs).size).toBe(1);
+
+		// 이름 강조 — var(--text) 색·굵기 700
+		const name = rows.first().locator(".member-name");
+		await expect(name).toHaveCSS("font-weight", "700");
+		const textColor = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue("--text").trim());
+		const rgb = await name.evaluate(el => getComputedStyle(el).color);
+		expect(rgb).toBe(hexToRgb(textColor));
+
+		// 행 포인터 커서 — 클릭하면 상세로 이동하고, 행 안 삭제 버튼은 confirm만 띄우고 이동하지 않는다
+		await expect(rows.first()).toHaveCSS("cursor", "pointer");
+		await rows.first().locator("td:nth-child(1)").click();
+		await expect(page).toHaveURL(/member-detail\.html\?memberID=/);
+
+		await page.goBack();
+		await expect(rows.first()).toBeVisible();
+		let dialog = "";
+		page.on("dialog", async d => {
+			dialog = d.message();
+			await d.dismiss();
+		});
+		await rows.first().locator(".row-remove").click();
+		await page.waitForTimeout(300);
+		expect(dialog).toContain("삭제");
+		expect(page.url()).toContain("members.html");
+	});
+
+	/** CSS 변수 hex 값을 getComputedStyle의 rgb() 문자열로 변환한다 */
+	function hexToRgb(hex) {
+		const v = hex.replace("#", "");
+		const full =
+			v.length === 3
+				? v
+						.split("")
+						.map(c => c + c)
+						.join("")
+				: v;
+		return `rgb(${parseInt(full.slice(0, 2), 16)}, ${parseInt(full.slice(2, 4), 16)}, ${parseInt(full.slice(4, 6), 16)})`;
+	}
 });
