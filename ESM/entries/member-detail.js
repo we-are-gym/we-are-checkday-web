@@ -7,7 +7,6 @@ import "@infra/components/app-header.js";
 import { setupTabs } from "@infra/UI-tabs.js";
 import { renderCompare } from "@member/checkdoc-compare.js";
 import { getRecords, goView, init, refreshRecords } from "@member/member-view.js";
-import "@shared/components/toast/toast.js";
 import { byId, delegate } from "@tools/utils-dom.js";
 import { getUrlParam } from "@tools/utils-url.js";
 
