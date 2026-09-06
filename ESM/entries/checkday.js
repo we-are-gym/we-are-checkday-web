@@ -11,6 +11,7 @@ import { MOTION_TOTAL_MAX } from "@infra/constants.js";
 import { loadMembers, memberStore } from "@member/member-store.js";
 import { getMemberById } from "@member/member-utils.js";
 import "@shared/components/index.js";
+import { hideLoading, showLoading } from "@shared/components/loading/loading-overlay.js";
 import { byId, delegate, dismissOnOverlayClick, setText } from "@tools/utils-dom.js";
 import { today } from "@tools/utils-string.js";
 import { getUrlParam } from "@tools/utils-url.js";
@@ -18,8 +19,8 @@ import { getUrlParam } from "@tools/utils-url.js";
 // ── 평가 구성: 레거시 8항목·24점 — 각 진입점에서 명시적 init (모듈 레벨 init 금지) ──
 configureEvaluation({ items: ASSESSMENT_ITEMS_FULL, max: MOTION_TOTAL_MAX });
 
-// // 로딩 오버레이 — memberStore의 loading 상태 구독
-// memberStore.subscribe(state => (state.loading ? showLoading() : hideLoading()));
+// 로딩 오버레이 — memberStore의 loading 상태 구독
+memberStore.subscribe(state => (state.loading ? showLoading() : hideLoading()));
 
 // ── 날짜 ──
 setText("date-badge", today());

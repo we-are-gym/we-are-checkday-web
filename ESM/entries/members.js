@@ -7,11 +7,12 @@ import "@infra/components/app-header.js";
 import "@member/components/member-table.js";
 import { removeMember as apiRemoveMember, loadMembers, memberStore } from "@member/member-store.js";
 import { displayGender } from "@member/member-utils.js";
+import { hideLoading, showLoading } from "@shared/components/loading/loading-overlay.js";
 import { byId } from "@tools/utils-dom.js";
 
-// // 로딩 오버레이 — memberStore/recordStore의 loading 상태 구독
-// memberStore.subscribe(state => (state.loading ? showLoading() : hideLoading()));
-// recordStore.subscribe(state => (state.loading ? showLoading() : hideLoading()));
+// 로딩 오버레이 — memberStore/recordStore의 loading 상태 구독
+memberStore.subscribe(state => (state.loading ? showLoading() : hideLoading()));
+recordStore.subscribe(state => (state.loading ? showLoading() : hideLoading()));
 
 /** 한 번에 표시할 회원 수 */
 const PAGE_SIZE = 50;

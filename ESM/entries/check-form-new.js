@@ -17,6 +17,7 @@ import { escapeHtml } from "@infra/templates.js";
 import { addMember, loadMembers, memberStore } from "@member/member-store.js";
 import { getMemberById, getMemberByName } from "@member/member-utils.js";
 import "@shared/components/index.js";
+import { hideLoading, showLoading } from "@shared/components/loading/loading-overlay.js";
 import { byId, delegate, dismissOnOverlayClick } from "@tools/utils-dom.js";
 import { todayISO } from "@tools/utils-string.js";
 import { getUrlParam } from "@tools/utils-url.js";
@@ -27,9 +28,9 @@ guardOnBfcache(async () => {
 	fillMemberDatalist();
 });
 
-// // 로딩 오버레이 — memberStore/recordStore의 loading 상태 구독
-// memberStore.subscribe(state => (state.loading ? showLoading() : hideLoading()));
-// recordStore.subscribe(state => (state.loading ? showLoading() : hideLoading()));
+// 로딩 오버레이 — memberStore/recordStore의 loading 상태 구독
+memberStore.subscribe(state => (state.loading ? showLoading() : hideLoading()));
+recordStore.subscribe(state => (state.loading ? showLoading() : hideLoading()));
 
 // ── 날짜 ──
 // 상담일(date picker) 기본값 = 오늘 (기록 date는 YYYY-MM-DD 형식으로 저장)
