@@ -2,30 +2,19 @@
 // 기법: 카드·체크 행 마크업은 공용 템플릿(TPL.feedbackCard·TPL.fbCheckRow)을 단일 소스로 사용,
 //       카드 목록·ID 카운터는 CheckMovementStore에 보관한다.
 // DEPENDS: byId(utils-dom), TPL, CheckMovementStore
-import { byId } from "@tools/utils-dom.js";
 import { TPL } from "@infra/templates.js";
+import { byId } from "@tools/utils-dom.js";
 import { CheckMovementStore } from "./check-movement-store.js";
 
 /** 동작 피드백 프리셋 정의 (동작명 → 체크 문구 목록) */
 const FB_PRESET = [
 	{
 		name: "스쿼트",
-		checks: [
-			"무릎 안쪽 무너짐",
-			"허리 말림",
-			"상체 과도한 숙임",
-			"뒤꿈치 들림",
-			"좌우 비대칭",
-		],
+		checks: ["무릎 안쪽 무너짐", "허리 말림", "상체 과도한 숙임", "뒤꿈치 들림", "좌우 비대칭"],
 	},
 	{
 		name: "힙힌지 / 데드리프트",
-		checks: [
-			"등 굽음 (요추 굴곡)",
-			"무릎 과도한 굽힘",
-			"엉덩이 후방 이동 부족",
-			"바 몸에서 멀어짐",
-		],
+		checks: ["등 굽음 (요추 굴곡)", "무릎 과도한 굽힘", "엉덩이 후방 이동 부족", "바 몸에서 멀어짐"],
 	},
 	{
 		name: "런지",
@@ -33,12 +22,7 @@ const FB_PRESET = [
 	},
 	{
 		name: "푸시업",
-		checks: [
-			"날개뼈 들뜸",
-			"요추 과신전",
-			"어깨 으쓱 (승모근 과활동)",
-			"팔꿈치 과도한 외전",
-		],
+		checks: ["날개뼈 들뜸", "요추 과신전", "어깨 으쓱 (승모근 과활동)", "팔꿈치 과도한 외전"],
 	},
 ];
 
@@ -59,7 +43,7 @@ export function appendCheckMovementItemRow(btn) {
 }
 
 /** 피드백 카드 1장을 카드 영역에 렌더링한다
- * @param {import("./check-movement-item.js").CheckMovementItem} item 카드 데이터
+ * @param {import("./check-movement-item.ts").CheckMovementItem} item 카드 데이터
  * @returns {void}
  */
 function renderFbCard(item) {
@@ -91,7 +75,7 @@ export function renderCheckMovementCards() {
 export function resetFeedbacks() {
 	byId("fb-cards").innerHTML = "";
 	checkMovementStore.clear();
-	FB_PRESET.forEach((preset) => checkMovementStore.add(preset));
+	FB_PRESET.forEach(preset => checkMovementStore.add(preset));
 	renderCheckMovementCards();
 }
 
@@ -100,14 +84,11 @@ export function resetFeedbacks() {
  */
 export function collectCheckMovementData() {
 	return [...document.querySelectorAll(".fb-item")]
-		.map((item) => {
-			const name =
-				item.querySelector(".fb-move-input").value || "(동작명 없음)";
+		.map(item => {
+			const name = item.querySelector(".fb-move-input").value || "(동작명 없음)";
 			const checked = [...item.querySelectorAll(".fb-check-row")]
-				.filter(
-					(row) => row.querySelector("input[type=checkbox]").checked,
-				)
-				.map((row) => row.querySelector(".fb-check-input").value)
+				.filter(row => row.querySelector("input[type=checkbox]").checked)
+				.map(row => row.querySelector(".fb-check-input").value)
 				.filter(Boolean);
 			const memo = item.querySelector(".eval-memo").value;
 			if (!checked.length && !memo) return null;

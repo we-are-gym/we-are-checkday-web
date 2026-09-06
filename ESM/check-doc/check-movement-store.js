@@ -2,7 +2,7 @@
 // 기법: 프리셋 배열로 초기화하고 add/clear로 카드를 추가·비운다. feedback.js의 전역 `feedbacks`·`fbIdCounter` 대체.
 // 사용: feedback.js가 화면의 피드백 카드 상태를 이 저장소에 보관한다.
 
-import { CheckMovementItem } from "./check-movement-item.js";
+import { CheckMovementItem } from "./check-movement-item.ts";
 
 /**
  * 동작 피드백 카드 저장소
@@ -13,9 +13,7 @@ export class CheckMovementStore {
 	 */
 	constructor(presets = []) {
 		/** 카드 목록 (첨가 순서 유지) */
-		this.items = presets.map(
-			(p, i) => new CheckMovementItem(i + 1, p.name, [...p.checks]),
-		);
+		this.items = presets.map((p, i) => new CheckMovementItem(i + 1, p.name, [...p.checks]));
 		/** 다음 카드 고유 번호 */
 		this.nextId = this.items.length + 1;
 	}
@@ -32,11 +30,7 @@ export class CheckMovementStore {
 	 * @returns {CheckMovementItem} 추가된 카드
 	 */
 	add(preset) {
-		const item = new CheckMovementItem(
-			this.nextId++,
-			preset ? preset.name : "",
-			preset ? [...preset.checks] : [""],
-		);
+		const item = new CheckMovementItem(this.nextId++, preset ? preset.name : "", preset ? [...preset.checks] : [""]);
 		this.items.push(item);
 		return item;
 	}
