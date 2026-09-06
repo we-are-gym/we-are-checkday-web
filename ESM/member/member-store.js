@@ -1,6 +1,5 @@
 // 파일 용도: 회원 스토어 단일 인스턴스 — Mason API 클라이언트 (회원 관리·등록·상세 공용)
-// 주의: 기존 sessionStorage mock 저장에서 API 영속화로 교체되었습니다.
-// to-be: API 실패 시 toUserMessage + showToast로 사용자 피드백 제공
+// 주의: 모든 CRUD는 Mason API 경유 — 실패 시 toUserMessage + showToast로 사용자 피드백을 제공한다.
 import { request } from "@infra/api-client.js";
 import { toUserMessage } from "@infra/errors.js";
 import { Store } from "@infra/store.js";
