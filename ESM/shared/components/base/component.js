@@ -1,5 +1,21 @@
-// 파일 용도: UI 컴포넌트 기본 클래스·타입·유틸 — 모든 웹 컴포넌트의 기반
+// 파일 용도: UI 컴포넌트 단일 공개 팩토리 — 구(infra·member)·신(shared) 모든 웹 컴포넌트의 공통 기반
+// 기법: 라이트 DOM 모드 + props 자동 바인딩 + 이벤트 디스패치 헬퍼
+// 결정: defineComponent는 options 오브젝트 한 벌만 사용한다. (구 방식 defineComponent(tag, spec) 제거)
+//       연결 순서 단일 정책: ① props 초기화 → ② connectedCallback(첫 렌더 전 — light-DOM 자식 캡처용)
+//       → ③ 최초 렌더 보장 → ④ onConnect(이벤트 배선 1회)
 import { defineComponent as baseDefineComponent } from "./component-factory.js";
+
+/** defineComponent 옵션 중 팩토리가 직접 처리하는 예약 키 */
+const BASE_OPTION_KEYS = new Set([
+	"tag",
+	"props",
+	"render",
+	"connectedCallback",
+	"disconnectedCallback",
+	"attributeChangedCallback",
+	"onConnect",
+	"observedAttributes",
+]);
 
 /**
  * 컴포넌트 Props 타입 (확장용)
@@ -22,39 +38,50 @@ import { defineComponent as baseDefineComponent } from "./component-factory.js";
  * 기본 컴포넌트 옵션
  * @typedef {Object} ComponentOptions
  * @property {string} tag 커스텀 엘리먼트 태그명
- * @property {Object} props 프로퍼티 정의
- * @property {Function} render 렌더 함수
- * @property {Function} [connectedCallback] 연결 시 콜백
+ * @property {Object} [props] 프로퍼티 정의 ({ key: { type, default } })
+ * @property {Function} render 렌더 함수 (props 인자 수신)
+ * @property {Function} [connectedCallback] 연결 시 콜백 — 첫 렌더 전에 1회 호출 (light-DOM 자식 캡처 등)
+ * @property {Function} [onConnect] 연결 후 콜백 — 첫 렌더 완료 후 1회 호출 (이벤트 배선)
  * @property {Function} [disconnectedCallback] 해제 시 콜백
  * @property {Function} [attributeChangedCallback] 속성 변경 콜백
  * @property {string[]} [observedAttributes] 감시할 속성 목록
  */
 
 /**
- * 컴포넌트 팩토리 — 기본 defineComponent를 확장한 버전
- * Light DOM 모드, props 자동 바인딩, 이벤트 디스패치 헬퍼 제공
- * @param {ComponentOptions} options
- * @returns {typeof HTMLElement}
+ * 웹 컴포넌트 팩토리 — 라이트 DOM 모드, props 자동 바인딩, 이벤트 디스패치·refresh 헬퍼 제공
+ * 옵션에 선언한 예약 키 외의 함수는 프로토타입 메서드로 노출된다. (예: prefill, renderAuth)
+ * @param {ComponentOptions & Record<string, Function>} options 컴포넌트 옵션
+ * @returns {typeof HTMLElement} 정의된 컴포넌트 클래스
  */
 export function defineComponent(options) {
-	const { tag, props = {}, render, connectedCallback, disconnectedCallback, attributeChangedCallback, observedAttributes = [] } = options;
+	const {
+		tag,
+		props = {},
+		render,
+		connectedCallback,
+		disconnectedCallback,
+		attributeChangedCallback,
+		onConnect,
+		observedAttributes = [],
+	} = options;
 
 	// props를 observedAttributes에 자동 추가
 	const allObserved = [...new Set([...observedAttributes, ...Object.keys(props)])];
 
 	const spec = {
-		// 렌더 함수
+		observedAttributes: allObserved,
+
+		// 렌더 함수 — props 오브젝트를 인자로 전달 (props가 없는 컴포넌트는 빈 오브젝트)
 		render() {
 			return render.call(this, spec._getProps.call(this));
 		},
 
-		// 연결 시: props 초기화 + 사용자 콜백
+		// 연결 시 — 단일 순서 정책 적용
 		connectedCallback() {
-			// console.log("웹컴포넌트의 props를 초기화하고 사용자 콜백을 호출합니다…");
-			// console.log({ spec, this: this });
-
 			spec._initProps.call(this);
 			if (connectedCallback) connectedCallback.call(this);
+			if (!this._rendered) spec.refresh.call(this);
+			if (onConnect) onConnect.call(this);
 		},
 
 		// 해제 시
@@ -62,11 +89,14 @@ export function defineComponent(options) {
 			if (disconnectedCallback) disconnectedCallback.call(this);
 		},
 
-		// 속성 변경 시: props 갱신 + 리렌더
+		// 속성 변경 시: props 갱신 + 리렌더 후 사용자 콜백
+		// 주의: 커스텀 엘리먼트 업그레이드 시 attributeChangedCallback이 connectedCallback보다 먼저
+		//       호출되므로, _props가 아직 초기화되지 않았으면 여기서 지연 초기화한다.
 		attributeChangedCallback(name, oldVal, newVal) {
 			if (oldVal === newVal) return;
 
 			if (props[name] !== undefined) {
+				if (!this._props) spec._initProps.call(this);
 				this._props[name] = spec._deserializeProp(name, newVal);
 				spec.refresh.call(this);
 			}
@@ -76,9 +106,6 @@ export function defineComponent(options) {
 
 		// props 초기화
 		_initProps() {
-			// console.log("웹컴포넌트의 props를 초기화합니다…");
-			// console.log({ this: this });
-
 			this._props = {};
 
 			for (const [key, def] of Object.entries(props)) {
@@ -94,7 +121,7 @@ export function defineComponent(options) {
 
 			if (!def || def.type === String) return value;
 			if (def.type === Number) return Number(value);
-						if (def.type === Boolean) return value !== "false"; 
+			if (def.type === Boolean) return value !== "false";
 
 			if (def.type === Array) return value ? value.split(",").map(v => v.trim()) : [];
 
@@ -141,11 +168,18 @@ export function defineComponent(options) {
 			);
 		},
 
-		// 렌더 결과로 내부 갱신
+		// 렌더 결과로 내부 갱신 (외부에서 el.refresh() 호출 가능 — 구 컴포넌트 호환)
 		refresh() {
 			this.innerHTML = render.call(this, this._getProps());
+			this._rendered = true;
 		},
 	};
+
+	// 사용자 정의 메서드(prefill·renderAuth·_handleSort 등)를 spec에 실어 프로토타입 메서드로 노출
+	for (const key of Object.keys(options)) {
+		if (BASE_OPTION_KEYS.has(key)) continue;
+		if (typeof options[key] === "function") spec[key] = options[key];
+	}
 
 	return baseDefineComponent(tag, spec);
 }

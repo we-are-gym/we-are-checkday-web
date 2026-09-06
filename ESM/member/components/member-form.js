@@ -1,10 +1,11 @@
 // 파일 용도: 회원 정보 폼 컴포넌트 — 이름·성별·목표·담당 트레이너 입력과 저장/취소 (member-create·member-edit 공용)
-// 기법: 순수 함수형 컴포넌트 팩토리 + 네이티브 웹 컴포넌트 (light DOM 모드)
+// 기법: 단일 컴포넌트 팩토리(base/component.js) + 네이티브 웹 컴포넌트 (light DOM 모드)
 // 사용: el.onSubmit = (data) => {} 콜백 설정
 // 결정: 저장 버튼은 to-be 지시에 따라 채색(btn-primary)을 주지 않는다 — 프로토타입과 달리 이 화면의 버튼은 무채색으로 둔다.
-import { defineComponent } from "@infra/component-factory.js";
+import { defineComponent } from "@shared/components/base/component.js";
 
-defineComponent("member-form", {
+defineComponent({
+	tag: "member-form",
 	/**
 	 * 회원 정보 입력 폼 HTML을 생성한다
 	 * @returns {string} 폼 HTML

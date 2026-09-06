@@ -2,10 +2,11 @@
 // 기법: 순수 함수형 컴포넌트 팩토리 + 네이티브 웹 컴포넌트 (light DOM 모드)
 // 사용: el.rows = [...]; el.refresh(); / el.onSelect(id), el.onRemove(id) 콜백 설정
 // 주의: 회원 ID(member_ID)는 NanoID 문자열(예: "M-로나미라노소시")이다. 숫자가 아니다.
-import { defineComponent } from "@infra/component-factory.js";
 import { TPL } from "@infra/templates.js";
+import { defineComponent } from "@shared/components/base/component.js";
 
-defineComponent("member-table", {
+defineComponent({
+	tag: "member-table",
 	/**
 	 * 회원 목록 테이블 HTML을 생성한다 (빈 목록이면 안내 행 포함)
 	 * @returns {string} 테이블 HTML
