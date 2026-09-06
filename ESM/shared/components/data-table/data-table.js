@@ -1,4 +1,7 @@
 // 파일 용도: DataTable 웹 컴포넌트 — 정렬·선택 가능한 데이터 테이블 (전체 화면 공용)
+// 계약: col.align("center"|"right")은 styles/data-table.css의 .align-* 규칙으로 실현된다.
+//       render 미지정 셀은 이스케이프된 일반 텍스트, render 반환값은 trusted HTML로 삽입한다.
+import { escapeHtml } from "@infra/templates.js";
 import { defineComponent } from "@shared/components/base/component.js";
 
 /** 데이터 테이블 마크업 생성 (순수 함수 — 컴포넌트 상태와 분리)
@@ -57,7 +60,7 @@ const renderDataTable = (
 
 				const cells = columns
 					.map(col => {
-						const cellValue = col.render ? col.render(row[col.key], row, rowIndex) : row[col.key];
+						const cellValue = col.render ? col.render(row[col.key], row, rowIndex) : escapeHtml(row[col.key] ?? "");
 						const alignClass = col.align ? ` align-${col.align}` : "";
 						return `<td class="${alignClass}" data-key="${col.key}">${cellValue ?? ""}</td>`;
 					})

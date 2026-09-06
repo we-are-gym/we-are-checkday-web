@@ -31,6 +31,18 @@
 	border-bottom: 0.5px solid var(--border);
 }
 
+/* 열 정렬 유틸 — ui-data-table이 col.align("center"|"right")으로 출력하는 align-* 클래스의 구현체
+   (컴포넌트 선언 API였으나 CSS 규칙이 없어 동작하지 않던 정렬을 복원한다. 헤더·셀 동시 적용) */
+.data-table th.align-center,
+.data-table td.align-center {
+	text-align: center;
+}
+
+.data-table th.align-right,
+.data-table td.align-right {
+	text-align: right;
+}
+
 .data-table tbody tr:last-child td {
 	border-bottom: none;
 }
