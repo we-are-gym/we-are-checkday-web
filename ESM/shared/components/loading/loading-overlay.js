@@ -32,7 +32,9 @@ if (typeof HTMLElement !== "undefined") {
 			if (this.querySelector(".loading-overlay")) return;
 
 			const overlay = document.createElement("div");
+
 			overlay.className = "loading-overlay";
+
 			overlay.setAttribute("role", "status");
 			overlay.setAttribute("aria-live", "polite");
 			overlay.style.cssText =
@@ -44,6 +46,7 @@ if (typeof HTMLElement !== "undefined") {
 
 			const style = document.createElement("style");
 			style.textContent = "@keyframes es-loading-spin{to{transform:rotate(360deg)}}";
+
 			this.appendChild(style);
 			this.appendChild(overlay);
 		}
@@ -73,11 +76,14 @@ if (typeof HTMLElement !== "undefined") {
 function ensureLoadingOverlay() {
 	if (typeof document === "undefined" || typeof customElements === "undefined") return null;
 	if (!customElements.get("es-loading-overlay") || !document.body) return null;
+
 	let el = document.querySelector("es-loading-overlay");
+
 	if (!el) {
 		el = document.createElement("es-loading-overlay");
 		document.body.appendChild(el);
 	}
+
 	return el;
 }
 
