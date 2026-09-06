@@ -4,8 +4,8 @@ var e=null,t=0;if(typeof HTMLElement<`u`){class t extends HTMLElement{connectedC
 				z-index: 9999;
 
 				/* background: rgba(255, 255, 255, .65); */
-				background: rgba(255, 255, 255, .25);
-				/* background: rgba(255, 255, 255, .0); */
+				/* background: rgba(255, 255, 255, .25); */
+				background: rgba(255, 255, 255, .0);
 
 				display: none;
 				align-items: center;
