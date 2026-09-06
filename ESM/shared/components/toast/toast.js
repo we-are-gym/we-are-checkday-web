@@ -166,31 +166,61 @@ if (typeof HTMLElement !== "undefined") {
 	customElements.define("es-toast", EsToast);
 } // end HTMLElement guard
 
-// ── 싱글톤 헬퍼 — 컴포넌트 없이 어디서든 호출 가능 ──
+// ── 싱글톤 헬퍼 — 화면에 <es-toast> 마크업이 없어도 자동 부착되어 동작 ──
+
 /**
- * 토스트 메시지를 표시합니다 (싱글톤 자동 사용).
+ * 토스트·로딩 오버레이 루트(<es-toast>)를 body에 보장한다.
+ * 첫 사용 시점에 엘리먼트가 없으면 생성·부착하므로, HTML에 마크업이 없는 화면에서도
+ * showToast/showLoading이 항상 동작한다. 비-DOM 환경(bun 테스트 등)이거나
+ * 컴포넌트가 아직 정의되지 않았으면 null을 반환한다.
+ * @returns {EsToast | null} 토스트 엘리먼트 (사용 불가 환경이면 null)
+ */
+function ensureFeedbackRoot() {
+	if (typeof document === "undefined" || typeof customElements === "undefined") return null;
+	if (!customElements.get("es-toast") || !document.body) return null;
+	let el = document.querySelector("es-toast");
+	if (!el) {
+		el = document.createElement("es-toast");
+		document.body.appendChild(el);
+	}
+	return el;
+}
+
+/**
+ * 토스트 메시지를 표시합니다 (루트 자동 부착).
  * @param {string} message
  * @param {{ type?: "error"|"warning"|"success"|"info", duration?: number, action?: { label: string, onClick: () => void } }} [options]
  */
 export function showToast(message, options) {
-	const el = singletonEl || document.querySelector("es-toast");
+	const el = ensureFeedbackRoot();
 	if (el) el.show(message, options);
 }
 
 /** 모든 토스트를 숨깁니다. */
 export function hideAllToasts() {
-	const el = singletonEl || document.querySelector("es-toast");
+	const el = ensureFeedbackRoot();
 	if (el) el.hideAll();
 }
 
-/** 로딩 오버레이를 표시합니다. */
+/** 로딩 오버레이 참조카운터 — 동시 로딩(memberStore+recordStore 등) 시 마지막 hide까지 오버레이를 유지한다 */
+let loadingCount = 0;
+
+/** 로딩 오버레이를 표시합니다. (호출마다 참조카운터 증가)
+ * @returns {void}
+ */
 export function showLoading() {
-	const el = singletonEl || document.querySelector("es-toast");
-	if (el) el.showLoading();
+	const el = ensureFeedbackRoot();
+	if (!el) return;
+	loadingCount++;
+	el.showLoading();
 }
 
-/** 로딩 오버레이를 숨깁니다. */
+/** 로딩 오버레이를 숨깁니다. (참조카운터가 0이 된 시점에만 실제로 숨김)
+ * @returns {void}
+ */
 export function hideLoading() {
-	const el = singletonEl || document.querySelector("es-toast");
-	if (el) el.hideLoading();
+	const el = singletonEl || (typeof document !== "undefined" ? document.querySelector("es-toast") : null);
+	if (!el) return;
+	loadingCount = Math.max(0, loadingCount - 1);
+	if (loadingCount === 0) el.hideLoading();
 }
