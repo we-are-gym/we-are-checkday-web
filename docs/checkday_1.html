@@ -27,22 +27,22 @@
         }
       }
     </script>
-    <script type="module" crossorigin src="/we-are-checkday-web/assets/checkday-DOYGw8OQ.js"></script>
-    <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/app-header-CTxcyEpO.js">
-    <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/utils-dom-AA-aQdFf.js">
-    <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/member-store-BW42P3lL.js">
+    <script type="module" crossorigin src="/we-are-checkday-web/assets/checkday-DE7ffZZ-.js"></script>
+    <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/app-header-CBLU3CuN.js">
+    <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/utils-dom-y8yOKY5h.js">
+    <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/member-store-D-qGl6Xz.js">
     <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/member-utils-C3eDrFg1.js">
     <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/loading-overlay-BYL9g967.js">
     <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/utils-url-B0nUYPTI.js">
     <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/assessment-data-BzkGwTxd.js">
     <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/utils-array-Dlk6KB1T.js">
-    <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/vo2-C9GwogSU.js">
-    <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/inbody-smwfiy4b.js">
-    <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/inbody-data-BJEls_cQ.js">
-    <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/utils-string-DmrAWNnK.js">
-    <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/components-CULovy1R.js">
+    <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/vo2-X_VpuxHI.js">
+    <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/inbody-Br_ZMeNv.js">
+    <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/inbody-data-BkB7qKY7.js">
+    <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/utils-string-D5Q_1hHA.js">
+    <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/components-CiZszeJ8.js">
     <link rel="stylesheet" crossorigin href="/we-are-checkday-web/assets/app-header-xc_EjZYv.css">
-    <link rel="stylesheet" crossorigin href="/we-are-checkday-web/assets/inbody-data-3jKqgQd_.css">
+    <link rel="stylesheet" crossorigin href="/we-are-checkday-web/assets/inbody-data-wnyqT5ND.css">
   </head>
   <body>
     <!-- 파일 용도: 체크데이 상담지 화면 — 그룹 트레이닝 격월 점검 · 회원 움직임 평가와 상담 기록 -->
@@ -167,8 +167,8 @@
       </div>
     </div>
 
-    <!-- 결과 모달 -->
-    <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="overlay-title">
+    <!-- 결과 모달 (네이티브 <dialog>) -->
+    <dialog class="modal-dialog" id="overlay" aria-labelledby="overlay-title">
       <div class="modal">
         <h3 id="overlay-title">체크데이 결과 요약</h3>
         <div id="report-body"></div>
@@ -177,7 +177,7 @@
           <button class="btn btn-primary" data-action="copy">텍스트 복사</button>
         </div>
       </div>
-    </div>
+    </dialog>
 
 
   </body>

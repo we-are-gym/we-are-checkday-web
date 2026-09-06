@@ -27,15 +27,15 @@
         }
       }
     </script>
-    <script type="module" crossorigin src="/we-are-checkday-web/assets/basic-function-assessment-Dt4_bxJa.js"></script>
-    <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/app-header-CTxcyEpO.js">
-    <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/utils-dom-AA-aQdFf.js">
+    <script type="module" crossorigin src="/we-are-checkday-web/assets/basic-function-assessment-BEQfzMnL.js"></script>
+    <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/app-header-CBLU3CuN.js">
+    <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/utils-dom-y8yOKY5h.js">
     <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/assessment-data-BzkGwTxd.js">
-    <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/vo2-C9GwogSU.js">
-    <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/components-CULovy1R.js">
+    <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/vo2-X_VpuxHI.js">
+    <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/components-CiZszeJ8.js">
     <link rel="stylesheet" crossorigin href="/we-are-checkday-web/assets/app-header-xc_EjZYv.css">
-    <link rel="stylesheet" crossorigin href="/we-are-checkday-web/assets/basic-function-assessment-160FIUD8.css">
-    <link rel="stylesheet" crossorigin href="/we-are-checkday-web/assets/layout-shell-BA7I2lRI.css">
+    <link rel="stylesheet" crossorigin href="/we-are-checkday-web/assets/basic-function-assessment-DcTZVLT-.css">
+    <link rel="stylesheet" crossorigin href="/we-are-checkday-web/assets/layout-shell-BIoOTHLL.css">
   </head>
   <body>
     <!-- 파일 용도: 베이직 펑션 평가화면 — 7개 움직임 항목 + VO₂ Max 심폐 평가 입력과 결과 조회 -->
@@ -216,8 +216,8 @@
       </div>
     </div>
 
-    <!-- Report Modal -->
-    <div class="modal-overlay" id="modal-overlay">
+    <!-- Report Modal (네이티브 <dialog>) -->
+    <dialog class="modal-dialog" id="modal-overlay" aria-label="평가 결과 요약">
       <div class="modal">
         <h3>평가 결과 요약</h3>
         <div id="report-content"></div>
@@ -226,7 +226,7 @@
           <button class="btn btn-primary" data-action="copy">텍스트 복사</button>
         </div>
       </div>
-    </div>
+    </dialog>
 
 
   </body>

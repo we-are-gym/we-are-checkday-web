@@ -1,4 +1,4 @@
-import{t as e}from"./app-header-CTxcyEpO.js";var t=({variant:e,disabled:t,loading:n,type:r,ariaLabel:i})=>{let a=`btn btn-${e}${t?` disabled`:``}${n?` loading`:``}`,o={};i&&(o.label=i),t&&(o.disabled=`true`),n&&(o.busy=`true`);let s=``;for(let[e,t]of Object.entries(o))s+=` aria-${e}="${t}"`;return`
+import{t as e}from"./app-header-CBLU3CuN.js";var t=({variant:e,disabled:t,loading:n,type:r,ariaLabel:i})=>{let a=`btn btn-${e}${t?` disabled`:``}${n?` loading`:``}`,o={};i&&(o.label=i),t&&(o.disabled=`true`),n&&(o.busy=`true`);let s=``;for(let[e,t]of Object.entries(o))s+=` aria-${e}="${t}"`;return`
 			<button type="${r}" class="${a}"${s} ${t?`disabled`:``}>
 				${n?`<span class="btn-spinner" aria-hidden="true"></span>`:``}
 				<span class="btn-text"><slot>버튼</slot></span>
