@@ -1,9 +1,9 @@
 // 파일 용도: 회원 스토어 단일 인스턴스 — Mason API 클라이언트 (회원 관리·등록·상세 공용)
-// 주의: 모든 CRUD는 Mason API 경유 — 실패 시 toUserMessage + showToast로 사용자 피드백을 제공한다.
+// 주의: 모든 CRUD는 Mason API 경유 — 사용자 토스트는 api-client 계층이 담당하고,
+//       스토어는 toUserMessage로 error 상태만 기록한다. (진단 로그는 화면 진입점의 console.error가 담당)
 import { request } from "@infra/api-client.js";
 import { toUserMessage } from "@infra/errors.js";
 import { Store } from "@infra/store.js";
-import { showToast } from "@shared/components/toast/toast.js";
 
 /** API Member 응답을 웹 Member 형태로 정규화합니다.
  * @param {object} apiMember Mason API Member 리소스
@@ -60,7 +60,7 @@ export async function loadMembers() {
 	} catch (err) {
 		const msg = toUserMessage(err);
 		memberStore.update({ loading: false, error: msg });
-		showToast(msg, { type: "error" });
+		// 사용자 안내 토스트는 api-client.request가 이미 표시 — 여기서 중복 표시하지 않는다
 		throw err;
 	}
 }

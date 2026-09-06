@@ -1,6 +1,7 @@
 // 파일 용도: 세션 리포트 템플릿 — 수집된 데이터로 결과 요약 HTML·클립보드 텍스트를 조립 (checkday 공용)
 // 기법: 순수 조립 함수(formatEvalLine·formatFbLine·buildReportHTML·buildReportText) + 세션 리포트 API(SessionReport)
 // 사용: check-form-new·checkday 진입점이 sessionReport.openModal()/copyToClipboard()를 호출한다. 데이터 수집은 report-collect.js가 담당한다.
+import { showToast } from "@shared/components/toast/toast.js";
 import { byId } from "@tools/utils-dom.js";
 import { collectReportData } from "./report-collect.js";
 
@@ -87,7 +88,7 @@ export class SessionReport {
 		byId("overlay").classList.add("open");
 	}
 
-	/** 결과 요약을 텍스트로 조립해 클립보드에 복사하고 성공·실패를 안내한다
+	/** 결과 요약을 텍스트로 조립해 클립보드에 복사하고 성공·실패를 토스트로 안내한다
 	 * @returns {void}
 	 */
 	copyToClipboard() {
@@ -95,8 +96,8 @@ export class SessionReport {
 		const lines = buildReportText(data);
 		navigator.clipboard
 			.writeText(lines.join("\n"))
-			.then(() => alert("복사되었습니다!"))
-			.catch(() => alert("직접 선택해서 복사해 주세요."));
+			.then(() => showToast("복사되었습니다!", { type: "success" }))
+			.catch(() => showToast("직접 선택해서 복사해 주세요.", { type: "error" }));
 	}
 }
 

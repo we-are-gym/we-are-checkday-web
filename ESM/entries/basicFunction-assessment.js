@@ -8,10 +8,11 @@ import { getGradeMeta } from "@calc/grade.js";
 import { calcVo2Assessment } from "@calc/vo2.js";
 import { ASSESSMENT_ITEMS } from "@check-doc/assessment-data.js";
 import "@infra/components/app-header.js";
-import "@shared/components/index.js"; 
 import { MOTION_TOTAL_MAX, SCORE_MAX, SCORE_MIN } from "@infra/constants.js";
 import { TPL } from "@infra/templates.js";
 import { clamp, parseToNum } from "@infra/validation.js";
+import "@shared/components/index.js";
+import { showToast } from "@shared/components/toast/toast.js";
 import { byId, delegate, queryAll, queryOne } from "@tools/utils-dom.js";
 
 const assessments = ASSESSMENT_ITEMS.map((item, idx) => ({
@@ -341,10 +342,10 @@ function copyReportToClipboard() {
 	navigator.clipboard
 		.writeText(lines.join("\n"))
 		.then(() => {
-			alert("클립보드에 복사되었습니다!");
+			showToast("클립보드에 복사되었습니다!", { type: "success" });
 		})
 		.catch(() => {
-			alert("복사에 실패했습니다. 직접 선택해서 복사해 주세요.");
+			showToast("복사에 실패했습니다. 직접 선택해서 복사해 주세요.", { type: "error" });
 		});
 }
 
