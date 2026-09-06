@@ -69,9 +69,11 @@ delegate(document, "click", "[data-action]", (e, el) => {
 		case "copy":
 			sessionReport.copyToClipboard();
 			break;
-		case "close-modal":
-			byId("overlay").classList.remove("open");
+		case "close-modal": {
+			const dlg = byId("overlay");
+			if (dlg?.open) dlg.close();
 			break;
+		}
 	}
 });
 

@@ -72,27 +72,30 @@ export function toggle(el, cls, state) {
  * @returns {void}
  */
 export function delegate(root, type, selector, handler) {
-	const base =
-		root === document || root === "document"
-			? document
-			: typeof root === "string"
-				? queryOne(root)
-				: root;
+	const base = root === document || root === "document" ? document : typeof root === "string" ? queryOne(root) : root;
 	if (!base) return;
-	base.addEventListener(type, (e) => {
+	base.addEventListener(type, e => {
 		const el = e.target.closest ? e.target.closest(selector) : null;
 		if (el) handler(e, el);
 	});
 }
 
 /**
- * 모달 오버레이 배경(자신) 클릭 시 닫는 공용 헬퍼 — 각 화면이 반복하던
+ * 모달 배경(자신) 클릭 시 닫는 공용 헬퍼 — 각 화면이 반복하던
  * `delegate(document, "click", "#overlay", …)` 패턴을 단일 소스로 통합한다.
- * @param {string} [overlayId="overlay"] 닫을 오버레이 요소 id (예: "overlay", "modal-overlay")
+ * 네이티브 <dialog>는 showModal 상태에서 ::backdrop(자신) 클릭 시 close()하고,
+ * 레거시 div.overlay(.open 토글)는 그대로 classList에서 제거한다.
+ * ESC 닫기는 <dialog> 네이티브 cancel 동작에 위임한다.
+ * @param {string} [overlayId="overlay"] 닫을 요소 id (예: "overlay", "eval-picker-overlay")
  * @returns {void}
  */
 export function dismissOnOverlayClick(overlayId = "overlay") {
-	delegate(document, "click", `#${overlayId}`, (e) => {
-		if (e.target.id === overlayId) e.target.classList.remove("open");
+	delegate(document, "click", `#${overlayId}`, e => {
+		if (e.target.id !== overlayId) return;
+		if (typeof e.target.close === "function") {
+			if (e.target.open) e.target.close();
+		} else {
+			e.target.classList.remove("open");
+		}
 	});
 }

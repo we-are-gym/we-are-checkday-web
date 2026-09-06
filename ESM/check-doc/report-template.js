@@ -79,13 +79,15 @@ export function buildReportText(data) {
  * 데이터 수집은 report-collect.js, 조립은 buildReportHTML/buildReportText에 위임한다.
  */
 export class SessionReport {
-	/** 결과 요약 HTML을 조립해 결과 모달 본문에 표시하고 오버레이를 연다
+	/** 결과 요약 HTML을 조립해 결과 모달 본문에 표시하고 <dialog>를 연다
 	 * @returns {void}
 	 */
 	openModal() {
 		const data = collectReportData();
+		const dlg = byId("overlay");
+		if (!dlg) return;
 		byId("report-body").innerHTML = buildReportHTML(data);
-		byId("overlay").classList.add("open");
+		if (!dlg.open) dlg.showModal();
 	}
 
 	/** 결과 요약을 텍스트로 조립해 클립보드에 복사하고 성공·실패를 토스트로 안내한다

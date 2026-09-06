@@ -599,19 +599,16 @@ textarea.consult-memo::placeholder {
 	background: var(--accent-hover);
 }
 
-/* ── 모달 ── */
-.overlay {
-	display: none;
-	position: fixed;
-	inset: 0;
-	background: rgba(0, 0, 0, 0.45);
-	z-index: 100;
-	align-items: center;
-	justify-content: center;
-	padding: 1rem;
+/* ── 모달 (네이티브 <dialog> — 커스텀 .overlay 대체) ── */
+dialog.modal-dialog {
+	margin: auto;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	width: min(480px, calc(100vw - 2rem));
 }
-.overlay.open {
-	display: flex;
+dialog.modal-dialog::backdrop {
+	background: rgba(0, 0, 0, 0.45);
 }
 .modal {
 	background: var(--surface);
@@ -724,7 +721,7 @@ textarea.consult-memo::placeholder {
 }
 @media print {
 	.actions,
-	.overlay {
+	dialog.modal-dialog {
 		display: none !important;
 	}
 	body {
