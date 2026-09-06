@@ -24,14 +24,21 @@ let displayCount = PAGE_SIZE;
 /** 회원 목록 테이블 컴포넌트 엘리먼트 (ui-data-table) */
 const tableEl = byId("member-table");
 
-/** 테이블 컬럼 정의 — 이름·성별·담당 트레이너·체크 횟수·관리(삭제) */
+/** 테이블 컬럼 정의 — 이름·성별·담당 트레이너·체크 횟수는 중앙, 관리(삭제)는 우측 정렬 */
 const COLUMNS = [
-	{ key: "name", label: "이름" },
-	{ key: "gender", label: "성별" },
-	{ key: "trainer", label: "담당 트레이너" },
+	{
+		key: "name",
+		label: "이름",
+		align: "center",
+		// 이름 강조(색 var(--text)·굵기 700)용 후킹 클래스 — 스타일은 layout-members.css
+		render: value => `<span class="member-name">${escapeHtml(value)}</span>`,
+	},
+	{ key: "gender", label: "성별", align: "center" },
+	{ key: "trainer", label: "담당 트레이너", align: "center" },
 	{
 		key: "recordCount",
 		label: "체크 횟수",
+		align: "center",
 		render: (value, row) => `${row.recordCount}회`,
 	},
 	{
@@ -47,6 +54,8 @@ const COLUMNS = [
 tableEl.setProp("columns", COLUMNS);
 tableEl.setProp("ariaLabel", "회원 목록");
 tableEl.setProp("emptyMessage", "검색 결과가 없어요");
+// 홀/짝 행 배경을 동등하게 한다 — 줄무늬는 공용 컴포넌트 능력으로 남기고 이 화면에서만 끈다
+tableEl.setProp("striped", false);
 /** 현재 검색어 (빈 문자열이면 전체 목록) */
 let keyword = "";
 

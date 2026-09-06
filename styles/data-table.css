@@ -52,7 +52,10 @@
 	background: var(--surface2);
 }
 
-/* hoverable — 행 hover 배경 (활성화 가능 행 시각 단서) */
+/* hoverable — 활성화 가능 행의 시각 단서: 상시 포인터 커서 + hover 배경 변화 */
+.data-table .data-row.hoverable {
+	cursor: pointer;
+}
 .data-table .data-row.hoverable:hover {
 	background: var(--surface2);
 }
