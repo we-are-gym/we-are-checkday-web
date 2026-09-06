@@ -37,12 +37,26 @@ if (typeof HTMLElement !== "undefined") {
 
 			overlay.setAttribute("role", "status");
 			overlay.setAttribute("aria-live", "polite");
-			overlay.style.cssText =
-				"position:fixed;inset:0;z-index:9999;background:rgba(255,255,255,.65);display:none;align-items:center;justify-content:center;";
-			overlay.innerHTML =
-				'<div style="display:flex;flex-direction:column;align-items:center;gap:.75rem;">' +
-				'<div class="spinner" style="width:32px;height:32px;border:3px solid #e5e7eb;border-top-color:#3b82f6;border-radius:50%;animation:es-loading-spin .6s linear infinite;"></div>' +
-				'<span style="font-size:14px;color:#374151;">로딩 중…</span></div>';
+
+			overlay.style.cssText = `
+				position: fixed;
+				inset: 0;
+				z-index: 9999;
+
+				/* background: rgba(255, 255, 255, .65); */
+				background: rgba(255, 255, 255, .25);
+				/* background: rgba(255, 255, 255, .0); */
+
+				display: none;
+				align-items: center;
+				justify-content: center;
+			`;
+
+			overlay.innerHTML = `
+				<div style="display:flex; flex-direction:column; align-items:center; gap:.75rem;">
+					<div class="spinner" style="width:32px; height:32px; border: 3px solid #e5e7eb; border-top-color:#3b82f6; border-radius:50%; animation: es-loading-spin .6s linear infinite;"></div>
+					<span style="font-size:14px; /*color:#374151;*/">로딩중…</span>
+				</div>`;
 
 			const style = document.createElement("style");
 			style.textContent = "@keyframes es-loading-spin{to{transform:rotate(360deg)}}";
