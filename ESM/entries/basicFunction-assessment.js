@@ -309,14 +309,16 @@ function openReportModal() {
 	</div>`;
 
 	container.innerHTML = html;
-	byId("modal-overlay").classList.add("open");
+	const modalDlg = byId("modal-overlay");
+	if (modalDlg && !modalDlg.open) modalDlg.showModal();
 }
 
 /** 결과 보고 모달을 닫는다
  * @returns {void}
  */
 function closeModalDirect() {
-	byId("modal-overlay").classList.remove("open");
+	const modalDlg = byId("modal-overlay");
+	if (modalDlg?.open) modalDlg.close();
 }
 
 /** 보고서 텍스트를 클립보드로 복사한다 (실패 시 안내)

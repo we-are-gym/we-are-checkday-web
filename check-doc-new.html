@@ -164,8 +164,8 @@
       </main>
     </div>
 
-    <!-- 결과 모달 -->
-    <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="overlay-title">
+    <!-- 결과 모달 (네이티브 <dialog>) -->
+    <dialog class="modal-dialog" id="overlay" aria-labelledby="overlay-title">
       <div class="modal">
         <h3 id="overlay-title">체크데이 결과 요약</h3>
         <div id="report-body"></div>
@@ -174,7 +174,7 @@
           <button class="btn btn-primary" data-action="copy">텍스트 복사</button>
         </div>
       </div>
-    </div>
+    </dialog>
 
     <script type="importmap">
       {

@@ -1,4 +1,4 @@
-// 파일 용도: 내장 도움말 컴포넌트 — 헤더 우측의 도움말 버튼과 모달 오버레이 (전 화면 공용)
+// 파일 용도: 내장 도움말 컴포넌트 — 헤더 우측의 도움말 버튼과 네이티브 <dialog> 모달 (전 화면 공용)
 // 기법: 단일 컴포넌트 팩토리(base/component.js) + 네이티브 웹 컴포넌트 (light DOM 모드)
 // light-DOM 자식이 도움말 본문(HTML)이 된다. (예: <app-help><h4>…</h4><p>…</p></app-help>)
 import { TPL } from "@infra/templates.js";
@@ -27,25 +27,33 @@ defineComponent({
 			${TPL.helpModal(this._contentHTML || "")}`;
 	},
 	/**
-	 * open/close 메서드를 정의하고 열기·닫기·오버레이·Escape 키 동작을 연결한다
+	 * open/close 메서드를 정의하고 열기·닫기·배경 클릭을 연결한다.
+	 * ESC 닫기·포커스 트랩은 <dialog> 네이티브 동작(showModal)에 위임한다.
 	 */
 	onConnect() {
+		this._dialog = this.querySelector("[data-help-dialog]");
+
 		this.open = () => {
-			this.querySelector(".help-overlay").hidden = false;
+			const dlg = this._dialog;
+			if (dlg && !dlg.open) dlg.showModal();
 			this.querySelector("[data-help-open]").setAttribute("aria-expanded", "true");
 			this.querySelector("[data-help-close]").focus();
 		};
 		this.close = () => {
-			this.querySelector(".help-overlay").hidden = true;
+			const dlg = this._dialog;
+			if (dlg?.open) dlg.close();
 			this.querySelector("[data-help-open]").setAttribute("aria-expanded", "false");
 		};
 		this.querySelector("[data-help-open]").addEventListener("click", this.open);
 		this.querySelector("[data-help-close]").addEventListener("click", this.close);
-		this.querySelector(".help-overlay").addEventListener("click", e => {
+		// 배경(::backdrop) 클릭 시 닫기 — 클릭 대상이 dialog 자신이면 닫는다
+		this._dialog.addEventListener("click", e => {
 			if (e.target === e.currentTarget) this.close();
 		});
-		document.addEventListener("keydown", e => {
-			if (e.key === "Escape" && !this.querySelector(".help-overlay").hidden) this.close();
+		// 네이티브 ESC/close 후 aria-expanded 동기화
+		this._dialog.addEventListener("close", () => {
+			const openBtn = this.querySelector("[data-help-open]");
+			if (openBtn) openBtn.setAttribute("aria-expanded", "false");
 		});
 	},
 });

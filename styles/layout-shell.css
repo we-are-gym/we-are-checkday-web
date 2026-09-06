@@ -197,19 +197,16 @@ app-header {
 	font-size: 12.5px;
 }
 
-/* ── 도움말 모달 ── */
-.help-overlay {
-	position: fixed;
-	inset: 0;
-	background: rgba(0, 0, 0, 0.55);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	z-index: 100;
-	padding: 1rem;
+/* ── 도움말 모달 (네이티브 <dialog> — 커스텀 .help-overlay 대체) ── */
+dialog.help-dialog {
+	margin: auto;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	width: min(420px, calc(100vw - 2rem));
 }
-.help-overlay[hidden] {
-	display: none;
+dialog.help-dialog::backdrop {
+	background: rgba(0, 0, 0, 0.55);
 }
 .help-modal {
 	background: var(--surface);

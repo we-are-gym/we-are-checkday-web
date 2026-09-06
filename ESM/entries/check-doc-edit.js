@@ -177,12 +177,12 @@ function addEvalItem() {
 		showToast("추가할 수 있는 평가 항목이 없습니다.", { type: "warning" });
 		return;
 	}
-	const overlay = byId("eval-picker-overlay");
+	const pickerDlg = byId("eval-picker-overlay");
 	const list = byId("eval-picker-list");
 	list.innerHTML = candidates
 		.map((item, i) => `<button type="button" class="picker-item" data-picker-item="${i}">${escapeHtml(item.name)}</button>`)
 		.join("");
-	overlay.classList.add("open");
+	if (pickerDlg && !pickerDlg.open) pickerDlg.showModal();
 }
 
 /** i번째 평가 항목 삭제 — 최소 1개는 남긴다 */
@@ -206,9 +206,11 @@ delegate(document, "click", "[data-action]", (e, el) => {
 		case "save":
 			saveRecord();
 			break;
-		case "close-picker":
-			byId("eval-picker-overlay").classList.remove("open");
+		case "close-picker": {
+			const pickerDlg = byId("eval-picker-overlay");
+			if (pickerDlg?.open) pickerDlg.close();
 			break;
+		}
 	}
 });
 byId("add-eval-btn").addEventListener("click", addEvalItem);
@@ -220,7 +222,8 @@ delegate(document, "click", "[data-picker-item]", (e, el) => {
 	const picked = candidates[index];
 	if (!picked) return;
 	rebuildEvalItems(nextAfterAdd(getEvals(), picked));
-	byId("eval-picker-overlay").classList.remove("open");
+	const pickerDlg = byId("eval-picker-overlay");
+	if (pickerDlg?.open) pickerDlg.close();
 });
 // 피커 배경(오버레이 자신) 클릭 시 닫기 — 공용 헬퍼
 dismissOnOverlayClick("eval-picker-overlay");

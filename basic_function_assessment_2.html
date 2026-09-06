@@ -197,8 +197,8 @@
       </div>
     </div>
 
-    <!-- Report Modal -->
-    <div class="modal-overlay" id="modal-overlay">
+    <!-- Report Modal (네이티브 <dialog>) -->
+    <dialog class="modal-dialog" id="modal-overlay" aria-label="평가 결과 요약">
       <div class="modal">
         <h3>평가 결과 요약</h3>
         <div id="report-content"></div>
@@ -207,7 +207,7 @@
           <button class="btn btn-primary" data-action="copy">텍스트 복사</button>
         </div>
       </div>
-    </div>
+    </dialog>
 
     <script type="importmap">
       {
