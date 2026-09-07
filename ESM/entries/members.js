@@ -5,11 +5,11 @@ import { getRecordCountsByMember } from "@check-doc/record-utils.js";
 import { guardOnBfcache } from "@infra/auth.js";
 import "@infra/components/app-header.js";
 import { escapeHtml } from "@infra/templates.js";
-import { removeMember as apiRemoveMember, loadMembers, memberStore } from "@member/member-store.js";
+import { removeMember } from "@member/confirm-delete.js";
+import { loadMembers, memberStore } from "@member/member-store.js";
 import { displayGender } from "@member/member-utils.js";
 import "@shared/components/data-table/data-table.js";
 import { hideLoading, showLoading } from "@shared/components/loading/loading-overlay.js";
-import "@shared/components/password-confirm/password-confirm.js";
 import { byId } from "@tools/utils-dom.js";
 
 // 로딩 오버레이 — memberStore/recordStore의 loading 상태 구독
@@ -143,79 +143,6 @@ function render() {
 	// } else if (skeletonEl) {
 	// 	skeletonEl.style.display = "none";
 	// }
-}
-
-/**
- * 회원 삭제 비밀번호 모달 엘리먼트를 보장한다 (미존재 시 동적 생성).
- * @returns {HTMLElement} password-confirm 엘리먼트
- */
-function ensurePasswordConfirm() {
-	let el = document.querySelector("password-confirm");
-	if (!el) {
-		el = document.createElement("password-confirm");
-		document.body.appendChild(el);
-	}
-	return el;
-}
-
-/**
- * 3단계 확인 모달을 열고 평문 비밀번호를 반환한다. 취소 시 null.
- * @returns {Promise<string|null>}
- */
-async function confirmDeletePassword() {
-	const pc = ensurePasswordConfirm();
-	return new Promise((resolve) => {
-		pc.onConfirm = (value) => resolve(value);
-		pc.onCancel = () => resolve(null);
-		pc.show("회원 삭제 비밀번호", "로그인 비밀번호가 아닙니다.\n회원 삭제 전용 비밀번호(작업 코드)를 입력하세요.");
-	});
-}
-
-/**
- * 회원 삭제 (경고×2 → 평문 비밀번호 모달 → API 호출 → 스토어 갱신)
- * @param {string} id 삭제할 회원 member_ID
- * @returns {Promise<void>}
- */
-async function removeMember(id) {
-	const member = memberStore.getState().members.find((m) => m.id === id);
-	if (!member) return;
-
-	// 연관 체크기록 건수 (안내용)
-	const linkedRecords = recordStore.getState().records.filter((r) => r.memberId === id);
-	const recordCount = linkedRecords.length;
-
-	const prompt =
-		recordCount > 0
-			? `회원 ${member.name} 님을 삭제하시겠습니까?\n\n연결된 체크기록 ${recordCount}건도 함께 삭제합니다.`
-			: `회원 ${member.name} 님을 삭제하시겠습니까?`;
-
-	if (!confirm(prompt)) {
-		return;
-	}
-
-	if (!confirm("정말 삭제하실 겁니까? 확실해요?")) {
-		return;
-	}
-
-	// 3단계: 평문 비밀번호 확인 — 취소 시 삭제 중단
-	const password = await confirmDeletePassword();
-	if (password === null) {
-		return;
-	}
-
-	try {
-		await apiRemoveMember(id, password);
-
-		// 로컬 기록 목록에서도 해당 회원 기록 제거
-		recordStore.setState((prev) => ({
-			...prev,
-			records: prev.records.filter((r) => r.memberId !== id),
-		}));
-	} catch (err) {
-		console.error("회원 삭제 실패:", err);
-		// 401은 request() 내부에서 goToLogin()이 이미 리다이렉트를 처리하고,
-		// 그 밖의 실패 안내 토스트는 api-client.request가 표시한다 — 여기서 중복 안내하지 않는다
-	}
 }
 
 /** 검색어 갱신 후 재렌더링
