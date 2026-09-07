@@ -140,7 +140,12 @@ export function defineComponent(options) {
 			if (this._props[key] === value) return;
 
 			this._props[key] = value;
-			this.setAttribute(key, spec._serializeProp(key, value));
+			// Array·Object props는 문자열 속성으로 왕복하면 형태가 깨지므로(잠재 버그) 직접 갱신만 한다.
+			// (data-table의 rows·columns·selectedRows 등 — 렌더는 attributeChanged가 아니라 refresh가 담당)
+			const def = props[key];
+			if (!def || (def.type !== Array && def.type !== Object)) {
+				this.setAttribute(key, spec._serializeProp(key, value));
+			}
 			spec.refresh.call(this);
 		},
 

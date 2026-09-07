@@ -1,0 +1,107 @@
+/* 파일 용도: DataTable(ui-data-table) 공용 스타일 — 데이터 테이블 시각 정의 (colors.css 변수 참조)
+   사용: members.html 등 ui-data-table 사용 화면이 <link>로 로드한다. */
+.data-table-wrapper {
+	border: 0.5px solid var(--border);
+	border-radius: var(--rlg);
+	background: var(--surface);
+	overflow: hidden;
+}
+
+.data-table {
+	width: 100%;
+	border-collapse: collapse;
+	table-layout: fixed;
+}
+
+.data-table th {
+	font-size: 11px;
+	font-weight: 600;
+	color: var(--text3);
+	padding: 10px 12px;
+	background: var(--surface2);
+	border-bottom: 0.5px solid var(--border);
+	letter-spacing: 0.4px;
+	text-align: left;
+}
+
+.data-table td {
+	font-size: 13px;
+	color: var(--text2);
+	padding: 12px;
+	border-bottom: 0.5px solid var(--border);
+}
+
+/* 열 정렬 유틸 — ui-data-table이 col.align("center"|"right")으로 출력하는 align-* 클래스의 구현체
+   (컴포넌트 선언 API였으나 CSS 규칙이 없어 동작하지 않던 정렬을 복원한다. 헤더·셀 동시 적용) */
+.data-table th.align-center,
+.data-table td.align-center {
+	text-align: center;
+}
+
+.data-table th.align-right,
+.data-table td.align-right {
+	text-align: right;
+}
+
+.data-table tbody tr:last-child td {
+	border-bottom: none;
+}
+
+/* 줄무늬(striped) — 짝수 행 배경 */
+.data-table-wrapper.striped .data-row:nth-child(even) {
+	background: var(--surface2);
+}
+
+/* hoverable — 활성화 가능 행의 시각 단서: 상시 포인터 커서 + hover 배경 변화 */
+.data-table .data-row.hoverable {
+	cursor: pointer;
+}
+.data-table .data-row.hoverable:hover {
+	background: var(--surface2);
+}
+
+/* 포커스 가능한 행 — 키보드(Enter/Space) 활성화 지원 */
+.data-table .data-row:focus-visible {
+	outline: 2px solid var(--blue);
+	outline-offset: -2px;
+}
+
+/* 빈 목록 안내 행 */
+.data-table .empty-cell {
+	text-align: center;
+	font-size: 13px;
+	color: var(--text3);
+	padding: 2rem 0;
+	cursor: default;
+}
+
+/* 행 액션 버튼(삭제 등) — 투명 배경 + 위험 색상 */
+.row-remove {
+	padding: 4px 10px;
+	border: 1px solid var(--border);
+	border-radius: var(--r);
+	background: transparent;
+	color: var(--btn-danger-fg);
+	font-size: 12px;
+	font-weight: 500;
+	font-family: inherit;
+	cursor: pointer;
+	transition:
+		border-color 0.15s,
+		color 0.15s;
+}
+
+.row-remove:hover {
+	border-color: var(--btn-danger-fg);
+}
+
+/* 회원 목록 호환 — 4열(체크 횟수)을 모바일에서 숨긴다 (기존 members 화면 동작 유지) */
+@media (max-width: 480px) {
+	.data-table {
+		font-size: 12px;
+	}
+	.data-table th:nth-child(4),
+	.data-table td:nth-child(4) {
+		display: none;
+	}
+}

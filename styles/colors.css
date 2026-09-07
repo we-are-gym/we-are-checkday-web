@@ -71,7 +71,7 @@
 	/* 하강 = 블루 계 */
 	--delta-down: #3478d4;
 
-	/* 회원 목록 삭제 버튼 글자색 (layout-members.css .member-remove) */
+	/* 목록 행 액션(삭제) 버튼 글자색 (data-table.css .row-remove) */
 	--btn-danger-fg: #c97a72;
 
 	/* 체크데이 날짜 배지 파랑 (layout-checkday.css .date-badge) */

@@ -208,22 +208,6 @@ export const TPL = {
 	},
 
 	/**
-	 * 회원 목록 행 1개 (member-table tbody용) — to-be 지시에 따라 「목표」 열은 표시하지 않는다 (데이터는 유지)
-	 * @param {{ id: number, name: string, gender: string, trainer: string, recordCount: number }} p
-	 * @returns {string}
-	 */
-	memberRow({ id, name, gender, trainer, recordCount }) {
-		return `
-			<tr class="member-row" data-member-id="${id}" tabindex="0" role="link" aria-label="${escapeHtml(name)} 상세 보기">
-				<td class="member-name">${escapeHtml(name)}</td>
-				<td class="member-gender">${escapeHtml(gender || "-")}</td>
-				<td class="member-trainer">${escapeHtml(trainer || "-")}</td>
-				<td class="member-count">${recordCount}회</td>
-				<td class="member-action"><button type="button" class="member-remove" data-remove-id="${id}" aria-label="${escapeHtml(name)} 삭제">삭제</button></td>
-			</tr>`;
-	},
-
-	/**
 	 * 회원 상세의 체크기록 로우 1개 — 회차·날짜·총점을 한 줄로 표시 (to-be 지시 반영)
 	 * @param {{ id: number, session: string, date: string, total: number, max: number }} p
 	 *           session: 회차 표기(예: "1회차"), date: 기록 날짜(YYYY.MM.DD)
