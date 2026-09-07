@@ -27,7 +27,7 @@ async function confirmDeletePassword() {
 	return new Promise(resolve => {
 		pc.onConfirm = value => resolve(value);
 		pc.onCancel = () => resolve(null);
-		pc.show("회원 삭제 비밀번호", "로그인 비밀번호가 아닙니다.\n회원 삭제 전용 비밀번호(작업 코드)를 입력하세요.");
+		pc.show(" ", "회원 삭제 전용 비밀번호를 입력하세요.");
 	});
 }
 
