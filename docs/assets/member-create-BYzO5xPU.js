@@ -1,1 +1,0 @@
-import{i as e}from"./app-header-QCOnakgs.js";/* empty css                     */import{t}from"./utils-dom-y8yOKY5h.js";/* empty css                       */import{t as n}from"./member-store-CqDvOaHA.js";import"./member-form-2D9W_POG.js";e();var r=t(`member-form`);r.onSubmit=async e=>{try{await n(e),window.location.href=`members.html`}catch(e){console.error(`회원 등록 실패:`,e)}};
