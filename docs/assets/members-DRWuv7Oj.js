@@ -12,7 +12,7 @@ import{i as e,r as t,t as n}from"./app-header-QCOnakgs.js";/* empty css         
 				<div class="pc-dialog" role="dialog" aria-modal="true" aria-labelledby="pc-title" aria-describedby="pc-msg">
 					<h2 id="pc-title" class="pc-title"></h2>
 					<p id="pc-msg" class="pc-msg"></p>
-					<input class="pc-input" type="password" autocomplete="off" aria-label="삭제 비밀번호" />
+					<input class="pc-input" type="password" autocomplete="new-password" aria-label="삭제 비밀번호" />
 					<div class="pc-actions">
 						<button type="button" class="pc-cancel btn btn-ghost">취소</button>
 						<button type="button" class="pc-ok btn btn-primary">확인</button>

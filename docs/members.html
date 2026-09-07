@@ -27,7 +27,7 @@
         }
       }
     </script>
-    <script type="module" crossorigin src="/we-are-checkday-web/assets/members-Coa4f18x.js"></script>
+    <script type="module" crossorigin src="/we-are-checkday-web/assets/members-DRWuv7Oj.js"></script>
     <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/app-header-QCOnakgs.js">
     <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/utils-dom-y8yOKY5h.js">
     <link rel="modulepreload" crossorigin href="/we-are-checkday-web/assets/member-store-BeCLUSmp.js">
@@ -58,15 +58,20 @@
 
         <!-- 검색 -->
         <section class="member-toolbar">
-          <input id="search-input" class="member-search" type="search" placeholder="회원 이름으로 검색" aria-label="회원 이름으로 검색" />
+          <input
+            id="search-input"
+            class="member-search"
+            type="search"
+            placeholder="회원 이름으로 검색"
+            aria-label="회원 이름으로 검색"
+            autocomplete="off"
+          />
         </section>
 
         <!-- 목록 (ui-data-table 컴포넌트가 테이블 렌더링, 빈 목록 안내도 목록 안에 표시) -->
         <ui-data-table id="member-table"></ui-data-table>
       </main>
     </div>
-    <!-- 회원 삭제 3단계 비밀번호 확인 모달 (members.js가 동적 생성하므로 마크업 없이도 동작) -->
-    <password-confirm></password-confirm>
 
 
   </body>
