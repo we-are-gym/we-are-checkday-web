@@ -5,7 +5,8 @@ import { getRecordCountsByMember } from "@check-doc/record-utils.js";
 import { guardOnBfcache } from "@infra/auth.js";
 import "@infra/components/app-header.js";
 import { escapeHtml } from "@infra/templates.js";
-import { removeMember as apiRemoveMember, loadMembers, memberStore } from "@member/member-store.js";
+import { removeMember } from "@member/confirm-delete.js";
+import { loadMembers, memberStore } from "@member/member-store.js";
 import { displayGender } from "@member/member-utils.js";
 import "@shared/components/data-table/data-table.js";
 import { hideLoading, showLoading } from "@shared/components/loading/loading-overlay.js";
@@ -142,47 +143,6 @@ function render() {
 	// } else if (skeletonEl) {
 	// 	skeletonEl.style.display = "none";
 	// }
-}
-
-/**
- * 회원 삭제 (API 호출 → 스토어 상태 갱신 → 구독자 재렌더링)
- * @param {string} id 삭제할 회원 member_ID
- * @returns {Promise<void>}
- */
-async function removeMember(id) {
-	const member = memberStore.getState().members.find(m => m.id === id);
-	if (!member) return;
-
-	// 연관 체크기록 건수 (안내용)
-	const linkedRecords = recordStore.getState().records.filter(r => r.memberId === id);
-	const recordCount = linkedRecords.length;
-
-	const prompt =
-		recordCount > 0
-			? `회원 ${member.name} 님을 삭제하시겠습니까?\n\n연결된 체크기록 ${recordCount}건도 함께 삭제합니다.`
-			: `회원 ${member.name} 님을 삭제하시겠습니까?`;
-
-	if (!confirm(prompt)) {
-		return;
-	}
-
-	if (!confirm("정말 삭제하실 겁니까? 확실해요?")) {
-		return;
-	}
-
-	try {
-		await apiRemoveMember(id);
-
-		// 로컬 기록 목록에서도 해당 회원 기록 제거
-		recordStore.setState(prev => ({
-			...prev,
-			records: prev.records.filter(r => r.memberId !== id),
-		}));
-	} catch (err) {
-		console.error("회원 삭제 실패:", err);
-		// 401은 request() 내부에서 goToLogin()이 이미 리다이렉트를 처리하고,
-		// 그 밖의 실패 안내 토스트는 api-client.request가 표시한다 — 여기서 중복 안내하지 않는다
-	}
 }
 
 /** 검색어 갱신 후 재렌더링
