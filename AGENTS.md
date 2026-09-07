@@ -29,6 +29,13 @@
 - end of line: [.editorconfig](.editorconfig) 파일을 참조하십시오.
 - 라인 폭: 140
 
+## 수정 금지 영역 (당분간 — 사용자 결정)
+
+- 모바일 가로 오버플로 관련 CSS는 당분간 수정하지 마십시오.
+  - `__e2e__/mobile-smoke.spec.js`의 가로 오버플로 단언이 실패해도, 이를 고치려고 아래 CSS를 바꾸지 말고 리포트만 하십시오.
+  - 대상: `styles/layout-login.css`의 `.login-form` 폭 규칙(고정 400px + 주석 처리된 반응형 의도 — 현 상태 유지), `styles/data-table.css`의 `@media (max-width: 480px)` 열 숨김 규칙(회원 목록 4열 — 동작 보존용).
+- 이 영역의 변경이 필요하다고 판단되면 사용자 승인을 받은 뒤에만 수정하십시오.
+
 ## 참조 문서
 
 - [리드미](README.md)

@@ -95,7 +95,8 @@
 	border-color: var(--btn-danger-fg);
 }
 
-/* 회원 목록 호환 — 4열(체크 횟수)을 모바일에서 숨긴다 (기존 members 화면 동작 유지) */
+/* 주의(수정 금지 — 당분간): 모바일 가로 오버플로 영역. AGENTS.md 「수정 금지 영역」 참조.
+   4열(체크 횟수) 모바일 숨김은 기존 members 화면 동작 보존용 — mobile-smoke 레드여도 변경 금지. */
 @media (max-width: 480px) {
 	.data-table {
 		font-size: 12px;
