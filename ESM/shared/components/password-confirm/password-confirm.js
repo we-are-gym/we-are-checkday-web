@@ -1,6 +1,7 @@
 // 파일 용도: 삭제 비밀번호 확인 모달 웹 컴포넌트 — 3단계 회원 삭제 경고 후 평문 비밀번호 입력
 // 기법: 라이트 DOM 모드(defineComponent), role=dialog·aria-modal, Esc/배경 클릭 취소, 확인 시 onConfirm(값) 호출
-// 주의: 입력값은 평문이며 로그인 비밀번호가 아니다. 모달은 import 시 한 번 등록된다.
+// 주의: 입력값은 평문이며 로그인 비밀번호가 아니다. autocomplete=new-password로 저장 자격증명 자동 채움·사용자이름 페어링을 차단한다.
+//       (정적 마크업을 두면 페이지의 검색 입력이 브라우저 자동완성 대상이 되므로, 모달은 사용 시점에 동적 생성한다.)
 import { defineComponent } from "@shared/components/base/component.js";
 
 defineComponent({
@@ -20,7 +21,7 @@ defineComponent({
 				<div class="pc-dialog" role="dialog" aria-modal="true" aria-labelledby="pc-title" aria-describedby="pc-msg">
 					<h2 id="pc-title" class="pc-title"></h2>
 					<p id="pc-msg" class="pc-msg"></p>
-					<input class="pc-input" type="password" autocomplete="off" aria-label="삭제 비밀번호" />
+					<input class="pc-input" type="password" autocomplete="new-password" aria-label="삭제 비밀번호" />
 					<div class="pc-actions">
 						<button type="button" class="pc-cancel btn btn-ghost">취소</button>
 						<button type="button" class="pc-ok btn btn-primary">확인</button>
