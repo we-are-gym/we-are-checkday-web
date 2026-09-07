@@ -109,8 +109,14 @@ export async function updateMember(id, patch) {
  * @param {string} id 대상 회원 member_ID
  * @returns {Promise<void>}
  */
-export async function removeMember(id) {
-	await request(`/members/${id}`, { method: "DELETE" });
+/**
+ * 회원 1명을 API에서 삭제하고 스토어에서 제거합니다.
+ * @param {string} id 대상 회원 member_ID
+ * @param {string} password 회원 삭제 전용 평문 비밀번호(작업 코드)
+ * @returns {Promise<void>}
+ */
+export async function removeMember(id, password) {
+	await request(`/members/${id}`, { method: "DELETE", body: { password } });
 	memberStore.setState(prev => ({
 		...prev,
 		members: prev.members.filter(m => m.id !== id),
