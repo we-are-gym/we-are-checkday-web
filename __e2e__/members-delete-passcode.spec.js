@@ -48,7 +48,27 @@ test.describe("회원 삭제 3단계 확인", () => {
 		await expect(backdrop).toBeVisible();
 		await page.locator("password-confirm .pc-cancel").click();
 
-		// 취소 시 행 수不变
+		// 취소 시 행 수 유지
+		await expect(table.locator("tbody tr.member-row")).toHaveCount(rowsBefore);
+	});
+
+	test("오답 비밀번호 시 오류 토스트 + 삭제 중단", async ({ page }) => {
+		await page.goto("/members.html");
+		const table = page.locator("#member-table");
+		const rowsBefore = await table.locator("tbody tr.member-row").count();
+		test.skip(rowsBefore === 0, "삭제할 회원이 없습니다");
+
+		page.on("dialog", dialog => dialog.accept());
+
+		await table.locator("tbody tr.member-row").first().locator(".member-remove").click();
+
+		const backdrop = page.locator("password-confirm .pc-backdrop");
+		await expect(backdrop).toBeVisible();
+		await page.locator("password-confirm .pc-input").fill(`${PASSCODE}-wrong`);
+		await page.locator("password-confirm .pc-ok").click();
+
+		// 403 오류 토스트가 표시되고(로그인 이동 없음) 행 수는 유지된다
+		await expect(page.locator("es-toast", { hasText: "회원 삭제 비밀번호가 올바르지 않습니다" })).toBeVisible();
 		await expect(table.locator("tbody tr.member-row")).toHaveCount(rowsBefore);
 	});
 });
