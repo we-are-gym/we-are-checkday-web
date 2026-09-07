@@ -19,7 +19,9 @@ test("회원 등록 화면에서 남/녀 성별로 신규 회원 생성", async 
 	await loginAndInjectToken(page);
 	await page.goto("/member-create.html");
 
-	await page.fill("#mf-name", "스모크회원");
+	// 재실행·재시도 시에도 목록에서 유일하게 식별되도록 고유 이름을 쓴다
+	const name = `스모크회원_${Date.now()}`;
+	await page.fill("#mf-name", name);
 	await page.selectOption("#mf-gender", "남");
 
 	const created = page.waitForResponse(r => r.url().includes("/members") && r.request().method() === "POST" && r.ok());
@@ -36,7 +38,9 @@ test("여성(녀) 성별로 신규 회원 생성 — 전송값은 녀, 목록 �
 	await loginAndInjectToken(page);
 	await page.goto("/member-create.html");
 
-	await page.fill("#mf-name", "스모크여성회원");
+	// 재실행·재시도 시에도 목록에서 유일하게 식별되도록 고유 이름을 쓴다
+	const name = `스모크여성회원_${Date.now()}`;
+	await page.fill("#mf-name", name);
 	await page.selectOption("#mf-gender", "녀");
 
 	const created = page.waitForResponse(r => r.url().includes("/members") && r.request().method() === "POST" && r.ok());
@@ -47,8 +51,10 @@ test("여성(녀) 성별로 신규 회원 생성 — 전송값은 녀, 목록 �
 	expect(body.gender).toBe("녀");
 
 	await page.waitForURL(/members\.html/);
-	// 목록 화면 표기는 남/여로 변환된다
-	await expect(page.locator(".member-gender", { hasText: "여" }).first()).toBeVisible();
+	// 목록 화면 표기는 남/여로 변환된다 — 고유 이름 행의 2열(성별)이 "여"여야 한다
+	const row = page.locator("#member-table tbody tr.data-row", { hasText: name });
+	await expect(row).toBeVisible();
+	await expect(row.locator("td").nth(1)).toHaveText("여");
 	expect(consoleErrors).toEqual([]);
 });
 

@@ -20,6 +20,9 @@ const detailUrl = `member-detail.html?memberID=${encodeURIComponent(memberId)}`;
 /** 회원 편집 폼 컴포넌트 엘리먼트 */
 const formEl = byId("member-form");
 
+// 취소 폴백을 즉시 설정 — init(목록 로드) 완료 전에 취소를 눌러도 상세 화면으로 돌아가게 한다
+formEl.cancelHref = detailUrl;
+
 /**
  * 회원 정보를 불러와 폼을 채우고 저장 이벤트를 연결합니다.
  * @returns {Promise<void>}
@@ -40,7 +43,6 @@ async function init() {
 		return;
 	}
 
-	formEl.cancelHref = detailUrl;
 	/** 취소 시 상세 화면으로 복귀
 	 * @returns {void}
 	 */
