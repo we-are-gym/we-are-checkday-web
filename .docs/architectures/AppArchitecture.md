@@ -18,7 +18,6 @@
 | 모듈                     | 내보내기                                                                   | 책임                                                                               | 의존                                     |
 | ------------------------ | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------- |
 | `store.js`               | `Store`                                                                    | 관찰자 패턴 GUI 상태 스토어 — `getState`/`setState`/`subscribe`                    | 없음                                     |
-| `component-factory.js`   | `defineComponent`                                                          | 순수 함수형 컴포넌트 + 네이티브 웹 컴포넌트(light DOM) 팩토리                      | 없음                                     |
 | `templates.js`           | `TPL`, `escapeHtml`                                                        | 바닐라JS 템플릿 함수 — 화면 공용 HTML 조각 (카드·행·도트·비교테이블·헤더·GNB·모달) | `utils-array`                            |
 | `auth.js`                | `isAuthed`, `login`, `logout`                                              | localStorage 영속 로그인 상태                                                      | `token-storage` · `api-client`           |
 | `utils-array.js`         | `sum`, `createZeroArray`                                                   | 배열 합계·0 배열                                                                   | 없음                                     |
@@ -66,13 +65,13 @@
 
 ### 웹컴포넌트 (light dom)
 
-| 컴포넌트           | 기능                                                     |
-| ------------------ | -------------------------------------------------------- |
-| `<app-header />`   | 헤더 막대 — 로고·crumb·로그아웃(세션 해제 후 login.html) |
-| `<app-gnb />`      | 주 메뉴(GNB) — aria-current로 활성 표시                  |
-| `<app-help />`     | 내장 도움말 모달 — ESC·오버레이 클릭 닫기                |
-| `<member-table />` | 회원 목록 표 — 행 선택/제거 콜백 위임                    |
-| `<member-form />`  | 회원 등록 폼 (member-create 화면)                        |
+| 컴포넌트            | 기능                                                                                                 |
+| ------------------- | ---------------------------------------------------------------------------------------------------- |
+| `<app-header />`    | 헤더 막대 — 로고·crumb·로그아웃(세션 해제 후 `login.html`)                                           |
+| `<app-gnb />`       | 주 메뉴(GNB) — `aria-current`로 활성 표시                                                            |
+| `<app-help />`      | 내장 도움말 모달 — ESC·오버레이 클릭 닫기                                                            |
+| `<ui-data-table />` | 회원 목록 표 — 컬럼·행 props 주입, `rowActivate`·`rowAction` 이벤트 (`shared/components/data-table`) |
+| `<member-form />`   | 회원 등록 폼 (`member-create` 화면)                                                                  |
 
 ### 화면 진입점 (엔트리 모듈)
 
