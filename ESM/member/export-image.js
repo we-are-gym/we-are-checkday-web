@@ -1,5 +1,6 @@
-// 파일 용도: 회원 상세 화면 내보내기 — html2canvas PNG 캡처·다운로드 + Mason API PDF 다운로드
+// 파일 용도: 회원 상세 화면 내보내기 — 번들된 html2canvas로 PNG 캡처·다운로드 + Mason API PDF 다운로드
 // 기법: DOM 조작·다운로드 트리거만 담당 — 회원 조회(member-utils)·API 클라이언트(api-client)에 위임한다.
+import html2canvas from "@vendor/html2canvas.js";
 import { requestBlob } from "@infra/api-client.js";
 import { memberStore } from "@member/member-store.js";
 import { getMemberById } from "@member/member-utils.js";
@@ -78,11 +79,6 @@ export function exportMemberDetailPNG(memberId) {
 
 	if (!target) {
 		showToast("내보낼 화면을 찾을 수 없습니다.", { type: "error" });
-		return;
-	}
-
-	if (typeof html2canvas === "undefined") {
-		showToast("이미지 생성 라이브러리(html2canvas)를 불러오지 못했습니다. 네트워크 확인 후 다시 시도하세요.", { type: "error" });
 		return;
 	}
 
