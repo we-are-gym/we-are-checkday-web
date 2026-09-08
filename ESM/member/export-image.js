@@ -1,4 +1,4 @@
-// 파일 용도: 회원 상세 화면 내보내기 — 번들된 html2canvas로 PNG 캡처·다운로드 + Mason API PDF 다운로드
+// 파일 용도: 회원 상세 화면 내보내기 — 로컬 html2canvas로 PNG 캡처·다운로드 + Mason API PDF 다운로드
 // 기법: DOM 조작·다운로드 트리거만 담당 — 회원 조회(member-utils)·API 클라이언트(api-client)에 위임한다.
 import html2canvas from "@vendor/html2canvas.js";
 import { requestBlob } from "@infra/api-client.js";
