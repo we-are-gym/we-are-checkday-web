@@ -111,6 +111,15 @@
 
 화면마다 컨테이너 최대 폭이 다를 수 있다.
 
+### 비주얼 디자인 방향
+
+- 깔끔하고 현대적인 dark mode UI
+- 배경은 순수 검정이 아닌 짙은 charcoal/dark gray 계열
+- subtle한 border와 shadow를 적용해주세요.
+- 입력창의 border와 focus 상태도 dark theme에 맞게 디자인해주세요.
+- 취소 버튼은 neutral한 dark/gray 계열로 만들어주세요.
+- 버튼의 크기와 간격은 충분히 확보해주세요.
+
 ## 상태 구조
 
 - 평가 화면(checkday)은 `STATE`(단일 소스)가 평가 점수를 관리한다. (`init`/`get`/`set`/`getTotal`/`reset`)
