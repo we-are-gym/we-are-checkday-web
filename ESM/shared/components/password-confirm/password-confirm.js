@@ -9,7 +9,11 @@ defineComponent({
 	render() {
 		return `
 			<style>
-				/* 모달 팔레트 — colors.css :root 다크 토큰을 소비해 테마 단일 지점 유지 */
+				/*
+					모달 팔레트 — colors.css :root 다크 토큰을 소비해 테마 단일 지점 유지
+					--pc-bg(#212121)≒페이지(#131313)보다 밝음, --pc-text(#f3f1ee)≒제목/--pc-text2(#9a9a9a)≒설명(제목보다 낮은 대비·AA 충족),
+					--pc-input-bg(#1a1a1a)≒모달보다 어두움, --pc-overlay·--pc-border·--pc-shadow≒help-dialog 규약 정렬
+				*/
 				.pc-backdrop{
 					--pc-bg:var(--surface2); --pc-border:var(--border2); --pc-text:var(--text); --pc-text2:var(--text2);
 					--pc-input-bg:var(--surface); --pc-input-border:var(--border2);
@@ -17,10 +21,10 @@ defineComponent({
 					position:fixed;inset:0;background:var(--pc-overlay);display:flex;align-items:center;justify-content:center;z-index:1000
 				}
 				.pc-backdrop[hidden]{display:none}
-				.pc-dialog{background:var(--pc-bg);color:var(--pc-text);padding:20px;border-radius:12px;width:min(90vw,360px);border:0.5px solid var(--pc-border);box-shadow:var(--pc-shadow)}
+				.pc-dialog{background:var(--pc-bg);color:var(--pc-text);padding:20px;border-radius:var(--rlg);width:min(90vw,360px);border:0.5px solid var(--pc-border);box-shadow:var(--pc-shadow)}
 				.pc-title{margin:0 0 8px;font-size:18px}
 				.pc-msg{margin:0 0 12px;font-size:13px;color:var(--pc-text2);white-space:pre-line}
-				.pc-input{width:100%;padding:8px;font-size:14px;background:var(--pc-input-bg);color:var(--pc-text);border:1px solid var(--pc-input-border);border-radius:8px;box-sizing:border-box}
+				.pc-input{width:100%;padding:8px;font-size:14px;background:var(--pc-input-bg);color:var(--pc-text);border:1px solid var(--pc-input-border);border-radius:var(--r);box-sizing:border-box}
 				.pc-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
 			</style>
 			<div class="pc-backdrop" hidden>
