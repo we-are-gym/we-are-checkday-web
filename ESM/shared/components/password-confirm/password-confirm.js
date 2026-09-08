@@ -9,15 +9,15 @@ defineComponent({
 	render() {
 		return `
 			<style>
-				/* 모달 팔레트 — 컴포넌트 스코프 커스텀 프로퍼티로 격리해 테마 변경이 단일 지점이 되게 한다 */
+				/* 모달 팔레트 — colors.css :root 다크 토큰을 소비해 테마 단일 지점 유지 */
 				.pc-backdrop{
-					--pc-bg:#fff; --pc-border:#ccc; --pc-text:#111; --pc-text2:#555;
-					--pc-input-bg:#fff; --pc-input-border:#ccc;
-					--pc-overlay:rgba(0,0,0,.5); --pc-shadow:0 10px 30px rgba(0,0,0,.3);
+					--pc-bg:var(--surface2); --pc-border:var(--border2); --pc-text:var(--text); --pc-text2:var(--text2);
+					--pc-input-bg:var(--surface); --pc-input-border:var(--border2);
+					--pc-overlay:rgba(0,0,0,.55); --pc-shadow:0 12px 40px rgba(0,0,0,.5);
 					position:fixed;inset:0;background:var(--pc-overlay);display:flex;align-items:center;justify-content:center;z-index:1000
 				}
 				.pc-backdrop[hidden]{display:none}
-				.pc-dialog{background:var(--pc-bg);color:var(--pc-text);padding:20px;border-radius:12px;width:min(90vw,360px);box-shadow:var(--pc-shadow)}
+				.pc-dialog{background:var(--pc-bg);color:var(--pc-text);padding:20px;border-radius:12px;width:min(90vw,360px);border:0.5px solid var(--pc-border);box-shadow:var(--pc-shadow)}
 				.pc-title{margin:0 0 8px;font-size:18px}
 				.pc-msg{margin:0 0 12px;font-size:13px;color:var(--pc-text2);white-space:pre-line}
 				.pc-input{width:100%;padding:8px;font-size:14px;background:var(--pc-input-bg);color:var(--pc-text);border:1px solid var(--pc-input-border);border-radius:8px;box-sizing:border-box}
