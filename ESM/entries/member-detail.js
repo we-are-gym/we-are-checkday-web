@@ -12,6 +12,57 @@ import { hideLoading, showLoading } from "@shared/components/loading/loading-ove
 import { byId, delegate } from "@tools/utils-dom.js";
 import { getUrlParam } from "@tools/utils-url.js";
 
+/**
+ * 네이티브 <dialog> 기반 확인 다이얼로그를 표시합니다 (로컬 헬퍼).
+ * @param {string} title 제목
+ * @param {string} message 본문 메시지
+ * @returns {Promise<boolean>} 확인 true, 취소 false를 돌려줍니다
+ */
+async function showConfirmDialog(title, message) {
+	return new Promise(resolve => {
+		const dialog = document.createElement("dialog");
+		dialog.className = "cd-dialog cd-dialog--danger";
+		dialog.innerHTML = `
+			<style>
+				.cd-dialog{background:var(--surface2);color:var(--text);padding:0;border-radius:var(--rlg);border:0.5px solid var(--border2);box-shadow:0 12px 40px rgba(0,0,0,.5);max-width:min(90vw,360px)}
+				.cd-dialog::backdrop{background:rgba(0,0,0,.55)}
+				.cd-dialog[open]{display:flex;flex-direction:column}
+				.cd-header{padding:20px 20px 8px;border-bottom:1px solid var(--border2)}
+				.cd-title{margin:0;font-size:18px}
+				.cd-body{padding:12px 20px;font-size:13px;color:var(--text2);white-space:pre-line}
+				.cd-footer{display:flex;justify-content:flex-end;gap:8px;padding:8px 20px 20px}
+				.cd-cancel{background:transparent;color:var(--text);border:1px solid var(--border2);padding:8px 16px;border-radius:var(--r);cursor:pointer}
+				.cd-ok{background:var(--red-fg);color:#fff;border:none;padding:8px 16px;border-radius:var(--r);cursor:pointer}
+				.cd-ok:hover{background:#c95a5a}
+			</style>
+			<div class="cd-header"><h2 class="cd-title"></h2></div>
+			<div class="cd-body"></div>
+			<div class="cd-footer">
+				<button type="button" class="cd-cancel">취소</button>
+				<button type="button" class="cd-ok">확인</button>
+			</div>
+		`;
+		dialog.querySelector(".cd-title").textContent = title;
+		dialog.querySelector(".cd-body").textContent = message;
+		document.body.appendChild(dialog);
+		const okBtn = dialog.querySelector(".cd-ok");
+		const cancelBtn = dialog.querySelector(".cd-cancel");
+		const close = confirmed => {
+			dialog.close();
+			dialog.remove();
+			resolve(confirmed);
+		};
+		okBtn.addEventListener("click", () => close(true));
+		cancelBtn.addEventListener("click", () => close(false));
+		dialog.addEventListener("click", e => {
+			if (e.target === dialog) close(false);
+		});
+		dialog.addEventListener("cancel", () => close(false));
+		dialog.showModal();
+		cancelBtn.focus();
+	});
+}
+
 /** ?memberID= 파라미터 (문자열 member_ID) */
 const memberId = getUrlParam("memberID");
 
@@ -22,9 +73,8 @@ recordStore.subscribe(state => (state.loading ? showLoading() : hideLoading()));
 // 이벤트 1회 등록
 delegate(document, "click", "[data-del-record]", async (e, el) => {
 	e.stopPropagation();
-	if (!confirm("체크기록을 삭제하시겠습니까?")) {
-		return;
-	}
+	const confirmed = await showConfirmDialog("체크기록 삭제", "체크기록을 삭제하시겠습니까?");
+	if (!confirmed) return;
 	try {
 		await deleteRecord(Number(el.dataset.delRecord));
 		refreshRecords(memberId);
