@@ -23,7 +23,8 @@
       "@member/*": ["./ESM/member/*"],
       "@check-doc/*": ["./ESM/check-doc/*"],
       "@shared/*": ["./ESM/shared/*"],
-      "@types/*": ["./ESM/types/*"]
+      "@types/*": ["./ESM/types/*"],
+      "@vendor/*": ["./ESM/vendor/*"]
     }
   },
   "include": ["ESM/**/*.js", "ESM/**/*.ts"],

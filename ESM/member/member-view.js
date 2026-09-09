@@ -93,7 +93,7 @@ export async function init(memberId) {
 
 	refreshRecords(memberId);
 
-	// PNG 내보내기 버튼 이벤트 (html2canvas CDN — member-detail.html에 defer 로드)
+	// PNG 내보내기 버튼 이벤트 (html2canvas는 @member/export-image.js에서 정적 번들)
 	const PNGExportButtonElem = byId("export-png-btn");
 
 	if (PNGExportButtonElem) {
