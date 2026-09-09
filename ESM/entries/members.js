@@ -31,21 +31,25 @@ const COLUMNS = [
 		key: "name",
 		label: "이름",
 		align: "center",
+		// 열 폭 비율은 members-table-before(29/18/23/18/12%)와 동일 — table-layout: fixed 기준
+		width: "29%",
 		// 이름 강조(색 var(--text)·굵기 700)용 후킹 클래스 — 스타일은 layout-members.css
 		render: value => `<span class="member-name">${escapeHtml(value)}</span>`,
 	},
-	{ key: "gender", label: "성별", align: "center" },
-	{ key: "trainer", label: "담당 트레이너", align: "center" },
+	{ key: "gender", label: "성별", align: "center", width: "18%" },
+	{ key: "trainer", label: "담당 트레이너", align: "center", width: "23%" },
 	{
 		key: "recordCount",
 		label: "체크 횟수",
 		align: "center",
+		width: "18%",
 		render: (value, row) => `${row.recordCount}회`,
 	},
 	{
 		key: "action",
 		label: "",
 		align: "right",
+		width: "12%",
 		render: (value, row) =>
 			`<button type="button" class="row-remove" data-row-action="remove" aria-label="${escapeHtml(row.name)} 삭제">삭제</button>`,
 	},
