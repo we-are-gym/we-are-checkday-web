@@ -89,7 +89,8 @@ function render() {
 
 	tableEl.setProp("rows", buildRows(sliced));
 
-	// "더 보기" 버튼 표시/숨김
+	// "더 보기" 버튼 표시/숨김 — 시각 정의는 styles/layout-members.css .btn-load-more 단일 규칙
+	// (colors.css 다크 토큰 소비, 회원 상세 #new-record-btn 고스트 규약과 정렬)
 	let loadMoreBtn = byId("load-more-btn");
 
 	if (filtered.length > displayCount) {
