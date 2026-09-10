@@ -98,8 +98,6 @@ function render() {
 			loadMoreBtn.id = "load-more-btn";
 			loadMoreBtn.textContent = "더 보기";
 			loadMoreBtn.className = "btn-load-more";
-			loadMoreBtn.style.cssText =
-				"width:100%;padding:.75rem;margin-top:.5rem;background:#f3f4f6;border:1px solid #d1d5db;border-radius:8px;font-size:14px;cursor:pointer;color:#374151;";
 
 			loadMoreBtn.addEventListener("click", () => {
 				displayCount += PAGE_SIZE;
