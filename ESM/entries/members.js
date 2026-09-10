@@ -89,7 +89,8 @@ function render() {
 
 	tableEl.setProp("rows", buildRows(sliced));
 
-	// "더 보기" 버튼 표시/숨김
+	// "더 보기" 버튼 표시/숨김 — 시각 정의는 styles/layout-members.css .btn-load-more 단일 규칙
+	// (colors.css 다크 토큰 소비, 회원 상세 #new-record-btn 고스트 규약과 정렬)
 	let loadMoreBtn = byId("load-more-btn");
 
 	if (filtered.length > displayCount) {
@@ -98,8 +99,6 @@ function render() {
 			loadMoreBtn.id = "load-more-btn";
 			loadMoreBtn.textContent = "더 보기";
 			loadMoreBtn.className = "btn-load-more";
-			loadMoreBtn.style.cssText =
-				"width:100%;padding:.75rem;margin-top:.5rem;background:#f3f4f6;border:1px solid #d1d5db;border-radius:8px;font-size:14px;cursor:pointer;color:#374151;";
 
 			loadMoreBtn.addEventListener("click", () => {
 				displayCount += PAGE_SIZE;

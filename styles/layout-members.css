@@ -123,3 +123,21 @@
 	color: var(--text);
 	font-weight: 700;
 }
+
+/* ── 회원 목록 더 보기 버튼 — ESM/entries/members.js render()가 동적 생성 (색상은 colors.css 단일 팔레트, 회원 상세 #new-record-btn 고스트 규약과 정렬) ── */
+.btn-load-more {
+	width: 100%;
+	padding: .75rem;
+	margin-top: .5rem;
+	background: none;
+	border: 1px solid var(--border2);
+	border-radius: 8px;
+	font-size: 14px;
+	cursor: pointer;
+	color: var(--text2);
+}
+
+.btn-load-more:hover {
+	background: var(--surface2);
+	color: var(--text);
+}
