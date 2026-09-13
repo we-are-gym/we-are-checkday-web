@@ -13,19 +13,33 @@ import "@shared/components/password-confirm/password-confirm.js";
 async function showConfirmDialog(title, message) {
 	return new Promise(resolve => {
 		const dialog = document.createElement("dialog");
+
 		dialog.className = "cd-dialog cd-dialog--danger";
+
 		dialog.innerHTML = `
 			<style>
-				.cd-dialog{background:var(--surface2);color:var(--text);padding:0;border-radius:var(--rlg);border:0.5px solid var(--border2);box-shadow:0 12px 40px rgba(0,0,0,.5);max-width:min(90vw,360px)}
-				.cd-dialog::backdrop{background:rgba(0,0,0,.55)}
-				.cd-dialog[open]{display:flex;flex-direction:column}
-				.cd-header{padding:20px 20px 8px;border-bottom:1px solid var(--border2)}
-				.cd-title{margin:0;font-size:18px}
-				.cd-body{padding:12px 20px;font-size:13px;color:var(--text2);white-space:pre-line}
-				.cd-footer{display:flex;justify-content:flex-end;gap:8px;padding:8px 20px 20px}
-				.cd-cancel{background:transparent;color:var(--text);border:1px solid var(--border2);padding:8px 16px;border-radius:var(--r);cursor:pointer}
-				.cd-ok{background:var(--red-fg);color:#fff;border:none;padding:8px 16px;border-radius:var(--r);cursor:pointer}
-				.cd-ok:hover{background:#c95a5a}
+				.cd-dialog {
+					background: var(--surface2);
+					color: var(--text);
+					padding: 0;
+					border-radius: var(--rlg);
+					border: 0.5px solid var(--border2);
+					box-shadow: 0 12px 40px rgba(0, 0, 0, .5);
+					max-width: min(90vw, 360px);
+				}
+
+				.cd-dialog::backdrop { background: rgba(0, 0, 0, .55) }
+				.cd-dialog[open] { display: flex; flex-direction: column }
+				.cd-header { padding: 20px 20px 8px; border-bottom: 1px solid var(--border2) }
+				.cd-title { margin: 0; font-size: 18px }
+				.cd-body { padding: 12px 20px; font-size: 13px; color: var(--text2); white-space: pre-line }
+				.cd-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 8px 20px 20px }
+
+				.cd-cancel { background: transparent; color: var(--text); border: 1px solid var(--border2); padding: 8px 16px; border-radius: var(--r); cursor: pointer }
+
+				.cd-ok { background: var(--red-fg); color: #fff; border: none; padding: 8px 16px; border-radius: var(--r); cursor: pointer }
+
+				.cd-ok:hover { background: #c95a5a }
 			</style>
 			<div class="cd-header"><h2 class="cd-title"></h2></div>
 			<div class="cd-body"></div>
@@ -34,21 +48,28 @@ async function showConfirmDialog(title, message) {
 				<button type="button" class="cd-ok">확인</button>
 			</div>
 		`;
+
 		dialog.querySelector(".cd-title").textContent = title;
 		dialog.querySelector(".cd-body").textContent = message;
+
 		document.body.appendChild(dialog);
+
 		const okBtn = dialog.querySelector(".cd-ok");
 		const cancelBtn = dialog.querySelector(".cd-cancel");
+
 		const close = confirmed => {
 			dialog.close();
 			dialog.remove();
 			resolve(confirmed);
 		};
+
 		okBtn.addEventListener("click", () => close(true));
 		cancelBtn.addEventListener("click", () => close(false));
+
 		dialog.addEventListener("click", e => {
 			if (e.target === dialog) close(false);
 		});
+
 		dialog.addEventListener("cancel", () => close(false));
 		dialog.showModal();
 		cancelBtn.focus();
@@ -61,11 +82,13 @@ async function showConfirmDialog(title, message) {
  */
 function ensurePasswordConfirm() {
 	const el = document.querySelector("password-confirm");
+
 	if (!el) {
 		const created = document.createElement("password-confirm");
 		document.body.appendChild(created);
 		return created;
 	}
+
 	return el;
 }
 
@@ -75,6 +98,7 @@ function ensurePasswordConfirm() {
  */
 async function confirmDeletePassword() {
 	const pc = ensurePasswordConfirm();
+
 	return new Promise(resolve => {
 		pc.onConfirm = value => resolve(value);
 		pc.onCancel = () => resolve(null);
