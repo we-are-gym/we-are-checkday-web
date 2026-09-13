@@ -22,10 +22,17 @@ async function showConfirmDialog(title, message) {
 					background: var(--surface2);
 					color: var(--text);
 					padding: 0;
-					border-radius: var(--rlg);
+
+					/* 네모 모양, 각지게 */
+					/* border-radius: var(--rlg); */
+
 					border: 0.5px solid var(--border2);
 					box-shadow: 0 12px 40px rgba(0, 0, 0, .5);
-					max-width: min(90vw, 360px);
+
+					/* 가로로 긴 직사각형 형태 */
+					/* max-width: min(90vw, 360px); */
+					max-width: min(90vw, 630px);
+
 					margin: auto;
 				}
 
@@ -33,8 +40,31 @@ async function showConfirmDialog(title, message) {
 				.cd-dialog[open] { display: flex; flex-direction: column }
 				.cd-header { padding: 20px 20px 8px; border-bottom: 1px solid var(--border2) }
 				.cd-title { margin: 0; font-size: 18px }
-				.cd-body { padding: 12px 20px; font-size: 13px; color: var(--text2); white-space: pre-line }
-				.cd-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 8px 20px 20px }
+
+				.cd-body {
+					/* 가로로 긴 직사각형 형태 */
+					/* padding: 12px 20px; */
+					padding: 12px 40px;
+
+					font-size: 13px;
+					color: var(--text2);
+					white-space: pre-line;
+				}
+
+				.cd-footer {
+					display: flex;
+					justify-content: flex-end;
+					gap: 8px;
+
+					/* 가로로 긴 직사각형 형태 */
+
+					/* padding: 8px 20px 20px; */
+
+					padding-top: 8px;
+					padding-bottom: 20px;
+					padding-left: 40px;
+					padding-right: 40px;
+				}
 
 				.cd-cancel { background: transparent; color: var(--text); border: 1px solid var(--border2); padding: 8px 16px; border-radius: var(--r); cursor: pointer }
 
@@ -125,9 +155,9 @@ export async function removeMember(id) {
 			? `회원 ${member.name} 님을 삭제하시겠습니까?\n\n연결된 체크기록 ${recordCount}건도 함께 삭제합니다.`
 			: `회원 ${member.name} 님을 삭제하시겠습니까?`;
 
-	const confirmed1 = await showConfirmDialog("회원 삭제 확인", prompt);
+	const confirmed1 = await showConfirmDialog(/* 제목 필요 없음 */ /*"회원 삭제 확인"*/ null, prompt);
 	if (!confirmed1) return;
-	const confirmed2 = await showConfirmDialog("최종 확인", "정말 삭제하실 겁니까? 확실해요?");
+	const confirmed2 = await showConfirmDialog(/* 제목 필요 없음 */ /*"최종 확인"*/ null, "정말 삭제하실 겁니까? 확실해요?");
 	if (!confirmed2) return;
 
 	// 3단계: 평문 비밀번호 확인 — 취소 시 삭제 중단
