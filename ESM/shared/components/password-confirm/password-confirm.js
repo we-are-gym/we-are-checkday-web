@@ -62,6 +62,8 @@ defineComponent({
 
 				.pc-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px }
 
+				.pc-ok { background: var(--red-fg); color: #fff; }
+				.pc-ok:hover { background: #c95a5a }
 			</style>
 			<div class="pc-backdrop" hidden>
 				<div class="pc-dialog" role="dialog" aria-modal="true" aria-labelledby="pc-title" aria-describedby="pc-msg">
@@ -70,7 +72,7 @@ defineComponent({
 					<input class="pc-input" type="password" autocomplete="new-password" aria-label="삭제 비밀번호" />
 					<div class="pc-actions">
 						<button type="button" class="pc-cancel btn btn-ghost">취소</button>
-						<button type="button" class="pc-ok btn btn-primary">확인</button>
+						<button type="button" class="pc-ok btn">확인</button>
 					</div>
 				</div>
 			</div>`;
