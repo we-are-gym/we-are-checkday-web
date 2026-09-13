@@ -30,10 +30,17 @@ async function showConfirmDialog(title, message) {
 					background: var(--surface2);
 					color: var(--text);
 					padding: 0;
-					border-radius: var(--rlg);
+
+					/* 네모 모양, 각지게 */
+					/* border-radius: var(--rlg); */
+
 					border: 0.5px solid var(--border2);
 					box-shadow: 0 12px 40px rgba(0, 0, 0, .5);
-					max-width: min(90vw, 360px);
+
+					/* 가로로 긴 직사각형 형태 */
+					/* max-width: min(90vw, 360px); */
+					max-width: min(90vw, 630px);
+
 					margin: auto;
 				}
 
@@ -41,8 +48,31 @@ async function showConfirmDialog(title, message) {
 				.cd-dialog[open] { display: flex; flex-direction: column }
 				.cd-header { padding: 20px 20px 8px; border-bottom: 1px solid var(--border2) }
 				.cd-title { margin: 0; font-size: 18px }
-				.cd-body { padding: 12px 20px; font-size: 13px; color: var(--text2); white-space: pre-line }
-				.cd-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 8px 20px 20px}
+
+				.cd-body {
+					/* 가로로 긴 직사각형 형태 */
+					/* padding: 12px 20px; */
+					padding: 12px 40px;
+
+					font-size: 13px;
+					color: var(--text2);
+					white-space: pre-line;
+				}
+
+				.cd-footer {
+					display: flex;
+					justify-content: flex-end;
+					gap: 8px;
+
+					/* 가로로 긴 직사각형 형태 */
+
+					/* padding: 8px 20px 20px; */
+
+					padding-top: 8px;
+					padding-bottom: 20px;
+					padding-left: 40px;
+					padding-right: 40px;
+				}
 
 				.cd-cancel {
 					background: transparent;
