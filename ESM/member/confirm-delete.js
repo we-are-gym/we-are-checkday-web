@@ -125,9 +125,9 @@ export async function removeMember(id) {
 			? `회원 ${member.name} 님을 삭제하시겠습니까?\n\n연결된 체크기록 ${recordCount}건도 함께 삭제합니다.`
 			: `회원 ${member.name} 님을 삭제하시겠습니까?`;
 
-	const confirmed1 = await showConfirmDialog("회원 삭제 확인", prompt);
+	const confirmed1 = await showConfirmDialog(/* 제목 필요 없음 */ /*"회원 삭제 확인"*/ null, prompt);
 	if (!confirmed1) return;
-	const confirmed2 = await showConfirmDialog("최종 확인", "정말 삭제하실 겁니까? 확실해요?");
+	const confirmed2 = await showConfirmDialog(/* 제목 필요 없음 */ /*"최종 확인"*/ null, "정말 삭제하실 겁니까? 확실해요?");
 	if (!confirmed2) return;
 
 	// 3단계: 평문 비밀번호 확인 — 취소 시 삭제 중단

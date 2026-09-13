@@ -109,7 +109,7 @@ recordStore.subscribe(state => (state.loading ? showLoading() : hideLoading()));
 // 이벤트 1회 등록
 delegate(document, "click", "[data-del-record]", async (e, el) => {
 	e.stopPropagation();
-	const confirmed = await showConfirmDialog("체크기록 삭제", "체크기록을 삭제하시겠습니까?");
+	const confirmed = await showConfirmDialog(/* 제목 필요 없음 */ /*"체크기록 삭제"*/ null, "체크기록을 삭제하시겠습니까?");
 	if (!confirmed) return;
 
 	try {
