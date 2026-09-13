@@ -26,6 +26,7 @@ async function showConfirmDialog(title, message) {
 					border: 0.5px solid var(--border2);
 					box-shadow: 0 12px 40px rgba(0, 0, 0, .5);
 					max-width: min(90vw, 360px);
+					margin: auto;
 				}
 
 				.cd-dialog::backdrop { background: rgba(0, 0, 0, .55) }
