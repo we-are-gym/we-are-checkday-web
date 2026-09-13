@@ -21,19 +21,47 @@ import { getUrlParam } from "@tools/utils-url.js";
 async function showConfirmDialog(title, message) {
 	return new Promise(resolve => {
 		const dialog = document.createElement("dialog");
+
 		dialog.className = "cd-dialog cd-dialog--danger";
+
 		dialog.innerHTML = `
 			<style>
-				.cd-dialog{background:var(--surface2);color:var(--text);padding:0;border-radius:var(--rlg);border:0.5px solid var(--border2);box-shadow:0 12px 40px rgba(0,0,0,.5);max-width:min(90vw,360px)}
-				.cd-dialog::backdrop{background:rgba(0,0,0,.55)}
-				.cd-dialog[open]{display:flex;flex-direction:column}
-				.cd-header{padding:20px 20px 8px;border-bottom:1px solid var(--border2)}
-				.cd-title{margin:0;font-size:18px}
-				.cd-body{padding:12px 20px;font-size:13px;color:var(--text2);white-space:pre-line}
-				.cd-footer{display:flex;justify-content:flex-end;gap:8px;padding:8px 20px 20px}
-				.cd-cancel{background:transparent;color:var(--text);border:1px solid var(--border2);padding:8px 16px;border-radius:var(--r);cursor:pointer}
-				.cd-ok{background:var(--red-fg);color:#fff;border:none;padding:8px 16px;border-radius:var(--r);cursor:pointer}
-				.cd-ok:hover{background:#c95a5a}
+				.cd-dialog {
+					background: var(--surface2);
+					color: var(--text);
+					padding: 0;
+					border-radius: var(--rlg);
+					border: 0.5px solid var(--border2);
+					box-shadow: 0 12px 40px rgba(0, 0, 0, .5);
+					max-width: min(90vw, 360px);
+				}
+
+				.cd-dialog::backdrop { background:rgba(0, 0, 0, .55) }
+				.cd-dialog[open] { display: flex; flex-direction: column }
+				.cd-header { padding: 20px 20px 8px; border-bottom: 1px solid var(--border2) }
+				.cd-title { margin: 0; font-size: 18px }
+				.cd-body { padding: 12px 20px; font-size: 13px; color: var(--text2); white-space: pre-line }
+				.cd-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 8px 20px 20px}
+
+				.cd-cancel {
+					background: transparent;
+					color: var(--text);
+					border: 1px solid var(--border2);
+					padding: 8px 16px;
+					border-radius: var(--r);
+					cursor:pointer;
+				}
+
+				.cd-ok {
+					background: var(--red-fg);
+					color: #fff;
+					border: none;
+					padding: 8px 16px;
+					border-radius: var(--r);
+					cursor:pointer;
+				}
+
+				.cd-ok:hover{ background: #c95a5a }
 			</style>
 			<div class="cd-header"><h2 class="cd-title"></h2></div>
 			<div class="cd-body"></div>
@@ -42,21 +70,28 @@ async function showConfirmDialog(title, message) {
 				<button type="button" class="cd-ok">확인</button>
 			</div>
 		`;
+
 		dialog.querySelector(".cd-title").textContent = title;
 		dialog.querySelector(".cd-body").textContent = message;
+
 		document.body.appendChild(dialog);
+
 		const okBtn = dialog.querySelector(".cd-ok");
 		const cancelBtn = dialog.querySelector(".cd-cancel");
+
 		const close = confirmed => {
 			dialog.close();
 			dialog.remove();
 			resolve(confirmed);
 		};
+
 		okBtn.addEventListener("click", () => close(true));
 		cancelBtn.addEventListener("click", () => close(false));
+
 		dialog.addEventListener("click", e => {
 			if (e.target === dialog) close(false);
 		});
+
 		dialog.addEventListener("cancel", () => close(false));
 		dialog.showModal();
 		cancelBtn.focus();
@@ -75,6 +110,7 @@ delegate(document, "click", "[data-del-record]", async (e, el) => {
 	e.stopPropagation();
 	const confirmed = await showConfirmDialog("체크기록 삭제", "체크기록을 삭제하시겠습니까?");
 	if (!confirmed) return;
+
 	try {
 		await deleteRecord(Number(el.dataset.delRecord));
 		refreshRecords(memberId);
@@ -84,10 +120,12 @@ delegate(document, "click", "[data-del-record]", async (e, el) => {
 });
 
 // 기록 행 클릭/키보드 → 조회 화면 (삭제 버튼은 제외)
+
 delegate(document, "click", ".record-row", (e, el) => {
 	if (e.target.closest("[data-del-record]")) return;
 	goView(el);
 });
+
 delegate(document, "keydown", ".record-row", (e, el) => {
 	if ((e.key === "Enter" || e.key === " ") && !e.target.closest("[data-del-record]")) {
 		e.preventDefault();

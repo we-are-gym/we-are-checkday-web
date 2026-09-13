@@ -14,18 +14,54 @@ defineComponent({
 					--pc-bg(#212121)≒페이지(#131313)보다 밝음, --pc-text(#f3f1ee)≒제목/--pc-text2(#9a9a9a)≒설명(제목보다 낮은 대비·AA 충족),
 					--pc-input-bg(#1a1a1a)≒모달보다 어두움, --pc-overlay·--pc-border·--pc-shadow≒help-dialog 규약 정렬
 				*/
+
 				.pc-backdrop{
-					--pc-bg:var(--surface2); --pc-border:var(--border2); --pc-text:var(--text); --pc-text2:var(--text2);
-					--pc-input-bg:var(--surface); --pc-input-border:var(--border2);
-					--pc-overlay:rgba(0,0,0,.55); --pc-shadow:0 12px 40px rgba(0,0,0,.5);
-					position:fixed;inset:0;background:var(--pc-overlay);display:flex;align-items:center;justify-content:center;z-index:1000
+					--pc-bg: var(--surface2);
+					--pc-border: var(--border2);
+					--pc-text: var(--text);
+					--pc-text2:var(--text2);
+					--pc-input-bg: var(--surface);
+					--pc-input-border: var(--border2);
+					--pc-overlay:rgba(0, 0, 0, .55);
+					--pc-shadow:0 12px 40px rgba(0, 0, 0, .5);
+
+					position: fixed;
+					inset: 0;
+					background: var(--pc-overlay);
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					z-index: 1000;
 				}
-				.pc-backdrop[hidden]{display:none}
-				.pc-dialog{background:var(--pc-bg);color:var(--pc-text);padding:20px;border-radius:var(--rlg);width:min(90vw,360px);border:0.5px solid var(--pc-border);box-shadow:var(--pc-shadow)}
-				.pc-title{margin:0 0 8px;font-size:18px}
-				.pc-msg{margin:0 0 12px;font-size:13px;color:var(--pc-text2);white-space:pre-line}
-				.pc-input{width:100%;padding:8px;font-size:14px;background:var(--pc-input-bg);color:var(--pc-text);border:1px solid var(--pc-input-border);border-radius:var(--r);box-sizing:border-box}
-				.pc-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+
+				.pc-backdrop[hidden]{ display: none }
+
+				.pc-dialog {
+					background: var(--pc-bg);
+					color: var(--pc-text);
+					padding: 20px;
+					border-radius: var(--rlg);
+					width: min(90vw, 360px);
+					border: 0.5px solid var(--pc-border);
+					box-shadow: var(--pc-shadow);
+				}
+
+				.pc-title { margin: 0 0 8px; font-size: 18px }
+				.pc-msg { margin: 0 0 12px; font-size: 13px; color: var(--pc-text2); white-space: pre-line }
+
+				.pc-input {
+					width: 100%;
+					padding: 8px;
+					font-size: 14px;
+					background: var(--pc-input-bg);
+					color: var(--pc-text);
+					border: 1px solid var(--pc-input-border);
+					border-radius: var(--r);
+					box-sizing: border-box;
+				}
+
+				.pc-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px }
+
 			</style>
 			<div class="pc-backdrop" hidden>
 				<div class="pc-dialog" role="dialog" aria-modal="true" aria-labelledby="pc-title" aria-describedby="pc-msg">
@@ -39,6 +75,7 @@ defineComponent({
 				</div>
 			</div>`;
 	},
+
 	onConnect() {
 		const backdrop = this.querySelector(".pc-backdrop");
 		const input = this.querySelector(".pc-input");
@@ -47,28 +84,35 @@ defineComponent({
 
 		const finish = confirmed => {
 			const value = input.value;
+
 			input.value = "";
 			backdrop.hidden = true;
+
 			if (confirmed && typeof this.onConfirm === "function") this.onConfirm(value);
 			if (!confirmed && typeof this.onCancel === "function") this.onCancel();
 		};
 
 		okBtn.addEventListener("click", () => finish(true));
 		cancelBtn.addEventListener("click", () => finish(false));
+
 		backdrop.addEventListener("click", e => {
 			if (e.target === backdrop) finish(false);
 		});
+
 		input.addEventListener("keydown", e => {
 			if (e.key === "Enter") finish(true);
 			if (e.key === "Escape") finish(false);
 		});
 	},
+
 	// 모달 열기 — 제목/안내 설정 후 표시하고 입력에 포커스한다
 	show(title, message) {
 		this.querySelector(".pc-title").textContent = title || "비밀번호 확인";
 		this.querySelector(".pc-msg").textContent = message || "";
+
 		const backdrop = this.querySelector(".pc-backdrop");
 		const input = this.querySelector(".pc-input");
+
 		backdrop.hidden = false;
 		input.focus();
 	},
