@@ -17,6 +17,7 @@
 ### 웹 UI
 
 - HTML5
-- 모던 JS
+- 모던 JavaScript
+- TypeScript
 
 <!-- EOF -->
