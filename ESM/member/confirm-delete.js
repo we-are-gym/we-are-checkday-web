@@ -162,7 +162,7 @@ export async function removeMember(id) {
 
 	const confirmed1 = await showConfirmDialog(/* 제목 필요 없음 */ /*"회원 삭제 확인"*/ null, prompt, { solidOk: true });
 	if (!confirmed1) return;
-	const confirmed2 = await showConfirmDialog(/* 제목 필요 없음 */ /*"최종 확인"*/ null, "정말 삭제하실 겁니까? 확실해요?");
+	const confirmed2 = await showConfirmDialog(/* 제목 필요 없음 */ /*"최종 확인"*/ null, "정말 삭제하실 겁니까? 확실해요?", { solidOk: true });
 	if (!confirmed2) return;
 
 	// 3단계: 평문 비밀번호 확인 — 취소 시 삭제 중단
