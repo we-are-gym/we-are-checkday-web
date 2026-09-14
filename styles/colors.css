@@ -40,6 +40,9 @@
 	--orange-fg: #f5a830;
 	--red-bg: rgba(224, 138, 122, 0.12);
 	--red-fg: #e08a7a;
+	/* ── 삭제 확인 솔리드 레드 (삭제 확인 모달 확인 버튼 — 살몬 --red-fg 대신 흰 글자 대비 확보용) ── */
+	--danger-solid: #dc3545;
+	--danger-solid-hover: #bb2d3b;
 
 	/* ── 라운드 — 전 CSS 공용 (별칭 --radius/--radius-lg는 제거, 실토큰 직접 사용) ── */
 	--r: 10px;

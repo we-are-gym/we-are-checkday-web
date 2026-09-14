@@ -8,9 +8,11 @@ import "@shared/components/password-confirm/password-confirm.js";
  * 네이티브 <dialog> 기반 확인 다이얼로그를 표시합니다 (로컬 헬퍼).
  * @param {string} title 제목
  * @param {string} message 본문 메시지 (\n 줄바꿈을 유지합니다)
+ * @param {Object} [options] 표시 옵션 (생략 시 기존 살몬색 확인 버튼)
+ * @param {boolean} [options.solidOk] 참이면 확인 버튼을 솔리드 레드로 표시합니다
  * @returns {Promise<boolean>} 확인 true, 취소 false를 돌려줍니다
  */
-async function showConfirmDialog(title, message) {
+async function showConfirmDialog(title, message, options = {}) {
 	return new Promise(resolve => {
 		const dialog = document.createElement("dialog");
 
@@ -71,6 +73,8 @@ async function showConfirmDialog(title, message) {
 				.cd-ok { background: var(--red-fg); color: #fff; border: none; padding: 8px 16px; border-radius: var(--r); cursor: pointer }
 
 				.cd-ok:hover { background: #c95a5a }
+				.cd-ok--solid { background: var(--danger-solid) }
+				.cd-ok--solid:hover { background: var(--danger-solid-hover) }
 			</style>
 			<div class="cd-header"><h2 class="cd-title"></h2></div>
 			<div class="cd-body"></div>
@@ -87,6 +91,7 @@ async function showConfirmDialog(title, message) {
 
 		const okBtn = dialog.querySelector(".cd-ok");
 		const cancelBtn = dialog.querySelector(".cd-cancel");
+		if (options.solidOk) okBtn.classList.add("cd-ok--solid");
 
 		const close = confirmed => {
 			dialog.close();
@@ -155,9 +160,11 @@ export async function removeMember(id) {
 			? `회원 ${member.name} 님을 삭제하시겠습니까?\n\n연결된 체크기록 ${recordCount}건도 함께 삭제합니다.`
 			: `회원 ${member.name} 님을 삭제하시겠습니까?`;
 
-	const confirmed1 = await showConfirmDialog(/* 제목 필요 없음 */ /*"회원 삭제 확인"*/ null, prompt);
+	const confirmed1 = await showConfirmDialog(/* 제목 필요 없음 */ /*"회원 삭제 확인"*/ null, prompt, { solidOk: true });
 	if (!confirmed1) return;
-	const confirmed2 = await showConfirmDialog(/* 제목 필요 없음 */ /*"최종 확인"*/ null, "정말 삭제하실 겁니까? 확실해요?");
+	const confirmed2 = await showConfirmDialog(/* 제목 필요 없음 */ /*"최종 확인"*/ null, "정말 삭제하실 겁니까? 확실해요?", {
+		solidOk: true,
+	});
 	if (!confirmed2) return;
 
 	// 3단계: 평문 비밀번호 확인 — 취소 시 삭제 중단
