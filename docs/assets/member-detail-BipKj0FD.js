@@ -1,4 +1,4 @@
-import{_ as e,c as t,i as n,n as r,r as i}from"./app-header-QCOnakgs.js";/* empty css                     */import{a,i as o,n as s,o as c,s as l,t as u}from"./utils-dom-y8yOKY5h.js";import{n as d,r as f}from"./member-store-BeCLUSmp.js";import{a as p,l as m,r as h,s as g,t as _}from"./record-utils-QV3OCxjZ.js";import{n as v,t as y}from"./member-utils-C3eDrFg1.js";import{n as b,t as x}from"./loading-overlay-BYL9g967.js";import{t as S}from"./utils-url-B0nUYPTI.js";import{n as C}from"./utils-array-Dlk6KB1T.js";import{a as w,i as T,n as ee,r as te}from"./record-stats-D9OcZbnV.js";function E({buttons:e=`.tab-btn`,panels:t={}}={}){let n=o(e),r=e=>{n.forEach(t=>{let n=t.dataset.tab===e;t.setAttribute(`aria-selected`,String(n)),t.tabIndex=n?0:-1});for(let[n,r]of Object.entries(t))u(r).hidden=n!==e},i=e=>{if(e.key!==`ArrowRight`&&e.key!==`ArrowLeft`)return;e.preventDefault();let t=(n.findIndex(t=>t.dataset.tab===e.target.dataset.tab)+(e.key===`ArrowRight`?1:-1)+n.length)%n.length;r(n[t].dataset.tab),n[t].focus()};return n.forEach(e=>{e.addEventListener(`click`,()=>r(e.dataset.tab)),e.addEventListener(`keydown`,i)}),{activate:r}}function ne(e){let t=u(`cmp-cur`),n=u(`cmp-tgt`);if(e.length===0){t.innerHTML=n.innerHTML=`<option>체크기록 없음</option>`,c(`compare-result`,`<div class="sparkline-empty">비교할 체크기록이 없어요</div>`);return}let r=e.map(e=>`<option value="${e.id}">${e.payload.session||e.date} (${e.date})</option>`).join(``);t.innerHTML=r,n.innerHTML=r,t.value=String(e[Math.max(0,e.length-2)].id),n.value=String(e[e.length-1].id),re(e)}function re(e){let t=Number(u(`cmp-cur`).value),n=Number(u(`cmp-tgt`).value),r=_(e,t),i=_(e,n);!r||!i||c(`compare-result`,ee(r,i,{showTotalScoreLabel:!1,includeMovementHeader:!0}))}function ie(e){if(!e.length){c(`stat-charts`,`<div class="sparkline-empty">아직 체크기록이 없어요</div>`);return}let t=[{label:`체지방률 변화`,key:`bfp`,unit:`%`,deltaUnit:`%p`,deltaDigits:1,fmt:e=>e.toFixed(1)},{label:`체중 변화`,key:`w`,unit:`kg`,deltaUnit:`kg`,deltaDigits:1,fmt:e=>e.toFixed(1)},{label:`골격근량 변화`,key:`m`,unit:`kg`,deltaUnit:`kg`,deltaDigits:1,fmt:e=>e.toFixed(1)},{label:`체지방량 변화`,key:`fat`,unit:`kg`,deltaUnit:`kg`,deltaDigits:1,fmt:e=>e.toFixed(1)},{label:`내장지방 변화`,key:`vis`,unit:`레벨`,deltaUnit:`레벨`,deltaDigits:0,fmt:e=>e.toFixed(0)}],n=e[0]?.payload.session??``,r=e[e.length-1]?.payload.session??``;c(`stat-charts`,t.map(t=>{let a=e.map(e=>parseFloat(e.payload.ib?.[t.key])).filter(e=>!Number.isNaN(e)),o=a[a.length-1],s=a[0],c=a.length>1&&o!=null&&s!=null?`<span class="stat-delta ${o>=s?`delta-up`:`delta-down`}">${o>=s?`▲`:`▼`} ${Math.abs(o-s).toFixed(t.deltaDigits)}${t.deltaUnit}</span>`:``;return`
+import{_ as e,c as t,i as n,n as r,r as i}from"./app-header-B5CSCFPt.js";/* empty css                     */import{a,i as o,n as s,o as c,s as l,t as u}from"./utils-dom-y8yOKY5h.js";import{n as d,r as f}from"./member-store-B30E-RJa.js";import{a as p,l as m,r as h,s as g,t as _}from"./record-utils-CSo8jrK-.js";import{n as v,t as y}from"./member-utils-C3eDrFg1.js";import{n as b,t as x}from"./loading-overlay-BYL9g967.js";import{t as S}from"./utils-url-B0nUYPTI.js";import{n as C}from"./utils-array-Dlk6KB1T.js";import{a as w,i as T,n as ee,r as te}from"./record-stats-BXNfGw2S.js";function E({buttons:e=`.tab-btn`,panels:t={}}={}){let n=o(e),r=e=>{n.forEach(t=>{let n=t.dataset.tab===e;t.setAttribute(`aria-selected`,String(n)),t.tabIndex=n?0:-1});for(let[n,r]of Object.entries(t))u(r).hidden=n!==e},i=e=>{if(e.key!==`ArrowRight`&&e.key!==`ArrowLeft`)return;e.preventDefault();let t=(n.findIndex(t=>t.dataset.tab===e.target.dataset.tab)+(e.key===`ArrowRight`?1:-1)+n.length)%n.length;r(n[t].dataset.tab),n[t].focus()};return n.forEach(e=>{e.addEventListener(`click`,()=>r(e.dataset.tab)),e.addEventListener(`keydown`,i)}),{activate:r}}function ne(e){let t=u(`cmp-cur`),n=u(`cmp-tgt`);if(e.length===0){t.innerHTML=n.innerHTML=`<option>체크기록 없음</option>`,c(`compare-result`,`<div class="sparkline-empty">비교할 체크기록이 없어요</div>`);return}let r=e.map(e=>`<option value="${e.id}">${e.payload.session||e.date} (${e.date})</option>`).join(``);t.innerHTML=r,n.innerHTML=r,t.value=String(e[Math.max(0,e.length-2)].id),n.value=String(e[e.length-1].id),re(e)}function re(e){let t=Number(u(`cmp-cur`).value),n=Number(u(`cmp-tgt`).value),r=_(e,t),i=_(e,n);!r||!i||c(`compare-result`,ee(r,i,{showTotalScoreLabel:!1,includeMovementHeader:!0}))}function ie(e){if(!e.length){c(`stat-charts`,`<div class="sparkline-empty">아직 체크기록이 없어요</div>`);return}let t=[{label:`체지방률 변화`,key:`bfp`,unit:`%`,deltaUnit:`%p`,deltaDigits:1,fmt:e=>e.toFixed(1)},{label:`체중 변화`,key:`w`,unit:`kg`,deltaUnit:`kg`,deltaDigits:1,fmt:e=>e.toFixed(1)},{label:`골격근량 변화`,key:`m`,unit:`kg`,deltaUnit:`kg`,deltaDigits:1,fmt:e=>e.toFixed(1)},{label:`체지방량 변화`,key:`fat`,unit:`kg`,deltaUnit:`kg`,deltaDigits:1,fmt:e=>e.toFixed(1)},{label:`내장지방 변화`,key:`vis`,unit:`레벨`,deltaUnit:`레벨`,deltaDigits:0,fmt:e=>e.toFixed(0)}],n=e[0]?.payload.session??``,r=e[e.length-1]?.payload.session??``;c(`stat-charts`,t.map(t=>{let a=e.map(e=>parseFloat(e.payload.ib?.[t.key])).filter(e=>!Number.isNaN(e)),o=a[a.length-1],s=a[0],c=a.length>1&&o!=null&&s!=null?`<span class="stat-delta ${o>=s?`delta-up`:`delta-down`}">${o>=s?`▲`:`▼`} ${Math.abs(o-s).toFixed(t.deltaDigits)}${t.deltaUnit}</span>`:``;return`
 					<div class="chart-stat">
 						<div class="chart-stat-top">
 							<span class="k">${t.label}</span>
@@ -16,19 +16,56 @@ import{_ as e,c as t,i as n,n as r,r as i}from"./app-header-QCOnakgs.js";/* empt
 					background: var(--surface2);
 					color: var(--text);
 					padding: 0;
-					border-radius: var(--rlg);
+
+					/* 네모 모양, 각지게 */
+					/* border-radius: var(--rlg); */
+
 					border: 0.5px solid var(--border2);
 					box-shadow: 0 12px 40px rgba(0, 0, 0, .5);
-					max-width: min(90vw, 360px);
+
+					/* 가로로 긴 직사각형 형태 */
+					/* max-width: min(90vw, 360px); */
+					max-width: min(90vw, 630px);
+
 					margin: auto;
 				}
 
 				.cd-dialog::backdrop { background:rgba(0, 0, 0, .55) }
 				.cd-dialog[open] { display: flex; flex-direction: column }
-				.cd-header { padding: 20px 20px 8px; border-bottom: 1px solid var(--border2) }
+
+				.cd-header {
+					padding: 20px 20px 8px;
+
+					/* 선 없애기 */
+					/* border-bottom: 1px solid var(--border2); */
+				}
+
 				.cd-title { margin: 0; font-size: 18px }
-				.cd-body { padding: 12px 20px; font-size: 13px; color: var(--text2); white-space: pre-line }
-				.cd-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 8px 20px 20px}
+
+				.cd-body {
+					/* 가로로 긴 직사각형 형태 */
+					/* padding: 12px 20px; */
+					padding: 12px 40px;
+
+					font-size: 13px;
+					color: var(--text2);
+					white-space: pre-line;
+				}
+
+				.cd-footer {
+					display: flex;
+					justify-content: flex-end;
+					gap: 8px;
+
+					/* 가로로 긴 직사각형 형태 */
+
+					/* padding: 8px 20px 20px; */
+
+					padding-top: 8px;
+					padding-bottom: 20px;
+					padding-left: 40px;
+					padding-right: 40px;
+				}
 
 				.cd-cancel {
 					background: transparent;
@@ -40,7 +77,7 @@ import{_ as e,c as t,i as n,n as r,r as i}from"./app-header-QCOnakgs.js";/* empt
 				}
 
 				.cd-ok {
-					background: var(--red-fg);
+					background: var(--danger-solid);
 					color: #fff;
 					border: none;
 					padding: 8px 16px;
@@ -48,7 +85,7 @@ import{_ as e,c as t,i as n,n as r,r as i}from"./app-header-QCOnakgs.js";/* empt
 					cursor:pointer;
 				}
 
-				.cd-ok:hover{ background: #c95a5a }
+				.cd-ok:hover{ background: var(--danger-solid-hover) }
 			</style>
 			<div class="cd-header"><h2 class="cd-title"></h2></div>
 			<div class="cd-body"></div>
@@ -56,4 +93,4 @@ import{_ as e,c as t,i as n,n as r,r as i}from"./app-header-QCOnakgs.js";/* empt
 				<button type="button" class="cd-cancel">취소</button>
 				<button type="button" class="cd-ok">확인</button>
 			</div>
-		`,r.querySelector(`.cd-title`).textContent=e,r.querySelector(`.cd-body`).textContent=t,document.body.appendChild(r);let i=r.querySelector(`.cd-ok`),a=r.querySelector(`.cd-cancel`),o=e=>{r.close(),r.remove(),n(e)};i.addEventListener(`click`,()=>o(!0)),a.addEventListener(`click`,()=>o(!1)),r.addEventListener(`click`,e=>{e.target===r&&o(!1)}),r.addEventListener(`cancel`,()=>o(!1)),r.showModal(),a.focus()})}var bu=S(`memberID`);f.subscribe(e=>e.loading?b():x()),m.subscribe(e=>e.loading?b():x()),s(document,`click`,`[data-del-record]`,async(e,t)=>{if(e.stopPropagation(),await yu(`체크기록 삭제`,`체크기록을 삭제하시겠습니까?`))try{await p(Number(t.dataset.delRecord)),gu(bu)}catch(e){console.error(`기록 삭제 실패:`,e)}}),s(document,`click`,`.record-row`,(e,t)=>{e.target.closest(`[data-del-record]`)||vu(t)}),s(document,`keydown`,`.record-row`,(e,t)=>{(e.key===`Enter`||e.key===` `)&&!e.target.closest(`[data-del-record]`)&&(e.preventDefault(),vu(t))}),E({panels:{records:`panel-records`,compare:`panel-compare`}}),u(`cmp-cur`).addEventListener(`change`,()=>re(mu(bu))),u(`cmp-tgt`).addEventListener(`change`,()=>re(mu(bu))),n(()=>_u(bu)),_u(bu);
+		`,r.querySelector(`.cd-title`).textContent=e,r.querySelector(`.cd-body`).textContent=t,document.body.appendChild(r);let i=r.querySelector(`.cd-ok`),a=r.querySelector(`.cd-cancel`),o=e=>{r.close(),r.remove(),n(e)};i.addEventListener(`click`,()=>o(!0)),a.addEventListener(`click`,()=>o(!1)),r.addEventListener(`click`,e=>{e.target===r&&o(!1)}),r.addEventListener(`cancel`,()=>o(!1)),r.showModal(),a.focus()})}var bu=S(`memberID`);f.subscribe(e=>e.loading?b():x()),m.subscribe(e=>e.loading?b():x()),s(document,`click`,`[data-del-record]`,async(e,t)=>{if(e.stopPropagation(),await yu(null,`체크기록을 삭제하시겠습니까?`))try{await p(Number(t.dataset.delRecord)),gu(bu)}catch(e){console.error(`기록 삭제 실패:`,e)}}),s(document,`click`,`.record-row`,(e,t)=>{e.target.closest(`[data-del-record]`)||vu(t)}),s(document,`keydown`,`.record-row`,(e,t)=>{(e.key===`Enter`||e.key===` `)&&!e.target.closest(`[data-del-record]`)&&(e.preventDefault(),vu(t))}),E({panels:{records:`panel-records`,compare:`panel-compare`}}),u(`cmp-cur`).addEventListener(`change`,()=>re(mu(bu))),u(`cmp-tgt`).addEventListener(`change`,()=>re(mu(bu))),n(()=>_u(bu)),_u(bu);
