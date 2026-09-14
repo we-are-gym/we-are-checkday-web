@@ -84,7 +84,7 @@ async function showConfirmDialog(title, message) {
 				}
 
 				.cd-ok {
-					background: #dc3545;
+					background: var(--danger-solid);
 					color: #fff;
 					border: none;
 					padding: 8px 16px;
@@ -92,7 +92,7 @@ async function showConfirmDialog(title, message) {
 					cursor:pointer;
 				}
 
-				.cd-ok:hover{ background: #bb2d3b }
+				.cd-ok:hover{ background: var(--danger-solid-hover) }
 			</style>
 			<div class="cd-header"><h2 class="cd-title"></h2></div>
 			<div class="cd-body"></div>

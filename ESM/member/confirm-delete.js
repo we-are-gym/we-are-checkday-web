@@ -73,8 +73,8 @@ async function showConfirmDialog(title, message, options = {}) {
 				.cd-ok { background: var(--red-fg); color: #fff; border: none; padding: 8px 16px; border-radius: var(--r); cursor: pointer }
 
 				.cd-ok:hover { background: #c95a5a }
-				.cd-ok--solid { background: #dc3545 }
-				.cd-ok--solid:hover { background: #bb2d3b }
+				.cd-ok--solid { background: var(--danger-solid) }
+				.cd-ok--solid:hover { background: var(--danger-solid-hover) }
 			</style>
 			<div class="cd-header"><h2 class="cd-title"></h2></div>
 			<div class="cd-body"></div>
@@ -162,7 +162,9 @@ export async function removeMember(id) {
 
 	const confirmed1 = await showConfirmDialog(/* 제목 필요 없음 */ /*"회원 삭제 확인"*/ null, prompt, { solidOk: true });
 	if (!confirmed1) return;
-	const confirmed2 = await showConfirmDialog(/* 제목 필요 없음 */ /*"최종 확인"*/ null, "정말 삭제하실 겁니까? 확실해요?", { solidOk: true });
+	const confirmed2 = await showConfirmDialog(/* 제목 필요 없음 */ /*"최종 확인"*/ null, "정말 삭제하실 겁니까? 확실해요?", {
+		solidOk: true,
+	});
 	if (!confirmed2) return;
 
 	// 3단계: 평문 비밀번호 확인 — 취소 시 삭제 중단

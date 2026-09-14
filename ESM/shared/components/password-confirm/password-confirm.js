@@ -62,8 +62,8 @@ defineComponent({
 
 				.pc-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px }
 
-			.pc-ok { background: #dc3545; color: #fff; }
-			.pc-ok:hover { background: #bb2d3b }
+			.pc-ok { background: var(--danger-solid); color: #fff; }
+			.pc-ok:hover { background: var(--danger-solid-hover) }
 			</style>
 			<div class="pc-backdrop" hidden>
 				<div class="pc-dialog" role="dialog" aria-modal="true" aria-labelledby="pc-title" aria-describedby="pc-msg">
