@@ -46,7 +46,14 @@ async function showConfirmDialog(title, message) {
 
 				.cd-dialog::backdrop { background:rgba(0, 0, 0, .55) }
 				.cd-dialog[open] { display: flex; flex-direction: column }
-				.cd-header { padding: 20px 20px 8px; border-bottom: 1px solid var(--border2) }
+
+				.cd-header {
+					padding: 20px 20px 8px;
+
+					/* 선 없애기 */
+					/* border-bottom: 1px solid var(--border2); */
+				}
+
 				.cd-title { margin: 0; font-size: 18px }
 
 				.cd-body {
