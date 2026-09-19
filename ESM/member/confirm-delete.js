@@ -10,13 +10,19 @@ import "@shared/components/password-confirm/password-confirm.js";
  * @param {string} message 본문 메시지 (\n 줄바꿈을 유지합니다)
  * @param {Object} [options] 표시 옵션 (생략 시 기존 살몬색 확인 버튼)
  * @param {boolean} [options.solidOk] 참이면 확인 버튼을 솔리드 레드로 표시합니다
+ * @param {string} [options.okLabel="확인"] 확인 버튼 문구
+ * @param {"plain"|"warn"} [options.variant="plain"] plain=기존 레이아웃, warn=1단계 경고 레이아웃(후속 커밋에서 구현)
  * @returns {Promise<boolean>} 확인 true, 취소 false를 돌려줍니다
  */
 async function showConfirmDialog(title, message, options = {}) {
+	const okLabel = options.okLabel ?? "확인";
+	const variant = options.variant ?? "plain";
+
 	return new Promise(resolve => {
 		const dialog = document.createElement("dialog");
 
 		dialog.className = "cd-dialog cd-dialog--danger";
+		if (variant !== "plain") dialog.classList.add(`cd-dialog--${variant}`);
 
 		dialog.innerHTML = `
 			<style>
@@ -87,7 +93,7 @@ async function showConfirmDialog(title, message, options = {}) {
 			<div class="cd-body"></div>
 			<div class="cd-footer">
 				<button type="button" class="cd-cancel">취소</button>
-				<button type="button" class="cd-ok">확인</button>
+				<button type="button" class="cd-ok"></button>
 			</div>
 		`;
 
@@ -98,6 +104,7 @@ async function showConfirmDialog(title, message, options = {}) {
 
 		const okBtn = dialog.querySelector(".cd-ok");
 		const cancelBtn = dialog.querySelector(".cd-cancel");
+		okBtn.textContent = okLabel;
 		if (options.solidOk) okBtn.classList.add("cd-ok--solid");
 
 		const close = confirmed => {
