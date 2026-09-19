@@ -293,7 +293,7 @@ async function confirmDeletePassword() {
 }
 
 /**
- * 회원 삭제 (경고×2 → 평문 비밀번호 모달 → API 호출 → 스토어 갱신)
+ * 회원 삭제 (경고×1 → 평문 비밀번호 모달 → API 호출 → 스토어 갱신)
  * @param {string} id 삭제할 회원 member_ID
  * @returns {Promise<void>}
  */
@@ -313,13 +313,16 @@ export async function removeMember(id) {
 		memberName: member.name,
 		recordCount,
 	});
-	if (!confirmed1) return;
-	const confirmed2 = await showConfirmDialog(/* 제목 필요 없음 */ /*"최종 확인"*/ null, "정말 삭제하실 겁니까? 확실해요?", {
-		solidOk: true,
-	});
-	if (!confirmed2) return;
 
-	// 3단계: 평문 비밀번호 확인 — 취소 시 삭제 중단
+	if (!confirmed1) return;
+
+	// const confirmed2 = await showConfirmDialog(/* 제목 필요 없음 */ /*"최종 확인"*/ null, "정말 삭제하실 겁니까? 확실해요?", {
+	// 	solidOk: true,
+	// });
+
+	// if (!confirmed2) return;
+
+	// 2단계: 평문 비밀번호 확인 — 취소 시 삭제 중단
 	const password = await confirmDeletePassword();
 	if (password === null) return;
 
