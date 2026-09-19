@@ -6,6 +6,15 @@ import { loginAndInjectToken } from "./checkdoc-helpers.js";
 
 const PASSCODE = process.env.E2E_DELETE_PASSCODE ?? "";
 
+/** HTML <dialog> 기반 1·2단계 확인을 순서대로 수락한다 (네이티브 window.dialog 아님). */
+async function acceptDeleteWarnings(page) {
+	const dialog = page.locator("dialog.cd-dialog");
+	await expect(dialog).toBeVisible();
+	await dialog.locator(".cd-ok").click();
+	await expect(dialog).toBeVisible();
+	await dialog.locator(".cd-ok").click();
+}
+
 test.describe("회원 삭제 3단계 확인", () => {
 	test.skip(!PASSCODE, "E2E_DELETE_PASSCODE 미설정 — 삭제 3단계 테스트를 건너뜁니다");
 
@@ -19,10 +28,8 @@ test.describe("회원 삭제 3단계 확인", () => {
 		const rowsBefore = await table.locator("tbody tr.member-row").count();
 		test.skip(rowsBefore === 0, "삭제할 회원이 없습니다");
 
-		// 1·2차 confirm 대화는 자동 수락
-		page.on("dialog", dialog => dialog.accept());
-
 		await table.locator("tbody tr.member-row").first().locator(".member-remove").click();
+		await acceptDeleteWarnings(page);
 
 		// 3단계: 비밀번호 확인 모달
 		const backdrop = page.locator("password-confirm .pc-backdrop");
@@ -40,9 +47,8 @@ test.describe("회원 삭제 3단계 확인", () => {
 		const rowsBefore = await table.locator("tbody tr.member-row").count();
 		test.skip(rowsBefore === 0, "삭제할 회원이 없습니다");
 
-		page.on("dialog", dialog => dialog.accept());
-
 		await table.locator("tbody tr.member-row").first().locator(".member-remove").click();
+		await acceptDeleteWarnings(page);
 
 		const backdrop = page.locator("password-confirm .pc-backdrop");
 		await expect(backdrop).toBeVisible();
@@ -58,9 +64,8 @@ test.describe("회원 삭제 3단계 확인", () => {
 		const rowsBefore = await table.locator("tbody tr.member-row").count();
 		test.skip(rowsBefore === 0, "삭제할 회원이 없습니다");
 
-		page.on("dialog", dialog => dialog.accept());
-
 		await table.locator("tbody tr.member-row").first().locator(".member-remove").click();
+		await acceptDeleteWarnings(page);
 
 		const backdrop = page.locator("password-confirm .pc-backdrop");
 		await expect(backdrop).toBeVisible();
