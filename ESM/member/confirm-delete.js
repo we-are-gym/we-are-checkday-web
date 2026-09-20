@@ -3,6 +3,7 @@
 import { recordStore } from "@check-doc/record-store.js";
 import { removeMember as apiRemoveMember, memberStore } from "@member/member-store.js";
 import "@shared/components/password-confirm/password-confirm.js";
+import { CircleAlert, createIcons } from "lucide";
 
 /**
  * 네이티브 <dialog> 기반 확인 다이얼로그를 표시합니다 (로컬 헬퍼).
@@ -30,7 +31,9 @@ async function showConfirmDialog(title, message, options = {}) {
 		dialog.innerHTML = `
 			<style>
 				.cd-dialog {
-					background: var(--surface2);
+					/*background: var(--surface2);*/
+					background: #181b1e;
+
 					color: var(--text);
 					padding: 0;
 
@@ -84,9 +87,25 @@ async function showConfirmDialog(title, message, options = {}) {
 					padding-right: 40px;
 				}
 
-				.cd-cancel { background: transparent; color: var(--text); border: 1px solid var(--border2); padding: 8px 16px; border-radius: var(--r); cursor: pointer }
+				.cd-cancel {
+					background: transparent;
+					font-size: 0.63rem;
+					color: var(--text);
+					border: 1px solid var(--border2);
+					padding: 8px 25px;
+					border-radius: var(--r);
+					cursor: pointer;
+				}
 
-				.cd-ok { background: var(--red-fg); color: #fff; border: none; padding: 8px 16px; border-radius: var(--r); cursor: pointer }
+				.cd-ok {
+					background: var(--red-fg);
+					font-size: 0.63rem;
+					color: #fff;
+					border: none;
+					padding: 8px 25px;
+					border-radius: var(--r);
+					cursor: pointer;
+				}
 
 				.cd-ok:hover { background: #c95a5a }
 				.cd-ok--solid { background: var(--danger-solid) }
@@ -95,8 +114,12 @@ async function showConfirmDialog(title, message, options = {}) {
 				/* ── warn: 회원삭제확인모달-1.png ── */
 				.cd-dialog--warn {
 					position: relative;
-					border-radius: var(--rlg);
-					max-width: min(90vw, 360px);
+
+					/*border-radius: var(--rlg);*/
+					border-radius: var(--r);
+
+					/*max-width: min(90vw, 360px);*/
+					max-width: min(90vw, 400px);
 				}
 
 				.cd-dialog--warn .cd-close {
@@ -134,15 +157,25 @@ async function showConfirmDialog(title, message, options = {}) {
 					flex-shrink: 0;
 					width: 28px;
 					height: 28px;
+					/*border: solid 3px var(--danger-solid);*/
 					border-radius: 50%;
+
+					/*
 					background: var(--danger-solid);
 					color: #fff;
+					*/
+
+					color: var(--danger-solid);
+
 					font-size: 16px;
 					font-weight: 700;
 					display: flex;
 					align-items: center;
 					justify-content: center;
 					line-height: 1;
+
+					padding-bottom: 1px;
+					padding-right: 1.1px;
 				}
 
 				.cd-dialog--warn .cd-warn-text { min-width: 0; flex: 1 }
@@ -200,10 +233,17 @@ async function showConfirmDialog(title, message, options = {}) {
 			const row = document.createElement("div");
 			row.className = "cd-warn-row";
 
-			const icon = document.createElement("span");
+			// const icon = document.createElement("span");
+			// icon.className = "cd-warn-icon";
+			// icon.setAttribute("aria-hidden", "true");
+			// icon.textContent = "!";
+
+			const icon = document.createElement("i");
 			icon.className = "cd-warn-icon";
+
+			icon.setAttribute("data-lucide", "circle-alert");
+			icon.setAttribute("color", "var(--danger-solid)");
 			icon.setAttribute("aria-hidden", "true");
-			icon.textContent = "!";
 
 			const textWrap = document.createElement("div");
 			textWrap.className = "cd-warn-text";
@@ -236,6 +276,7 @@ async function showConfirmDialog(title, message, options = {}) {
 		}
 
 		document.body.appendChild(dialog);
+		createIcons({ icons: { CircleAlert } });
 
 		const okBtn = dialog.querySelector(".cd-ok");
 		const cancelBtn = dialog.querySelector(".cd-cancel");
