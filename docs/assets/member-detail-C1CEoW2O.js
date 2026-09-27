@@ -45,7 +45,11 @@ import{_ as e,c as t,i as n,n as r,r as i}from"./app-header-B5CSCFPt.js";/* empt
 				.cd-body {
 					/* 가로로 긴 직사각형 형태 */
 					/* padding: 12px 20px; */
-					padding: 12px 40px;
+					/* padding: 12px 40px; */
+					padding-top: 16px;
+					padding-bottom: 12px;
+					padding-left: 40px;
+					padding-right: 40px;
 
 					font-size: 13px;
 					color: var(--text2);
@@ -62,7 +66,10 @@ import{_ as e,c as t,i as n,n as r,r as i}from"./app-header-B5CSCFPt.js";/* empt
 					/* padding: 8px 20px 20px; */
 
 					padding-top: 8px;
-					padding-bottom: 20px;
+
+					/* padding-bottom: 20px; */
+					padding-bottom: 12px;
+
 					padding-left: 40px;
 					padding-right: 40px;
 				}
@@ -71,8 +78,12 @@ import{_ as e,c as t,i as n,n as r,r as i}from"./app-header-B5CSCFPt.js";/* empt
 					background: transparent;
 					color: var(--text);
 					border: 1px solid var(--border2);
-					padding: 8px 16px;
+
+					/* padding: 8px 16px; */
+					padding: 6.3px 10px;
+
 					border-radius: var(--r);
+					font-size: 0.63rem;
 					cursor:pointer;
 				}
 
@@ -80,17 +91,21 @@ import{_ as e,c as t,i as n,n as r,r as i}from"./app-header-B5CSCFPt.js";/* empt
 					background: var(--danger-solid);
 					color: #fff;
 					border: none;
-					padding: 8px 16px;
+
+					/* padding: 8px 16px; */
+					padding: 6.3px 10px;
+
 					border-radius: var(--r);
+					font-size: 0.63rem;
 					cursor:pointer;
 				}
 
 				.cd-ok:hover{ background: var(--danger-solid-hover) }
 			</style>
-			<div class="cd-header"><h2 class="cd-title"></h2></div>
+			<!--div class="cd-header"><h2 class="cd-title"></h2></div-->
 			<div class="cd-body"></div>
 			<div class="cd-footer">
 				<button type="button" class="cd-cancel">취소</button>
-				<button type="button" class="cd-ok">확인</button>
+				<button type="button" class="cd-ok">삭제</button>
 			</div>
-		`,r.querySelector(`.cd-title`).textContent=e,r.querySelector(`.cd-body`).textContent=t,document.body.appendChild(r);let i=r.querySelector(`.cd-ok`),a=r.querySelector(`.cd-cancel`),o=e=>{r.close(),r.remove(),n(e)};i.addEventListener(`click`,()=>o(!0)),a.addEventListener(`click`,()=>o(!1)),r.addEventListener(`click`,e=>{e.target===r&&o(!1)}),r.addEventListener(`cancel`,()=>o(!1)),r.showModal(),a.focus()})}var bu=S(`memberID`);f.subscribe(e=>e.loading?b():x()),m.subscribe(e=>e.loading?b():x()),s(document,`click`,`[data-del-record]`,async(e,t)=>{if(e.stopPropagation(),await yu(null,`체크기록을 삭제하시겠습니까?`))try{await p(Number(t.dataset.delRecord)),gu(bu)}catch(e){console.error(`기록 삭제 실패:`,e)}}),s(document,`click`,`.record-row`,(e,t)=>{e.target.closest(`[data-del-record]`)||vu(t)}),s(document,`keydown`,`.record-row`,(e,t)=>{(e.key===`Enter`||e.key===` `)&&!e.target.closest(`[data-del-record]`)&&(e.preventDefault(),vu(t))}),E({panels:{records:`panel-records`,compare:`panel-compare`}}),u(`cmp-cur`).addEventListener(`change`,()=>re(mu(bu))),u(`cmp-tgt`).addEventListener(`change`,()=>re(mu(bu))),n(()=>_u(bu)),_u(bu);
+		`,r.querySelector(`.cd-title`)&&(r.querySelector(`.cd-title`).textContent=e),r.querySelector(`.cd-body`).textContent=t,document.body.appendChild(r);let i=r.querySelector(`.cd-ok`),a=r.querySelector(`.cd-cancel`),o=e=>{r.close(),r.remove(),n(e)};i.addEventListener(`click`,()=>o(!0)),a.addEventListener(`click`,()=>o(!1)),r.addEventListener(`click`,e=>{e.target===r&&o(!1)}),r.addEventListener(`cancel`,()=>o(!1)),r.showModal(),a.focus()})}var bu=S(`memberID`);f.subscribe(e=>e.loading?b():x()),m.subscribe(e=>e.loading?b():x()),s(document,`click`,`[data-del-record]`,async(e,t)=>{if(e.stopPropagation(),await yu(null,`체크기록을 삭제하시겠습니까?`))try{await p(Number(t.dataset.delRecord)),gu(bu)}catch(e){console.error(`기록 삭제 실패:`,e)}}),s(document,`click`,`.record-row`,(e,t)=>{e.target.closest(`[data-del-record]`)||vu(t)}),s(document,`keydown`,`.record-row`,(e,t)=>{(e.key===`Enter`||e.key===` `)&&!e.target.closest(`[data-del-record]`)&&(e.preventDefault(),vu(t))}),E({panels:{records:`panel-records`,compare:`panel-compare`}}),u(`cmp-cur`).addEventListener(`change`,()=>re(mu(bu))),u(`cmp-tgt`).addEventListener(`change`,()=>re(mu(bu))),n(()=>_u(bu)),_u(bu);
