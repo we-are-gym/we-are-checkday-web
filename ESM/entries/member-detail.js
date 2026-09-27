@@ -59,7 +59,11 @@ async function showConfirmDialog(title, message) {
 				.cd-body {
 					/* 가로로 긴 직사각형 형태 */
 					/* padding: 12px 20px; */
-					padding: 12px 40px;
+					/* padding: 12px 40px; */
+					padding-top: 16px;
+					padding-bottom: 12px;
+					padding-left: 40px;
+					padding-right: 40px;
 
 					font-size: 13px;
 					color: var(--text2);
@@ -76,7 +80,10 @@ async function showConfirmDialog(title, message) {
 					/* padding: 8px 20px 20px; */
 
 					padding-top: 8px;
-					padding-bottom: 20px;
+
+					/* padding-bottom: 20px; */
+					padding-bottom: 12px;
+
 					padding-left: 40px;
 					padding-right: 40px;
 				}
@@ -85,8 +92,12 @@ async function showConfirmDialog(title, message) {
 					background: transparent;
 					color: var(--text);
 					border: 1px solid var(--border2);
-					padding: 8px 16px;
+
+					/* padding: 8px 16px; */
+					padding: 6.3px 10px;
+
 					border-radius: var(--r);
+					font-size: 0.63rem;
 					cursor:pointer;
 				}
 
@@ -94,22 +105,29 @@ async function showConfirmDialog(title, message) {
 					background: var(--danger-solid);
 					color: #fff;
 					border: none;
-					padding: 8px 16px;
+
+					/* padding: 8px 16px; */
+					padding: 6.3px 10px;
+
 					border-radius: var(--r);
+					font-size: 0.63rem;
 					cursor:pointer;
 				}
 
 				.cd-ok:hover{ background: var(--danger-solid-hover) }
 			</style>
-			<div class="cd-header"><h2 class="cd-title"></h2></div>
+			<!--div class="cd-header"><h2 class="cd-title"></h2></div-->
 			<div class="cd-body"></div>
 			<div class="cd-footer">
 				<button type="button" class="cd-cancel">취소</button>
-				<button type="button" class="cd-ok">확인</button>
+				<button type="button" class="cd-ok">삭제</button>
 			</div>
 		`;
 
-		dialog.querySelector(".cd-title").textContent = title;
+		if (dialog.querySelector(".cd-title")) {
+			dialog.querySelector(".cd-title").textContent = title;
+		}
+
 		dialog.querySelector(".cd-body").textContent = message;
 
 		document.body.appendChild(dialog);
