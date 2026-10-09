@@ -1,7 +1,6 @@
 // 파일 용도: 회원 관리 화면(members.html) — API 기반 회원 목록·검색·제거·상세 이동
 // 상태: memberStore·recordStore(공용 스토어, 관찰자 패턴) 구독, subscribe 콜백에서 ui-data-table 컴포넌트에 rows를 주입해 재렌더링한다.
 import { loadRecords, recordStore } from "@check-doc/record-store.js";
-import { getRecordCountsByMember } from "@check-doc/record-utils.js";
 import { guardOnBfcache } from "@infra/auth.js";
 import "@infra/components/app-header.js";
 import { escapeHtml } from "@infra/templates.js";
@@ -65,16 +64,15 @@ tableEl.setProp("striped", false);
 let keyword = "";
 
 /**
- * 목록 행 데이터 구성 (체크 횟수는 공용 헬퍼로 기록 스토어에서 실계산)
- * @param {Array<{id:string,name:string,gender:string,goal:string,trainer:string}>} list
- * @returns {Array<{id:string,name:string,gender:string,goal:string,trainer:string,recordCount:number}>}
+ * 목록 행 데이터 구성 (체크 횟수는 API 응답 checkdocs_count를 사용)
+ * @param {Array<import("@infra/store.js").Member>} list
+ * @returns {Array<import("@infra/store.js").Member & {gender: string, recordCount: number}>}
  */
 function buildRows(list) {
-	const countByMember = getRecordCountsByMember(recordStore.getState().records);
 	return list.map(m => ({
 		...m,
 		gender: displayGender(m.gender),
-		recordCount: countByMember.get(m.id) || 0,
+		recordCount: m.checkdocs_count || 0,
 	}));
 }
 
