@@ -10,6 +10,7 @@
  * @property {"" | "남" | "녀"} gender 성별 (저장·전송값은 남/녀, 화면 표기는 남/여)
  * @property {string} goal 운송 목표
  * @property {string} trainer 담당 트레이너
+ * @property {number} checkdocs_count 체크 횟수 (Mason API 응답 포함)
  */
 
 /**

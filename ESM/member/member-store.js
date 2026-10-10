@@ -16,6 +16,7 @@ function normalizeMember(apiMember) {
 		gender: apiMember.gender,
 		goal: apiMember.goal,
 		trainer: apiMember.trainer,
+		checkdocs_count: apiMember.checkdocs_count || 0,
 		registered_at: apiMember.registered_at,
 		updated_at: apiMember.updated_at,
 	};

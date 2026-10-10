@@ -9,6 +9,7 @@
  * @property {"" | "남" | "녀"} gender 성별
  * @property {string} goal 운동 목표
  * @property {string} trainer 담당 트레이너
+ * @property {number} checkdocs_count 체크 횟수 (Mason API 응답 포함)
  */
 
 /**
