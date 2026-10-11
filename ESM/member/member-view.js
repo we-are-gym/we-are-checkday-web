@@ -1,4 +1,4 @@
-// 파일 용도: 회원 상세 조회·화면 조립 — member-detail.html 페이지의 데이터 로드와 렌더 조합
+// 파일 용도: 회원 상세 조회·화면 조합 — member-detail.html 페이지의 데이터 로드와 렌더 조합
 // 기법: 조회(getRecords)·목록(renderRecords)·갱신(refreshRecords)·초기화(init)를 소유하고,
 //       렌더 세부는 member-info-card·charts·checkdoc-compare·export-image 모듈에 위임한다.
 import { recordMax, sessionLabel } from "@check-doc/record-stats.js";
@@ -9,8 +9,7 @@ import { renderStatCards } from "@member/charts.js";
 import { fillCompareSelects } from "@member/checkdoc-compare.js";
 import { downloadPdf, exportMemberDetailPNG } from "@member/export-image.js";
 import { renderInfoCard } from "@member/member-info-card.js";
-import { loadMembers, memberStore } from "@member/member-store.js";
-import { getMemberById } from "@member/member-utils.js";
+import { loadMember, memberStore } from "@member/member-store.js";
 import { sum } from "@tools/utils-array.js";
 import { byId, setHTML } from "@tools/utils-dom.js";
 
@@ -59,13 +58,13 @@ export function refreshRecords(memberId) {
 }
 
 /**
- * 초기 렌더링 — 회원을 조회해 정보 카드·통계·기록·비교 select를 채운다 (회원이 없으면 안내만 표시)
+ * 초기 렌더링 — 회원을 단건 조회해 정보 카드·통계·기록·비교 select를 채운다 (회원이 없으면 안내만 표시)
  * @param {string} memberId 대상 회원 member_ID
  * @returns {Promise<void>}
  */
 export async function init(memberId) {
 	try {
-		await Promise.all([loadMembers(), loadRecordsByMember(memberId)]);
+		await Promise.all([loadMember(memberId), loadRecordsByMember(memberId)]);
 	} catch (err) {
 		console.error("회원/기록 로드 실패:", err);
 		setHTML("stat-charts", "");
@@ -74,7 +73,7 @@ export async function init(memberId) {
 		return;
 	}
 
-	const member = getMemberById(memberStore.getState().members, memberId);
+	const member = memberStore.getState().members.find(m => m.id === memberId);
 
 	if (!member) {
 		setHTML("stat-charts", "");
@@ -113,3 +112,5 @@ export async function init(memberId) {
  * @returns {void}
  */
 export const goView = el => (window.location.href = `check-doc-view.html?docID=${el.dataset.recordId}`);
+
+// EOF
