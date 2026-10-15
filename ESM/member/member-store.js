@@ -108,11 +108,6 @@ export async function updateMember(id, patch) {
 /**
  * 회원 1명을 API에서 삭제하고 스토어에서 제거합니다.
  * @param {string} id 대상 회원 member_ID
- * @returns {Promise<void>}
- */
-/**
- * 회원 1명을 API에서 삭제하고 스토어에서 제거합니다.
- * @param {string} id 대상 회원 member_ID
  * @param {string} password 회원 삭제 전용 평문 비밀번호(작업 코드)
  * @returns {Promise<void>}
  */
@@ -122,4 +117,40 @@ export async function removeMember(id, password) {
 		...prev,
 		members: prev.members.filter(m => m.id !== id),
 	}));
+}
+
+/**
+ * 회원 1명을 API에서 단건 조회합니다 (임베딩 포함).
+ * @param {string} id 회원 member_ID
+ * @returns {Promise<import("@infra/store.js").Member | null>} 정규화된 회원 객체, 없으면 null
+ */
+export async function fetchMember(id) {
+	const apiMember = await request(`/members/${encodeURIComponent(id)}?embed=inbody,checkdocs`, { method: "GET" });
+	return normalizeMember(apiMember);
+}
+
+/**
+ * 회원 1명을 API에서 단건 조회해 스토어에 upsert(삽입/갱신)합니다.
+ * @param {string} id 회원 member_ID
+ * @returns {Promise<import("@infra/store.js").Member | null>} 정규화된 회원 객체, 없으면 null
+ */
+export async function loadMember(id) {
+	memberStore.update({ loading: true, error: null });
+	try {
+		const member = await fetchMember(id);
+		if (member) {
+			memberStore.setState(prev => {
+				const idx = prev.members.findIndex(m => m.id === id);
+				const nextMembers = idx >= 0 ? prev.members.map((m, i) => (i === idx ? member : m)) : [...prev.members, member];
+				return { ...prev, members: nextMembers, loading: false };
+			});
+		} else {
+			memberStore.update({ loading: false });
+		}
+		return member;
+	} catch (err) {
+		const msg = toUserMessage(err);
+		memberStore.update({ loading: false, error: msg });
+		throw err;
+	}
 }
